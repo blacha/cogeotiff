@@ -1,0 +1,10 @@
+image: node:12
+
+stages:
+  - test
+
+test_js:
+  stage: test
+  script:
+    - yarn
+    - yarn build
