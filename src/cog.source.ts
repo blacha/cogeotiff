@@ -1,21 +1,12 @@
-import { TIFF_TAG_TYPE } from "./tif";
-
-const BUFFER_SIZE = Math.pow(2, 5) // 32kb
-
-export interface CogSourceBuffer {
-    buffer: DataView;
-    offset: number;
-}
+import { TIFF_TAG_TYPE, getTiffTagSize, getTiffTagReader } from "./tif";
 
 export abstract class CogSource {
 
     /** Default size to fetch in one go */
-    static CHUNK_SIZE = 128 * 1024;
+    static CHUNK_SIZE = 256 * 1024;
+
     _chunkSize = CogSource.CHUNK_SIZE;
     _chunks: CogSourceChunk[] = []
-    // TODO this is not really a great way of storing a sparse Buffer
-    // Should refactor this to be a better buffer, it will often have duplicate data in
-    _bytes: CogSourceBuffer[] = [];
     isLittleEndian = true;
 
     /** Read a UInt16 at the offset */
@@ -48,71 +39,23 @@ export abstract class CogSource {
     }
 
     async readTiffType(rawOffset: number, type: TIFF_TAG_TYPE, count: number): Promise<number | number[] | number[][]> {
-        const fieldLength = CogSource.getFieldLength(type);
+        const fieldLength = getTiffTagSize(type);
         const fieldSize = fieldLength * count;
         const raw = await this.getInternalBuffer(rawOffset, fieldSize);
         const dataView = new DataView(raw);
 
-        let convert = null;
-        switch (type) {
-            case TIFF_TAG_TYPE.BYTE:
-            case TIFF_TAG_TYPE.ASCII:
-            case TIFF_TAG_TYPE.UNDEFINED:
-            case TIFF_TAG_TYPE.SBYTE:
-                convert = offset => dataView.getUint8(offset)
-                break;
+        const convert = getTiffTagReader(type);
 
-            case TIFF_TAG_TYPE.SHORT:
-            case TIFF_TAG_TYPE.SSHORT:
-                convert = offset => dataView.getUint16(offset, this.isLittleEndian)
-                break;
-
-            case TIFF_TAG_TYPE.LONG:
-            case TIFF_TAG_TYPE.SLONG:
-                convert = offset => dataView.getUint32(offset, this.isLittleEndian)
-                break;
-
-            case TIFF_TAG_TYPE.RATIONAL:
-            case TIFF_TAG_TYPE.SRATIONAL:
-                convert = (offset: number) => [
-                    dataView.getUint32(offset, this.isLittleEndian),
-                    dataView.getUint32(offset + 4, this.isLittleEndian)
-                ]
-                break;
-
-            default:
-                throw new Error(`Unknown read type "${type}"`)
+        if (count == 1) {
+            return convert(dataView, 0, this.isLittleEndian)
         }
 
         const output = [];
-        if (convert == null) {
-            throw new Error(`Unknown read type "${type}"`)
-        }
-
         for (let i = 0; i < fieldSize; i += fieldLength) {
-            output.push(convert(i));
-        }
-        if (count == 1) {
-            return output[0];
+            output.push(convert(dataView, i, this.isLittleEndian));
         }
 
         return output;
-    }
-
-    static getFieldLength(fieldType: TIFF_TAG_TYPE) {
-        switch (fieldType) {
-            case TIFF_TAG_TYPE.BYTE: case TIFF_TAG_TYPE.ASCII: case TIFF_TAG_TYPE.SBYTE: case TIFF_TAG_TYPE.UNDEFINED:
-                return 1;
-            case TIFF_TAG_TYPE.SHORT: case TIFF_TAG_TYPE.SSHORT:
-                return 2;
-            case TIFF_TAG_TYPE.LONG: case TIFF_TAG_TYPE.SLONG: case TIFF_TAG_TYPE.FLOAT:
-                return 4;
-            case TIFF_TAG_TYPE.RATIONAL: case TIFF_TAG_TYPE.SRATIONAL: case TIFF_TAG_TYPE.DOUBLE:
-            case TIFF_TAG_TYPE.LONG8: case TIFF_TAG_TYPE.SLONG8: case TIFF_TAG_TYPE.IFD8:
-                return 8;
-            default:
-                throw new Error(`Invalid field type: "${fieldType}"`);
-        }
     }
 
     /** Check if the number of bytes has been cached so far */
@@ -161,7 +104,7 @@ export class CogSourceChunk {
     source: CogSource;
     id: number;
     ready: Promise<CogSourceChunk>;
-    buffer: ArrayBuffer; // Often is null, best to wait for promise
+    buffer: ArrayBuffer; // Often is null, best to wait for ready promise
 
     constructor(source: CogSource, id: number) {
         this.source = source;

@@ -16,6 +16,7 @@
     "typescript": "^3.5.1"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "source-map-support": "^0.5.12"
   }
 }
