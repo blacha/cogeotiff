@@ -1,7 +1,8 @@
-import { CogSource } from './cog.source'
-import { toHexString } from './util.hex';
+import { CogSource } from './cog.source';
 
-export class CogFileSource extends CogSource {
+declare var fetch: any;
+
+export class CogSourceUrl extends CogSource {
 
     url: string;
 

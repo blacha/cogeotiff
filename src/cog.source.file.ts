@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import { CogSource } from './cog.source'
 import { toHexString } from './util.hex';
 
-export class CogFileSource extends CogSource {
+export class CogSourceFile extends CogSource {
 
     fileName: string;
     fd: Promise<fs.FileHandle>;

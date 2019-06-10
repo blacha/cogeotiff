@@ -1,6 +1,5 @@
-import { TIFF_SIZE, TIFF_TAG, TIFF_COMPRESSION, TIFF_TAG_TYPE } from './tif';
-import { CogFileSource } from './cog.source.file';
 import { CogSource } from './cog.source';
+import { TIFF_COMPRESSION, TIFF_SIZE, TIFF_TAG, TIFF_TAG_TYPE } from './tif';
 
 const VERSION_TIFF = 42;
 const VERSION_BIGTIFF = 43;
@@ -36,6 +35,8 @@ export class CogLayer {
     }
 
     async fetchHeader() {
+        const byte = await this.source.getBytes(0, 1)
+        console.log(byte);
         const endian = await this.source.uint16(0);
 
         console.log(endian)
