@@ -1,12 +1,17 @@
 import { TIFF_TAG_TYPE } from "./tif";
 
-const BUFFER_SIZE = Math.pow(2, 16) // 32kb
+const BUFFER_SIZE = Math.pow(2, 5) // 32kb
 
 export interface CogSourceBuffer {
     buffer: DataView;
     offset: number;
 }
+
 export abstract class CogSource {
+
+    /** Default size to fetch in one go */
+    static ChunkSize = 60 * 1024;
+    _chunks: CogSourceChunk[] = []
     // TODO this is not really a great way of storing a sparse Buffer
     // Should refactor this to be a better buffer, it will often have duplicate data in
     _bytes: CogSourceBuffer[] = [];
@@ -15,35 +20,37 @@ export abstract class CogSource {
     /** Read a UInt16 at the offset */
     async uint16(offset: number) {
         const buff = await this.getInternalBuffer(offset, 2);
-        return this.uint16Sync(offset, buff);
+        return new DataView(buff).getUint16(0, this.isLittleEndian);
     }
     /** Read a UInt32 at the offset */
     async uint32(offset: number) {
         const buff = await this.getInternalBuffer(offset, 4);
-        return this.uint32Sync(offset, buff);
-    }
-    uint32Sync(offset: number, buff: CogSourceBuffer) {
-        return buff.buffer.getUint32(offset - buff.offset, this.isLittleEndian)
-    }
-    uint16Sync(offset: number, buff: CogSourceBuffer) {
-        return buff.buffer.getUint16(offset - buff.offset, this.isLittleEndian);
-
-    }
-    uint8Sync(offset: number, buff: CogSourceBuffer) {
-        return buff.buffer.getUint8(offset - buff.offset)
+        return new DataView(buff).getUint32(0, this.isLittleEndian);
     }
 
     /** Read a array of bytes at the offset */
-    async getBytes(offset: number, count: number) {
-        const buff = await this.getInternalBuffer(offset, count);
-        const startOffset = offset - buff.offset;
-        return buff.buffer.buffer.slice(startOffset, startOffset + count)
+    async getBytes(offset: number, count: number): Promise<ArrayBuffer> {
+        return await this.getInternalBuffer(offset, count);
     }
 
-    async readType(rawOffset: number, type: TIFF_TAG_TYPE, count: number): Promise<number | number[] | number[][]> {
+    getRequiredChunks(offset: number, count: number) {
+        const startChunk = Math.floor(offset / CogSource.ChunkSize);
+        const endChunk = Math.floor((offset + count) / CogSource.ChunkSize);
+        if (startChunk == endChunk) {
+            return [startChunk];
+        }
+        const output = []
+        for (let i = startChunk; i <= endChunk; i++) {
+            output.push(i);
+        }
+        return output;
+    }
+
+    async readTiffType(rawOffset: number, type: TIFF_TAG_TYPE, count: number): Promise<number | number[] | number[][]> {
         const fieldLength = CogSource.getFieldLength(type);
         const fieldSize = fieldLength * count;
-        const buff = await this.getInternalBuffer(rawOffset, fieldSize);
+        const raw = await this.getInternalBuffer(rawOffset, fieldSize);
+        const dataView = new DataView(raw);
 
         let convert = null;
         switch (type) {
@@ -51,24 +58,24 @@ export abstract class CogSource {
             case TIFF_TAG_TYPE.ASCII:
             case TIFF_TAG_TYPE.UNDEFINED:
             case TIFF_TAG_TYPE.SBYTE:
-                convert = offset => this.uint8Sync(rawOffset + offset, buff)
+                convert = offset => dataView.getUint8(offset)
                 break;
 
             case TIFF_TAG_TYPE.SHORT:
             case TIFF_TAG_TYPE.SSHORT:
-                convert = offset => this.uint16Sync(rawOffset + offset, buff)
+                convert = offset => dataView.getUint16(offset, this.isLittleEndian)
                 break;
 
             case TIFF_TAG_TYPE.LONG:
             case TIFF_TAG_TYPE.SLONG:
-                convert = offset => this.uint32Sync(rawOffset + offset, buff)
+                convert = offset => dataView.getUint32(offset, this.isLittleEndian)
                 break;
 
             case TIFF_TAG_TYPE.RATIONAL:
             case TIFF_TAG_TYPE.SRATIONAL:
                 convert = (offset: number) => [
-                    this.uint32Sync(rawOffset + offset, buff),
-                    this.uint32Sync(rawOffset + offset + 4, buff)
+                    dataView.getUint32(offset, this.isLittleEndian),
+                    dataView.getUint32(offset + 4, this.isLittleEndian)
                 ]
                 break;
 
@@ -107,35 +114,85 @@ export abstract class CogSource {
         }
     }
 
-    /** Check if the number of bytes has been chached so far */
+    /** Check if the number of bytes has been cached so far */
     hasBytes(offset: number, count = 1) {
-        for (const data of this._bytes) {
-            if (offset < data.offset) {
-                continue;
+        const requiredChunks = this.getRequiredChunks(offset, count);
+        for (const id of requiredChunks) {
+            if (this._chunks[id] == null || !this._chunks[id].isReady) {
+                return false;
             }
-            if (offset + count > data.offset + data.buffer.byteLength) {
-                continue;
-            }
-            return true;
         }
-        return false;
+        return true;
     }
 
-    protected async getInternalBuffer(offset: number, count: number): Promise<CogSourceBuffer> {
-        for (const data of this._bytes) {
-            if (offset < data.offset) {
-                continue;
+    protected async getInternalBuffer(offset: number, count: number): Promise<ArrayBuffer> {
+        const requiredChunks = this.getRequiredChunks(offset, count);
+        const chunkFetches: Promise<CogSourceChunk>[] = [];
+        for (const chunkId of requiredChunks) {
+            if (this._chunks[chunkId] == null) {
+                this._chunks[chunkId] = new CogSourceChunk(this, chunkId)
             }
-            if (offset + count > data.offset + data.buffer.byteLength) {
-                continue;
-            }
-            return data;
+            chunkFetches.push(this._chunks[chunkId].ready);
         }
-        const buffer = await this.fetchBytes(offset, Math.max(count, BUFFER_SIZE));
-        const node = { buffer: new DataView(buffer), offset };
-        this._bytes.push(node)
-        return node;
+
+        const chunks = await Promise.all(chunkFetches);
+        if (chunks.length === 1) {
+            return chunks[0].getBytes(offset, count)
+        }
+        // WIP need to unit test this
+        // Merge chunks into one buffer so that is can be read
+        const newBuff = new Uint8Array(count);
+        let byteOffset = 0;
+        for (const chunk of chunks) {
+            const readStart = Math.max(offset, chunk.offset)
+            const readEnd = Math.min(chunk.offsetEnd, offset + count)
+            const chunkBytes = chunk.getBytes(readStart, readEnd - readStart)
+            newBuff.set(new Uint8Array(chunkBytes), byteOffset);
+            byteOffset += chunkBytes.byteLength;
+        }
+        return newBuff.buffer;
     }
 
-    protected abstract fetchBytes(offset: number, length: number): Promise<ArrayBuffer>
+    abstract fetchBytes(offset: number, length: number): Promise<ArrayBuffer>
+}
+
+export class CogSourceChunk {
+    source: CogSource;
+    id: number;
+    ready: Promise<CogSourceChunk>;
+    buffer: ArrayBuffer; // Often is null, best to wait for promise
+
+    constructor(source: CogSource, id: number) {
+        this.source = source;
+        this.id = id;
+        this.ready = new Promise(async resolve => {
+            this.buffer = await this.source.fetchBytes(id * CogSource.ChunkSize, CogSource.ChunkSize);
+            resolve(this);
+        })
+    }
+
+    get isReady() {
+        return this.buffer != null;
+    }
+
+    get offset() {
+        return this.id * CogSource.ChunkSize
+    }
+
+    get offsetEnd() {
+        return this.offset + this.buffer.byteLength;
+    }
+
+    get length() {
+        return this.buffer.byteLength;
+    }
+
+    getBytes(offset: number, count: number): ArrayBuffer {
+        const startByte = offset - this.offset;
+        const endByte = startByte + count;
+        if (endByte > this.buffer.byteLength) {
+            throw new Error(`Read overflow ${endByte} > ${this.buffer.byteLength}`);
+        }
+        return this.buffer.slice(startByte, endByte)
+    }
 }

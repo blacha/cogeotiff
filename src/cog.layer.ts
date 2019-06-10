@@ -35,11 +35,8 @@ export class CogLayer {
     }
 
     async fetchHeader() {
-        const byte = await this.source.getBytes(0, 1)
-        console.log(byte);
         const endian = await this.source.uint16(0);
 
-        console.log(endian)
         this.isLittleEndian = endian === ENDIAN_LITTLE
         if (!this.isLittleEndian) {
             throw new Error('Only little endian is supported');
@@ -78,6 +75,7 @@ export class CogLayer {
         const offset = image.TileOffsets[idx];
         const byteCount = image.TileByteCounts[idx];
         // TODO fix JPEG
+        // console.log('byteCount', image.TileOffsets)
         const bytes = await this.source.getBytes(offset, byteCount);
         return { mimeType, bytes }
     }
@@ -85,6 +83,7 @@ export class CogLayer {
     async processIfd(offset: number) {
         const ifd = await this.readIfd(offset);
         this.images.push(ifd.image);
+        console.log(this.images[0].TileOffsets.slice(0, 10));
         // TODO dynamically load these as needed
         if (ifd.nextOffset) {
             await this.processIfd(ifd.nextOffset);
@@ -121,16 +120,17 @@ export class CogLayer {
             console.log(pos - 10, 'tag', tiffTag, 'type', TIFF_TAG_TYPE[tagType], 'typeCount', count, 'tagLen', tagLen)
 
             if (tagLen <= 4) {
-                image[tiffTag] = await this.source.readType(pos + 8, tagType, count);
+                image[tiffTag] = await this.source.readTiffType(pos + 8, tagType, count);
             } else {
                 const valueOffset = await this.source.uint32(pos + 8);
                 const valueEnd = valueOffset + tagLen;
                 if (!this.source.hasBytes(valueOffset, tagLen)) {
-                    console.error(`Need More data ${valueEnd} >`);
-                    image[tiffTag] = () => this.source.readType(valueOffset, tagType, count);
+                    // TODO only load in the additional tag info if we really need it
+                    console.error(`IFD needs more data ${valueOffset} -> ${valueEnd} chunks:[${this.source.getRequiredChunks(valueOffset, tagLen).join(', ')}]`);
+                    image[tiffTag] = await this.source.readTiffType(valueOffset, tagType, count);
                     isPartial = true;
                 } else {
-                    image[tiffTag] = await this.source.readType(valueOffset, tagType, count);
+                    image[tiffTag] = await this.source.readTiffType(valueOffset, tagType, count);
                 }
             }
         }
