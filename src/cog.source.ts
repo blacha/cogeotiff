@@ -10,7 +10,8 @@ export interface CogSourceBuffer {
 export abstract class CogSource {
 
     /** Default size to fetch in one go */
-    static ChunkSize = 60 * 1024;
+    static CHUNK_SIZE = 128 * 1024;
+    _chunkSize = CogSource.CHUNK_SIZE;
     _chunks: CogSourceChunk[] = []
     // TODO this is not really a great way of storing a sparse Buffer
     // Should refactor this to be a better buffer, it will often have duplicate data in
@@ -34,8 +35,8 @@ export abstract class CogSource {
     }
 
     getRequiredChunks(offset: number, count: number) {
-        const startChunk = Math.floor(offset / CogSource.ChunkSize);
-        const endChunk = Math.floor((offset + count) / CogSource.ChunkSize);
+        const startChunk = Math.floor(offset / this._chunkSize);
+        const endChunk = Math.floor((offset + count) / this._chunkSize);
         if (startChunk == endChunk) {
             return [startChunk];
         }
@@ -166,7 +167,7 @@ export class CogSourceChunk {
         this.source = source;
         this.id = id;
         this.ready = new Promise(async resolve => {
-            this.buffer = await this.source.fetchBytes(id * CogSource.ChunkSize, CogSource.ChunkSize);
+            this.buffer = await this.source.fetchBytes(id * this.source._chunkSize, this.source._chunkSize);
             resolve(this);
         })
     }
@@ -176,7 +177,7 @@ export class CogSourceChunk {
     }
 
     get offset() {
-        return this.id * CogSource.ChunkSize
+        return this.id * this.source._chunkSize
     }
 
     get offsetEnd() {
