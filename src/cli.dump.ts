@@ -6,7 +6,7 @@ import chalk from 'chalk';
 const helpMessage = chalk`
   {bold USAGE}
 
-      {dim $} {bold cogdump} [--help] --file {underline COG File} --xyz {underline offset}
+      {dim $} {bold cog-dump} [--help] --file {underline COG File} --xyz {underline offset}
 
   {bold OPTIONS}
       --help                      Shows this help message
