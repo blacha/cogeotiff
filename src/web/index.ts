@@ -1,10 +1,7 @@
-import { CogSourceUrl } from "../source/cog.source.web";
 import { CogTif } from "../cog.tif";
-import { CogViewer } from "..";
+import { CogSourceUrl } from "../source/cog.source.web";
 
 CogSourceUrl.fetch = (a, b) => fetch(a, b);
-
-const MAX_SIZE = 10;
 
 let map: L.Map;
 let cog: CogTif;
@@ -32,7 +29,7 @@ async function loadAndRender(url: string) {
 
     statusEl.innerHTML = 'Loading...';
     console.time('loadCog')
-    cog = await CogViewer.fromUrl(url);
+    cog = await new CogTif(new CogSourceUrl(url)).init();
     console.timeEnd('loadCog');
     const GeoTiffLayer = L.GridLayer.extend({
         createTile: function(coords, done) {
