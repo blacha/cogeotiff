@@ -15,10 +15,15 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/leaflet": "^1.4.4",
     "@types/node": "^12.0.7",
+    "html-webpack-plugin": "^3.2.0",
     "ospec": "^3.1.0",
     "source-map-support": "^0.5.12",
-    "typescript": "^3.5.1"
+    "typescript": "^3.5.1",
+    "webpack": "^4.33.0",
+    "webpack-cli": "^3.3.3",
+    "webpack-dev-server": "^3.7.1"
   },
   "dependencies": {
     "arg": "^4.1.0",

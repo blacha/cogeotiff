@@ -24,8 +24,9 @@ export class CogTif {
         this.source = source;
     }
 
-    async init() {
+    async init(): Promise<CogTif> {
         await this.fetchIfd();
+        return this;
     }
 
     async fetchIfd() {
@@ -65,6 +66,7 @@ export class CogTif {
         const nyTiles = Math.ceil(image.ImageHeight / image.TileHeight);
         const idx = y * nyTiles + x;
 
+        // TODO load only the parts of the tiles we care about
         const [tileOffsets, byteCounts] = await Promise.all([
             image.TileOffsets,
             image.TileByteCounts

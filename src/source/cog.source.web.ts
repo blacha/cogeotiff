@@ -54,8 +54,7 @@ export class CogSourceUrl extends CogSource {
             const firstChunk = chunkRange[0];
             const lastChunk = chunkRange[chunkRange.length - 1];
             const fetchRange = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
-
-            // console.log('FetchRange', fetchRange, 'chunks', chunkRange)
+            console.log('FetchRange', fetchRange, 'chunks', chunkRange)
             const promise = CogSourceUrl.fetch(this.url, {
                 headers: {
                     Range: fetchRange,
