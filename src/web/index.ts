@@ -1,6 +1,6 @@
 import { CogTif } from "../cog.tif";
 import { CogSourceUrl } from "../source/cog.source.web";
-
+import * as L from 'leaflet';
 CogSourceUrl.fetch = (a, b) => fetch(a, b);
 
 let map: L.Map;
