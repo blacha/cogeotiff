@@ -1,5 +1,5 @@
 import { TiffVersion } from "./cog.tif";
-import { getTiffTagReader, getTiffTagSize, TIFF_TAG, TIFF_TAG_TYPE } from "./tif";
+import { getTiffTagValueReader, getTiffTagSize, TiffTag, TiffTagValueType } from "./tif";
 
 export enum ByteSize {
     UInt8 = 1,
@@ -8,14 +8,7 @@ export enum ByteSize {
     UInt64 = 8
 }
 
-function uint64(view: DataView, offset: number, isLittleEndian: boolean) {
-    const intA = view.getUint32(offset, isLittleEndian);
-    const intB = view.getUint32(offset + 4, isLittleEndian);
-    if (isLittleEndian) {
-        return (intA << 32) | intB // Shifting by 32 is bad
-    }
-    return (intB << 32) | intA
-}
+
 
 const TagTiffConfig = {
     version: TiffVersion.Tiff,
@@ -64,7 +57,7 @@ const TagTiffBigConfig = {
         return {
             code: view.getUint16(0, isLittleEndian),
             type: view.getUint16(2, isLittleEndian),
-            count: uint64(view, 4, isLittleEndian),
+            count: CogSource.uint64(view, 4, isLittleEndian),
             valueOffset: offset + 12,
             size: TagTiffBigConfig.ifd
         }
@@ -115,7 +108,16 @@ export abstract class CogSource {
     async uint64(offset: number) {
         const buff = await this.getInternalBuffer(offset, ByteSize.UInt64);
         const view = new DataView(buff);
-        return uint64(view, 0, this.isLittleEndian);
+        return CogSource.uint64(view, 0, this.isLittleEndian);
+    }
+
+    static uint64(view: DataView, offset: number, isLittleEndian: boolean) {
+        const intA = view.getUint32(offset, isLittleEndian);
+        const intB = view.getUint32(offset + 4, isLittleEndian);
+        if (isLittleEndian) {
+            return (intA << 32) | intB // Shifting by 32 is bad
+        }
+        return (intB << 32) | intA
     }
 
     async uint(offset: number, bs: ByteSize) {
@@ -144,7 +146,7 @@ export abstract class CogSource {
         }
         return {
             ...tag,
-            codeName: TIFF_TAG[tag.code],
+            codeName: TiffTag[tag.code],
             typeSize,
             value,
             typeLength: tag.count * typeSize
@@ -179,7 +181,7 @@ export abstract class CogSource {
         return output;
     }
 
-    async readTiffTagValue(offset: number, type: TIFF_TAG_TYPE, tagCount: number): Promise<number | number[] | number[][]> {
+    async readTiffTagValue(offset: number, type: TiffTagValueType, tagCount: number): Promise<string | bigint | number | number[] | number[][]> {
         const fieldLength = getTiffTagSize(type);
         const fieldSize = fieldLength * tagCount;
 
@@ -192,7 +194,7 @@ export abstract class CogSource {
         const bytes = await this.getInternalBuffer(offset, fieldSize);
         const view = new DataView(bytes);
 
-        const convert = getTiffTagReader(type);
+        const convert = getTiffTagValueReader(type);
 
         if (tagCount == 1) {
             return convert(view, 0, this.isLittleEndian)
@@ -201,6 +203,11 @@ export abstract class CogSource {
         const output = [];
         for (let i = 0; i < fieldSize; i += fieldLength) {
             output.push(convert(view, i, this.isLittleEndian));
+        }
+
+        // Convert to a string if ascii
+        if (type === TiffTagValueType.ASCII) {
+            return output.join('').trim();
         }
 
         return output;

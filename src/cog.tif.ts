@@ -1,5 +1,5 @@
 import { CogSource } from './cog.source';
-import { TIFF_COMPRESSION } from './tif';
+import { TiffCompression } from './tif';
 import { toHexString } from './util.hex';
 
 export enum TiffVersion {
@@ -66,7 +66,7 @@ export class CogTif {
         if (image == null) {
             throw new Error(`Missing z: ${z}`);
         }
-        const mimeType = TIFF_COMPRESSION[image.Compression];
+        const mimeType = TiffCompression[image.Compression];
         const nyTiles = Math.ceil(image.ImageHeight / image.TileHeight);
         const idx = y * nyTiles + x;
 

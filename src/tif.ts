@@ -1,5 +1,5 @@
 // Stolen from geotiff.js
-export enum TIFF_TAG {
+export enum TiffTag {
     // TIFF Baseline
     Artist = 0x013B,
     BitsPerSample = 0x0102,
@@ -119,7 +119,7 @@ export enum TIFF_TAG {
     GeoAsciiParams = 0x87B1,
 }
 
-export const TIFF_COMPRESSION = {
+export const TiffCompression = {
     6: "image/jpeg",
     7: "image/jpeg",
     8: "deflate",
@@ -127,80 +127,82 @@ export const TIFF_COMPRESSION = {
     50001: "image/webp"
 };
 
-export enum TIFF_TAG_TYPE {
-    'BYTE' = 0x0001,
-    'ASCII' = 0x0002,
-    'SHORT' = 0x0003,
-    'LONG' = 0x0004,
-    'RATIONAL' = 0x0005,
-    'SBYTE' = 0x0006,
-    'UNDEFINED' = 0x0007,
-    'SSHORT' = 0x0008,
-    'SLONG' = 0x0009,
-    'SRATIONAL' = 0x000A,
-    'FLOAT' = 0x000B,
-    'DOUBLE' = 0x000C,
+export enum TiffTagValueType {
+    BYTE = 0x0001,
+    ASCII = 0x0002,
+    SHORT = 0x0003,
+    LONG = 0x0004,
+    RATIONAL = 0x0005,
+    SBYTE = 0x0006,
+    UNDEFINED = 0x0007,
+    SSHORT = 0x0008,
+    SLONG = 0x0009,
+    SRATIONAL = 0x000A,
+    FLOAT = 0x000B,
+    DOUBLE = 0x000C,
     // introduced by BigTIFF
-    'LONG8' = 0x0010,
-    'SLONG8' = 0x0011,
-    'IFD8' = 0x0012,
+    LONG8 = 0x0010,
+    SLONG8 = 0x0011,
+    IFD8 = 0x0012,
 };
 
-export function getTiffTagSize(fieldType: TIFF_TAG_TYPE) {
+export function getTiffTagSize(fieldType: TiffTagValueType) {
     switch (fieldType) {
-        case TIFF_TAG_TYPE.BYTE: case TIFF_TAG_TYPE.ASCII: case TIFF_TAG_TYPE.SBYTE: case TIFF_TAG_TYPE.UNDEFINED:
+        case TiffTagValueType.BYTE: case TiffTagValueType.ASCII: case TiffTagValueType.SBYTE: case TiffTagValueType.UNDEFINED:
             return 1;
-        case TIFF_TAG_TYPE.SHORT: case TIFF_TAG_TYPE.SSHORT:
+        case TiffTagValueType.SHORT: case TiffTagValueType.SSHORT:
             return 2;
-        case TIFF_TAG_TYPE.LONG: case TIFF_TAG_TYPE.SLONG: case TIFF_TAG_TYPE.FLOAT:
+        case TiffTagValueType.LONG: case TiffTagValueType.SLONG: case TiffTagValueType.FLOAT:
             return 4;
-        case TIFF_TAG_TYPE.RATIONAL: case TIFF_TAG_TYPE.SRATIONAL: case TIFF_TAG_TYPE.DOUBLE:
-        case TIFF_TAG_TYPE.LONG8: case TIFF_TAG_TYPE.SLONG8: case TIFF_TAG_TYPE.IFD8:
+        case TiffTagValueType.RATIONAL: case TiffTagValueType.SRATIONAL: case TiffTagValueType.DOUBLE:
+        case TiffTagValueType.LONG8: case TiffTagValueType.SLONG8: case TiffTagValueType.IFD8:
             return 8;
         default:
             throw new Error(`Invalid field type: "${fieldType}"`);
     }
 }
 
-export type TiffTagRational = [number, number]
-export type TiffTagReaderFunc = (view: DataView, offset: number, isLittleEndian: boolean) => number | TiffTagRational
+export type TiffTagValueRational = [number, number]
+export type TiffTagValueReaderFunc = (view: DataView, offset: number, isLittleEndian: boolean) => number | bigint | TiffTagValueRational | string
 
-const TiffTagReader: { [key: string]: TiffTagReaderFunc } = {
-    // char: (view: DataView, offset: number, isLittleEndian: boolean) => String.fromCharCode(view.getUint8(offset));,
+const TiffTagValueReader: { [key: string]: TiffTagValueReaderFunc } = {
+    char: (view: DataView, offset: number, isLittleEndian: boolean) => String.fromCharCode(view.getUint8(offset)),
     uint8: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint8(offset),
     uint16: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint16(offset, isLittleEndian),
     uint32: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint32(offset, isLittleEndian),
-    uint64: (view: DataView, offset: number, isLittleEndian: boolean) => view.getBigUint64(offset, isLittleEndian) as any,
+    uint64: (view: DataView, offset: number, isLittleEndian: boolean) => view.getBigUint64(offset, isLittleEndian),
     double: (view: DataView, offset: number, isLittleEndian: boolean) => view.getFloat64(offset, isLittleEndian),
     rational: (view: DataView, offset: number, isLittleEndian: boolean) => [view.getUint32(offset, this.isLittleEndian), view.getUint32(offset + 4, this.isLittleEndian)]
 }
-export function getTiffTagReader(fieldType: TIFF_TAG_TYPE): TiffTagReaderFunc {
+export function getTiffTagValueReader(fieldType: TiffTagValueType): TiffTagValueReaderFunc {
     switch (fieldType) {
-        case TIFF_TAG_TYPE.ASCII:
-        case TIFF_TAG_TYPE.BYTE:
-        case TIFF_TAG_TYPE.UNDEFINED:
-        case TIFF_TAG_TYPE.SBYTE:
-            return TiffTagReader.uint8
+        case TiffTagValueType.ASCII:
+            return TiffTagValueReader.char;
 
-        case TIFF_TAG_TYPE.SHORT:
-        case TIFF_TAG_TYPE.SSHORT:
-            return TiffTagReader.uint16
+        case TiffTagValueType.BYTE:
+        case TiffTagValueType.UNDEFINED:
+        case TiffTagValueType.SBYTE:
+            return TiffTagValueReader.uint8
 
-        case TIFF_TAG_TYPE.LONG:
-        case TIFF_TAG_TYPE.SLONG:
-            return TiffTagReader.uint32
+        case TiffTagValueType.SHORT:
+        case TiffTagValueType.SSHORT:
+            return TiffTagValueReader.uint16
 
-        case TIFF_TAG_TYPE.RATIONAL:
-        case TIFF_TAG_TYPE.SRATIONAL:
-            return TiffTagReader.rational
+        case TiffTagValueType.LONG:
+        case TiffTagValueType.SLONG:
+            return TiffTagValueReader.uint32
 
-        case TIFF_TAG_TYPE.DOUBLE:
-            return TiffTagReader.rational
+        case TiffTagValueType.RATIONAL:
+        case TiffTagValueType.SRATIONAL:
+            return TiffTagValueReader.rational
 
-        case TIFF_TAG_TYPE.LONG8:
-            return TiffTagReader.uint64
+        case TiffTagValueType.DOUBLE:
+            return TiffTagValueReader.rational
+
+        case TiffTagValueType.LONG8:
+            return TiffTagValueReader.uint64
 
         default:
-            throw new Error(`Unknown read type "${fieldType}" "${TIFF_TAG_TYPE[fieldType]}"`)
+            throw new Error(`Unknown read type "${fieldType}" "${TiffTagValueType[fieldType]}"`)
     }
 }
