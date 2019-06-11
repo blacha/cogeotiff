@@ -1,3 +1,8 @@
+export enum TiffVersion {
+    BigTiff = 43,
+    Tiff = 42
+}
+
 // Stolen from geotiff.js
 export enum TiffTag {
     // TIFF Baseline

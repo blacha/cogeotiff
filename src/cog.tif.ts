@@ -1,11 +1,6 @@
 import { CogSource } from './cog.source';
-import { TiffCompression } from './tif';
+import { TiffCompression, TiffVersion } from './tif';
 import { toHexString } from './util.hex';
-
-export enum TiffVersion {
-    BigTiff = 43,
-    Tiff = 42
-}
 
 export const ENDIAN_BIG = 0x4D4D
 export const ENDIAN_LITTLE = 0x4949
@@ -70,12 +65,17 @@ export class CogTif {
         const nyTiles = Math.ceil(image.ImageHeight / image.TileHeight);
         const idx = y * nyTiles + x;
 
-        if (idx > image.TileOffsets.length) {
+        const [tileOffsets, byteCounts] = await Promise.all([
+            image.TileOffsets,
+            image.TileByteCounts
+        ])
+
+        if (idx > tileOffsets.length) {
             throw new Error(`Tile ${x} ${y} ${z} does not exist`);
         }
 
-        const offset = image.TileOffsets[idx];
-        const byteCount = image.TileByteCounts[idx];
+        const offset = tileOffsets[idx];
+        const byteCount = byteCounts[idx];
         // TODO fix JPEG
         const bytes = await this.source.getBytes(offset, byteCount);
         return { mimeType, bytes };
@@ -84,11 +84,11 @@ export class CogTif {
     async processIfd(offset: number) {
         const ifd = await this.readIfd(offset);
         this.images.push(ifd.image);
-
-        console.log('GotImage', ifd.image.ImageWidth, 'x', ifd.image.ImageHeight, '\tTile:', ifd.image.TileWidth, 'x', ifd.image.TileHeight, `\tNext: ${toHexString(ifd.nextOffset, 6)}`)
-        // console.log(ifd.image);
+        console.log('GotImage',
+            '\tSize:', ifd.image.ImageWidth, 'x', ifd.image.ImageHeight,
+            '\tTile:', ifd.image.TileWidth, 'x', ifd.image.TileHeight,
+            '\tNext:', toHexString(ifd.nextOffset, 6));
         // TODO dynamically load these as needed
-
         if (ifd.nextOffset) {
             await this.processIfd(ifd.nextOffset);
         }

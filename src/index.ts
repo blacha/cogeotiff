@@ -1,4 +1,4 @@
-import 'source-map-support/register';
+// import 'source-map-support/register';
 import { CogSourceFile } from "./cog.source.file";
 import { CogSourceUrl } from './cog.source.web';
 import { CogTif } from "./cog.tif";
@@ -13,9 +13,10 @@ function getSource() {
         // return new CogSourceFile('/home/blacha/home/auckland_urban_2017_0.075m_cog.tif')
         // return new CogSourceFile('/home/blacha/Downloads/tif/bigtiff.tiff')
 
-        return new CogSourceFile('/home/blacha/Downloads/tif/S2A_MSIL1C_20170102T111442_N0204_R137_T30TXT_20170102T111441_TCI_cloudoptimized_512.tif')
-        // return new CogSourceFile('/home/blacha/Downloads/tif/land_shallow_topo_east.cog.webp.tif')
+        // return new CogSourceFile('/home/blacha/Downloads/tif/S2A_MSIL1C_20170102T111442_N0204_R137_T30TXT_20170102T111441_TCI_cloudoptimized_512.tif')
+        return new CogSourceFile('/home/blacha/Downloads/tif/land_shallow_topo_east_webp_lossless.tif')
     }
+    CogSourceUrl.fetch = window.fetch;
     return new CogSourceUrl('/land_shallow_topo_east_webp.tif');
 
 }
@@ -29,17 +30,19 @@ async function run() {
         '\tReadBufferSize:', cl.source._chunkSize);
 
     if (isWeb()) {
-        for (let y = 0; y < 10; y++) {
-            for (let x = 0; x < 10; x++) {
+        const X_MAX = 2;
+        const Y_MAX = 2;
+        for (let y = 0; y < Y_MAX; y++) {
+            for (let x = 0; x < X_MAX; x++) {
                 cl.getTileRaw(y, x, 0)
             }
         }
 
-        for (let y = 0; y < 10; y++) {
+        for (let y = 0; y < Y_MAX; y++) {
             const div = document.createElement('div');
             div.style.display = 'flex'
             div.style.flexDirection = 'column';
-            for (let x = 0; x < 10; x++) {
+            for (let x = 0; x < X_MAX; x++) {
                 const tile = await cl.getTileRaw(y, x, 0)
                 const img = document.createElement('img');
                 img.style.width = '64px';
@@ -71,3 +74,6 @@ async function run() {
 
 
 run().catch(console.error.bind(console))
+
+
+// const source = CogSourceUrl('/land_shallow_topo_east_webp.tif');

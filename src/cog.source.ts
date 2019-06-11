@@ -1,5 +1,4 @@
-import { TiffVersion } from "./cog.tif";
-import { getTiffTagValueReader, getTiffTagSize, TiffTag, TiffTagValueType } from "./tif";
+import { getTiffTagValueReader, getTiffTagSize, TiffTag, TiffTagValueType, TiffVersion } from "./tif";
 
 export enum ByteSize {
     UInt8 = 1,
@@ -73,7 +72,7 @@ const TiffIfdEntry = {
 export abstract class CogSource {
 
     /** Default size to fetch in one go */
-    static CHUNK_SIZE = 16 * 1024;
+    static CHUNK_SIZE = 64 * 1024;
 
     _chunkSize = CogSource.CHUNK_SIZE;
     _chunks: CogSourceChunk[] = []
@@ -142,7 +141,7 @@ export abstract class CogSource {
         if (this.hasBytes(tag.valueOffset, typeLength)) {
             value = await this.readTiffTagValue(tag.valueOffset, tag.type, tag.count)
         } else {
-            value = () => this.readTiffTagValue(tag.valueOffset, tag.type, tag.count)
+            value = new Promise(resolve => this.readTiffTagValue(tag.valueOffset, tag.type, tag.count).then(resolve))
         }
         return {
             ...tag,
@@ -170,7 +169,7 @@ export abstract class CogSource {
 
     getRequiredChunks(offset: number, count: number) {
         const startChunk = Math.floor(offset / this._chunkSize);
-        const endChunk = Math.floor((offset + count) / this._chunkSize);
+        const endChunk = Math.ceil((offset + count) / this._chunkSize) - 1;
         if (startChunk == endChunk) {
             return [startChunk];
         }
@@ -245,7 +244,13 @@ export abstract class CogSource {
         for (const chunk of chunks) {
             const readStart = Math.max(offset, chunk.offset)
             const readEnd = Math.min(chunk.offsetEnd, offset + count)
+            const chunkSize = readEnd - readStart;
             const chunkBytes = chunk.getBytes(readStart, readEnd - readStart)
+            if (chunkBytes.byteLength !== chunkSize) {
+                throw new Error(`ByteSize missmatch request: ${chunkSize} got: ${chunkBytes.byteLength}`)
+            }
+
+            // console.log('set-bytes', readStart, '->', readEnd, readEnd - readStart, 'bytesLeft', count - byteOffset, chunkBytes)
             newBuff.set(new Uint8Array(chunkBytes), byteOffset);
             byteOffset += chunkBytes.byteLength;
         }
@@ -280,7 +285,7 @@ export class CogSourceChunk {
     }
 
     get offsetEnd() {
-        return this.offset + this.buffer.byteLength;
+        return this.offset + this.source._chunkSize;
     }
 
     get length() {
@@ -290,9 +295,14 @@ export class CogSourceChunk {
     getBytes(offset: number, count: number): ArrayBuffer {
         const startByte = offset - this.offset;
         const endByte = startByte + count;
+        // console.log(this.toString(), startByte, count, endByte, this.offsetEnd)
         if (endByte > this.buffer.byteLength) {
             throw new Error(`Read overflow ${endByte} > ${this.buffer.byteLength}`);
         }
         return this.buffer.slice(startByte, endByte)
+    }
+
+    toString() {
+        return `<Chunk:${this.id} offset:${this.offset} length:${this.length}>`
     }
 }
