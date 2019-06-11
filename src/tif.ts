@@ -170,8 +170,8 @@ const TiffTagReader: { [key: string]: TiffTagReaderFunc } = {
     uint8: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint8(offset),
     uint16: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint16(offset, isLittleEndian),
     uint32: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint32(offset, isLittleEndian),
+    uint64: (view: DataView, offset: number, isLittleEndian: boolean) => view.getBigUint64(offset, isLittleEndian) as any,
     double: (view: DataView, offset: number, isLittleEndian: boolean) => view.getFloat64(offset, isLittleEndian),
-
     rational: (view: DataView, offset: number, isLittleEndian: boolean) => [view.getUint32(offset, this.isLittleEndian), view.getUint32(offset + 4, this.isLittleEndian)]
 }
 export function getTiffTagReader(fieldType: TIFF_TAG_TYPE): TiffTagReaderFunc {
@@ -196,6 +196,10 @@ export function getTiffTagReader(fieldType: TIFF_TAG_TYPE): TiffTagReaderFunc {
 
         case TIFF_TAG_TYPE.DOUBLE:
             return TiffTagReader.rational
+
+        case TIFF_TAG_TYPE.LONG8:
+            return TiffTagReader.uint64
+
         default:
             throw new Error(`Unknown read type "${fieldType}" "${TIFF_TAG_TYPE[fieldType]}"`)
     }

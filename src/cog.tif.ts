@@ -1,9 +1,11 @@
 import { CogSource } from './cog.source';
-import { TIFF_COMPRESSION, TIFF_TAG, TIFF_TAG_TYPE, getTiffTagSize } from './tif';
+import { TIFF_COMPRESSION } from './tif';
 import { toHexString } from './util.hex';
 
-export const VERSION_TIFF = 42;
-export const VERSION_BIGTIFF = 43;
+export enum TiffVersion {
+    BigTiff = 43,
+    Tiff = 42
+}
 
 export const ENDIAN_BIG = 0x4D4D
 export const ENDIAN_LITTLE = 0x4949
@@ -21,8 +23,6 @@ export interface CogImage {
 export class CogTif {
     source: CogSource;
     version: number;
-    isLittleEndian: boolean;
-    isBigTiff = false;
     images: Partial<CogImage>[] = [];
 
     constructor(source: CogSource) {
@@ -30,27 +30,35 @@ export class CogTif {
     }
 
     async init() {
-        await this.fetchHeader();
+        await this.fetchIfd();
     }
 
-    async fetchHeader() {
+    async fetchIfd() {
         const endian = await this.source.uint16(0);
-        this.isLittleEndian = endian === ENDIAN_LITTLE;
-        if (!this.isLittleEndian) {
+        this.source.isLittleEndian = endian === ENDIAN_LITTLE;
+        if (!this.source.isLittleEndian) {
             throw new Error('Only little endian is supported');
         }
         this.version = await this.source.uint16(2);
-        if (this.version == VERSION_BIGTIFF) {
-            throw new Error(`Only tiff supported version:${this.version}`);
+
+        let offset: number;
+        if (this.version == TiffVersion.BigTiff) {
+            const pointerSize = await this.source.uint16(4);
+            if (pointerSize !== 8) {
+                throw new Error('Only 8byte pointers are supported');
+            }
+            this.source.setVersion(TiffVersion.BigTiff);
+            offset = await this.source.pointer(8);
+            return await this.processIfd(offset);
         }
-        if (this.version != VERSION_TIFF) {
-            throw new Error(`Only tiff supported version:${this.version}`);
+
+        if (this.version === TiffVersion.Tiff) {
+            this.source.setVersion(TiffVersion.Tiff)
+            offset = await this.source.pointer(4);
+            return await this.processIfd(offset);
         }
-        const offset = await this.source.uint32(4);
-        if (!this.source.hasBytes(offset)) {
-            throw new Error('Offset out of range');
-        }
-        await this.processIfd(offset);
+
+        throw new Error(`Only tiff supported version:${this.version}`);
     }
 
     async getTileRaw(x: number, y: number, z: number): Promise<{ mimeType: string; bytes: ArrayBuffer; }> {
@@ -77,55 +85,46 @@ export class CogTif {
         const ifd = await this.readIfd(offset);
         this.images.push(ifd.image);
 
-        console.log('GotImage', ifd.image.ImageWidth, 'x', ifd.image.ImageHeight, `\tNext: ${toHexString(ifd.nextOffset, 6)}`)
+        console.log('GotImage', ifd.image.ImageWidth, 'x', ifd.image.ImageHeight, '\tTile:', ifd.image.TileWidth, 'x', ifd.image.TileHeight, `\tNext: ${toHexString(ifd.nextOffset, 6)}`)
         // console.log(ifd.image);
         // TODO dynamically load these as needed
+
         if (ifd.nextOffset) {
             await this.processIfd(ifd.nextOffset);
         }
     }
 
     private async readIfd(offset: number) {
-        const tagCount = await this.source.uint16(offset);
-        const byteStart = offset + 2;
-        const byteEnds = tagCount * 12 + 2 + byteStart;
+        // console.time('ifd:' + offset);
+        const tagCount = await this.source.offset(offset)
+        const byteStart = offset + this.source.config.offset;
 
         const image: Partial<CogImage> = {};
         let isPartial = false;
 
-        // console.log(`ReadIFD: ${offset} @ ${byteStart} - ${byteEnds} ${tagCount}`);
+        // console.log(`ReadIFD: ${offset} @ ${byteStart} (${tagCount})`);
+        let pos = byteStart;
         for (let i = 0; i < tagCount; i++) {
-            const pos = byteStart + 12 * i;
-            const tagCode = await this.source.uint16(pos);
-            const tiffTag = TIFF_TAG[tagCode];
+            const tag = await this.source.tag(pos);
+            pos += tag.size;
 
-            if (tiffTag == null) {
-                console.log(`Unknown code ${tagCode}`);
+            if (tag.codeName == null) {
+                console.log(`Unknown code ${tag.code}`);
                 continue;
             }
 
-            const tagType = await this.source.uint16(pos + 2);
-            const typeSize = getTiffTagSize(tagType);
-            const count = await this.source.uint32(pos + 4);
-            const tagLen = count * typeSize;
-
-            // console.log(pos - 10, 'tag', tiffTag, 'type', TIFF_TAG_TYPE[tagType], 'typeCount', count, 'tagLen', tagLen);
-            if (tagLen <= 4) {
-                image[tiffTag] = await this.source.readTiffType(pos + 8, tagType, count);
-            } else {
-                const valueOffset = await this.source.uint32(pos + 8);
-                const valueEnd = valueOffset + tagLen;
-                if (!this.source.hasBytes(valueOffset, tagLen)) {
-                    // TODO only load in the additional tag info if we really need it
-                    console.error(`IFD needs more data ${valueOffset} -> ${valueEnd} chunks:[${this.source.getRequiredChunks(valueOffset, tagLen).join(', ')}]`);
-                    image[tiffTag] = await this.source.readTiffType(valueOffset, tagType, count);
-                    isPartial = true;
-                } else {
-                    image[tiffTag] = await this.source.readTiffType(valueOffset, tagType, count);
-                }
+            // console.log(pos - offset, 'tag', tag.code, 'type', tag.codeName, 'typeCount', tag.count, 'tagLen', tag.typeLength, 'size', tag.size);
+            if (typeof tag.value === 'function') {
+                const pointer = await this.source.pointer(tag.valueOffset);
+                console.error(`\tIFD: ${tag.codeName} needs more data ${toHexString(tag.valueOffset, 6)} -> ${toHexString(pointer)} chunks:[${this.source.getRequiredChunks(pointer, tag.typeLength).length}]`);
+                isPartial = true;
+                continue;
             }
+            image[tag.codeName] = tag.value;
         }
-        const nextOffset = await this.source.uint32(offset + tagCount * 12 + 2);
+        image['_isPartial'] = isPartial;
+        const nextOffset = await this.source.pointer(pos);
+        // console.timeEnd('ifd:' + offset);
         return { nextOffset, image };
     }
 }

@@ -11,6 +11,10 @@ export class CogSourceUrl extends CogSource {
         this.url = url;
     }
 
+    get name() {
+        return this.url.split('/').pop()
+    }
+
     async fetchBytes(offset: number, length: number): Promise<ArrayBuffer> {
         const response = await fetch(this.url, {
             headers: {

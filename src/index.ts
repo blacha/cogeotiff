@@ -1,8 +1,7 @@
 import 'source-map-support/register';
-import { CogTif } from "./cog.tif";
 import { CogSourceFile } from "./cog.source.file";
 import { CogSourceUrl } from './cog.source.web';
-import { writeFileSync } from 'fs';
+import { CogTif } from "./cog.tif";
 
 function isWeb() {
     return typeof window !== 'undefined';
@@ -10,8 +9,11 @@ function isWeb() {
 
 function getSource() {
     if (typeof fetch === 'undefined') {
-        // return new CogSourceFile('/home/blacha/Downloads/tif/S2A_MSIL1C_20170102T111442_N0204_R137_T30TXT_20170102T111441_TCI_cloudoptimized_512.tif')
-        return new CogSourceFile('/home/blacha/Downloads/tif/land_shallow_topo_east.cog.webp.tif')
+        return new CogSourceFile('/home/blacha/home/auckland_urban_2017_0.075m_cog.tif')
+        // return new CogSourceFile('/home/blacha/Downloads/tif/bigtiff.tiff')
+
+        return new CogSourceFile('/home/blacha/Downloads/tif/S2A_MSIL1C_20170102T111442_N0204_R137_T30TXT_20170102T111441_TCI_cloudoptimized_512.tif')
+        // return new CogSourceFile('/home/blacha/Downloads/tif/land_shallow_topo_east.cog.webp.tif')
     }
     return new CogSourceUrl('/land_shallow_topo_east_webp.tif');
 
@@ -20,7 +22,10 @@ async function run() {
     const cl = new CogTif(getSource())
 
     await cl.init();
-    console.log('Loaded');
+    console.log('Loaded:', cl.source.name,
+        '\tReadBytes:', Object.keys(cl.source._chunks).length * cl.source._chunkSize,
+        '\tReadCount:', Object.keys(cl.source._chunks).length,
+        '\tReadBufferSize:', cl.source._chunkSize);
 
     if (isWeb()) {
         for (let y = 0; y < 10; y++) {
