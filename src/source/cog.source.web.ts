@@ -1,8 +1,8 @@
-import { CogSource } from './cog.source';
-
-declare var fetch: any;
+import { CogSource } from '../cog.source';
 
 export class CogSourceUrl extends CogSource {
+    chunkSize = 64 * 1024;
+
     url: string;
 
     batches = [];
@@ -53,7 +53,7 @@ export class CogSourceUrl extends CogSource {
         for (const chunkRange of chunks) {
             const firstChunk = chunkRange[0];
             const lastChunk = chunkRange[chunkRange.length - 1];
-            const fetchRange = `bytes=${firstChunk * this._chunkSize}-${lastChunk * this._chunkSize + this._chunkSize}`;
+            const fetchRange = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
 
             // console.log('FetchRange', fetchRange, 'chunks', chunkRange)
             const promise = CogSourceUrl.fetch(this.url, {
@@ -62,17 +62,16 @@ export class CogSourceUrl extends CogSource {
                 },
             }).then(async response => {
                 const buffer: ArrayBuffer = await response.arrayBuffer();
-                console.log(buffer);
                 if (chunkRange.length == 1) {
                     output[chunkRange[0]] = buffer;
                     return;
                 }
 
-                const rootOffset = firstChunk * this._chunkSize;
+                const rootOffset = firstChunk * this.chunkSize;
                 for (const chunkId of chunkRange) {
-                    const chunkOffset = chunkId * this._chunkSize - rootOffset;
+                    const chunkOffset = chunkId * this.chunkSize - rootOffset;
                     // console.log(chunkId, chunkOffset, 'fromBuffer', buffer.byteLength)
-                    output[chunkId] = buffer.slice(chunkOffset, chunkOffset + this._chunkSize)
+                    output[chunkId] = buffer.slice(chunkOffset, chunkOffset + this.chunkSize)
                 }
             });
 
@@ -84,8 +83,8 @@ export class CogSourceUrl extends CogSource {
     }
 
     async fetchBytes(offset: number, count: number): Promise<ArrayBuffer> {
-        const startChunk = Math.floor(offset / this._chunkSize);
-        const endChunk = Math.floor((offset + count) / this._chunkSize) - 1;
+        const startChunk = Math.floor(offset / this.chunkSize);
+        const endChunk = Math.floor((offset + count) / this.chunkSize) - 1;
         if (startChunk != endChunk) {
             console.log('RequestTooLarge');
             return null;

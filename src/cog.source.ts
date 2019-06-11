@@ -1,80 +1,13 @@
-import { getTiffTagValueReader, getTiffTagSize, TiffTag, TiffTagValueType, TiffVersion } from "./tif";
+import { getTiffTagValueReader, getTiffTagSize, TiffTag, TiffTagValueType, TiffVersion } from "./read/tif";
+import { ByteSize } from "./read/byte.size";
+import { TiffIfdEntry } from "./read/tif.ifd";
+import { CogSourceChunk } from "./source/cog.source.chunk";
 
-export enum ByteSize {
-    UInt8 = 1,
-    UInt16 = 2,
-    UInt32 = 4,
-    UInt64 = 8
-}
-
-
-
-const TagTiffConfig = {
-    version: TiffVersion.Tiff,
-    pointer: ByteSize.UInt32,
-    offset: ByteSize.UInt16,
-    /** Size of a IFD Entry */
-    ifd: ByteSize.UInt16 + ByteSize.UInt16 + 2 * ByteSize.UInt32,
-    /**
-     * Each tag entry is specified as
-     * UInt16:TagCode
-     * UInt16:TagType
-     * UInt32:TagCount
-     * UInt32:Pointer To Value or value
-     */
-    parseIfd: async (source: CogSource, offset: number, isLittleEndian: boolean) => {
-        const buff = await source.getBytes(offset, TagTiffConfig.ifd)
-        const view = new DataView(buff);
-        return {
-            code: view.getUint16(0, isLittleEndian),
-            type: view.getUint16(2, isLittleEndian),
-            count: view.getUint32(4, isLittleEndian),
-            valueOffset: offset + 8,
-            size: TagTiffConfig.ifd
-        }
-    }
-
-}
-const TagTiffBigConfig = {
-    version: TiffVersion.BigTiff,
-    /** Size of most pointers */
-    pointer: ByteSize.UInt64,
-    /** Size of offsets */
-    offset: ByteSize.UInt64,
-
-    /**
-     * Each tag entry is specified as
-     * UInt16:TagCode
-     * UInt16:TagType
-     * UInt64:TagCount
-     * UInt64:Pointer To Value or value
-     */
-    ifd: ByteSize.UInt16 + ByteSize.UInt16 + 2 * ByteSize.UInt64,
-    parseIfd: async (source: CogSource, offset: number, isLittleEndian: boolean) => {
-        const buff = await source.getBytes(offset, TagTiffBigConfig.ifd)
-        const view = new DataView(buff);
-        return {
-            code: view.getUint16(0, isLittleEndian),
-            type: view.getUint16(2, isLittleEndian),
-            count: CogSource.uint64(view, 4, isLittleEndian),
-            valueOffset: offset + 12,
-            size: TagTiffBigConfig.ifd
-        }
-    }
-
-}
-
-const TiffIfdEntry = {
-    [TiffVersion.BigTiff]: TagTiffBigConfig,
-    [TiffVersion.Tiff]: TagTiffConfig
-}
 
 export abstract class CogSource {
 
-    /** Default size to fetch in one go */
-    static CHUNK_SIZE = 64 * 1024;
+    abstract chunkSize: number;
 
-    _chunkSize = CogSource.CHUNK_SIZE;
     _chunks: CogSourceChunk[] = []
 
     isLittleEndian = true;
@@ -168,8 +101,8 @@ export abstract class CogSource {
     }
 
     getRequiredChunks(offset: number, count: number) {
-        const startChunk = Math.floor(offset / this._chunkSize);
-        const endChunk = Math.ceil((offset + count) / this._chunkSize) - 1;
+        const startChunk = Math.floor(offset / this.chunkSize);
+        const endChunk = Math.ceil((offset + count) / this.chunkSize) - 1;
         if (startChunk == endChunk) {
             return [startChunk];
         }
@@ -259,50 +192,4 @@ export abstract class CogSource {
 
     abstract fetchBytes(offset: number, length: number): Promise<ArrayBuffer>
     abstract name: string;
-}
-
-export class CogSourceChunk {
-    source: CogSource;
-    id: number;
-    ready: Promise<CogSourceChunk>;
-    buffer: ArrayBuffer; // Often is null, best to wait for ready promise
-
-    constructor(source: CogSource, id: number) {
-        this.source = source;
-        this.id = id;
-        this.ready = new Promise(async resolve => {
-            this.buffer = await this.source.fetchBytes(id * this.source._chunkSize, this.source._chunkSize);
-            resolve(this);
-        })
-    }
-
-    get isReady() {
-        return this.buffer != null;
-    }
-
-    get offset() {
-        return this.id * this.source._chunkSize
-    }
-
-    get offsetEnd() {
-        return this.offset + this.source._chunkSize;
-    }
-
-    get length() {
-        return this.buffer.byteLength;
-    }
-
-    getBytes(offset: number, count: number): ArrayBuffer {
-        const startByte = offset - this.offset;
-        const endByte = startByte + count;
-        // console.log(this.toString(), startByte, count, endByte, this.offsetEnd)
-        if (endByte > this.buffer.byteLength) {
-            throw new Error(`Read overflow ${endByte} > ${this.buffer.byteLength}`);
-        }
-        return this.buffer.slice(startByte, endByte)
-    }
-
-    toString() {
-        return `<Chunk:${this.id} offset:${this.offset} length:${this.length}>`
-    }
 }

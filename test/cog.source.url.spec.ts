@@ -1,5 +1,5 @@
 import * as o from 'ospec';
-import { CogSourceUrl } from '../src/cog.source.web';
+import { CogSourceUrl } from '../src/source/cog.source.web';
 
 import 'source-map-support/register';
 
@@ -22,7 +22,7 @@ o.spec('CogSourceUrl', () => {
     let ranges: string[];
     o.beforeEach(() => {
         source = new CogSourceUrl('https://foo');
-        source._chunkSize = 1;
+        source.chunkSize = 1;
         ranges = [];
     })
 
@@ -61,7 +61,7 @@ o.spec('CogSourceUrl', () => {
 
     o('should handle bigger buffers', async () => {
         const MAX_BYTE = 256;
-        source._chunkSize = 32;
+        source.chunkSize = 32;
 
         const bytesAll = await source.getBytes(0, MAX_BYTE);
         const bytesView = new DataView(bytesAll);
@@ -72,16 +72,16 @@ o.spec('CogSourceUrl', () => {
             o(bytesView.getUint8(i)).equals(i);
         }
 
-        for (let i = 0; i < MAX_BYTE / source._chunkSize; i++) {
+        for (let i = 0; i < MAX_BYTE / source.chunkSize; i++) {
             const view = new DataView(source._chunks[i].buffer)
-            for (let x = 0; x < source._chunkSize; x++) {
-                o(view.getUint8(x)).equals(i * source._chunkSize + x);
+            for (let x = 0; x < source.chunkSize; x++) {
+                o(view.getUint8(x)).equals(i * source.chunkSize + x);
             }
         }
     })
 
     o('should handle part requests', async () => {
-        source._chunkSize = 2
+        source.chunkSize = 2
         const result = await source.getBytes(2, 3);
         const bytesResult = new DataView(result);
 
@@ -96,7 +96,7 @@ o.spec('CogSourceUrl', () => {
 
     o('should handle out of order requests', async () => {
 
-        source._chunkSize = 2;
+        source.chunkSize = 2;
         const [resA, resB] = await Promise.all([
             source.getBytes(8, 3),
             source.getBytes(1, 3)

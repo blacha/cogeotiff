@@ -1,6 +1,6 @@
 import { CogSource } from './cog.source';
-import { TiffCompression, TiffVersion } from './tif';
-import { toHexString } from './util.hex';
+import { TiffCompression, TiffVersion } from './read/tif';
+import { toHexString } from './util/util.hex';
 
 export const ENDIAN_BIG = 0x4D4D
 export const ENDIAN_LITTLE = 0x4949

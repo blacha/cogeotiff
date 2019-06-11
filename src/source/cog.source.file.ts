@@ -1,9 +1,10 @@
 import { promises as fs } from 'fs';
-import { CogSource } from './cog.source'
-import { toHexString } from './util.hex';
+import { CogSource } from '../cog.source'
+import { toHexString } from '../util/util.hex';
 import { basename } from 'path';
 
 export class CogSourceFile extends CogSource {
+    chunkSize = 16 * 1024;
 
     fileName: string;
     fd: Promise<fs.FileHandle>;
