@@ -1,7 +1,8 @@
 import { CogSource } from '../cog.source';
+import { Logger } from '../util/util.log';
 
 export class CogSourceUrl extends CogSource {
-    chunkSize = 64 * 1024;
+    chunkSize = 16 * 1024;
 
     url: string;
 
@@ -23,7 +24,7 @@ export class CogSourceUrl extends CogSource {
         if (ranges.length === 0) {
             return [];
         }
-        const sortedRange = ranges.map(c => parseInt(c, 10)); //.sort((a, b) => a - b);
+        const sortedRange = ranges.map(c => parseInt(c, 10)).sort();
 
         const groups = [];
         let current = [];
@@ -54,7 +55,7 @@ export class CogSourceUrl extends CogSource {
             const firstChunk = chunkRange[0];
             const lastChunk = chunkRange[chunkRange.length - 1];
             const fetchRange = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
-            console.log('FetchRange', fetchRange, 'chunks', chunkRange)
+            Logger.info({ firstChunk, lastChunk, fetchRange }, 'HTTPGet')
             const promise = CogSourceUrl.fetch(this.url, {
                 headers: {
                     Range: fetchRange,
@@ -69,7 +70,6 @@ export class CogSourceUrl extends CogSource {
                 const rootOffset = firstChunk * this.chunkSize;
                 for (const chunkId of chunkRange) {
                     const chunkOffset = chunkId * this.chunkSize - rootOffset;
-                    // console.log(chunkId, chunkOffset, 'fromBuffer', buffer.byteLength)
                     output[chunkId] = buffer.slice(chunkOffset, chunkOffset + this.chunkSize)
                 }
             });
@@ -98,6 +98,7 @@ export class CogSourceUrl extends CogSource {
         return this.toFetchPromise.then(results => results[startChunk])
     }
 
-    static fetch: GlobalFetch["fetch"];
+    // Allow overwriting the fetcher used (eg testing/node-js)
+    static fetch: GlobalFetch["fetch"] = (a, b) => fetch(a, b);
 }
 

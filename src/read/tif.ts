@@ -1,3 +1,6 @@
+import { CogSourceView } from "../cog.source.view";
+import { CogSource } from "../cog.source";
+
 export enum TiffVersion {
     BigTiff = 43,
     Tiff = 42
@@ -124,12 +127,23 @@ export enum TiffTag {
     GeoAsciiParams = 0x87B1,
 }
 
+export enum TiffEndian {
+    BIG = 0x4D4D,
+    LITTLE = 0x4949
+}
+
+export enum MimeType {
+    JPEG = 'image/jpeg',
+    JP2 = 'image/jp2',
+    WEBP = 'image/webp'
+}
+
 export const TiffCompression = {
-    6: "image/jpeg",
-    7: "image/jpeg",
+    6: MimeType.JPEG,
+    7: MimeType.JPEG,
     8: "deflate",
-    34712: "image/jp2",
-    50001: "image/webp"
+    34712: MimeType.JP2,
+    50001: MimeType.WEBP
 };
 
 export enum TiffTagValueType {
@@ -168,16 +182,16 @@ export function getTiffTagSize(fieldType: TiffTagValueType) {
 }
 
 export type TiffTagValueRational = [number, number]
-export type TiffTagValueReaderFunc = (view: DataView, offset: number, isLittleEndian: boolean) => number | bigint | TiffTagValueRational | string
+export type TiffTagValueReaderFunc = (view: CogSource, offset: number) => number | bigint | TiffTagValueRational | string
 
 const TiffTagValueReader: { [key: string]: TiffTagValueReaderFunc } = {
-    char: (view: DataView, offset: number, isLittleEndian: boolean) => String.fromCharCode(view.getUint8(offset)),
-    uint8: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint8(offset),
-    uint16: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint16(offset, isLittleEndian),
-    uint32: (view: DataView, offset: number, isLittleEndian: boolean) => view.getUint32(offset, isLittleEndian),
-    uint64: (view: DataView, offset: number, isLittleEndian: boolean) => view.getBigUint64(offset, isLittleEndian),
-    double: (view: DataView, offset: number, isLittleEndian: boolean) => view.getFloat64(offset, isLittleEndian),
-    rational: (view: DataView, offset: number, isLittleEndian: boolean) => [view.getUint32(offset, this.isLittleEndian), view.getUint32(offset + 4, this.isLittleEndian)]
+    char: (view: CogSource, offset: number) => String.fromCharCode(view.uint8(offset)),
+    uint8: (view: CogSource, offset: number) => view.uint8(offset),
+    uint16: (view: CogSource, offset: number) => view.uint16(offset),
+    uint32: (view: CogSource, offset: number) => view.uint32(offset),
+    uint64: (view: CogSource, offset: number) => view.uint64(offset),
+    double: (view: CogSource, offset: number) => view.double(offset),
+    rational: (view: CogSource, offset: number) => [view.uint32(offset), view.uint32(offset + 4)]
 }
 export function getTiffTagValueReader(fieldType: TiffTagValueType): TiffTagValueReaderFunc {
     switch (fieldType) {
@@ -202,7 +216,7 @@ export function getTiffTagValueReader(fieldType: TiffTagValueType): TiffTagValue
             return TiffTagValueReader.rational
 
         case TiffTagValueType.DOUBLE:
-            return TiffTagValueReader.rational
+            return TiffTagValueReader.double
 
         case TiffTagValueType.LONG8:
             return TiffTagValueReader.uint64

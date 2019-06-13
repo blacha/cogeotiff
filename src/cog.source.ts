@@ -1,8 +1,11 @@
-import { getTiffTagValueReader, getTiffTagSize, TiffTag, TiffTagValueType, TiffVersion } from "./read/tif";
 import { ByteSize } from "./read/byte.size";
+import { TiffVersion } from "./read/tif";
 import { TiffIfdEntry } from "./read/tif.ifd";
 import { CogSourceChunk } from "./source/cog.source.chunk";
+import { CogSourceView } from "./cog.source.view";
+import * as ieee754 from 'ieee754';
 
+const POW_32 = 2 ** 32
 
 export abstract class CogSource {
 
@@ -11,48 +14,80 @@ export abstract class CogSource {
     _chunks: CogSourceChunk[] = []
 
     isLittleEndian = true;
-    config = TiffIfdEntry[TiffVersion.Tiff];
+    version = TiffVersion.Tiff;
 
     setVersion(version: TiffVersion) {
-        this.config = TiffIfdEntry[version];
+        this.version = version;
     }
 
-    /** Read a UInt8 at the offset */
-    async uint8(offset: number) {
-        const buff = await this.getInternalBuffer(offset, ByteSize.UInt8);
-        return buff[0];
+    get config() {
+        return TiffIfdEntry[this.version];
+    }
+    /**
+    *  @param offset Offset relative to the view
+    */
+    uint8(offset: number) {
+        const chunk = this.getChunk(offset);
+        return chunk.view.getUint8(offset - chunk.offset);
     }
 
     /** Read a UInt16 at the offset */
-    async uint16(offset: number) {
-        const buff = await this.getInternalBuffer(offset, ByteSize.UInt16);
-        return new DataView(buff).getUint16(0, this.isLittleEndian);
-    }
-
-    /** Read a UInt32 at the offset */
-    async uint32(offset: number) {
-        const buff = await this.getInternalBuffer(offset, ByteSize.UInt32);
-        return new DataView(buff).getUint32(0, this.isLittleEndian);
-    }
-
-    // TODO this could be not very precise for big numbers
-    // Possibly look at bigint for offsets
-    async uint64(offset: number) {
-        const buff = await this.getInternalBuffer(offset, ByteSize.UInt64);
-        const view = new DataView(buff);
-        return CogSource.uint64(view, 0, this.isLittleEndian);
-    }
-
-    static uint64(view: DataView, offset: number, isLittleEndian: boolean) {
-        const intA = view.getUint32(offset, isLittleEndian);
-        const intB = view.getUint32(offset + 4, isLittleEndian);
-        if (isLittleEndian) {
-            return (intA << 32) | intB // Shifting by 32 is bad
+    uint16(offset: number) {
+        const intA = this.uint8(offset);
+        const intB = this.uint8(offset + ByteSize.UInt8);
+        if (this.isLittleEndian) {
+            return intA + (intB << 8)
         }
-        return (intB << 32) | intA
+        return (intA << 8) + intB
     }
 
-    async uint(offset: number, bs: ByteSize) {
+    uint32(offset: number) {
+        const intA = this.uint8(offset);
+        const intB = this.uint8(offset + 1);
+        const intC = this.uint8(offset + 2);
+        const intD = this.uint8(offset + 3);
+        if (this.isLittleEndian) {
+            return intA + (intB << 8) + (intC << 16) + (intD << 24)
+        }
+        return (intA << 24) + (intB << 16) + (intC << 8) + intD
+    }
+
+    // This is not precise for large numbers
+    uint64(offset: number) {
+        const intA = this.uint32(offset);
+        const intB = this.uint32(offset + ByteSize.UInt32);
+        if (this.isLittleEndian) {
+            return intA + (intB * POW_32)  // Shifting by 32 is bad
+        }
+        return (intA * POW_32) + intB
+    }
+
+    bytes(offset: number, count: number) {
+        const output = [];
+        for (let i = 0; i < count; i++) {
+            output.push(this.uint8(offset + i))
+        }
+        return output
+    }
+
+    float(offset: number) {
+        return ieee754.read(this.bytes(offset, ByteSize.Float), 0, this.isLittleEndian, 23, 4)
+    }
+    double(offset: number) {
+        return ieee754.read(this.bytes(offset, ByteSize.Double), 0, this.isLittleEndian, 52, 8)
+    }
+
+    // Tiff:UInt32 or BigTiff:UInt64
+    pointer(offset: number) {
+        return this.uint(offset, this.config.pointer);
+    }
+
+    // Tiff:UInt16 or BigTiff:UInt64
+    offset(offset: number) {
+        return this.uint(offset, this.config.offset);
+    }
+
+    uint(offset: number, bs: ByteSize) {
         switch (bs) {
             case ByteSize.UInt8:
                 return this.uint8(offset)
@@ -65,129 +100,47 @@ export abstract class CogSource {
         }
     }
 
-    async tag(offset: number) {
-        const tag = await this.config.parseIfd(this, offset, this.isLittleEndian);
-        const typeSize = getTiffTagSize(tag.type);
-        const typeLength = tag.count * typeSize;
+    getChunk(offset: number) {
+        return this.chunk(Math.floor(offset / this.chunkSize))
+    }
 
-        let value = null;
-        if (this.hasBytes(tag.valueOffset, typeLength)) {
-            value = await this.readTiffTagValue(tag.valueOffset, tag.type, tag.count)
-        } else {
-            value = new Promise(resolve => this.readTiffTagValue(tag.valueOffset, tag.type, tag.count).then(resolve))
+    chunk(chunkId: number) {
+        let chunk = this._chunks[chunkId]
+        if (chunk == null) {
+            chunk = this._chunks[chunkId] = new CogSourceChunk(this, chunkId)
         }
-        return {
-            ...tag,
-            codeName: TiffTag[tag.code],
-            typeSize,
-            value,
-            typeLength: tag.count * typeSize
-        }
+        return chunk;
+    }
+    // /** Read a array of bytes at the offset */
+    getView(offset: number, count: number = -1): CogSourceView {
+        return new CogSourceView(this, offset);
     }
 
-    // Tiff:UInt32 or BigTiff:UInt64
-    async pointer(offset: number) {
-        return this.uint(offset, this.config.pointer);
-    }
-
-    // Tiff:UInt16 or BigTiff:UInt64
-    async offset(offset: number) {
-        return this.uint(offset, this.config.offset);
-    }
-
-    /** Read a array of bytes at the offset */
-    async getBytes(offset: number, count: number): Promise<ArrayBuffer> {
-        return await this.getInternalBuffer(offset, count);
-    }
-
-    getRequiredChunks(offset: number, count: number) {
+    getRequiredChunks(offset: number, count: number): CogSourceChunk[] {
         const startChunk = Math.floor(offset / this.chunkSize);
         const endChunk = Math.ceil((offset + count) / this.chunkSize) - 1;
-        if (startChunk == endChunk) {
-            return [startChunk];
-        }
+
         const output = []
-        for (let i = startChunk; i <= endChunk; i++) {
-            output.push(i);
+        for (let chunkId = startChunk; chunkId <= endChunk; chunkId++) {
+            output.push(this.chunk(chunkId));
         }
-        return output;
-    }
-
-    async readTiffTagValue(offset: number, type: TiffTagValueType, tagCount: number): Promise<string | bigint | number | number[] | number[][]> {
-        const fieldLength = getTiffTagSize(type);
-        const fieldSize = fieldLength * tagCount;
-
-        // Field is too big to be stored at the offset
-        // so the offset is a pointer to where it is really stored
-        if (fieldSize > this.config.pointer) {
-            offset = await this.pointer(offset);
-        }
-
-        const bytes = await this.getInternalBuffer(offset, fieldSize);
-        const view = new DataView(bytes);
-
-        const convert = getTiffTagValueReader(type);
-
-        if (tagCount == 1) {
-            return convert(view, 0, this.isLittleEndian)
-        }
-
-        const output = [];
-        for (let i = 0; i < fieldSize; i += fieldLength) {
-            output.push(convert(view, i, this.isLittleEndian));
-        }
-
-        // Convert to a string if ascii
-        if (type === TiffTagValueType.ASCII) {
-            return output.join('').trim();
-        }
-
         return output;
     }
 
     /** Check if the number of bytes has been cached so far */
     hasBytes(offset: number, count = 1) {
         const requiredChunks = this.getRequiredChunks(offset, count);
-        for (const id of requiredChunks) {
-            if (this._chunks[id] == null || !this._chunks[id].isReady) {
+        for (const chunk of requiredChunks) {
+            if (!chunk.isReady) {
                 return false;
             }
         }
         return true;
     }
 
-    protected async getInternalBuffer(offset: number, count: number): Promise<ArrayBuffer> {
-        const requiredChunks = this.getRequiredChunks(offset, count);
-        const chunkFetches: Promise<CogSourceChunk>[] = [];
-        for (const chunkId of requiredChunks) {
-            if (this._chunks[chunkId] == null) {
-                this._chunks[chunkId] = new CogSourceChunk(this, chunkId)
-            }
-            chunkFetches.push(this._chunks[chunkId].ready);
-        }
-
-        const chunks = await Promise.all(chunkFetches);
-        if (chunks.length === 1) {
-            return chunks[0].getBytes(offset, count)
-        }
-        // WIP need to unit test this
-        // Merge chunks into one buffer so that is can be read
-        const newBuff = new Uint8Array(count);
-        let byteOffset = 0;
-        for (const chunk of chunks) {
-            const readStart = Math.max(offset, chunk.offset)
-            const readEnd = Math.min(chunk.offsetEnd, offset + count)
-            const chunkSize = readEnd - readStart;
-            const chunkBytes = chunk.getBytes(readStart, readEnd - readStart)
-            if (chunkBytes.byteLength !== chunkSize) {
-                throw new Error(`ByteSize missmatch request: ${chunkSize} got: ${chunkBytes.byteLength}`)
-            }
-
-            // console.log('set-bytes', readStart, '->', readEnd, readEnd - readStart, 'bytesLeft', count - byteOffset, chunkBytes)
-            newBuff.set(new Uint8Array(chunkBytes), byteOffset);
-            byteOffset += chunkBytes.byteLength;
-        }
-        return newBuff.buffer;
+    async loadBytes(offset: number, count: number): Promise<void> {
+        const chunks = this.getRequiredChunks(offset, count);
+        await Promise.all(chunks.map(c => c.fetch));
     }
 
     abstract fetchBytes(offset: number, length: number): Promise<ArrayBuffer>

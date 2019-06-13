@@ -2,6 +2,9 @@ import * as o from 'ospec';
 import { CogSourceUrl } from '../src/source/cog.source.web';
 
 import 'source-map-support/register';
+import { LoggerConfig } from '../src/util/util.log';
+
+LoggerConfig.level = 99 as any;
 
 o.spec('CogSourceUrl', () => {
 
@@ -27,14 +30,14 @@ o.spec('CogSourceUrl', () => {
     })
 
     o('should get some data', async () => {
-        await source.getBytes(0, 1);
+        await source.loadBytes(0, 1);
         o(Object.keys(source._chunks)).deepEquals(['0'])
         o(source._chunks[0].offset).equals(0);
         o(source._chunks[0].offsetEnd).equals(1);
     })
 
     o('should group fetches together', async () => {
-        await source.getBytes(0, 2);
+        await source.loadBytes(0, 2);
 
         o(Object.keys(source._chunks)).deepEquals(['0', '1'])
         const viewA = new DataView(source._chunks[0].buffer)
@@ -45,16 +48,14 @@ o.spec('CogSourceUrl', () => {
     });
 
     o('should group big fetches', async () => {
-        const bytes02 = await source.getBytes(0, 2);
-        const bytes05 = await source.getBytes(0, 5);
-        const bytes05View = new DataView(bytes05);
+        await source.loadBytes(0, 2);
+        await source.loadBytes(0, 5);
 
         o(Object.keys(source._chunks)).deepEquals(['0', '1', '2', '3', '4'])
 
         for (let i = 0; i < 5; i++) {
-            const view = new DataView(source._chunks[i].buffer)
-            o(bytes05View.getUint8(i)).equals(i);
-            o(view.getUint8(0)).equals(i)
+            o(source.uint8(i)).equals(i);
+            o(source._chunks[i].view.getUint8(0)).equals(i)
         }
     })
 
@@ -63,13 +64,12 @@ o.spec('CogSourceUrl', () => {
         const MAX_BYTE = 256;
         source.chunkSize = 32;
 
-        const bytesAll = await source.getBytes(0, MAX_BYTE);
-        const bytesView = new DataView(bytesAll);
+        await source.loadBytes(0, MAX_BYTE);
 
         o(Object.keys(source._chunks)).deepEquals(['0', '1', '2', '3', '4', '5', '6', '7'])
 
         for (let i = 0; i < MAX_BYTE; i++) {
-            o(bytesView.getUint8(i)).equals(i);
+            o(source.uint8(i)).equals(i);
         }
 
         for (let i = 0; i < MAX_BYTE / source.chunkSize; i++) {
@@ -82,13 +82,11 @@ o.spec('CogSourceUrl', () => {
 
     o('should handle part requests', async () => {
         source.chunkSize = 2
-        const result = await source.getBytes(2, 3);
-        const bytesResult = new DataView(result);
+        await source.loadBytes(2, 3);
 
-        o(bytesResult.getUint8(0)).equals(2)
-        o(bytesResult.getUint8(1)).equals(3)
-        o(bytesResult.getUint8(2)).equals(4)
-        o(bytesResult.byteLength).equals(3)
+        o(source.uint8(2)).equals(2)
+        o(source.uint8(3)).equals(3)
+        o(source.uint8(4)).equals(4)
 
         o(source._chunks[1].buffer.byteLength).equals(2);
         o(source._chunks[2].buffer.byteLength).equals(2);
@@ -97,19 +95,17 @@ o.spec('CogSourceUrl', () => {
     o('should handle out of order requests', async () => {
 
         source.chunkSize = 2;
-        const [resA, resB] = await Promise.all([
-            source.getBytes(8, 3),
-            source.getBytes(1, 3)
+        await Promise.all([
+            source.loadBytes(8, 3),
+            source.loadBytes(1, 3)
         ])
 
-        const viewA = new DataView(resA);
-        const viewB = new DataView(resB);
-        o(viewA.getUint8(0)).equals(8)
-        o(viewA.getUint8(1)).equals(9)
-        o(viewA.getUint8(2)).equals(10)
-        o(viewB.getUint8(0)).equals(1)
-        o(viewB.getUint8(1)).equals(2)
-        o(viewB.getUint8(2)).equals(3)
+        o(source.uint8(0)).equals(0)
+        o(source.uint8(1)).equals(1)
+        o(source.uint8(2)).equals(2)
+        o(source.uint8(8)).equals(8)
+        o(source.uint8(9)).equals(9)
+        o(source.uint8(10)).equals(10)
     })
 
 })

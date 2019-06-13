@@ -1,7 +1,11 @@
 import { CogTif } from "../cog.tif";
 import { CogSourceUrl } from "../source/cog.source.web";
 import * as L from 'leaflet';
-CogSourceUrl.fetch = (a, b) => fetch(a, b);
+import { LoggerConfig, LoggerType } from "../util/util.log";
+
+LoggerConfig.level = 20
+LoggerConfig.type = LoggerType.WEB;
+
 
 let map: L.Map;
 let cog: CogTif;
@@ -11,7 +15,6 @@ async function getTile(img: HTMLImageElement, x: number, y: number, z: number) {
     if (cog == null) {
         return;
     }
-    // console.log('LoadingTile', x, y, z);
     const tileRaw = await cog.getTileRaw(x, y, 0)
     img.style.outline = '1px solid black';
     const blob = new Blob([tileRaw.bytes], { type: 'image/webp' });

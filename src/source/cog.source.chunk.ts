@@ -1,18 +1,33 @@
 import { CogSource } from "../cog.source";
+import { Logger } from "../util/util.log";
+import { toHexString } from "../util/util.hex";
+import { Fetchable } from "../util/util.fetchable";
 
 export class CogSourceChunk {
     source: CogSource;
     id: number;
-    ready: Promise<CogSourceChunk>;
+    fetchable: Fetchable<CogSourceChunk>;
     buffer: ArrayBuffer; // Often is null, best to wait for ready promise
+    view: DataView;
 
     constructor(source: CogSource, id: number) {
         this.source = source;
         this.id = id;
-        this.ready = new Promise(async resolve => {
-            this.buffer = await this.source.fetchBytes(id * this.source.chunkSize, this.source.chunkSize);
-            resolve(this);
+        this.fetchable = new Fetchable(async () => {
+            Logger.debug({ offset: toHexString(this.offset), count: toHexString(this.source.chunkSize), chunkId: this.id }, 'FetchBytes')
+            const buffer = await this.source.fetchBytes(id * this.source.chunkSize, this.source.chunkSize);;
+            this.init(buffer);
+            return this;
         })
+    }
+
+    init(buffer: ArrayBuffer) {
+        this.buffer = buffer;
+        this.view = new DataView(this.buffer);
+    }
+
+    get fetch() {
+        return this.fetchable.fetch;
     }
 
     get isReady() {
@@ -31,14 +46,14 @@ export class CogSourceChunk {
         return this.buffer.byteLength;
     }
 
-    getBytes(offset: number, count: number): ArrayBuffer {
-        const startByte = offset - this.offset;
-        const endByte = startByte + count;
-        // console.log(this.toString(), startByte, count, endByte, this.offsetEnd)
-        if (endByte > this.buffer.byteLength) {
-            throw new Error(`Read overflow ${endByte} > ${this.buffer.byteLength}`);
+    contains(offset: number) {
+        if (offset < this.offset) {
+            return false;
         }
-        return this.buffer.slice(startByte, endByte)
+        if (offset >= this.offsetEnd) {
+            return false;
+        }
+        return true;
     }
 
     toString() {
