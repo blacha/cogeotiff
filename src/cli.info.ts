@@ -15,9 +15,10 @@ const helpMessage = chalk`
       {dim $} {bold cog-info} [--help] --file {underline COG File}
 
   {bold OPTIONS}
-      --help                      Shows this help message
-      --file {underline COG File}           File to process
+      --help                           Shows this help message
+      --file {underline COG File}      File to process
       --bs {underline bytes}           Chunk size (KB) default: 64KB
+      --v|vv|vvv                       Increase logging verbosity
 `;
 
 const args = arg({
@@ -29,7 +30,8 @@ const args = arg({
     '--bs': Number,
 
     '-f': '--file',
-    '-h': '--help'
+    '-h': '--help',
+    '-v': '--v'
 })
 
 interface ResultMap {
@@ -74,7 +76,7 @@ async function run() {
         keys: [
             { key: 'Tiff type', value: `${TiffVersion[source.version]} (v${String(source.version)})` },
             { key: 'Chunk size', value: toByteSizeString(source.chunkSize) },
-            { key: 'Bytes read', value: `${toByteSizeString(chunkIds.length * source.chunkSize)} (${chunkIds.length} Chunks)` },
+            { key: 'Bytes read', value: `${toByteSizeString(chunkIds.length * source.chunkSize)} (${chunkIds.length} Chunk${chunkIds.length === 1 ? '' : 's'})` },
         ]
     }, {
         title: 'Images',
@@ -96,8 +98,6 @@ async function run() {
         ]
     }]
 
-    const tile = await tif.getTileRaw(1, 1, 8);
-    console.log('GotTile', tile);
     const msg = [chalk`{bold COG File Info} - {bold ${fileName}}`];
     for (const group of result) {
         msg.push('');
@@ -113,7 +113,6 @@ async function run() {
     }
 
     console.log(msg.join('\n'))
-
 }
 
 run().catch(e => console.error(e));
