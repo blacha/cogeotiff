@@ -1,13 +1,9 @@
 import 'source-map-support/register';
 
-import * as arg from 'arg';
 import chalk from 'chalk';
-import { CogTif } from "./cog.tif";
-import { CogSourceFile } from "./source/cog.source.file";
+import { TiffVersion } from './read/tif';
 import { toByteSizeString } from './util/util.bytes';
-import { TiffVersion, TiffCompression } from './read/tif';
-import { LoggerConfig } from './util/util.log';
-import { Log } from 'bblog';
+import { Cli } from './util/util.cli';
 
 const helpMessage = chalk`
   {bold USAGE}
@@ -15,24 +11,7 @@ const helpMessage = chalk`
       {dim $} {bold cog-info} [--help] --file {underline COG File}
 
   {bold OPTIONS}
-      --help                           Shows this help message
-      --file {underline COG File}      File to process
-      --bs {underline bytes}           Chunk size (KB) default: 64KB
-      --v|vv|vvv                       Increase logging verbosity
 `;
-
-const args = arg({
-    '--help': Boolean,
-    '--file': String,
-    '--v': Boolean,
-    '--vv': Boolean,
-    '--vvv': Boolean,
-    '--bs': Number,
-
-    '-f': '--file',
-    '-h': '--help',
-    '-v': '--v'
-})
 
 interface ResultMap {
     title?: string;
@@ -40,43 +19,16 @@ interface ResultMap {
 }
 
 async function run() {
-    if (args['--help']) {
-        console.log(helpMessage)
-        process.exit(2);
-    }
+    const { tif, args } = await Cli.process({}, helpMessage);
 
-    const fileName = args['--file'];
-    if (fileName == null) {
-        console.log(helpMessage)
-        process.exit(2);
-    }
-
-    if (args['--v']) {
-        LoggerConfig.level = Log.INFO
-    } else if (args['--vv']) {
-        LoggerConfig.level = Log.DEBUG
-    } else if (args['--vvv']) {
-        LoggerConfig.level = Log.TRACE
-    } else {
-        LoggerConfig.level = Log.ERROR
-    }
-
-    const bs = args['--bs']
-    const source = new CogSourceFile(fileName);
-    source.chunkSize = isNaN(bs) ? 64 * 1024 : bs * 1024;
-
-    const tif = new CogTif(source);
-
-    await tif.init();
-
-    const chunkIds = Object.keys(source._chunks).filter(f => source.chunk(parseInt(f, 10)).isReady)
+    const chunkIds = Object.keys(tif.source._chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady)
     const [firstImage] = tif.images;
 
     const result: ResultMap[] = [{
         keys: [
-            { key: 'Tiff type', value: `${TiffVersion[source.version]} (v${String(source.version)})` },
-            { key: 'Chunk size', value: toByteSizeString(source.chunkSize) },
-            { key: 'Bytes read', value: `${toByteSizeString(chunkIds.length * source.chunkSize)} (${chunkIds.length} Chunk${chunkIds.length === 1 ? '' : 's'})` },
+            { key: 'Tiff type', value: `${TiffVersion[tif.source.version]} (v${String(tif.source.version)})` },
+            { key: 'Chunk size', value: toByteSizeString(tif.source.chunkSize) },
+            { key: 'Bytes read', value: `${toByteSizeString(chunkIds.length * tif.source.chunkSize)} (${chunkIds.length} Chunk${chunkIds.length === 1 ? '' : 's'})` },
         ]
     }, {
         title: 'Images',
@@ -84,6 +36,8 @@ async function run() {
             { key: 'Count', value: tif.images.length },
             { key: 'Compression', value: firstImage.compression },
             { key: 'Origin', value: firstImage.origin },
+            { key: 'Resolution', value: firstImage.resolution },
+            { key: 'BoundingBox', value: firstImage.bbox },
             { key: 'Sizes', value: tif.images.map(c => `${c.size.width}x${c.size.height}`).join(' ') },
             { key: 'Tiles', value: tif.images.map(c => `${c.tileInfo.width}x${c.tileInfo.height}`).join(' ') },
         ]
@@ -98,7 +52,7 @@ async function run() {
         ]
     }]
 
-    const msg = [chalk`{bold COG File Info} - {bold ${fileName}}`];
+    const msg = [chalk`{bold COG File Info} - {bold ${args['--file']}}`];
     for (const group of result) {
         msg.push('');
         if (group.title) {

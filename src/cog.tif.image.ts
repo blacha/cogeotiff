@@ -30,15 +30,47 @@ export class CogTifImage {
     }
 
     get origin() {
-        const tiePoints = this.tags.get(TiffTag.ModelTiepoint);
+        const tiePoints: number[] = this.value(TiffTag.ModelTiepoint);
         if (tiePoints == null) {
             return;
         }
 
-        if (tiePoints && tiePoints.value.length === 6) {
-            return tiePoints.value.slice(3)
+        if (tiePoints && tiePoints.length === 6) {
+            return tiePoints.slice(3)
         }
     }
+
+    get resolution() {
+        const modelPixelScale = this.value(TiffTag.ModelPixelScale);
+        if (modelPixelScale == null) {
+            return null;
+        }
+        return [
+            modelPixelScale[0],
+            -modelPixelScale[1],
+            modelPixelScale[2],
+        ];
+    }
+
+    get bbox() {
+        const size = this.size;
+        const origin = this.origin;
+        const resolution = this.resolution
+
+        const x1 = origin[0];
+        const y1 = origin[1];
+
+        const x2 = x1 + (resolution[0] * size.width);
+        const y2 = y1 + (resolution[1] * size.height);
+
+        return [
+            Math.min(x1, x2),
+            Math.min(y1, y2),
+            Math.max(x1, x2),
+            Math.max(y1, y2),
+        ];
+    }
+
 
     get compression() {
         return TiffCompression[this.value(TiffTag.Compression)]
@@ -65,5 +97,17 @@ export class CogTifImage {
             width: this.value(TiffTag.TileWidth),
             height: this.value(TiffTag.TileHeight)
         }
+    }
+
+    get tileCount() {
+        const size = this.size;
+        const tileInfo = this.tileInfo
+        const nx = Math.ceil(size.width / tileInfo.width);
+        const ny = Math.ceil(size.height / tileInfo.height);
+        return { nx, ny, total: nx * ny }
+    }
+
+    getTile(x: number, y: number) {
+
     }
 }

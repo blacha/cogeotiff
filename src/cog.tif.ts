@@ -55,8 +55,12 @@ export class CogTif {
         return this.processIfd(nextOffsetIfd);
     }
 
+    getImage(z: number) {
+        return this.images[z];
+    }
+
     async getTileRaw(x: number, y: number, z: number): Promise<{ mimeType: string; bytes: ArrayBuffer; }> {
-        const image = this.images[z];
+        const image = this.getImage(z);
         if (image == null) {
             throw new Error(`Missing z: ${z}`);
         }
@@ -81,7 +85,7 @@ export class CogTif {
         const byteCount = byteCounts[idx];
 
         await this.source.loadBytes(offset, byteCount);
-        return { mimeType, bytes: null };
+        return { mimeType, bytes: new Uint8Array(this.source.bytes(offset, byteCount)) };
     }
 
     async processIfd(offset: number) {
