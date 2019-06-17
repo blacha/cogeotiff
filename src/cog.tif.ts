@@ -37,6 +37,10 @@ export class CogTif {
             if (pointerSize !== 8) {
                 throw new Error('Only 8byte pointers are supported');
             }
+            const zeros = view.uint16();
+            if (zeros !== 0) {
+                throw new Error('Invalid big tiff header')
+            }
             this.source.setVersion(TiffVersion.BigTiff);
             nextOffsetIfd = view.pointer();
         } else if (this.version === TiffVersion.Tiff) {
