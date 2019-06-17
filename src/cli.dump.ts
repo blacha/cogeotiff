@@ -7,16 +7,18 @@ import { Logger } from './util/util.log';
 const helpMessage = chalk`
   {bold USAGE}
 
-      {dim $} {bold cog-dump} [--help] --file {underline COG File} --zoom {underline zoom}
+      {dim $} {bold cog-dump} [--help] --file {underline COG File} --zoom {underline zoom} --html
 
   {bold OPTIONS}
       --zoom                      Zoom level to dump
-      --out                       Path to output
+      --output                    Path to output
+      --html                      Create a index.html
 `;
 
 const ARGS = {
     '--zoom': Number,
     '--output': String,
+    '--html': Boolean,
 
     '-z': '--zoom',
     '-o': '--output'
@@ -40,6 +42,9 @@ async function run() {
     }
 
     const img = tif.getImage(zoom)
+    if (img == null) {
+        throw Cli.fail(helpMessage, `Zoom too high max:  ${tif.images.length - 1}\n`)
+    }
     const tileCount = img.tileCount;
 
     const output = path.join(outputPath, `z${zoom}`);
@@ -54,6 +59,27 @@ async function run() {
             Logger.debug({ fileName }, 'WriteFile')
         }
     }
+
+    // This is really nasty but it works!
+    if (args['--html']) {
+        Logger.info('CreateHtml')
+
+        const html = ['<html>'];
+        for (let y = 0; y < tileCount.ny; y++) {
+            html.push('\t<div style="display:flex;">')
+
+            for (let x = 0; x < tileCount.nx; x++) {
+                html.push(`\t\t<img src="./${getTileName(zoom, x, y)}" >`)
+            }
+
+            html.push('\t</div>')
+        }
+        html.push('</html>')
+
+        await fs.writeFile(path.join(output, 'index.html'), html.join('\n'));
+    }
+
+    console.log(`Done, ${img.tileCount.total} tiles written`)
 }
 
 run().catch(e => console.error(e));
