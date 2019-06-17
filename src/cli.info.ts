@@ -39,7 +39,7 @@ async function run() {
             { key: 'Resolution', value: firstImage.resolution },
             { key: 'BoundingBox', value: firstImage.bbox },
             { key: 'Sizes', value: tif.images.map(c => `${c.size.width}x${c.size.height}`).join(' ') },
-            { key: 'Tiles', value: tif.images.map(c => `${c.tileInfo.width}x${c.tileInfo.height}`).join(' ') },
+            { key: 'Tiles', value: tif.images.map(c => `${c.tileInfo.width}x${c.tileInfo.height} (${c.tileCount.total})`).join(' ') },
         ]
     }, {
         title: 'GDAL',
