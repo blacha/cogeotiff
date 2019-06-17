@@ -14,7 +14,7 @@ This is a work in progress and likely will not work
 Display basic information about COG
 
 ```shell
-cogdump --file webp.cog.tif --zoom 2 --output output --html
+coginfo --file webp.cog.tif
 ```
 
 Output:
