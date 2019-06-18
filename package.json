@@ -8,8 +8,8 @@
     "test": "npx ospec build/**/*.spec.js"
   },
   "bin": {
-    "cogdump": "build/src/cli.dump.js",
-    "coginfo": "build/src/cli.info.js"
+    "cogdump": "bin/cogdump",
+    "coginfo": "bin/coginfo"
   },
   "keywords": [],
   "author": "",
