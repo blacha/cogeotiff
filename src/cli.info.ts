@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import chalk from 'chalk';
 import { TiffVersion } from './read/tif';
 import { toByteSizeString } from './util/util.bytes';
@@ -12,8 +10,6 @@ const helpMessage = chalk`
 
   {bold OPTIONS}
 `;
-
-
 
 async function run() {
     const { tif, args } = await Cli.process({}, helpMessage);

@@ -1,5 +1,3 @@
-import 'source-map-support/register'
-
 import { LoggerConfig } from "./util.log";
 import { Log } from "bblog";
 import { CogSourceFile, CogTif } from "..";
