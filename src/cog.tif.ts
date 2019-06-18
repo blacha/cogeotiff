@@ -82,7 +82,7 @@ export class CogTif {
         ])
 
         if (idx > tileOffsets.length) {
-            throw new Error(`Tile ${x} ${y} ${z} does not exist`);
+            return null;
         }
 
         const offset = tileOffsets[idx];

@@ -3,7 +3,7 @@ import 'source-map-support/register';
 import chalk from 'chalk';
 import { TiffVersion } from './read/tif';
 import { toByteSizeString } from './util/util.bytes';
-import { Cli } from './util/util.cli';
+import { Cli, CliResultMap } from './util/util.cli';
 
 const helpMessage = chalk`
   {bold USAGE}
@@ -13,10 +13,7 @@ const helpMessage = chalk`
   {bold OPTIONS}
 `;
 
-interface ResultMap {
-    title?: string;
-    keys: { key: string, value: any }[]
-}
+
 
 async function run() {
     const { tif, args } = await Cli.process({}, helpMessage);
@@ -24,7 +21,7 @@ async function run() {
     const chunkIds = Object.keys(tif.source._chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady)
     const [firstImage] = tif.images;
 
-    const result: ResultMap[] = [{
+    const result: CliResultMap[] = [{
         keys: [
             { key: 'Tiff type', value: `${TiffVersion[tif.source.version]} (v${String(tif.source.version)})` },
             { key: 'Chunk size', value: toByteSizeString(tif.source.chunkSize) },
@@ -52,20 +49,7 @@ async function run() {
         ]
     }]
 
-    const msg = [chalk`{bold COG File Info} - {bold ${args['--file']}}`];
-    for (const group of result) {
-        msg.push('');
-        if (group.title) {
-            msg.push(chalk`  {bold ${group.title}}`)
-        }
-        for (const { key, value } of group.keys) {
-            if (value == null || (typeof value === 'string' && value.trim() === '')) {
-                continue;
-            }
-            msg.push(chalk`    ${key.padEnd(14, ' ')}  ${value}`)
-        }
-    }
-
+    const msg = Cli.formatResult(chalk`{bold COG File Info} - {bold ${tif.source.name}}`, result);
     console.log(msg.join('\n'))
 }
 

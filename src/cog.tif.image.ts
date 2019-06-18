@@ -107,7 +107,4 @@ export class CogTifImage {
         return { nx, ny, total: nx * ny }
     }
 
-    getTile(x: number, y: number) {
-
-    }
 }

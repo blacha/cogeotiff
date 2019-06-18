@@ -15,7 +15,16 @@ async function getTile(img: HTMLImageElement, x: number, y: number, z: number) {
     if (cog == null) {
         return;
     }
-    const tileRaw = await cog.getTileRaw(x, y, 0)
+    if (z >= cog.images.length) {
+        return null;
+    }
+    console.log(x, y, z, cog.images.length - z - 1);
+    const tileRaw = await cog.getTileRaw(x, y, cog.images.length - z - 1)
+    if (tileRaw == null) {
+        img.style.backgroundColor = 'rgba(0,0,0,0.87)';
+        img.style.outline = '1px solid red';
+        return;
+    }
     img.style.outline = '1px solid black';
     const blob = new Blob([tileRaw.bytes], { type: 'image/webp' });
     img.onload = () => URL.revokeObjectURL(img.src);
@@ -54,10 +63,11 @@ async function loadAndRender(url: string) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Loaded');
-    map = L.map('container').setView([6, 50], 7);
+    map = L.map('container').setView([6, 50], 0);
 
     const inputEl = document.getElementById('url') as HTMLInputElement;
-    inputEl.value = 'https://blayne.chard.com/land_shallow_topo_east_webp.tif'
+    inputEl.value = 'https://public.lo.chard.com/bg43_2017-2018.webp.cog.tif';
+
     document.getElementById('button').addEventListener('click', e => {
         loadAndRender(inputEl.value)
         e.preventDefault();

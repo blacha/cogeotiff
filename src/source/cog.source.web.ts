@@ -1,5 +1,6 @@
 import { CogSource } from '../cog.source';
 import { Logger } from '../util/util.log';
+import { toByteSizeString } from '../util/util.bytes';
 
 export class CogSourceUrl extends CogSource {
     chunkSize = 16 * 1024;
@@ -17,10 +18,10 @@ export class CogSourceUrl extends CogSource {
     }
 
     get name() {
-        return this.url.split('/').pop()
+        return this.url
     }
 
-    static getByteRanges(ranges: string[]) {
+    static getByteRanges(ranges: string[], maxRange = 32) {
         if (ranges.length === 0) {
             return [];
         }
@@ -31,7 +32,10 @@ export class CogSourceUrl extends CogSource {
         groups.push(current);
 
         for (let i = 0; i < sortedRange.length; ++i) {
-            if (i === 0 || sortedRange[i] === sortedRange[i - 1] + 1) {
+            if (current.length > maxRange) {
+                current = [sortedRange[i]];
+                groups.push(current);
+            } else if (i === 0 || sortedRange[i] === sortedRange[i - 1] + 1) {
                 current.push(sortedRange[i]);
             } else {
                 current = [sortedRange[i]];
@@ -55,7 +59,9 @@ export class CogSourceUrl extends CogSource {
             const firstChunk = chunkRange[0];
             const lastChunk = chunkRange[chunkRange.length - 1];
             const fetchRange = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
-            Logger.info({ firstChunk, lastChunk, fetchRange }, 'HTTPGet')
+            const chunkCount = (lastChunk - firstChunk) || 1;
+
+            Logger.info({ firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange }, 'HTTPGet')
             const promise = CogSourceUrl.fetch(this.url, {
                 headers: {
                     Range: fetchRange,
