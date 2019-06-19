@@ -6,10 +6,10 @@ module.exports = {
     entry: './build/src/web/index.js',
     devServer: {
         port: 8080,
-        contentBase: path.join(__dirname, "dist")
+        contentBase: path.join(__dirname, 'dist'),
     },
     node: {
-        fs: 'empty'
+        fs: 'empty',
     },
     module: {
         rules: [],
@@ -17,7 +17,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './index.html',
-            inject: true
-        })
-    ]
+            inject: true,
+        }),
+    ],
 };

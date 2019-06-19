@@ -6,7 +6,8 @@
     "build": "tsc --pretty",
     "build-watch": "tsc --pretty --watch",
     "lint": "eslint '{src,test}/**/*.{js,ts,tsx}' --quiet --fix",
-    "test": "npx ospec build/**/*.spec.js"
+    "test": "ospec build/**/*.spec.js",
+    "webpack": "NODE_ENV=production webpack"
   },
   "bin": {
     "cogdump": "bin/cogdump",
