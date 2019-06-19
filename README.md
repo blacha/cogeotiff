@@ -1,6 +1,8 @@
 # cog-viewer
 [![pipeline status](https://gitlab.com/blacha/coginfo/badges/master/pipeline.svg)](https://gitlab.com/blacha/coginfo/commits/master)
 
+[pipeline status](https://codebuild.ap-southeast-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiQ2p1VkxVVEdrOWhhcnF2WExWMFlueHBIWmdHeVltdjgyeHBIenFNNzU4WVZWYzJzeXVUYnFqRWJVU212SkJiTkFvUmZmNG0yY2ovS3VTVjRYcjdqRGhvPSIsIml2UGFyYW1ldGVyU3BlYyI6InNaUFo2ZW1KclVBRDJHREgiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 Utility to investigate access patterns for [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
 This is mostly just a learning exercise for Tiff/[BigTiff](http://bigtiff.org/) IFD access & GEOTiff in general

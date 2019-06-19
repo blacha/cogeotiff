@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 10
+  build:
+    commands:
+      - yarn
+      - yarn lint
+      - yarn build
+      - yarn run webpack
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
+  base-directory: dist
