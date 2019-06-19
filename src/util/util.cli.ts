@@ -12,6 +12,21 @@ export interface CliResultMap {
     title?: string;
     keys: { key: string, value: any }[]
 }
+export const StdArgs = {
+    '--help': Boolean,
+    '--file': String,
+    '--url': String,
+    '--v': Boolean,
+    '--vv': Boolean,
+    '--vvv': Boolean,
+    '--bs': Number,
+
+    '-f': '--file',
+    '-u': '--url',
+    '-h': '--help',
+    '-v': '--v',
+    '-V': '--vv'
+}
 
 export const Cli = {
     ChunkSize: 64 * 1024,
@@ -22,23 +37,9 @@ export const Cli = {
     --bs {underline bytes}           Chunk size (KB) default: 64KB
     --v|vv|vvv                       Increase logging verbosity
 `,
-    StdArgs: {
-        '--help': Boolean,
-        '--file': String,
-        '--url': String,
-        '--v': Boolean,
-        '--vv': Boolean,
-        '--vvv': Boolean,
-        '--bs': Number,
+    StdArgs,
 
-        '-f': '--file',
-        '-u': '--url',
-        '-h': '--help',
-        '-v': '--v',
-        '-V': '--vv'
-    },
-
-    getLogging(args: Object) {
+    getLogging(args: arg.Result<typeof StdArgs>) {
         if (args['--v']) {
             LoggerConfig.level = Log.INFO
         } else if (args['--vv']) {
@@ -55,7 +56,7 @@ export const Cli = {
         process.exit(2);
     },
 
-    getSource(args: Object) {
+    getSource(args: arg.Result<typeof StdArgs>) {
         const fileName = args['--file'];
         if (fileName != null) {
             return new CogSourceFile(fileName);
@@ -86,7 +87,11 @@ export const Cli = {
         Cli.getLogging(args)
 
         const bs = args['--bs']
-        source.chunkSize = isNaN(bs) ? Cli.ChunkSize : bs * 1024;
+        if (typeof bs === 'number') {
+            source.chunkSize = bs * 1024;
+        } else {
+            source.chunkSize = this.ChunkSize;
+        }
         const tif = new CogTif(source);
         await tif.init();
         return { tif, args, source };
