@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { promises as fs } from 'fs';
-import { Cli, CliResultMap } from "./util/util.cli";
+import { Cli, CliResultMap } from "./cli/cli";
 import * as path from 'path';
 import { Logger } from './util/util.log';
 import { toByteSizeString } from './util/util.bytes';

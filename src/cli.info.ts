@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { TiffVersion } from './read/tif';
 import { toByteSizeString } from './util/util.bytes';
-import { Cli, CliResultMap } from './util/util.cli';
+import { Cli, CliResultMap } from './cli/cli';
 
 const helpMessage = chalk`
   {bold USAGE}
@@ -17,6 +17,7 @@ async function run() {
     const chunkIds = Object.keys(tif.source._chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady)
     const [firstImage] = tif.images;
 
+    const isCogOptimized = tif.options.isCogOptimized;
     const result: CliResultMap[] = [{
         keys: [
             { key: 'Tiff type', value: `${TiffVersion[tif.source.version]} (v${String(tif.source.version)})` },
@@ -38,10 +39,10 @@ async function run() {
         title: 'GDAL',
         keys: [
             { key: 'COG optimized', value: tif.options.isCogOptimized },
-            { key: 'COG broken', value: tif.options.isBroken },
-            { key: 'Tile order', value: tif.options.tileOrder },
-            { key: 'Tile leader', value: `${tif.options.tileLeader} - ${tif.options.tileLeaderByteSize} Bytes` },
-            { key: 'Mask interleaved', value: tif.options.isMaskInterleaved },
+            tif.options.isBroken ? { key: 'COG broken', value: tif.options.isBroken } : null,
+            isCogOptimized ? { key: 'Tile order', value: tif.options.tileOrder } : null,
+            isCogOptimized ? { key: 'Tile leader', value: `${tif.options.tileLeader} - ${tif.options.tileLeaderByteSize} Bytes` } : null,
+            isCogOptimized ? { key: 'Mask interleaved', value: tif.options.isMaskInterleaved } : null,
         ]
     }]
 

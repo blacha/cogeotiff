@@ -1,6 +1,5 @@
 import { CogSource } from '../cog.source';
 import { Logger } from '../util/util.log';
-import { toByteSizeString } from '../util/util.bytes';
 
 export class CogSourceUrl extends CogSource {
     chunkSize = 16 * 1024;
@@ -67,6 +66,14 @@ export class CogSourceUrl extends CogSource {
                     Range: fetchRange,
                 },
             }).then(async response => {
+                if (!response.ok) {
+                    Logger.error({
+                        status: response.status,
+                        statusText: response.statusText,
+                        url: this.url
+                    }, 'Failed to fetch')
+                    throw new Error('Failed to fetch')
+                }
                 const buffer: ArrayBuffer = await response.arrayBuffer();
                 if (chunkRange.length == 1) {
                     output[chunkRange[0]] = buffer;

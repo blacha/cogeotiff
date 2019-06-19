@@ -1,10 +1,13 @@
-import { LoggerConfig } from "./util.log";
+import 'source-map-support/register';
+
+import { LoggerConfig, Logger } from "../util/util.log";
 import { Log } from "bblog";
 import { CogSourceFile, CogTif } from "..";
 import * as arg from 'arg';
 import chalk from 'chalk';
 import { CogSourceUrl } from '../source/cog.source.web';
 import * as fetch from 'node-fetch';
+import { ChalkLogStream } from './cli.log';
 
 CogSourceUrl.fetch = (a, b) => fetch(a, b);
 
@@ -38,7 +41,7 @@ export const Cli = {
         '-V': '--vv'
     },
 
-    getLogging(args: Object) {
+    setupLogging(args: Object) {
         if (args['--v']) {
             LoggerConfig.level = Log.INFO
         } else if (args['--vv']) {
@@ -47,6 +50,9 @@ export const Cli = {
             LoggerConfig.level = Log.TRACE
         } else {
             LoggerConfig.level = Log.ERROR
+        }
+        if (chalk.supportsColor) {
+            Logger['streams'] = [ChalkLogStream]
         }
     },
 
@@ -83,7 +89,7 @@ export const Cli = {
             throw Cli.fail(helpMessage, 'Missing input. Use --file or --url\n\n')
         }
 
-        Cli.getLogging(args)
+        Cli.setupLogging(args)
 
         const bs = args['--bs']
         source.chunkSize = isNaN(bs) ? Cli.ChunkSize : bs * 1024;

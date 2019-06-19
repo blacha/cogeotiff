@@ -6,7 +6,6 @@ import { LoggerConfig, LoggerType } from "../util/util.log";
 LoggerConfig.level = 20
 LoggerConfig.type = LoggerType.WEB;
 
-
 let map: L.Map;
 let cog: CogTif;
 let geoTiffLayer: L.Layer;

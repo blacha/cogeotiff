@@ -57,6 +57,10 @@ export class CogTifImage {
         const origin = this.origin;
         const resolution = this.resolution
 
+        if (origin == null || size == null || resolution == null) {
+            return null;
+        }
+
         const x1 = origin[0];
         const y1 = origin[1];
 
