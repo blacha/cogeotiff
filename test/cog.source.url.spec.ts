@@ -35,7 +35,7 @@ o.spec('CogSourceUrl', () => {
         }
         const buffer = new Uint8Array(bytes).buffer;
         const arrayBuffer = () => Promise.resolve(buffer);
-        return Promise.resolve({ arrayBuffer }) as any;
+        return Promise.resolve({ arrayBuffer, ok: true }) as any;
     };
 
     o.beforeEach(() => {
