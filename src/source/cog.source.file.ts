@@ -1,13 +1,12 @@
 import { promises as fs } from 'fs';
-import { CogSource } from '../cog.source'
-import { toHexString } from '../util/util.hex';
 import { basename } from 'path';
+import { CogSource } from '../cog.source';
 
 export class CogSourceFile extends CogSource {
     chunkSize = 16 * 1024;
 
     fileName: string;
-    fd: Promise<fs.FileHandle>;
+    fd: Promise<fs.FileHandle> | null = null;
 
     constructor(fileName: string) {
         super();
@@ -24,7 +23,6 @@ export class CogSourceFile extends CogSource {
         }
         const fd = await this.fd;
         const { buffer } = await fd.read(Buffer.alloc(length), 0, length, offset);
-        return buffer.buffer
+        return buffer.buffer;
     }
 }
-

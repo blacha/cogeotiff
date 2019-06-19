@@ -1,4 +1,4 @@
-import { CogSource } from "../src";
+import { CogSource } from '../src';
 
 export class FakeCogSource extends CogSource {
     chunkSize: number = 100;

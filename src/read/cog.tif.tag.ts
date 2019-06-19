@@ -1,7 +1,7 @@
-import { CogSource } from "../cog.source";
-import { CogSourceView } from "../cog.source.view";
-import { Fetchable } from "../util/util.fetchable";
-import { getTiffTagSize, getTiffTagValueReader, TiffTag, TiffTagValueType, TiffVersion } from "./tif";
+import { CogSource } from '../cog.source';
+import { CogSourceView } from '../cog.source.view';
+import { Fetchable } from '../util/util.fetchable';
+import { getTiffTagSize, getTiffTagValueReader, TiffTag, TiffTagValueType, TiffVersion } from './tif';
 
 export class CogTifTag<T = any> {
     protected source: CogSource;
@@ -16,9 +16,9 @@ export class CogTifTag<T = any> {
         this.view = source.getView(offset, source.config.ifd);
 
         if (this.source.hasBytes(this.valuePointer, this.dataLength)) {
-            this.valueFetch = new Fetchable<T>(this.convertValue(this.valuePointer))
+            this.valueFetch = new Fetchable<T>(this.convertValue(this.valuePointer));
         } else {
-            this.valueFetch = new Fetchable<T>(this.loadValueFromPtr.bind(this))
+            this.valueFetch = new Fetchable<T>(this.loadValueFromPtr.bind(this));
         }
     }
 
@@ -26,21 +26,45 @@ export class CogTifTag<T = any> {
         if (source.version === TiffVersion.Tiff) {
             return new CogTifTag(source, offset);
         }
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         return new CogTifTagBig(source, offset);
     }
 
-    get value() { return this.valueFetch.value }
-    get fetch() { return this.valueFetch.fetch }
+    get value() {
+        return this.valueFetch.value;
+    }
 
-    get id(): TiffTag { return this.view.uint16At(0) }
-    get name() { return TiffTag[this.id]; }
+    get fetch() {
+        return this.valueFetch.fetch;
+    }
 
-    get dataType(): TiffTagValueType { return this.view.uint16At(2) }
-    get dataCount(): number { return this.view.uint16At(4) }
+    get id(): TiffTag {
+        return this.view.uint16At(0);
+    }
 
-    get dataTypeSize() { return getTiffTagSize(this.dataType); }
-    get dataTypeName() { return TiffTagValueType[this.dataType]; }
-    get dataLength() { return this.dataTypeSize * this.dataCount; }
+    get name(): string {
+        return TiffTag[this.id];
+    }
+
+    get dataType(): TiffTagValueType {
+        return this.view.uint16At(2);
+    }
+
+    get dataCount(): number {
+        return this.view.uint16At(4);
+    }
+
+    get dataTypeSize() {
+        return getTiffTagSize(this.dataType);
+    }
+
+    get dataTypeName() {
+        return TiffTagValueType[this.dataType];
+    }
+
+    get dataLength() {
+        return this.dataTypeSize * this.dataCount;
+    }
 
     /** absolute offset of the Tag value */
     get valuePointer() {
@@ -48,25 +72,30 @@ export class CogTifTag<T = any> {
         if (this.isValueInline) {
             return this.byteOffset + valueOffset;
         }
-        return this.view.uint32At(valueOffset)
+        return this.view.uint32At(valueOffset);
     }
 
-    get isValueInline() { return this.dataLength <= this.source.config.pointer; }
-    get size() { return this.source.config.ifd }
+    get isValueInline() {
+        return this.dataLength <= this.source.config.pointer;
+    }
+
+    get size() {
+        return this.source.config.ifd;
+    }
 
     async loadValueFromPtr() {
-        await this.source.loadBytes(this.valuePointer, this.dataLength)
-        return this.convertValue(this.valuePointer)
+        await this.source.loadBytes(this.valuePointer, this.dataLength);
+        return this.convertValue(this.valuePointer);
     }
 
     private convertValue(offset: number): T {
-        const dataTypeSize = this.dataTypeSize
+        const dataTypeSize = this.dataTypeSize;
         const convert = getTiffTagValueReader(this.dataType);
         const count = this.dataCount;
-        const dataLength = count * dataTypeSize
+        const dataLength = count * dataTypeSize;
 
         if (count == 1) {
-            return convert(this.source, offset) as any
+            return convert(this.source, offset) as any;
         }
 
         const output = [];
@@ -84,9 +113,8 @@ export class CogTifTag<T = any> {
 }
 
 export class CogTifTagBig<T> extends CogTifTag<T> {
-
     get dataCount() {
-        return this.view.uint64At(4)
+        return this.view.uint64At(4);
     }
 
     get valuePointer() {
@@ -94,7 +122,6 @@ export class CogTifTagBig<T> extends CogTifTag<T> {
         if (this.isValueInline) {
             return this.byteOffset + valueOffset;
         }
-        return this.view.uint64At(valueOffset)
+        return this.view.uint64At(valueOffset);
     }
-
 }

@@ -8,9 +8,9 @@ import { CogTifTag } from './read/cog.tif.tag';
 
 export class CogTif {
     source: CogSource;
-    version: number;
+    version: number = -1;
     images: CogTifImage[] = [];
-    options = new CogTifGhostOptions()
+    options = new CogTifGhostOptions();
 
     constructor(source: CogSource) {
         this.source = source;
@@ -39,12 +39,12 @@ export class CogTif {
             }
             const zeros = view.uint16();
             if (zeros !== 0) {
-                throw new Error('Invalid big tiff header')
+                throw new Error('Invalid big tiff header');
             }
             this.source.setVersion(TiffVersion.BigTiff);
             nextOffsetIfd = view.pointer();
         } else if (this.version === TiffVersion.Tiff) {
-            this.source.setVersion(TiffVersion.Tiff)
+            this.source.setVersion(TiffVersion.Tiff);
             nextOffsetIfd = view.pointer();
         } else {
             throw new Error(`Only tiff supported version:${this.version}`);
@@ -63,23 +63,29 @@ export class CogTif {
         return this.images[z];
     }
 
-    async getTileRaw(x: number, y: number, z: number): Promise<{ mimeType: string; bytes: ArrayBuffer; }> {
+    async getTileRaw(x: number, y: number, z: number): Promise<{ mimeType: string; bytes: ArrayBuffer } | null> {
         const image = this.getImage(z);
         if (image == null) {
             throw new Error(`Missing z: ${z}`);
         }
         const mimeType = image.compression;
-        const size = image.size
-        const tiles = image.tileInfo
+        const size = image.size;
+        const tiles = image.tileInfo;
+        if (tiles == null) {
+            throw new Error('Tiff is not tiled');
+        }
+        if (mimeType == null) {
+            throw new Error('Unsupported compression: ' + image.value(TiffTag.Compression));
+        }
+
         const nyTiles = Math.ceil(size.width / tiles.width);
         const idx = y * nyTiles + x;
-
 
         // TODO load only the parts of the tiles we care about
         const [tileOffsets, byteCounts] = await Promise.all([
             image.fetch(TiffTag.TileOffsets),
-            image.fetch(TiffTag.TileByteCounts)
-        ])
+            image.fetch(TiffTag.TileByteCounts),
+        ]);
 
         if (idx > tileOffsets.length) {
             return null;
@@ -97,14 +103,22 @@ export class CogTif {
         this.images.push(image);
         const size = image.size;
         const tile = image.tileInfo;
-        Logger.debug({
-            ...size,
-            tileWidth: tile.width, tileHeight: tile.height,
-            tileCount: Math.ceil(size.width / tile.width)
-        }, 'GotImage')
+        if (tile == null) {
+            Logger.warn('Tiff is not tiled');
+        } else {
+            Logger.debug(
+                {
+                    ...size,
+                    tileWidth: tile.width,
+                    tileHeight: tile.height,
+                    tileCount: Math.ceil(size.width / tile.width),
+                },
+                'GotImage',
+            );
+        }
 
         if (nextOffset) {
-            Logger.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset')
+            Logger.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
             await this.source.loadBytes(nextOffset, 1024);
             await this.processIfd(nextOffset);
         }
@@ -112,10 +126,10 @@ export class CogTif {
 
     private async readIfd(offset: number) {
         const view = this.source.getView(offset);
-        const tagCount = view.offset()
+        const tagCount = view.offset();
         const byteStart = offset + this.source.config.offset;
         const logger = Logger.child({ imageId: this.images.length });
-        const image = new CogTifImage(this.images.length, byteStart)
+        const image = new CogTifImage(this.images.length, byteStart);
 
         let pos = byteStart;
         for (let i = 0; i < tagCount; i++) {
@@ -127,15 +141,18 @@ export class CogTif {
                 continue;
             }
 
-
+            const logObj = {
+                offset: toHexString(pos - offset),
+                code: toHexString(tag.id),
+                tagName: tag.name,
+            };
             if (tag.value == null) {
-                logger.trace({ offset: toHexString(pos - offset), ptr: toHexString(tag.valuePointer), code: toHexString(tag.id), tagName: tag.name }, 'PartialReadIFD')
+                logger.trace({ ...logObj, ptr: toHexString(tag.valuePointer) }, 'PartialReadIFD');
             } else {
-                const displayValue = Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value
-                logger.trace({ offset: toHexString(pos - offset), code: toHexString(tag.id), tagName: tag.name, value: displayValue }, 'ReadIFD');
+                const displayValue = Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value;
+                logger.trace({ ...logObj, value: displayValue }, 'ReadIFD');
             }
-            image.tags.set(TiffTag[tag.name], tag);
-
+            image.tags.set(tag.id, tag);
         }
         const nextOffset = await this.source.pointer(pos);
         return { nextOffset, image };

@@ -8,7 +8,7 @@ export class CogSourceUrl extends CogSource {
 
     batches = [];
     toFetch: boolean[];
-    toFetchPromise: Promise<ArrayBuffer[]>;
+    toFetchPromise: Promise<ArrayBuffer[]> | null = null;
 
     constructor(url: string) {
         super();
@@ -17,7 +17,7 @@ export class CogSourceUrl extends CogSource {
     }
 
     get name() {
-        return this.url
+        return this.url;
     }
 
     static getByteRanges(ranges: string[], maxRange = 32) {
@@ -26,8 +26,8 @@ export class CogSourceUrl extends CogSource {
         }
         const sortedRange = ranges.map(c => parseInt(c, 10)).sort();
 
-        const groups = [];
-        let current = [];
+        const groups: number[][] = [];
+        let current: number[] = [];
         groups.push(current);
 
         for (let i = 0; i < sortedRange.length; ++i) {
@@ -45,12 +45,11 @@ export class CogSourceUrl extends CogSource {
     }
 
     async fetchData(): Promise<ArrayBuffer[]> {
-
         const chunkIds = Object.keys(this.toFetch);
         this.toFetch = [];
         delete this.toFetchPromise;
 
-        const fetches: Promise<void>[] = []
+        const fetches: Promise<void>[] = [];
         const chunks = CogSourceUrl.getByteRanges(chunkIds);
         const output: ArrayBuffer[] = [];
 
@@ -58,21 +57,27 @@ export class CogSourceUrl extends CogSource {
             const firstChunk = chunkRange[0];
             const lastChunk = chunkRange[chunkRange.length - 1];
             const fetchRange = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
-            const chunkCount = (lastChunk - firstChunk) || 1;
+            const chunkCount = lastChunk - firstChunk || 1;
 
-            Logger.info({ firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange }, 'HTTPGet')
+            Logger.info(
+                { firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange },
+                'HTTPGet',
+            );
             const promise = CogSourceUrl.fetch(this.url, {
                 headers: {
                     Range: fetchRange,
                 },
             }).then(async response => {
                 if (!response.ok) {
-                    Logger.error({
-                        status: response.status,
-                        statusText: response.statusText,
-                        url: this.url
-                    }, 'Failed to fetch')
-                    throw new Error('Failed to fetch')
+                    Logger.error(
+                        {
+                            status: response.status,
+                            statusText: response.statusText,
+                            url: this.url,
+                        },
+                        'Failed to fetch',
+                    );
+                    throw new Error('Failed to fetch');
                 }
                 const buffer: ArrayBuffer = await response.arrayBuffer();
                 if (chunkRange.length == 1) {
@@ -83,14 +88,14 @@ export class CogSourceUrl extends CogSource {
                 const rootOffset = firstChunk * this.chunkSize;
                 for (const chunkId of chunkRange) {
                     const chunkOffset = chunkId * this.chunkSize - rootOffset;
-                    output[chunkId] = buffer.slice(chunkOffset, chunkOffset + this.chunkSize)
+                    output[chunkId] = buffer.slice(chunkOffset, chunkOffset + this.chunkSize);
                 }
             });
 
             fetches.push(promise);
         }
 
-        await Promise.all(fetches)
+        await Promise.all(fetches);
         return output;
     }
 
@@ -98,8 +103,7 @@ export class CogSourceUrl extends CogSource {
         const startChunk = Math.floor(offset / this.chunkSize);
         const endChunk = Math.floor((offset + count) / this.chunkSize) - 1;
         if (startChunk != endChunk) {
-            console.log('RequestTooLarge');
-            return null;
+            throw new Error(`Request too large start:${startChunk} end:${endChunk}`);
         }
 
         this.toFetch[startChunk] = true;
@@ -108,10 +112,9 @@ export class CogSourceUrl extends CogSource {
             this.toFetchPromise = new Promise<void>(resolve => setTimeout(resolve, 5)).then(() => this.fetchData());
         }
 
-        return this.toFetchPromise.then(results => results[startChunk])
+        return this.toFetchPromise.then(results => results[startChunk]);
     }
 
     // Allow overwriting the fetcher used (eg testing/node-js)
-    static fetch: GlobalFetch["fetch"] = (a, b) => fetch(a, b);
+    static fetch: GlobalFetch['fetch'] = (a, b) => fetch(a, b);
 }
-

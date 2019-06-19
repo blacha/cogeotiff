@@ -7,5 +7,6 @@ test_js:
   stage: test
   script:
     - yarn
+    - yarn lint
     - yarn build
     - yarn test

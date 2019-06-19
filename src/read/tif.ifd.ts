@@ -1,6 +1,5 @@
-import { ByteSize } from "./byte.size";
-import { TiffVersion } from "./tif";
-
+import { ByteSize } from './byte.size';
+import { TiffVersion } from './tif';
 
 export const TagTiffConfig = {
     version: TiffVersion.Tiff,
@@ -14,7 +13,7 @@ export const TagTiffConfig = {
      * UInt32:Pointer To Value or value
      */
     ifd: ByteSize.UInt16 + ByteSize.UInt16 + 2 * ByteSize.UInt32,
-}
+};
 
 export const TagTiffBigConfig = {
     version: TiffVersion.BigTiff,
@@ -30,10 +29,10 @@ export const TagTiffBigConfig = {
      * UInt64:TagCount
      * UInt64:Pointer To Value or value
      */
-    ifd: ByteSize.UInt16 + ByteSize.UInt16 + 2 * ByteSize.UInt64
-}
+    ifd: ByteSize.UInt16 + ByteSize.UInt16 + 2 * ByteSize.UInt64,
+};
 
 export const TiffIfdEntry = {
     [TiffVersion.BigTiff]: TagTiffBigConfig,
-    [TiffVersion.Tiff]: TagTiffConfig
-}
+    [TiffVersion.Tiff]: TagTiffConfig,
+};

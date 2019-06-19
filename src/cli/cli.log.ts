@@ -1,8 +1,8 @@
-import { Log, LogLevel, LogMessage } from "bblog";
-import chalk from "chalk";
-import { LoggerConfig } from "../util/util.log";
+import { Log, LogLevel, LogMessage } from 'bblog';
+import chalk from 'chalk';
+import { LoggerConfig } from '../util/util.log';
 
-function getLogStatus(level: LogLevel | number) {
+function getLogStatus(level: LogLevel | number): string {
     if (level <= Log.TRACE) {
         return chalk.gray('TRACE');
     }
@@ -19,19 +19,18 @@ function getLogStatus(level: LogLevel | number) {
         return chalk.red('ERROR');
     }
     return chalk.bgRed('FATAL');
-
 }
 
 /** Dont print these keys */
-const IGNORE_KEYS = {
+const IGNORE_KEYS: { [key: string]: boolean } = {
     pid: true,
     time: true,
     hostname: true,
     level: true,
     v: true,
     name: true,
-    msg: true
-}
+    msg: true,
+};
 
 /**
  * check if a object looks like a hex string
@@ -43,42 +42,40 @@ function isHex(s: any): s is string {
     if (typeof s !== 'string') {
         return false;
     }
-    return s.charAt(0) === '0' && s.charAt(1) === 'x'
+    return s.charAt(0) === '0' && s.charAt(1) === 'x';
 }
 
 export const ChalkLogStream = {
     level: Log.ERROR,
-    setLevel(level: LogLevel) {
+    setLevel(level: LogLevel): void {
         LoggerConfig.level = level;
     },
-    write(msg: LogMessage) {
+    write(msg: LogMessage): void {
         if (msg.level < LoggerConfig.level) {
             return;
         }
-        const output = `[${msg.time.toISOString()}] ${getLogStatus(msg.level)} ${chalk.blue(msg.msg)}`
+        const output = `[${msg.time.toISOString()}] ${getLogStatus(msg.level)} ${chalk.blue(msg.msg)}`;
         const kvs = [];
-        for (const key of Object.keys(msg)) {
-            let value = msg[key]
+        for (const [key, value] of Object.entries(msg)) {
             if (value == null || value === '') {
                 continue;
             }
-            if (IGNORE_KEYS[key]) {
+            if (IGNORE_KEYS[key] === true) {
                 continue;
             }
+            let output = '';
             const typeofValue = typeof value;
             if (typeofValue === 'number' || isHex(value)) {
-                value = chalk.yellow(String(value));
+                output = chalk.yellow(String(value));
             } else if (typeofValue === 'string') {
-                value = chalk.green(value)
+                output = chalk.green(value);
+            } else {
+                output = String(value);
             }
 
-            kvs.push(`${chalk.dim(key)}=${value}`)
+            kvs.push(`${chalk.dim(key)}=${output}`);
         }
-        const kvString = kvs.join(', ')
-        // if (kvString.length > 0) {
-        //     console.log(`${output} ${kvString}`)
-        // } else {
-        console.log(`${output} ${kvString}`)
-        // }
-    }
-}
+        const kvString = kvs.join(', ');
+        console.log(`${output} ${kvString}`);
+    },
+};

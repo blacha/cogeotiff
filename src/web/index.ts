@@ -1,9 +1,10 @@
-import { CogTif } from "../cog.tif";
-import { CogSourceUrl } from "../source/cog.source.web";
+import { CogTif } from '../cog.tif';
+import { CogSourceUrl } from '../source/cog.source.web';
 import * as L from 'leaflet';
-import { LoggerConfig, LoggerType } from "../util/util.log";
+import { LoggerConfig, LoggerType } from '../util/util.log';
+import { Vector } from '../@types/vector';
 
-LoggerConfig.level = 20
+LoggerConfig.level = 20;
 LoggerConfig.type = LoggerType.WEB;
 
 let map: L.Map;
@@ -18,7 +19,7 @@ async function getTile(img: HTMLImageElement, x: number, y: number, z: number) {
         return null;
     }
     console.log(x, y, z, cog.images.length - z - 1);
-    const tileRaw = await cog.getTileRaw(x, y, cog.images.length - z - 1)
+    const tileRaw = await cog.getTileRaw(x, y, cog.images.length - z - 1);
     if (tileRaw == null) {
         img.style.backgroundColor = 'rgba(0,0,0,0.87)';
         img.style.outline = '1px solid red';
@@ -32,6 +33,9 @@ async function getTile(img: HTMLImageElement, x: number, y: number, z: number) {
 
 async function loadAndRender(url: string) {
     const statusEl = document.getElementById('status');
+    if (statusEl == null) {
+        throw new Error('Missing status element');
+    }
 
     if (url == null || !url.startsWith('http')) {
         statusEl.innerHTML = 'Invalid URL, needs to start with http://...';
@@ -39,20 +43,20 @@ async function loadAndRender(url: string) {
     }
 
     statusEl.innerHTML = 'Loading...';
-    console.time('loadCog')
+    console.time('loadCog');
     cog = await new CogTif(new CogSourceUrl(url)).init();
     console.timeEnd('loadCog');
     const GeoTiffLayer = L.GridLayer.extend({
-        createTile: function(coords, done) {
+        createTile: function(coords: Vector, done: Function) {
             var tile = document.createElement('img') as HTMLImageElement;
             getTile(tile, coords.x, coords.y, coords.z).then(() => done(null, tile));
             tile.style.outline = '1px solid blue';
             return tile;
-        }
-    })
+        },
+    });
 
     if (geoTiffLayer != null) {
-        map.removeLayer(geoTiffLayer)
+        map.removeLayer(geoTiffLayer);
     }
     geoTiffLayer = new GeoTiffLayer();
     map.addLayer(geoTiffLayer);
@@ -66,24 +70,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const inputEl = document.getElementById('url') as HTMLInputElement;
     inputEl.value = 'https://public.lo.chard.com/bg43_2017-2018.webp.cog.tif';
+    const btn = document.getElementById('button');
+    if (btn == null) {
+        throw new Error('Unable to find button');
+    }
 
-    document.getElementById('button').addEventListener('click', e => {
-        loadAndRender(inputEl.value)
+    btn.addEventListener('click', e => {
+        loadAndRender(inputEl.value);
         e.preventDefault();
         return false;
-    })
+    });
 
     const DebugLayer = L.GridLayer.extend({
-        createTile: function(coords) {
+        createTile: function(coords: Vector) {
             var tile = document.createElement('div');
             tile.innerHTML = [coords.x, coords.y, coords.z].join(', ');
             tile.style.outline = '1px solid red';
             return tile;
-        }
+        },
     });
 
     map.addLayer(new DebugLayer());
-
 });
-
-
