@@ -19,6 +19,7 @@ const helpMessage = chalk`
 `;
 
 const ARGS = {
+    ...Cli.StdArgs,
     '--zoom': Number,
     '--output': String,
     '--html': Boolean,

@@ -21,6 +21,21 @@ export interface CliResultMap {
     title?: string;
     keys: (CLiResultMapLine | null)[];
 }
+export const StdArgs = {
+    '--help': Boolean,
+    '--file': String,
+    '--url': String,
+    '--v': Boolean,
+    '--vv': Boolean,
+    '--vvv': Boolean,
+    '--bs': Number,
+
+    '-f': '--file',
+    '-u': '--url',
+    '-h': '--help',
+    '-v': '--v',
+    '-V': '--vv',
+};
 
 export const Cli = {
     ChunkSize: 64 * 1024,
@@ -31,23 +46,9 @@ export const Cli = {
     --bs {underline bytes}           Chunk size (KB) default: 64KB
     --v|vv|vvv                       Increase logging verbosity
 `,
-    StdArgs: {
-        '--help': Boolean,
-        '--file': String,
-        '--url': String,
-        '--v': Boolean,
-        '--vv': Boolean,
-        '--vvv': Boolean,
-        '--bs': Number,
+    StdArgs,
 
-        '-f': '--file',
-        '-u': '--url',
-        '-h': '--help',
-        '-v': '--v',
-        '-V': '--vv',
-    },
-
-    setupLogging(args: Record<string, any>): void {
+    setupLogging(args: arg.Result<typeof StdArgs>): void {
         if (args['--v']) {
             LoggerConfig.level = Log.INFO;
         } else if (args['--vv']) {
@@ -67,7 +68,7 @@ export const Cli = {
         process.exit(2);
     },
 
-    getSource(args: Record<string, any>): CogSource | null {
+    getSource(args: arg.Result<typeof StdArgs>): CogSource | null {
         const fileName = args['--file'];
         if (fileName != null) {
             return new CogSourceFile(fileName);
@@ -80,12 +81,8 @@ export const Cli = {
         return null;
     },
 
-    async process<T>(argList: T, helpMessage: string) {
-        const fullArgs = {
-            ...Cli.StdArgs,
-            ...argList,
-        };
-        const args = arg(fullArgs);
+    async process<T extends arg.Spec>(argList: T, helpMessage: string) {
+        const args = arg(argList);
         if (args['--help']) {
             throw Cli.fail(helpMessage);
         }
@@ -97,9 +94,11 @@ export const Cli = {
 
         Cli.setupLogging(args);
 
-        const bs = args['--bs'] || Cli.ChunkSize;
+        const bs = args['--bs'];
         if (typeof bs == 'number' && !isNaN(bs)) {
             source.chunkSize = bs * 1024;
+        } else {
+            source.chunkSize = Cli.ChunkSize;
         }
         const tif = new CogTif(source);
         await tif.init();
