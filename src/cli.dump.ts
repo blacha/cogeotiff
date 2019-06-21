@@ -6,6 +6,7 @@ import { Logger } from './util/util.log';
 import { toByteSizeString } from './util/util.bytes';
 import { TiffVersion } from './read/tif';
 import { CogTif } from './cog.tif';
+import { MimeType } from './read/tif';
 
 const helpMessage = chalk`
   {bold USAGE}
@@ -28,29 +29,43 @@ const ARGS = {
     '-o': '--output',
 };
 
-function getTileName(zoom: number, x: number, y: number) {
+const FileExtension: { [key: string]: string } = {
+    [MimeType.JPEG]: 'jpeg',
+    [MimeType.JP2]: 'jp2',
+    [MimeType.WEBP]: 'webp',
+};
+
+function getTileName(mimeType: string, zoom: number, x: number, y: number) {
     const xS = `${x}`.padStart(3, '0');
     const yS = `${y}`.padStart(3, '0');
-    return `${xS}_${yS}_z${zoom}.webp`;
+
+    const fileExt: string = FileExtension[mimeType];
+    if (fileExt == null) {
+        throw new Error(`Unable to process tile type:${mimeType}`);
+    }
+
+    return `${xS}_${yS}_z${zoom}.${fileExt}`;
 }
 
 async function writeTile(tif: CogTif, x: number, y: number, zoom: number, output: string) {
     const tile = await tif.getTileRaw(x, y, zoom);
-    const fileName = getTileName(zoom, x, y);
     if (tile == null) {
         Logger.error('Unable to write file, missing data..');
         return;
     }
+    const fileName = getTileName(tile.mimeType, zoom, x, y);
     fs.writeFile(path.join(output, fileName), tile.bytes);
     Logger.debug({ fileName }, 'WriteFile');
 }
 
 async function run() {
     const { tif, args } = await Cli.process(ARGS, helpMessage);
+
     const zoom = args['--zoom'];
     if (zoom == null) {
         throw Cli.fail(helpMessage, 'Missing zoom\n');
     }
+
     const outputPath = args['--output'];
     if (outputPath == null) {
         throw Cli.fail(helpMessage, 'Missing output\n');
@@ -60,9 +75,11 @@ async function run() {
     if (img == null) {
         throw Cli.fail(helpMessage, `Zoom too high max:  ${tif.images.length - 1}\n`);
     }
+
     if (!img.isTiled()) {
         throw Cli.fail(helpMessage, `Tiff is not tiled\n`);
     }
+
     const tileCount = img.tileCount;
 
     const output = path.join(outputPath, `z${zoom}`);
@@ -89,7 +106,12 @@ async function run() {
             html.push('\t<div style="display:flex;">');
 
             for (let x = 0; x < tileCount.nx; x++) {
-                html.push(`\t\t<img src="./${getTileName(zoom, x, y)}" >`);
+                const tile = await tif.getTileRaw(x, y, zoom);
+                if (tile == null) {
+                    continue;
+                }
+
+                html.push(`\t\t<img src="./${getTileName(tile.mimeType, zoom, x, y)}" >`);
             }
 
             html.push('\t</div>');
