@@ -69,7 +69,7 @@ export class CogSourceUrl extends CogSource {
                 headers: {
                     Range: fetchRange,
                 },
-            })
+            });
 
             if (!response.ok) {
                 Logger.error(

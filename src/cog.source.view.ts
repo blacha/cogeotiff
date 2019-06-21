@@ -1,6 +1,5 @@
 import { CogSource } from './cog.source';
 import { ByteSize } from './read/byte.size';
-import * as ieee754 from 'ieee754';
 
 export class CogSourceView {
     source: CogSource;

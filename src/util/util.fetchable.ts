@@ -1,14 +1,13 @@
 export type FetchFunc<T> = () => Promise<T>;
 
 /**
- * Lazily fetch data as requried
+ * Lazily fetch data as required
  */
 export class Fetchable<T = any> {
     /** Raw value if the value has been fetched */
     private _value: T | null = null;
-    /** If the last fech errored */
+    /** If the last fetch errored */
     private _error: Error | null = null;
-    /**  */
     private _valuePromise: Promise<T> | null = null;
     private fetchFunc: FetchFunc<T | null>;
 
@@ -28,6 +27,11 @@ export class Fetchable<T = any> {
      */
     get value(): T | null {
         return this._value;
+    }
+
+    /** Last reported error if it exists */
+    get error(): Error | null {
+        return this._error;
     }
 
     /**

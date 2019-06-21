@@ -75,6 +75,7 @@ export class CogTifTag<T = any> {
         return this.view.uint32At(valueOffset);
     }
 
+    /** Is the value of this tag inline, or is it a pointer to the real value */
     get isValueInline() {
         return this.dataLength <= this.source.config.pointer;
     }
@@ -83,6 +84,11 @@ export class CogTifTag<T = any> {
         return this.source.config.ifd;
     }
 
+    /**
+     * Assume the value is a pointer and load the bytes at the pointer
+     *
+     * TODO Ideally we should only load the bytes we care about
+     */
     async loadValueFromPtr() {
         await this.source.loadBytes(this.valuePointer, this.dataLength);
         return this.convertValue(this.valuePointer);

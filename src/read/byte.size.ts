@@ -1,3 +1,6 @@
+/**
+ * Number of bytes used to represent each type of number
+ */
 export enum ByteSize {
     UInt8 = 1,
     UInt16 = 2,

@@ -67,6 +67,9 @@ export class CogTifImage {
         return [Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2)];
     }
 
+    /**
+     * Get the compression used by the tile
+     */
     get compression() {
         const compression = this.value(TiffTag.Compression);
         if (compression == null || typeof compression !== 'number') {
@@ -75,6 +78,9 @@ export class CogTifImage {
         return TiffCompression[compression];
     }
 
+    /**
+     * Get the size of the image
+     */
     get size(): Size {
         return {
             width: this.value(TiffTag.ImageWidth),
@@ -82,14 +88,23 @@ export class CogTifImage {
         };
     }
 
+    /**
+     * Get the list of IFD tags that were read
+     */
     get tagList(): string[] {
         return [...this.tags.keys()].map(c => TiffTag[c]);
     }
 
+    /**
+     * Determine if this image is tiled
+     */
     isTiled() {
         return this.value(TiffTag.TileWidth) !== null;
     }
 
+    /**
+     * Get tiling information
+     */
     get tileInfo(): Size {
         return {
             width: this.value(TiffTag.TileWidth),

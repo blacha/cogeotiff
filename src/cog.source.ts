@@ -6,11 +6,12 @@ import { TiffIfdEntry } from './read/tif.ifd';
 import { CogSourceChunk } from './source/cog.source.chunk';
 import { Logger } from './util/util.log';
 
+/** Shifting `<< 32` does not work in javascript */
 const POW_32 = 2 ** 32;
 
 export abstract class CogSource {
+    /** Split the Tif into chunks to be read  */
     abstract chunkSize: number;
-
     _chunks: CogSourceChunk[] = [];
 
     isLittleEndian = true;
@@ -49,6 +50,7 @@ export abstract class CogSource {
         return (intA << 8) + intB;
     }
 
+    /** Read a UInt32 at the offset */
     uint32(offset: number): number {
         const intA = this.uint8(offset);
         const intB = this.uint8(offset + 1);
@@ -82,10 +84,10 @@ export abstract class CogSource {
             const lastChunk = this.getChunk(offset + count - 1);
             if (firstChunk.id === lastChunk.id) {
                 const startOffset = offset - firstChunk.offset;
-                return firstChunk.view.buffer.slice(startOffset, startOffset + count)
+                return firstChunk.view.buffer.slice(startOffset, startOffset + count);
             } else {
                 // TODO it would be nice to use the same slicing across multiple buffers
-                Logger.debug({ firstChunk: firstChunk.id, lastChunk: lastChunk.id }, 'Cross chunk buffer')
+                Logger.debug({ firstChunk: firstChunk.id, lastChunk: lastChunk.id }, 'Cross chunk buffer');
             }
         }
 
@@ -103,12 +105,18 @@ export abstract class CogSource {
         return ieee754.read(this.bytes(offset, ByteSize.Double), 0, this.isLittleEndian, 52, 8);
     }
 
-    // Tiff:UInt32 or BigTiff:UInt64
+    /**
+     * Fetch a pointer offset, this could be a UInt32 (Tif) or UInt64 (BigTif)
+     * @param offset byte offset to fetch at
+     */
     pointer(offset: number) {
         return this.uint(offset, this.config.pointer);
     }
 
-    // Tiff:UInt16 or BigTiff:UInt64
+    /**
+     * Fetch a offset, this could be a UInt16 (Tif) or UInt64 (BigTif)
+     * @param offset byte offset to fetch at
+     */
     offset(offset: number) {
         return this.uint(offset, this.config.offset);
     }
@@ -126,6 +134,10 @@ export abstract class CogSource {
         }
     }
 
+    /**
+     * find the chunk for the given offset
+     * @param offset byte offset to get the chunk for
+     */
     getChunk(offset: number) {
         return this.chunk(Math.floor(offset / this.chunkSize));
     }
@@ -142,6 +154,11 @@ export abstract class CogSource {
         return new CogSourceView(this, offset);
     }
 
+    /**
+     * Determine the required chunks for a given request
+     * @param offset starting byte offset
+     * @param count number of bytes to read
+     */
     getRequiredChunks(offset: number, count: number): CogSourceChunk[] {
         const startChunk = Math.floor(offset / this.chunkSize);
         const endChunk = Math.ceil((offset + count) / this.chunkSize) - 1;
@@ -164,6 +181,16 @@ export abstract class CogSource {
         return true;
     }
 
+    /**
+     * Load the required bytes from the source
+     *
+     * @remarks
+     * This will load a minimum of @see this.chunkSize amount of bytes
+     * if we do not have the bytes cached
+     *
+     * @param offset byte offset to start loading from
+     * @param count  number of bytes required
+     */
     async loadBytes(offset: number, count: number): Promise<void> {
         const chunks = this.getRequiredChunks(offset, count);
         await Promise.all(chunks.map(c => c.fetch));

@@ -1,5 +1,12 @@
 const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 
+/**
+ * Convert a byte count into human readable byte numbers
+ *
+ * eg 1024 => 1KB
+ *
+ * @param bytes  byte count to convert
+ */
 export function toByteSizeString(bytes: number) {
     if (bytes == 1) return '1 Byte';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
