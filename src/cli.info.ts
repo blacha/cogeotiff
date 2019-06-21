@@ -27,7 +27,7 @@ async function run() {
                     key: 'Bytes read',
                     value: `${toByteSizeString(chunkIds.length * tif.source.chunkSize)} (${chunkIds.length} Chunk${
                         chunkIds.length === 1 ? '' : 's'
-                        })`,
+                    })`,
                 },
             ],
         },
@@ -61,9 +61,9 @@ async function run() {
                 isCogOptimized ? { key: 'Tile order', value: tif.options.tileOrder } : null,
                 isCogOptimized
                     ? {
-                        key: 'Tile leader',
-                        value: `${tif.options.tileLeader} - ${tif.options.tileLeaderByteSize} Bytes`,
-                    }
+                          key: 'Tile leader',
+                          value: `${tif.options.tileLeader} - ${tif.options.tileLeaderByteSize} Bytes`,
+                      }
                     : null,
                 isCogOptimized ? { key: 'Mask interleaved', value: tif.options.isMaskInterleaved } : null,
             ],

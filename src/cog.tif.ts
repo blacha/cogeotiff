@@ -91,9 +91,21 @@ export class CogTif {
             return null;
         }
 
-        const offset = tileOffsets[idx];
-        const byteCount = byteCounts[idx];
+        let offset: number;
+        let byteCount: number;
+        // if there is only one tile the offsets are not a array
+        // they are a direct reference to the tile
+        if (idx === 0 && typeof tileOffsets === 'number') {
+            offset = tileOffsets;
+            byteCount = byteCounts;
+        } else {
+            offset = tileOffsets[idx];
+            byteCount = byteCounts[idx];
+        }
 
+        if (typeof offset !== 'number' || typeof byteCount !== 'number') {
+            throw new Error(`Invalid tile offset ${offset} count: ${byteCount}`);
+        }
         await this.source.loadBytes(offset, byteCount);
         return { mimeType, bytes: new Uint8Array(this.source.bytes(offset, byteCount)) };
     }
