@@ -63,36 +63,37 @@ export class CogSourceUrl extends CogSource {
                 { firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange },
                 'HTTPGet',
             );
-            const promise = CogSourceUrl.fetch(this.url, {
+            // TODO putting this in a promise queue to do multiple requests
+            // at a time would be a good idea.
+            const response = await CogSourceUrl.fetch(this.url, {
                 headers: {
                     Range: fetchRange,
                 },
-            }).then(async response => {
-                if (!response.ok) {
-                    Logger.error(
-                        {
-                            status: response.status,
-                            statusText: response.statusText,
-                            url: this.url,
-                        },
-                        'Failed to fetch',
-                    );
-                    throw new Error('Failed to fetch');
-                }
-                const buffer: ArrayBuffer = await response.arrayBuffer();
-                if (chunkRange.length == 1) {
-                    output[chunkRange[0]] = buffer;
-                    return;
-                }
+            })
 
-                const rootOffset = firstChunk * this.chunkSize;
-                for (const chunkId of chunkRange) {
-                    const chunkOffset = chunkId * this.chunkSize - rootOffset;
-                    output[chunkId] = buffer.slice(chunkOffset, chunkOffset + this.chunkSize);
-                }
-            });
+            if (!response.ok) {
+                Logger.error(
+                    {
+                        status: response.status,
+                        statusText: response.statusText,
+                        url: this.url,
+                    },
+                    'Failed to fetch',
+                );
+                throw new Error('Failed to fetch');
+            }
 
-            fetches.push(promise);
+            const buffer: ArrayBuffer = await response.arrayBuffer();
+            if (chunkRange.length == 1) {
+                output[chunkRange[0]] = buffer;
+                continue;
+            }
+
+            const rootOffset = firstChunk * this.chunkSize;
+            for (const chunkId of chunkRange) {
+                const chunkOffset = chunkId * this.chunkSize - rootOffset;
+                output[chunkId] = buffer.slice(chunkOffset, chunkOffset + this.chunkSize);
+            }
         }
 
         await Promise.all(fetches);
