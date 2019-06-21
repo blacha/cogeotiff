@@ -1,9 +1,10 @@
+import * as ieee754 from 'ieee754';
+import { CogSourceView } from './cog.source.view';
 import { ByteSize } from './read/byte.size';
 import { TiffVersion } from './read/tif';
 import { TiffIfdEntry } from './read/tif.ifd';
 import { CogSourceChunk } from './source/cog.source.chunk';
-import { CogSourceView } from './cog.source.view';
-import * as ieee754 from 'ieee754';
+import { Logger } from './util/util.log';
 
 const POW_32 = 2 ** 32;
 
@@ -22,16 +23,24 @@ export abstract class CogSource {
     get config() {
         return TiffIfdEntry[this.version];
     }
+
+    /**
+     * Get the list of chunks that have been read in
+     */
+    get chunksRead(): string[] {
+        return Object.keys(this._chunks).filter(f => this.chunk(parseInt(f, 10)).isReady());
+    }
+
     /**
      *  @param offset Offset relative to the view
      */
-    uint8(offset: number) {
+    uint8(offset: number): number {
         const chunk = this.getChunk(offset);
         return chunk.view.getUint8(offset - chunk.offset);
     }
 
     /** Read a UInt16 at the offset */
-    uint16(offset: number) {
+    uint16(offset: number): number {
         const intA = this.uint8(offset);
         const intB = this.uint8(offset + ByteSize.UInt8);
         if (this.isLittleEndian) {
@@ -40,7 +49,7 @@ export abstract class CogSource {
         return (intA << 8) + intB;
     }
 
-    uint32(offset: number) {
+    uint32(offset: number): number {
         const intA = this.uint8(offset);
         const intB = this.uint8(offset + 1);
         const intC = this.uint8(offset + 2);
@@ -52,7 +61,8 @@ export abstract class CogSource {
     }
 
     // This is not precise for large numbers
-    uint64(offset: number) {
+    // TODO Ideally switch to bigint for offsets
+    uint64(offset: number): number {
         const intA = this.uint32(offset);
         const intB = this.uint32(offset + ByteSize.UInt32);
         if (this.isLittleEndian) {
@@ -61,10 +71,27 @@ export abstract class CogSource {
         return intA * POW_32 + intB;
     }
 
-    bytes(offset: number, count: number) {
-        const output = [];
+    // TODO this is not really a great way of grabbing a large
+    // number of bytes, ideally we should create slices of each DataView
+    // and reduce the number of function calls
+    bytes(offset: number, count: number): ArrayBuffer {
+        // Large fetches on the same chunk should use the buffer slice
+        // to reduce the number of .unit8 calls required to make the buffer
+        if (count > 8) {
+            const firstChunk = this.getChunk(offset);
+            const lastChunk = this.getChunk(offset + count - 1);
+            if (firstChunk.id === lastChunk.id) {
+                const startOffset = offset - firstChunk.offset;
+                return firstChunk.view.buffer.slice(startOffset, startOffset + count)
+            } else {
+                // TODO it would be nice to use the same slicing across multiple buffers
+                Logger.debug({ firstChunk: firstChunk.id, lastChunk: lastChunk.id }, 'Cross chunk buffer')
+            }
+        }
+
+        const output = new Uint8Array(count);
         for (let i = 0; i < count; i++) {
-            output.push(this.uint8(offset + i));
+            output[i] = this.uint8(offset + i);
         }
         return output;
     }
