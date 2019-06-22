@@ -1,10 +1,11 @@
 import { CogSource } from './cog.source';
 import { CogTifImage } from './cog.tif.image';
-import { TiffEndian, TiffTag, TiffVersion } from './read/tif';
+import { TiffEndian, TiffTag, TiffVersion, TiffCompression } from './read/tif';
 import { CogTifGhostOptions } from './read/tif.gdal';
 import { toHexString } from './util/util.hex';
 import { Logger } from './util/util.log';
 import { CogTifTag } from './read/cog.tif.tag';
+import { MimeType } from './read/tif'
 
 export class CogTif {
     source: CogSource;
@@ -21,6 +22,8 @@ export class CogTif {
         await this.fetchIfd();
         return this;
     }
+
+
 
     async fetchIfd() {
         const view = this.source.getView(0);
@@ -104,10 +107,24 @@ export class CogTif {
         }
 
         if (typeof offset !== 'number' || typeof byteCount !== 'number') {
-            throw new Error(`Invalid tile offset ${offset} count: ${byteCount}`);
+            throw new Error(`Invalid tile offset:${offset} count: ${byteCount}`);
         }
         await this.source.loadBytes(offset, byteCount);
-        return { mimeType, bytes: new Uint8Array(this.source.bytes(offset, byteCount)) };
+        const bytes = this.source.bytes(offset, byteCount);
+        if (image.compression == MimeType.JPEG) {
+            const tables: number[] = image.value(TiffTag.JPEGTables)
+            // Both the JPEGTable and the Bytes with have the start of image and end of image markers
+
+            // SOI 0xffd8 EOI 0xffd9
+            // Remove EndOfImage marker
+            const tableData = tables.slice(0, tables.length - 2);
+            const actualBytes = new Uint8Array(bytes.byteLength + tableData.length - 2);
+            actualBytes.set(tableData, 0)
+            actualBytes.set(bytes.slice(2), tableData.length);
+
+            return { mimeType, bytes: actualBytes }
+        }
+        return { mimeType, bytes: new Uint8Array(bytes) };
     }
 
     async processIfd(offset: number) {

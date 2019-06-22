@@ -76,7 +76,7 @@ export abstract class CogSource {
     // TODO this is not really a great way of grabbing a large
     // number of bytes, ideally we should create slices of each DataView
     // and reduce the number of function calls
-    bytes(offset: number, count: number): ArrayBuffer {
+    bytes(offset: number, count: number): Uint8Array {
         // Large fetches on the same chunk should use the buffer slice
         // to reduce the number of .unit8 calls required to make the buffer
         if (count > 8) {
@@ -84,7 +84,7 @@ export abstract class CogSource {
             const lastChunk = this.getChunk(offset + count - 1);
             if (firstChunk.id === lastChunk.id) {
                 const startOffset = offset - firstChunk.offset;
-                return firstChunk.view.buffer.slice(startOffset, startOffset + count);
+                return new Uint8Array(firstChunk.view.buffer.slice(startOffset, startOffset + count));
             } else {
                 // TODO it would be nice to use the same slicing across multiple buffers
                 Logger.debug({ firstChunk: firstChunk.id, lastChunk: lastChunk.id }, 'Cross chunk buffer');

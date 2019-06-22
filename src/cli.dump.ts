@@ -129,9 +129,8 @@ async function run() {
                 { key: 'Chunk size', value: toByteSizeString(tif.source.chunkSize) },
                 {
                     key: 'Bytes read',
-                    value: `${toByteSizeString(chunkIds.length * tif.source.chunkSize)} (${chunkIds.length} Chunk${
-                        chunkIds.length === 1 ? '' : 's'
-                    })`,
+                    value: `${toByteSizeString(chunkIds.length * tif.source.chunkSize)} ` +
+                        `(${chunkIds.length} Chunk${chunkIds.length === 1 ? '' : 's'})`,
                 },
             ],
         },
