@@ -1,6 +1,6 @@
 {
   "name": "coginfo",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "build/src/index.js",
   "scripts": {
     "build": "tsc --pretty",
