@@ -30,6 +30,10 @@ export class CogTifTag<T = any> {
         return new CogTifTagBig(source, offset);
     }
 
+    get isReady() {
+        return this.valueFetch.isFetching && this.valueFetch.value != null;
+    }
+
     get value() {
         return this.valueFetch.value;
     }

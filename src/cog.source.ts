@@ -74,9 +74,7 @@ export abstract class CogSource {
         return intA * POW_32 + intB;
     }
 
-
     bytes(offset: number, count: number): Uint8Array {
-
         const firstChunk = this.getChunk(offset);
 
         if (firstChunk.contains(offset + count)) {
@@ -92,12 +90,12 @@ export abstract class CogSource {
         for (const chunk of chunks) {
             const startRead = offset + outputOffset;
             const endRead = Math.min(endOffset, chunk.offsetEnd);
-            const chunkBuffer = chunk.buffer.slice(startRead - chunk.offset, endRead - chunk.offset)
-            output.set(new Uint8Array(chunkBuffer), outputOffset)
-            outputOffset += chunkBuffer.byteLength
+            const chunkBuffer = chunk.buffer.slice(startRead - chunk.offset, endRead - chunk.offset);
+            output.set(new Uint8Array(chunkBuffer), outputOffset);
+            outputOffset += chunkBuffer.byteLength;
         }
 
-        return output
+        return output;
     }
 
     float(offset: number) {

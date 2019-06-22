@@ -1,7 +1,7 @@
+import 'source-map-support/register';
+
 import * as o from 'ospec';
 import { CogSourceUrl } from '../src/source/cog.source.web';
-
-import 'source-map-support/register';
 import { LoggerConfig } from '../src/util/util.log';
 import { LogLevel } from 'bblog';
 

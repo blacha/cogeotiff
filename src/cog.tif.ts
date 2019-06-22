@@ -5,7 +5,7 @@ import { CogTifGhostOptions } from './read/tif.gdal';
 import { toHexString } from './util/util.hex';
 import { Logger } from './util/util.log';
 import { CogTifTag } from './read/cog.tif.tag';
-import { MimeType } from './read/tif'
+import { MimeType } from './read/tif';
 
 export class CogTif {
     source: CogSource;
@@ -22,8 +22,6 @@ export class CogTif {
         await this.fetchIfd();
         return this;
     }
-
-
 
     async fetchIfd() {
         const view = this.source.getView(0);
@@ -112,17 +110,17 @@ export class CogTif {
         await this.source.loadBytes(offset, byteCount);
         const bytes = this.source.bytes(offset, byteCount);
         if (image.compression == MimeType.JPEG) {
-            const tables: number[] = image.value(TiffTag.JPEGTables)
+            const tables: number[] = image.value(TiffTag.JPEGTables);
             // Both the JPEGTable and the Bytes with have the start of image and end of image markers
 
             // SOI 0xffd8 EOI 0xffd9
             // Remove EndOfImage marker
             const tableData = tables.slice(0, tables.length - 2);
             const actualBytes = new Uint8Array(bytes.byteLength + tableData.length - 2);
-            actualBytes.set(tableData, 0)
+            actualBytes.set(tableData, 0);
             actualBytes.set(bytes.slice(2), tableData.length);
 
-            return { mimeType, bytes: actualBytes }
+            return { mimeType, bytes: actualBytes };
         }
         return { mimeType, bytes: new Uint8Array(bytes) };
     }
