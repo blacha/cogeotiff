@@ -5,6 +5,7 @@ import { TiffVersion } from './read/tif';
 import { TiffIfdEntry } from './read/tif.ifd';
 import { CogSourceChunk } from './source/cog.source.chunk';
 import { Logger } from './util/util.log';
+import { toHexString } from './util/util.hex';
 
 /** Shifting `<< 32` does not work in javascript */
 const POW_32 = 2 ** 32;
@@ -73,29 +74,30 @@ export abstract class CogSource {
         return intA * POW_32 + intB;
     }
 
-    // TODO this is not really a great way of grabbing a large
-    // number of bytes, ideally we should create slices of each DataView
-    // and reduce the number of function calls
+
     bytes(offset: number, count: number): Uint8Array {
-        // Large fetches on the same chunk should use the buffer slice
-        // to reduce the number of .unit8 calls required to make the buffer
-        if (count > 8) {
-            const firstChunk = this.getChunk(offset);
-            const lastChunk = this.getChunk(offset + count - 1);
-            if (firstChunk.id === lastChunk.id) {
-                const startOffset = offset - firstChunk.offset;
-                return new Uint8Array(firstChunk.view.buffer.slice(startOffset, startOffset + count));
-            } else {
-                // TODO it would be nice to use the same slicing across multiple buffers
-                Logger.debug({ firstChunk: firstChunk.id, lastChunk: lastChunk.id }, 'Cross chunk buffer');
-            }
+
+        const firstChunk = this.getChunk(offset);
+
+        if (firstChunk.contains(offset + count)) {
+            const startOffset = offset - firstChunk.offset;
+            return new Uint8Array(firstChunk.view.buffer.slice(startOffset, startOffset + count));
         }
 
         const output = new Uint8Array(count);
-        for (let i = 0; i < count; i++) {
-            output[i] = this.uint8(offset + i);
+        const endOffset = offset + count;
+
+        const chunks = this.getRequiredChunks(offset, count);
+        let outputOffset = 0;
+        for (const chunk of chunks) {
+            const startRead = offset + outputOffset;
+            const endRead = Math.min(endOffset, chunk.offsetEnd);
+            const chunkBuffer = chunk.buffer.slice(startRead - chunk.offset, endRead - chunk.offset)
+            output.set(new Uint8Array(chunkBuffer), outputOffset)
+            outputOffset += chunkBuffer.byteLength
         }
-        return output;
+
+        return output
     }
 
     float(offset: number) {
