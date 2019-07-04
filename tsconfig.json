@@ -5,7 +5,8 @@
         "removeComments": true,
         "outDir": "build/",
         "sourceMap": true,
-        "strict": true
+        "strict": true,
+        "declaration": true
     },
     "exclude": [
         "build/",
