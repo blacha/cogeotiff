@@ -17,7 +17,7 @@ This is a work in progress and likely will not work
 Display basic information about COG
 
 ```shell
-coginfo --file webp.cog.tif
+coginfo info --file webp.cog.tif
 ```
 
 Output:
@@ -51,7 +51,7 @@ COG File Info - /home/blacha/Downloads/tif-new/bg43.webp.cog.tif
 Dump all tiles for a zoom level (**Warning** if you do this for a large cog this will create millions of files.)
 
 ```
-cogdump --file webp.cog.tif --zoom 2 --output output --html
+coginfo dump --file webp.cog.tif --zoom 2 --output output
 ```
 
 

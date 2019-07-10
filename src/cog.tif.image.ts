@@ -29,22 +29,19 @@ export class CogTifImage {
         return sourceTag.fetch;
     }
 
-    get origin() {
+    get origin(): number[] {
         const tiePoints: number[] | null = this.value(TiffTag.ModelTiepoint);
-        if (tiePoints == null) {
-            return null;
+        if (tiePoints == null || tiePoints.length !== 6) {
+            throw new Error('Tiff image does not have a ModelTiepoint');
         }
 
-        if (tiePoints && tiePoints.length === 6) {
-            return tiePoints.slice(3);
-        }
-        return null;
+        return tiePoints.slice(3);
     }
 
-    get resolution() {
+    get resolution(): number[] {
         const modelPixelScale: number[] | null = this.value(TiffTag.ModelPixelScale);
         if (modelPixelScale == null) {
-            return null;
+            throw new Error('Tiff image does not have a ModelPixelScale');
         }
         return [modelPixelScale[0], -modelPixelScale[1], modelPixelScale[2]];
     }

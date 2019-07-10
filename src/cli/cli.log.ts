@@ -21,7 +21,7 @@ function getLogStatus(level: LogLevel | number): string {
     return chalk.bgRed('FATAL');
 }
 
-/** Dont print these keys */
+/** Don't print these keys */
 const IGNORE_KEYS: { [key: string]: boolean } = {
     pid: true,
     time: true,
