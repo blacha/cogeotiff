@@ -24,7 +24,7 @@ export class CogSourceUrl extends CogSource {
         if (ranges.length === 0) {
             return [];
         }
-        const sortedRange = ranges.map(c => parseInt(c, 10)).sort();
+        const sortedRange = ranges.map(c => parseInt(c, 10)).sort((a, b) => a - b);
 
         const groups: number[][] = [];
         let current: number[] = [];
