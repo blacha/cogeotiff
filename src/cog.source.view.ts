@@ -29,6 +29,9 @@ export class CogSourceView {
     bytes(count: number) {
         return this.source.bytes(this.seek(count), count);
     }
+    uint(size: number) {
+        return this.source.uint(this.seek(size), size);
+    }
     uint8() {
         return this.source.uint8(this.seek(ByteSize.UInt8));
     }
@@ -56,6 +59,9 @@ export class CogSourceView {
 
     bytesAt(offset: number, count: number) {
         return this.source.bytes(this.byteOffset + offset, count);
+    }
+    uintAt(offset: number, size: number) {
+        return this.source.uint(this.byteOffset + offset, size);
     }
     uint8At(offset: number) {
         return this.source.uint8(this.byteOffset + offset);

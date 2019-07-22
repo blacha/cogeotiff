@@ -1,47 +1,18 @@
-import { CommandLineAction, CommandLineStringParameter, CommandLineIntegerParameter } from '@microsoft/ts-command-line';
-import { ActionUtil, CliResultMap } from './action.util';
-import * as path from 'path';
-import { Logger } from '../util/util.log';
-import { promises as fs } from 'fs';
-import { CogTif } from '../cog.tif';
-import { MimeType, TiffVersion } from '../read/tif';
-import { toByteSizeString } from '../util/util.bytes';
+import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
-import { CogTifImage } from '../cog.tif.image';
-
-const FileExtension: { [key: string]: string } = {
-    [MimeType.JPEG]: 'jpeg',
-    [MimeType.JP2]: 'jp2',
-    [MimeType.WEBP]: 'webp',
-};
+import { promises as fs } from 'fs';
+import * as path from 'path';
+import { CogTif } from '../cog.tif';
+import { TiffVersion } from '../read/tif';
+import { toByteSizeString } from '../util/util.bytes';
+import { Logger } from '../util/util.log';
+import { TileUtil } from '../util/util.tile';
+import { ActionUtil, CliResultMap } from './action.util';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
 function toLatLng(x: number, y: number) {
     return [(x * Rad2Deg) / A, (Math.PI * 0.5 - 2.0 * Math.atan(Math.exp(-y / A))) * Rad2Deg];
-}
-
-function getTileName(mimeType: string, zoom: number, x: number, y: number) {
-    const xS = `${x}`.padStart(3, '0');
-    const yS = `${y}`.padStart(3, '0');
-
-    const fileExt: string = FileExtension[mimeType];
-    if (fileExt == null) {
-        throw new Error(`Unable to process tile type:${mimeType}`);
-    }
-
-    return `${xS}_${yS}_z${zoom}.${fileExt}`;
-}
-
-async function writeTile(tif: CogTif, x: number, y: number, zoom: number, output: string) {
-    const tile = await tif.getTileRaw(x, y, zoom);
-    if (tile == null) {
-        Logger.error('Unable to write file, missing data..');
-        return;
-    }
-    const fileName = getTileName(tile.mimeType, zoom, x, y);
-    fs.writeFile(path.join(output, fileName), tile.bytes);
-    Logger.debug({ fileName }, 'WriteFile');
 }
 
 export interface GeoJsonPolygon {
@@ -85,6 +56,9 @@ export class ActionDumpTile extends CommandLineAction {
     async dumpBounds(tif: CogTif, output: string, zoom: number) {
         Logger.info({ zoom }, 'CreateTileBounds');
         const img = tif.getImage(zoom);
+        if (!img.isTiled()) {
+            return;
+        }
 
         const features: GeoJsonPolygon[] = [];
         const featureCollection = {
@@ -120,6 +94,10 @@ export class ActionDumpTile extends CommandLineAction {
     async dumpIndex(tif: CogTif, output: string, zoom: number) {
         Logger.info({ zoom }, 'CreateIndexHtml');
         const img = tif.getImage(zoom);
+        if (!img.isTiled()) {
+            return;
+        }
+
         const tileCount = img.tileCount;
 
         const html = ['<html>'];
@@ -131,7 +109,7 @@ export class ActionDumpTile extends CommandLineAction {
                     continue;
                 }
 
-                html.push(`\t\t<img src="./${getTileName(tile.mimeType, zoom, x, y)}" >`);
+                html.push(`\t\t<img src="./${TileUtil.name(tile.mimeType, zoom, x, y)}" >`);
             }
 
             html.push('\t</div>');
@@ -143,20 +121,25 @@ export class ActionDumpTile extends CommandLineAction {
     async dumpTiles(tif: CogTif, output: string, zoom: number) {
         const promises: Promise<void>[] = [];
         const img = tif.getImage(zoom);
+        if (!img.isTiled()) {
+            return;
+        }
 
         Logger.info({ ...img.tileInfo, ...img.tileCount }, 'TileInfo');
         const tileCount = img.tileCount;
 
+        // Load all offsets in
+        await img.tileOffset.load();
+
         for (let x = 0; x < tileCount.nx; x++) {
             for (let y = 0; y < tileCount.ny; y++) {
                 // TODO should limit how many of these we run at a time
-                promises.push(writeTile(tif, x, y, zoom, output));
+                promises.push(TileUtil.write(tif, x, y, zoom, output));
                 this.outputCount++;
             }
         }
-        await Promise.all(promises);
 
-        Logger.info({ zoom }, 'CreateTileBounds');
+        await Promise.all(promises);
     }
 
     async onExecute(): Promise<void> {
@@ -179,11 +162,10 @@ export class ActionDumpTile extends CommandLineAction {
 
         const output = path.join(this.output.value, `z${zoom}`);
         await fs.mkdir(output, { recursive: true });
+
         await this.dumpTiles(tif, output, zoom);
         await this.dumpIndex(tif, output, zoom);
-        for (let i = 0; i < tif.images.length; i++) {
-            await this.dumpBounds(tif, this.output.value, i);
-        }
+        await this.dumpBounds(tif, this.output.value, zoom);
 
         const chunkIds = Object.keys(tif.source._chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
         const result: CliResultMap[] = [

@@ -23,7 +23,7 @@ o.spec('CogSourceUrl', () => {
     let source: CogSourceUrl;
     let ranges: string[];
 
-    // FAke fetch that returns the number of the byte that was requested
+    // Fake fetch that returns the number of the byte that was requested
     CogSourceUrl.fetch = (url: string, obj: Record<string, HttpHeaders>) => {
         const [startByte, endByte] = obj.headers.Range.split('=')[1]
             .split('-')

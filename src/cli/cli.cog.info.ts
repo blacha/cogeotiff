@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import { Log } from 'bblog';
 import { ChalkLogStream } from './cli.log';
 import { ActionCogInfo } from './action.info';
+import { ActionTile } from './action.tile';
 
 export class CogInfoCommandLine extends CommandLineParser {
     verbose = this.defineFlagParameter({
@@ -26,6 +27,7 @@ export class CogInfoCommandLine extends CommandLineParser {
 
         this.addAction(new ActionDumpTile());
         this.addAction(new ActionCogInfo());
+        this.addAction(new ActionTile());
     }
 
     protected onExecute(): Promise<void> {

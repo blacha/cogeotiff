@@ -1,8 +1,9 @@
 import { CogSource } from '../cog.source';
 import { Logger } from '../util/util.log';
+import { Timer } from '../util/util.timer';
 
 export class CogSourceUrl extends CogSource {
-    chunkSize = 16 * 1024;
+    chunkSize = 32 * 1024;
 
     url: string;
 
@@ -49,9 +50,13 @@ export class CogSourceUrl extends CogSource {
         this.toFetch = [];
         delete this.toFetchPromise;
 
-        const fetches: Promise<void>[] = [];
         const chunks = CogSourceUrl.getByteRanges(chunkIds);
         const output: ArrayBuffer[] = [];
+
+        if (chunks.length > 1) {
+            // TODO should multithread the fetches
+            Logger.warn({ count: chunks.length }, 'HTTPGet Multiple');
+        }
 
         for (const chunkRange of chunks) {
             const firstChunk = chunkRange[0];
@@ -63,6 +68,7 @@ export class CogSourceUrl extends CogSource {
                 { firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange },
                 'HTTPGet',
             );
+
             // TODO putting this in a promise queue to do multiple requests
             // at a time would be a good idea.
             const response = await CogSourceUrl.fetch(this.url, {
@@ -96,7 +102,6 @@ export class CogSourceUrl extends CogSource {
             }
         }
 
-        await Promise.all(fetches);
         return output;
     }
 
@@ -110,7 +115,7 @@ export class CogSourceUrl extends CogSource {
         this.toFetch[startChunk] = true;
 
         if (this.toFetchPromise == null) {
-            this.toFetchPromise = new Promise<void>(resolve => setTimeout(resolve, 5)).then(() => this.fetchData());
+            this.toFetchPromise = new Promise<void>(resolve => setImmediate(resolve)).then(() => this.fetchData());
         }
 
         return this.toFetchPromise.then(results => results[startChunk]);

@@ -1,8 +1,8 @@
 import { CommandLineAction, CommandLineStringParameter } from '@microsoft/ts-command-line';
-import { ActionUtil, CliResultMap } from './action.util';
+import chalk from 'chalk';
 import { TiffVersion } from '../read/tif';
 import { toByteSizeString } from '../util/util.bytes';
-import chalk from 'chalk';
+import { ActionUtil, CliResultMap } from './action.util';
 
 export class ActionCogInfo extends CommandLineAction {
     private file: CommandLineStringParameter | null = null;
@@ -18,10 +18,13 @@ export class ActionCogInfo extends CommandLineAction {
     async onExecute(): Promise<void> {
         // abstract
         const { tif } = await ActionUtil.getCogSource(this.file);
-        const chunkIds = Object.keys(tif.source._chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
+        // tif.options.options.clear()
         const [firstImage] = tif.images;
 
+        // return;
         const isCogOptimized = tif.options.isCogOptimized;
+        const chunkIds = Object.keys(tif.source._chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
+
         const result: CliResultMap[] = [
             {
                 keys: [
@@ -48,7 +51,7 @@ export class ActionCogInfo extends CommandLineAction {
                         key: 'Tiles',
                         value: tif.images
                             .map(i => {
-                                if (i.tileInfo == null) {
+                                if (!i.isTiled()) {
                                     return '';
                                 }
                                 return `${i.tileInfo.width}x${i.tileInfo.height} (${i.tileCount.total})`;

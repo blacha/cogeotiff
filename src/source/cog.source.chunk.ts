@@ -34,8 +34,8 @@ export class CogSourceChunk {
         this._view = new DataView(this._buffer);
     }
 
-    get fetch() {
-        return this.fetchable.fetch;
+    fetch(): Promise<CogSourceChunk> {
+        return this.fetchable.fetch();
     }
 
     isReady(): this is CogSourceChunkFetched {
@@ -48,6 +48,7 @@ export class CogSourceChunk {
         }
         throw new Error(`Chunk:${this.id} is not ready`);
     }
+
     get buffer(): ArrayBuffer {
         if (this.isReady()) {
             return this._buffer;

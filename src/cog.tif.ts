@@ -1,11 +1,11 @@
 import { CogSource } from './cog.source';
-import { CogTifImage } from './cog.tif.image';
-import { TiffEndian, TiffTag, TiffVersion, TiffCompression } from './read/tif';
+import { CogTifImage, CogTifImageTiled } from './cog.tif.image';
+import { CogTifTagFactory, CogTifTag } from './read/cog.tif.tag';
+import { TiffEndian, TiffVersion, TiffTag } from './read/tif';
 import { CogTifGhostOptions } from './read/tif.gdal';
 import { toHexString } from './util/util.hex';
 import { Logger } from './util/util.log';
-import { CogTifTag } from './read/cog.tif.tag';
-import { MimeType } from './read/tif';
+import { Timer } from './util/util.timer';
 
 export class CogTif {
     source: CogSource;
@@ -18,12 +18,17 @@ export class CogTif {
     }
 
     async init(): Promise<CogTif> {
-        await this.source.loadBytes(0, 1024);
+        Timer.start('init');
+        // Load the first few KB in, more loads will run as more data is required
+        await this.source.loadBytes(0, 4 * 1024);
         await this.fetchIfd();
+        Timer.end('init');
         return this;
     }
 
     async fetchIfd() {
+        Timer.start('init:ifd');
+
         const view = this.source.getView(0);
         const endian = view.uint16();
         this.source.isLittleEndian = endian === TiffEndian.LITTLE;
@@ -51,10 +56,14 @@ export class CogTif {
             throw new Error(`Only tiff supported version:${this.version}`);
         }
 
+        Timer.end('init:ifd');
+
         const ghostSize = nextOffsetIfd - view.currentOffset;
         // GDAL now stores metadata between the IFD inside a ghost storage area
         if (ghostSize > 0 && ghostSize < 16 * 1024) {
+            Timer.start('init:ghost');
             this.options.process(this.source, view.currentOffset, ghostSize);
+            Timer.end('init:ghost');
         }
 
         return this.processIfd(nextOffsetIfd);
@@ -65,74 +74,30 @@ export class CogTif {
     }
 
     async getTileRaw(x: number, y: number, z: number): Promise<{ mimeType: string; bytes: ArrayBuffer } | null> {
+        Timer.start(`tile:z${z}:${x}_${y}`);
         const image = this.getImage(z);
         if (image == null) {
             throw new Error(`Missing z: ${z}`);
         }
-        const mimeType = image.compression;
-        const size = image.size;
-        const tiles = image.tileInfo;
-        if (tiles == null) {
-            throw new Error('Tiff is not tiled');
+
+        if (!image.isTiled()) {
+            throw new Error('Tif is not tiled');
         }
-        if (mimeType == null) {
-            throw new Error('Unsupported compression: ' + image.value(TiffTag.Compression));
-        }
-
-        const nyTiles = Math.ceil(size.width / tiles.width);
-        const idx = y * nyTiles + x;
-
-        // TODO load only the parts of the tiles we care about
-        const [tileOffsets, byteCounts] = await Promise.all([
-            image.fetch(TiffTag.TileOffsets),
-            image.fetch(TiffTag.TileByteCounts),
-        ]);
-
-        if (idx > tileOffsets.length) {
-            return null;
-        }
-
-        let offset: number;
-        let byteCount: number;
-        // if there is only one tile the offsets are not a array
-        // they are a direct reference to the tile
-        if (idx === 0 && typeof tileOffsets === 'number') {
-            offset = tileOffsets;
-            byteCount = byteCounts;
-        } else {
-            offset = tileOffsets[idx];
-            byteCount = byteCounts[idx];
-        }
-
-        if (typeof offset !== 'number' || typeof byteCount !== 'number') {
-            throw new Error(`Invalid tile offset:${offset} count: ${byteCount}`);
-        }
-        await this.source.loadBytes(offset, byteCount);
-        const bytes = this.source.bytes(offset, byteCount);
-        if (image.compression == MimeType.JPEG) {
-            const tables: number[] = image.value(TiffTag.JPEGTables);
-            // Both the JPEGTable and the Bytes with have the start of image and end of image markers
-
-            // SOI 0xffd8 EOI 0xffd9
-            // Remove EndOfImage marker
-            const tableData = tables.slice(0, tables.length - 2);
-            const actualBytes = new Uint8Array(bytes.byteLength + tableData.length - 2);
-            actualBytes.set(tableData, 0);
-            actualBytes.set(bytes.slice(2), tableData.length);
-
-            return { mimeType, bytes: actualBytes };
-        }
-        return { mimeType, bytes: new Uint8Array(bytes) };
+        const ret = await image.getTile(x, y);
+        Timer.end(`tile:z${z}:${x}_${y}`);
+        return ret;
     }
 
     async processIfd(offset: number) {
+        const ifdId = toHexString(offset);
+        Timer.start(`init:ifd:${ifdId}`);
         const { image, nextOffset } = await this.readIfd(offset);
         this.images.push(image);
         const size = image.size;
-        const tile = image.tileInfo;
-        if (tile == null) {
+        if (!image.isTiled()) {
             Logger.warn('Tiff is not tiled');
         } else {
+            const tile = image.tileInfo;
             Logger.debug(
                 {
                     ...size,
@@ -143,6 +108,7 @@ export class CogTif {
                 'GotImage',
             );
         }
+        Timer.end(`init:ifd:${ifdId}`);
 
         if (nextOffset) {
             Logger.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
@@ -156,11 +122,11 @@ export class CogTif {
         const tagCount = view.offset();
         const byteStart = offset + this.source.config.offset;
         const logger = Logger.child({ imageId: this.images.length });
-        const image = new CogTifImage(this.images.length, byteStart);
+        const tags: Map<TiffTag, CogTifTag<any>> = new Map();
 
         let pos = byteStart;
         for (let i = 0; i < tagCount; i++) {
-            const tag = CogTifTag.create(this.source, pos);
+            const tag = CogTifTagFactory.create(this.source, pos);
             pos += tag.size;
 
             if (tag.name == null) {
@@ -179,7 +145,15 @@ export class CogTif {
                 const displayValue = Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value;
                 logger.trace({ ...logObj, value: displayValue }, 'ReadIFD');
             }
-            image.tags.set(tag.id, tag);
+            tags.set(tag.id, tag);
+        }
+
+        let image: CogTifImage;
+        const tileWidth = tags.get(TiffTag.TileWidth);
+        if (tileWidth != null && tileWidth.value > 0) {
+            image = new CogTifImageTiled(this, this.images.length, offset, tags);
+        } else {
+            image = new CogTifImage(this, this.images.length, byteStart, tags);
         }
         const nextOffset = await this.source.pointer(pos);
         return { nextOffset, image };

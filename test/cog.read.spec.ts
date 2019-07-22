@@ -6,6 +6,7 @@ import { CogSourceFile, CogTif } from '../src';
 import { TiffVersion } from '../src/read/tif';
 import { LoggerConfig } from '../src/util/util.log';
 import * as path from 'path';
+import { CogTifImageTiled } from '../src/cog.tif.image';
 
 LoggerConfig.level = 99 as LogLevel;
 
@@ -29,7 +30,7 @@ o.spec('CogRead', () => {
     function validate(tif: CogTif) {
         o(tif.images.length).equals(5);
 
-        const [firstTif] = tif.images;
+        const [firstTif] = tif.images as CogTifImageTiled[];
         o(firstTif.isTiled()).equals(true);
         o(firstTif.tileInfo).deepEquals({ width: 256, height: 256 });
         o(firstTif.size).deepEquals({ width: 64, height: 64 });

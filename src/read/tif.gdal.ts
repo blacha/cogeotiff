@@ -31,21 +31,21 @@ export const GhostOptionTileLeaderSize: { [key: string]: ByteSize } = {
 };
 
 export class CogTifGhostOptions {
-    _options: Map<GhostOption, string> = new Map();
+    options: Map<GhostOption, string> = new Map();
 
     get isCogOptimized() {
         if (this.isBroken) {
             return false;
         }
-        return this._options.get(GhostOption.LAYOUT) === 'IFDS_BEFORE_DATA';
+        return this.options.get(GhostOption.LAYOUT) === 'IFDS_BEFORE_DATA';
     }
 
     get isBroken(): boolean {
-        return this._options.get(GhostOption.KNOWN_INCOMPATIBLE_EDITION) === 'YES';
+        return this.options.get(GhostOption.KNOWN_INCOMPATIBLE_EDITION) === 'YES';
     }
 
     set(key: GhostOption, val: string) {
-        this._options.set(key, val);
+        this.options.set(key, val);
     }
 
     process(source: CogSource, offset: number, length: number) {
@@ -64,12 +64,12 @@ export class CogTifGhostOptions {
             .map(c => c.split('='));
 
         for (const [key, value] of keyValPairs) {
-            this._options.set(GhostOption[key as GhostOption], value);
+            this.options.set(GhostOption[key as GhostOption], value);
         }
     }
 
     private _getReverse<T>(e: Record<string, any>, key: GhostOption): T | null {
-        const opt = this._options.get(key);
+        const opt = this.options.get(key);
         if (opt == null) {
             return null;
         }
@@ -91,6 +91,6 @@ export class CogTifGhostOptions {
     }
 
     get isMaskInterleaved(): boolean {
-        return this._options.get(GhostOption.MASK_INTERLEAVED_WITH_IMAGERY) === 'YES';
+        return this.options.get(GhostOption.MASK_INTERLEAVED_WITH_IMAGERY) === 'YES';
     }
 }

@@ -37,7 +37,7 @@ export class Fetchable<T = any> {
     /**
      * Fetch the value if the value has not been fetched
      */
-    get fetch(): Promise<T> {
+    fetch(): Promise<T> {
         if (this._valuePromise == null) {
             this._valuePromise = new Promise(async resolve => {
                 try {

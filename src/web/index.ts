@@ -18,7 +18,7 @@ async function getTile(img: HTMLImageElement, x: number, y: number, z: number) {
     if (z >= cog.images.length) {
         return null;
     }
-    console.log(x, y, z, cog.images.length - z - 1);
+
     const tileRaw = await cog.getTileRaw(x, y, cog.images.length - z - 1);
     if (tileRaw == null) {
         img.style.backgroundColor = 'rgba(0,0,0,0.87)';

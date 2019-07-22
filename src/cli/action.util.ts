@@ -1,9 +1,9 @@
-import { CogSourceUrl } from '../source/cog.source.web';
-import { CogSourceFile } from '../source/cog.source.file';
-import { CogTif } from '../cog.tif';
+import { CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 import { CogSource } from '../cog.source';
-import { CommandLineStringParameter } from '@microsoft/ts-command-line';
+import { CogTif } from '../cog.tif';
+import { CogSourceFile } from '../source/cog.source.file';
+import { CogSourceUrl } from '../source/cog.source.web';
 
 export interface CLiResultMapLine {
     key: string;

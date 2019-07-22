@@ -31,7 +31,7 @@ o.spec('CogSourceChunk', () => {
     });
 
     async function Chunk(id: number) {
-        const cnk = source.chunk(id).fetch;
+        const cnk = source.chunk(id).fetch();
         if (cnk == null) {
             throw new Error('Failed to fetch');
         }
