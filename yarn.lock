@@ -3782,10 +3782,10 @@ osenv@^0.1.4:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
-ospec@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/ospec/-/ospec-3.1.0.tgz#d36b8e10110f58f63a463df2390a7a73fe9579a8"
-  integrity sha512-+nGtjV3vlADp+UGfL51miAh/hB4awPBkQrArhcgG4trAaoA2gKt5bf9w0m9ch9zOr555cHWaCHZEDiBOkNZSxw==
+ospec@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/ospec/-/ospec-4.0.0.tgz#7aaf8cb6d352a3f22e879460eebbc5f12df99779"
+  integrity sha512-MpDtkpscOxHYb4w71v7GB4LBsRuzxZnM+HdwjhzJQzu+5EJvA80yxTaKw+wp5Dmf5RV2/Bg3Uvz2vlI/PhW9Ow==
   dependencies:
     glob "^7.1.3"
 
