@@ -4,9 +4,7 @@ import { TiffVersion, TiffTag } from '../read/tif';
 import { toByteSizeString } from '../util/util.bytes';
 import chalk from 'chalk';
 import { Logger } from '../util/util.log';
-import { writeFileSync } from 'fs';
 import { TileUtil } from '../util/util.tile';
-import { Timer } from '../util/util.timer';
 
 export class ActionTile extends CommandLineAction {
     private file: CommandLineStringParameter | null = null;
@@ -22,7 +20,6 @@ export class ActionTile extends CommandLineAction {
 
     async onExecute(): Promise<void> {
         // abstract
-        Timer.start('total');
         const { tif } = await ActionUtil.getCogSource(this.file);
         if (this.xyz == null || this.xyz.value == null) {
             throw new Error('XYZ was not defined');
@@ -38,12 +35,9 @@ export class ActionTile extends CommandLineAction {
             throw new Error('Invalid XYZ, format: "X,Y,Z"');
         }
 
-        Timer.start('tile');
         await TileUtil.write(tif, x, y, z, '.');
-        Timer.end('tile');
 
-        Timer.end('total');
-        const chunkIds = Object.keys(tif.source._chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
+        const chunkIds = Object.keys(tif.source.chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
 
         const result: CliResultMap[] = [
             {
@@ -57,15 +51,6 @@ export class ActionTile extends CommandLineAction {
                         })`,
                     },
                 ],
-            },
-            {
-                title: 'Performance',
-                keys: Object.keys(Timer.startTimes).map(c => {
-                    if (Timer.times[c] == null) {
-                        return null;
-                    }
-                    return { key: c, value: String(Timer.times[c]) };
-                }),
             },
         ];
 

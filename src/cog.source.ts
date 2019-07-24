@@ -3,9 +3,7 @@ import { CogSourceView } from './cog.source.view';
 import { ByteSize } from './read/byte.size';
 import { TiffVersion } from './read/tif';
 import { TiffIfdEntry } from './read/tif.ifd';
-import { CogSourceChunk } from './source/cog.source.chunk';
-import { Logger } from './util/util.log';
-import { toHexString } from './util/util.hex';
+import { CogChunk } from './source/cog.chunk';
 
 /** Shifting `<< 32` does not work in javascript */
 const POW_32 = 2 ** 32;
@@ -13,7 +11,9 @@ const POW_32 = 2 ** 32;
 export abstract class CogSource {
     /** Split the Tif into chunks to be read  */
     abstract chunkSize: number;
-    _chunks: CogSourceChunk[] = [];
+    // TODO this should ideally be a LRU
+    // With a priority for the first few chunks (Generally where the main IFD resides)
+    chunks: CogChunk[] = [];
 
     isLittleEndian = true;
     version = TiffVersion.Tiff;
@@ -27,10 +27,10 @@ export abstract class CogSource {
     }
 
     /**
-     * Get the list of chunks that have been read in
+     * Get the list of chunks that have been read
      */
     get chunksRead(): string[] {
-        return Object.keys(this._chunks).filter(f => this.chunk(parseInt(f, 10)).isReady());
+        return Object.keys(this.chunks).filter(f => this.chunk(parseInt(f, 10)).isReady());
     }
 
     /**
@@ -143,9 +143,9 @@ export abstract class CogSource {
     }
 
     chunk(chunkId: number) {
-        let chunk = this._chunks[chunkId];
+        let chunk = this.chunks[chunkId];
         if (chunk == null) {
-            chunk = this._chunks[chunkId] = new CogSourceChunk(this, chunkId);
+            chunk = this.chunks[chunkId] = new CogChunk(this, chunkId);
         }
         return chunk;
     }
@@ -159,7 +159,7 @@ export abstract class CogSource {
      * @param offset starting byte offset
      * @param count number of bytes to read
      */
-    getRequiredChunks(offset: number, count: number): CogSourceChunk[] {
+    getRequiredChunks(offset: number, count: number): CogChunk[] {
         const startChunk = Math.floor(offset / this.chunkSize);
         const endChunk = Math.ceil((offset + count) / this.chunkSize) - 1;
 

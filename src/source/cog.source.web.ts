@@ -1,6 +1,5 @@
 import { CogSource } from '../cog.source';
 import { Logger } from '../util/util.log';
-import { Timer } from '../util/util.timer';
 
 export class CogSourceUrl extends CogSource {
     chunkSize = 32 * 1024;

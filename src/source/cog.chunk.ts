@@ -3,15 +3,15 @@ import { Logger } from '../util/util.log';
 import { toHexString } from '../util/util.hex';
 import { Fetchable } from '../util/util.fetchable';
 
-export interface CogSourceChunkFetched extends CogSourceChunk {
+export interface CogSourceChunkFetched extends CogChunk {
     _buffer: ArrayBuffer;
     _view: DataView;
 }
 
-export class CogSourceChunk {
+export class CogChunk {
     source: CogSource;
     id: number;
-    fetchable: Fetchable<CogSourceChunk>;
+    fetchable: Fetchable<CogChunk>;
     _buffer: ArrayBuffer | null = null; // Often is null, best to wait for ready promise
     _view: DataView | null = null;
 
@@ -34,7 +34,7 @@ export class CogSourceChunk {
         this._view = new DataView(this._buffer);
     }
 
-    fetch(): Promise<CogSourceChunk> {
+    fetch(): Promise<CogChunk> {
         return this.fetchable.fetch();
     }
 

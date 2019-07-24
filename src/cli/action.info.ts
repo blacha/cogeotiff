@@ -23,7 +23,7 @@ export class ActionCogInfo extends CommandLineAction {
 
         // return;
         const isCogOptimized = tif.options.isCogOptimized;
-        const chunkIds = Object.keys(tif.source._chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
+        const chunkIds = Object.keys(tif.source.chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
 
         const result: CliResultMap[] = [
             {

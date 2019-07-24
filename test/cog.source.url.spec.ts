@@ -12,7 +12,7 @@ export interface HttpHeaders {
 }
 
 function getCB(source: CogSourceUrl, index: number) {
-    const chnk = source._chunks[index];
+    const chnk = source.chunks[index];
     if (chnk.isReady()) {
         return chnk._buffer;
     }
@@ -46,15 +46,15 @@ o.spec('CogSourceUrl', () => {
 
     o('should get some data', async () => {
         await source.loadBytes(0, 1);
-        o(Object.keys(source._chunks)).deepEquals(['0']);
-        o(source._chunks[0].offset).equals(0);
-        o(source._chunks[0].offsetEnd).equals(1);
+        o(Object.keys(source.chunks)).deepEquals(['0']);
+        o(source.chunks[0].offset).equals(0);
+        o(source.chunks[0].offsetEnd).equals(1);
     });
 
     o('should group fetches together', async () => {
         await source.loadBytes(0, 2);
 
-        o(Object.keys(source._chunks)).deepEquals(['0', '1']);
+        o(Object.keys(source.chunks)).deepEquals(['0', '1']);
         const viewA = new DataView(getCB(source, 0));
         const viewB = new DataView(getCB(source, 1));
 
@@ -66,12 +66,12 @@ o.spec('CogSourceUrl', () => {
         await source.loadBytes(0, 2);
         await source.loadBytes(0, 5);
 
-        o(Object.keys(source._chunks)).deepEquals(['0', '1', '2', '3', '4']);
+        o(Object.keys(source.chunks)).deepEquals(['0', '1', '2', '3', '4']);
 
         for (let i = 0; i < 5; i++) {
             o(source.uint8(i)).equals(i);
 
-            o(source._chunks[i].view.getUint8(0)).equals(i);
+            o(source.chunks[i].view.getUint8(0)).equals(i);
         }
     });
 
@@ -81,7 +81,7 @@ o.spec('CogSourceUrl', () => {
 
         await source.loadBytes(0, MAX_BYTE);
 
-        o(Object.keys(source._chunks)).deepEquals(['0', '1', '2', '3', '4', '5', '6', '7']);
+        o(Object.keys(source.chunks)).deepEquals(['0', '1', '2', '3', '4', '5', '6', '7']);
 
         for (let i = 0; i < MAX_BYTE; i++) {
             o(source.uint8(i)).equals(i);

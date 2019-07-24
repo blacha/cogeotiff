@@ -6,7 +6,7 @@ import { CogSourceFile, CogTif } from '../src';
 import { TiffVersion } from '../src/read/tif';
 import { LoggerConfig } from '../src/util/util.log';
 import * as path from 'path';
-import { CogTifImageTiled } from '../src/cog.tif.image';
+import { CogTifImageTiled } from '../src/cog.tif.image.tiled';
 
 LoggerConfig.level = 99 as LogLevel;
 

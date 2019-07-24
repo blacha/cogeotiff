@@ -1,11 +1,11 @@
 import { CogSource } from './cog.source';
-import { CogTifImage, CogTifImageTiled } from './cog.tif.image';
-import { CogTifTagFactory, CogTifTag } from './read/cog.tif.tag';
-import { TiffEndian, TiffVersion, TiffTag } from './read/tif';
+import { CogTifImage } from './cog.tif.image';
+import { CogTifTag, CogTifTagFactory } from './read/cog.tif.tag';
+import { TiffEndian, TiffTag, TiffVersion } from './read/tif';
 import { CogTifGhostOptions } from './read/tif.gdal';
 import { toHexString } from './util/util.hex';
 import { Logger } from './util/util.log';
-import { Timer } from './util/util.timer';
+import { CogTifImageTiled } from './cog.tif.image.tiled';
 
 export class CogTif {
     source: CogSource;
@@ -18,17 +18,13 @@ export class CogTif {
     }
 
     async init(): Promise<CogTif> {
-        Timer.start('init');
         // Load the first few KB in, more loads will run as more data is required
         await this.source.loadBytes(0, 4 * 1024);
         await this.fetchIfd();
-        Timer.end('init');
         return this;
     }
 
     async fetchIfd() {
-        Timer.start('init:ifd');
-
         const view = this.source.getView(0);
         const endian = view.uint16();
         this.source.isLittleEndian = endian === TiffEndian.LITTLE;
@@ -56,14 +52,10 @@ export class CogTif {
             throw new Error(`Only tiff supported version:${this.version}`);
         }
 
-        Timer.end('init:ifd');
-
         const ghostSize = nextOffsetIfd - view.currentOffset;
         // GDAL now stores metadata between the IFD inside a ghost storage area
         if (ghostSize > 0 && ghostSize < 16 * 1024) {
-            Timer.start('init:ghost');
             this.options.process(this.source, view.currentOffset, ghostSize);
-            Timer.end('init:ghost');
         }
 
         return this.processIfd(nextOffsetIfd);
@@ -74,7 +66,6 @@ export class CogTif {
     }
 
     async getTileRaw(x: number, y: number, z: number): Promise<{ mimeType: string; bytes: ArrayBuffer } | null> {
-        Timer.start(`tile:z${z}:${x}_${y}`);
         const image = this.getImage(z);
         if (image == null) {
             throw new Error(`Missing z: ${z}`);
@@ -83,14 +74,10 @@ export class CogTif {
         if (!image.isTiled()) {
             throw new Error('Tif is not tiled');
         }
-        const ret = await image.getTile(x, y);
-        Timer.end(`tile:z${z}:${x}_${y}`);
-        return ret;
+        return image.getTile(x, y);
     }
 
     async processIfd(offset: number) {
-        const ifdId = toHexString(offset);
-        Timer.start(`init:ifd:${ifdId}`);
         const { image, nextOffset } = await this.readIfd(offset);
         this.images.push(image);
         const size = image.size;
@@ -108,7 +95,6 @@ export class CogTif {
                 'GotImage',
             );
         }
-        Timer.end(`init:ifd:${ifdId}`);
 
         if (nextOffset) {
             Logger.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
