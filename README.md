@@ -12,7 +12,7 @@ This is a work in progress and likely will not work
 
 
 ## Scripts
-### coginfo
+### coginfo info
 
 Display basic information about COG
 
@@ -46,7 +46,7 @@ COG File Info - /home/blacha/Downloads/tif-new/bg43.webp.cog.tif
 ```
 
 
-### cogdump
+### coginfo dump
 
 Dump all tiles for a zoom level (**Warning** if you do this for a large cog this will create millions of files.)
 
@@ -54,6 +54,13 @@ Dump all tiles for a zoom level (**Warning** if you do this for a large cog this
 coginfo dump --file webp.cog.tif --zoom 2 --output output
 ```
 
+### coginfo tile
+
+Load and dump a individual tile
+
+```
+coginfo tile --file webp.cog.tif --xyz 1,1,1
+```
 
 
 # Building
