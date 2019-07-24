@@ -1,11 +1,24 @@
 import { CogSource } from '../cog.source';
+import { Fetchable } from '../util/util.fetchable';
 
 /**
  * Chunked source for COGS
  */
 export abstract class CogSourceChunked extends CogSource {
+    /** size of chunks to fetch (Bytes) */
     abstract chunkSize: number;
+    /**
+     * Max number of chunks to load in one go
+     * Requested chunks could be more than this number if blankFillCount is used
+     */
     abstract maxChunkCount: number;
+
+    /**
+     * number non requested chunks to load even
+     * This allows one fetch for semi sparse requests eg requested [1,5]
+     * instead of two fetches [1] & [5] run one fetch [1,2,3,4,5]
+     */
+    blankFillCount = 16;
 
     /* List of chunk ids to fetch */
     toFetch: boolean[] = [];
@@ -16,40 +29,46 @@ export abstract class CogSourceChunked extends CogSource {
      * Split the ranges into a consecutive chunks
 
      * @param ranges list of chunks to fetch
-     * @param blankFill number non requested chunks to load even if they are not requested
-     *          This allows one fetch for semi sparse requests eg requested [1,5]
-     *          instead of two fetches [1] & [5] run one fetch [1,2,3,4,5]
+
      * @param maxChunks maximum number of chunks to load
      */
-    static getByteRanges(ranges: string[], maxChunks = 32, blankFill = 5): number[][] {
+    static getByteRanges(
+        ranges: string[],
+        chunkCount: number = 32,
+        blankFillCount = 16,
+    ): { chunks: number[][]; blankFill: number[] } {
         if (ranges.length === 0) {
-            return [];
+            return { chunks: [], blankFill: [] };
         }
         const sortedRange = ranges.map(c => parseInt(c, 10)).sort((a, b) => a - b);
 
-        const groups: number[][] = [];
+        const chunks: number[][] = [];
         let current: number[] = [];
-        groups.push(current);
+        chunks.push(current);
+        const blankFill = [];
 
         for (let i = 0; i < sortedRange.length; ++i) {
             const currentValue = sortedRange[i];
             const lastValue = sortedRange[i - 1];
-            if (current.length >= maxChunks) {
+            if (current.length >= chunkCount) {
                 current = [currentValue];
-                groups.push(current);
+                chunks.push(current);
             } else if (i === 0 || currentValue === lastValue + 1) {
                 current.push(currentValue);
-            } else if (currentValue < lastValue + blankFill) {
+            } else if (currentValue < lastValue + blankFillCount) {
                 // Allow for non continuos chunks to be requested to save on fetches
                 for (let x = lastValue; x < currentValue; x++) {
                     current.push(x + 1);
+                    blankFill.push(x + 1);
                 }
+                // Last value was actually requested so its not a blank fill
+                blankFill.pop();
             } else {
                 current = [currentValue];
-                groups.push(current);
+                chunks.push(current);
             }
         }
-        return groups;
+        return { chunks, blankFill };
     }
 
     async fetchData(): Promise<ArrayBuffer[]> {
@@ -57,8 +76,15 @@ export abstract class CogSourceChunked extends CogSource {
         this.toFetch = [];
         delete this.toFetchPromise;
 
-        const chunks = CogSourceChunked.getByteRanges(chunkIds, this.maxChunkCount);
-        return this.loadChunks(chunks);
+        const ranges = CogSourceChunked.getByteRanges(chunkIds, this.maxChunkCount, this.blankFillCount);
+        const chunkData = await this.loadChunks(ranges.chunks);
+
+        // These are extra chunks that were fetched, so lets prime the cache
+        for (const chunkId of ranges.blankFill) {
+            this.chunk(chunkId).init(chunkData[chunkId]);
+        }
+
+        return chunkData;
     }
 
     async fetchBytes(offset: number, count: number): Promise<ArrayBuffer> {
@@ -67,7 +93,6 @@ export abstract class CogSourceChunked extends CogSource {
         if (startChunk != endChunk) {
             throw new Error(`Request too large start:${startChunk} end:${endChunk}`);
         }
-
         this.toFetch[startChunk] = true;
 
         // Queue a fetch

@@ -193,7 +193,11 @@ export abstract class CogSource {
      */
     async loadBytes(offset: number, count: number): Promise<void> {
         const chunks = this.getRequiredChunks(offset, count);
-        await Promise.all(chunks.map(c => c.fetch()));
+        const promises: Promise<any>[] = [];
+        for (const chunk of chunks) {
+            promises.push(chunk.fetch());
+        }
+        await Promise.all(promises);
     }
 
     abstract fetchBytes(offset: number, length: number): Promise<ArrayBuffer>;

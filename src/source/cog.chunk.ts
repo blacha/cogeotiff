@@ -19,6 +19,11 @@ export class CogChunk {
         this.source = source;
         this.id = id;
         this.fetchable = new Fetchable(async () => {
+            // Sometimes things will init the chunk without a fetch being needed.
+            if (this._buffer != null) {
+                return this;
+            }
+
             Logger.debug(
                 { offset: toHexString(this.offset), count: toHexString(this.source.chunkSize), chunkId: this.id },
                 'FetchBytes',

@@ -15,8 +15,7 @@ export class Fetchable<T = any> {
         if (typeof fetchFunc === 'function') {
             this.fetchFunc = fetchFunc as FetchFunc<T>;
         } else {
-            this._value = fetchFunc;
-            this._valuePromise = Promise.resolve(this._value);
+            this.init(fetchFunc);
             this.fetchFunc = () => Promise.resolve(this._value);
         }
     }
@@ -32,6 +31,11 @@ export class Fetchable<T = any> {
     /** Last reported error if it exists */
     get error(): Error | null {
         return this._error;
+    }
+
+    init(value: T) {
+        this._valuePromise = Promise.resolve(value);
+        this._value = value;
     }
 
     /**
