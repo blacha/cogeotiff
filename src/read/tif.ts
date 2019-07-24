@@ -1,4 +1,5 @@
 import { CogSource } from '../cog.source';
+import { MimeType } from './mime';
 
 export enum TiffVersion {
     BigTiff = 43,
@@ -129,12 +130,6 @@ export enum TiffTag {
 export enum TiffEndian {
     BIG = 0x4d4d,
     LITTLE = 0x4949,
-}
-
-export enum MimeType {
-    JPEG = 'image/jpeg',
-    JP2 = 'image/jp2',
-    WEBP = 'image/webp',
 }
 
 export const TiffCompression: { [key: number]: string } = {

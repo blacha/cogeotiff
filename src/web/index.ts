@@ -11,12 +11,11 @@ let map: L.Map;
 let cog: CogTif;
 let geoTiffLayer: L.Layer;
 
+let debugCanvas = true;
+
 async function getTile(canvas: HTMLCanvasElement, x: number, y: number, z: number) {
     if (cog == null) {
         return;
-    }
-    if (z >= cog.images.length) {
-        return null;
     }
     const ctx = canvas.getContext('2d');
     if (ctx == null) {
@@ -24,11 +23,16 @@ async function getTile(canvas: HTMLCanvasElement, x: number, y: number, z: numbe
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const tileRaw = await cog.getTileRaw(x, y, cog.images.length - z - 1);
-    console.log(x, y, tileRaw);
+    if (z >= cog.images.length) {
+        return;
+    }
+
+    const zoom = cog.images.length - z - 1;
+    const tileRaw = await cog.getTileRaw(x, y, zoom);
+
     if (tileRaw == null) {
-        ctx.fillStyle = 'rgba(255,0,0,0.5)';
-        ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(200,0,0,0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         return;
     }
 
@@ -41,7 +45,12 @@ async function getTile(canvas: HTMLCanvasElement, x: number, y: number, z: numbe
         ctx.textBaseline = 'top';
         ctx.font = '20px "Roboto Condensed"';
         ctx.fillStyle = 'rgba(255,255,255,0.87)';
-        ctx.fillText(`${x},${y} z${z}`, 4, 10);
+
+        if (debugCanvas) {
+            ctx.fillText(`${x},${y} z${z}`, 4, 10);
+            ctx.strokeStyle = 'rgba(255,0,0,0.87)';
+            ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+        }
     };
     img.src = URL.createObjectURL(blob);
 }
@@ -62,6 +71,12 @@ async function loadAndRender(url: string) {
     cog = await new CogTif(new CogSourceUrl(url)).init();
     console.timeEnd('loadCog');
     const GeoTiffLayer = L.GridLayer.extend({
+        options: {
+            minZoom: 0,
+            maxNativeZoom: cog.images.length - 1,
+            maxZoom: cog.images.length + 1,
+        },
+
         createTile: function(coords: Vector, done: Function) {
             const canvas = document.createElement('canvas') as HTMLCanvasElement;
             // Overscale things to make font rendering a little less blury
@@ -77,8 +92,8 @@ async function loadAndRender(url: string) {
         map.removeLayer(geoTiffLayer);
     }
     geoTiffLayer = new GeoTiffLayer();
-    map.addLayer(geoTiffLayer);
 
+    map.addLayer(geoTiffLayer);
     statusEl.innerHTML = '';
 }
 
@@ -98,15 +113,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         return false;
     });
-
-    const DebugLayer = L.GridLayer.extend({
-        createTile: function(coords: Vector) {
-            var tile = document.createElement('div');
-            tile.innerHTML = [coords.x, coords.y, coords.z].join(', ');
-            tile.style.outline = '1px solid red';
-            return tile;
-        },
-    });
-
-    map.addLayer(new DebugLayer());
 });
