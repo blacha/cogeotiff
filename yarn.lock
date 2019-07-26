@@ -202,9 +202,9 @@
   integrity sha512-Il2DtDVRGDcqjDtE+rF8iqg1CArehSK84HZJCT7AMITlyXRBpuPhqGLDQMowraqqu1coEaimg4ZOqggt6L6L+A==
 
 "@types/leaflet@^1.4.4":
-  version "1.4.7"
-  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.4.7.tgz#96c4388e4f9cc599e85dbe2796e7df81dffb7ccb"
-  integrity sha512-wk6zQCFm8qXABeNrOQD4X7eYydhYydSBRdN82JVqyR4APe0i1kgvfBOc6rbtJ/A445tOUDTXdTGdCFh2Gapxgg==
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.5.0.tgz#a401eb9ec9e1c0c340454660f54962f29f048b7d"
+  integrity sha512-il6N/CP31AjvhYkWcQg9RAo/irfA88Qgs4r2AY8mVOU+btF4d60d/nI4M2rFuV+HyByQCItFfwj0yoPRMoMurQ==
   dependencies:
     "@types/geojson" "*"
 
