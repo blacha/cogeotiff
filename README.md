@@ -3,13 +3,20 @@
 
 ![pipeline status](https://codebuild.ap-southeast-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiQ2p1VkxVVEdrOWhhcnF2WExWMFlueHBIWmdHeVltdjgyeHBIenFNNzU4WVZWYzJzeXVUYnFqRWJVU212SkJiTkFvUmZmNG0yY2ovS3VTVjRYcjdqRGhvPSIsIml2UGFyYW1ldGVyU3BlYyI6InNaUFo2ZW1KclVBRDJHREgiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 
-Utility to investigate access patterns for [Cloud optimized GEOTiff](https://www.cogeo.org/)
+Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
-This is mostly just a learning exercise for Tiff/[BigTiff](http://bigtiff.org/) IFD access & GEOTiff in general
+* Completely javascript based, works in the browser!
+* Dynamically loads tif files 1-3 requests per tile
 
+## Usage
 
-This is a work in progress and likely will not work
+Load a COG from a URL using `fetch`
+```javascript
+import { CogTif, CogSourceUrl } from 'coginfo';
 
+const cog = await new CogTif(new CogSourceUrl(url)).init();
+const tile = await cog.getTileRaw(2, 2, 5);
+```
 
 ## Scripts
 ### coginfo info
