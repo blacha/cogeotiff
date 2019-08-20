@@ -1,5 +1,5 @@
 # cog-viewer
-[![pipeline status](https://gitlab.com/blacha/coginfo/badges/master/pipeline.svg)](https://gitlab.com/blacha/coginfo/commits/master)
+![Build Status](https://github.com/blacha/coginfo/workflows/Build/badge.svg)
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
