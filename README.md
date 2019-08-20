@@ -1,5 +1,5 @@
 # cog-viewer
-![Build Status](https://github.com/blacha/coginfo/workflows/Build/badge.svg)
+[![Build Status](https://github.com/blacha/coginfo/workflows/Main/badge.svg)](https://github.com/blacha/coginfo/actions)
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
