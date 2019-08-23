@@ -3,20 +3,29 @@
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
-* Completely javascript based, works in the browser!
-* Dynamically loads tif files 1-3 requests per tile
+* Completely javascript based, works in the browser and nodejs
+* Lazy load COG images and metadata
+* Supports huge 100GB+ COGs
+* Uses GDAL COG optimizations, generally only one read per tile!
+* Loads COGs from URL, File or AWS S3
 
 ## Usage
 
+
 Load a COG from a URL using `fetch`
 ```javascript
-import { CogTif, CogSourceUrl } from 'coginfo';
+import { CogSourceUrl } from '@coginfo/source-url';
 
-const cog = await new CogTif(new CogSourceUrl(url)).init();
+const cog = await CogSourceUrl.create('https://example.com/cog.tif');
 const tile = await cog.getTileRaw(2, 2, 5);
 ```
 
 ## Scripts
+
+```bash
+npm i -g @coginfo/cli
+```
+
 ### coginfo info
 
 Display basic information about COG
@@ -67,7 +76,6 @@ Load and dump a individual tile
 coginfo tile --file webp.cog.tif --xyz 1,1,1
 ```
 
-
 # Building
 This requires [NodeJs](https://nodejs.org/en/) > 12 & [Yarn](https://yarnpkg.com/en/)
 
@@ -87,18 +95,3 @@ yarn run build
 # Run the unit tests
 yarn run test
 ```
-
-# Contribuiting
-
-This repoistory uses [Conventional Commits](https://www.conventionalcommits.org/)
-
-Example options:
-- **build**: Changes that affect the build system or external dependencies
-- **ci**: Changes to our CI configuration files and scripts
-- **docs**: Documentation only changes
-- **feat**: A new feature
-- **fix**: A bug fix
-- **perf**: A code change that improves performance
-- **refactor**: A code change that neither fixes a bug nor adds a feature
-- **style**: Changes that do not affect the meaning of the code
-- **test**: Adding missing tests or correcting existing tests

@@ -1,0 +1,17 @@
+{
+    "name": "@coginfo/source-file",
+    "version": "0.1.0",
+    "repository": "git@github.com:blacha/coginfo.git",
+    "main": "./build/index.js",
+    "types": "./build/index.d.ts",
+    "author": "",
+    "license": "MIT",
+    "scripts": {},
+    "dependencies": {
+        "@coginfo/core": "^0.1.0"
+    },
+    "devDependencies": {
+        "@types/node": "^12.7.2",
+        "ospec": "^4.0.0"
+    }
+}

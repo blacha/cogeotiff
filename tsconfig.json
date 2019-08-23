@@ -1,15 +1,19 @@
 {
-    "compilerOptions": {
-        "target": "es2017",
-        "module": "commonjs",
-        "removeComments": true,
-        "outDir": "build/",
-        "sourceMap": true,
-        "strict": true,
-        "declaration": true
-    },
-    "exclude": [
-        "build/",
-        "node_modules"
+    "files": [],
+    "references": [{
+            "path": "./packages/core"
+        },
+        {
+            "path": "./packages/source-url"
+        },
+        {
+            "path": "./packages/source-aws"
+        },
+        {
+            "path": "./packages/source-file"
+        },
+        {
+            "path": "./packages/cli"
+        },
     ]
 }

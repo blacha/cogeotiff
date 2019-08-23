@@ -1,0 +1,14 @@
+{
+    "name": "@coginfo/source-web",
+    "version": "0.1.0",
+    "private": true,
+    "repository": "git@github.com:blacha/coginfo.git",
+    "author": "",
+    "license": "MIT",
+    "scripts": {},
+    "dependencies": {
+        "@coginfo/core": "^0.1.0",
+        "@coginfo/source-url": "^0.1.0"
+    },
+    "devDependencies": {}
+}

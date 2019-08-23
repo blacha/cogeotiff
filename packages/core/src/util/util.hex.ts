@@ -1,0 +1,19 @@
+/**
+ * Convert a number to a formated hex string
+ *
+ * @param num number to convert
+ * @param padding number of 0's to pad the digit with
+ * @param prefix should a `0x` be prefixed to the string
+ *
+ * @returns hex string eg 0x0015
+ **/
+export function toHexString(num: number, padding = 4, prefix = true): string {
+    let hex = num.toString(16);
+    while (hex.length < padding) {
+        hex = '0' + hex;
+    }
+    if (prefix) {
+        return '0x' + hex;
+    }
+    return hex;
+}

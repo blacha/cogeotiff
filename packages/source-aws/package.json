@@ -1,0 +1,15 @@
+{
+    "name": "@coginfo/source-aws",
+    "version": "0.1.0",
+    "repository": "git@github.com:blacha/coginfo.git",
+    "author": "",
+    "main": "./build/index.js",
+    "types": "./build/index.d.ts",
+    "license": "MIT",
+    "scripts": {},
+    "dependencies": {
+        "@coginfo/core": "^0.1.0",
+        "aws-sdk": "^2.517.0"
+    },
+    "devDependencies": {}
+}
