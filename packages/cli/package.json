@@ -1,0 +1,24 @@
+{
+    "name": "@coginfo/cli",
+    "version": "0.1.0",
+    "repository": "git@github.com:blacha/coginfo.git",
+    "author": "",
+    "license": "MIT",
+    "bin": {
+        "coginfo": "bin/coginfo"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@coginfo/core": "^0.1.0",
+        "@coginfo/source-url": "^0.1.0",
+        "@coginfo/source-file": "^0.1.0",
+        "@microsoft/ts-command-line": "^4.2.6",
+        "bblog": "^2.0.0",
+        "chalk": "^2.4.2",
+        "source-map-support": "^0.5.12"
+    },
+    "devDependencies": {
+        "@types/node": "^12.7.2",
+        "@types/node-fetch": "^2.5.0"
+    }
+}
