@@ -9,6 +9,6 @@ export async function writeTile(tif: CogTif, x: number, y: number, zoom: number,
         return;
     }
     const fileName = TileUtil.name(tile.mimeType, zoom, x, y);
-    fs.writeFile(path.join(outputPath, fileName), tile.bytes);
+    await fs.writeFile(path.join(outputPath, fileName), tile.bytes);
     logger.debug({ fileName }, 'WriteFile');
 }
