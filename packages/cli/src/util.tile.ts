@@ -2,7 +2,14 @@ import { CogLogger, CogTif, TileUtil } from '@coginfo/core';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
-export async function writeTile(tif: CogTif, x: number, y: number, zoom: number, outputPath: string, logger: CogLogger) {
+export async function writeTile(
+    tif: CogTif,
+    x: number,
+    y: number,
+    zoom: number,
+    outputPath: string,
+    logger: CogLogger,
+) {
     const tile = await tif.getTileRaw(x, y, zoom);
     if (tile == null) {
         logger.error('Unable to write file, missing data..');
