@@ -39,7 +39,7 @@ export class CogSourceAwsS3 extends CogSourceChunked {
         return new CogTif(new CogSourceAwsS3(bucket, key)).init();
     }
 
-    async loadChunks(firstChunk: number, lastChunk: number, log: CogLogger): Promise<ArrayBuffer> {
+    protected async loadChunks(firstChunk: number, lastChunk: number, log: CogLogger): Promise<ArrayBuffer> {
         const fetchRange = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
         const chunkCount = lastChunk - firstChunk || 1;
 

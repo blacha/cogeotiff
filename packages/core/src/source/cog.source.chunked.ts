@@ -23,7 +23,7 @@ export abstract class CogSourceChunked extends CogSource {
     /* List of chunk ids to fetch */
     toFetch: boolean[] = [];
     toFetchPromise: Promise<ArrayBuffer[]> | null = null;
-    abstract loadChunks(firstChunk: number, lastChunk: number, log: CogLogger): Promise<ArrayBuffer>;
+    protected abstract loadChunks(firstChunk: number, lastChunk: number, log: CogLogger): Promise<ArrayBuffer>;
 
     /**
      * Split the ranges into a consecutive chunks

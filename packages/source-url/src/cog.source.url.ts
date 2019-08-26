@@ -32,7 +32,7 @@ export class CogSourceUrl extends CogSourceChunked {
         return new CogTif(new CogSourceUrl(url)).init();
     }
 
-    async loadChunks(firstChunk: number, lastChunk: number, logger: CogLogger): Promise<ArrayBuffer> {
+    protected async loadChunks(firstChunk: number, lastChunk: number, logger: CogLogger): Promise<ArrayBuffer> {
         const Range = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
         const chunkCount = lastChunk - firstChunk || 1;
 
