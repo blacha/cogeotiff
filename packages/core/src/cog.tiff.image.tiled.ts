@@ -1,14 +1,36 @@
-import { CogTifImage } from './cog.tif.image';
-import { Size } from './vector';
-import { TiffTag } from './read/tif';
-import { CogTifTagOffset } from './read/cog.tif.tag';
-import { MimeType } from './read/mime';
+import { CogTiffImage } from './cog.tiff.image';
+import { TiffMimeType } from './const/tiff.mime';
+import { TiffTag } from './const/tiff.tag.id';
+import { CogTiffTagOffset } from './read/tag/tiff.tag.offset';
 
-export class CogTifImageTiled extends CogTifImage {
+/**
+ * Number of tiles used inside this image
+ */
+export interface CogTiffImageTiledCount {
+    /** Number of tiles on the x axis */
+    x: number;
+    /** Number of tiles on the y axis */
+    y: number;
+}
+
+/**
+ * Size of a individual tile
+ */
+export interface CogTiffImageTileSize {
+    /** Tile width (pixels) */
+    width: number;
+    /** Tile height (pixels) */
+    height: number;
+}
+
+/**
+ * A COG image that is tiled internally
+ */
+export class CogTiffImageTiled extends CogTiffImage {
     /**
-     * Get tiling information
+     * Get size of individual tiles
      */
-    get tileInfo(): Size {
+    get tileSize(): CogTiffImageTileSize {
         return {
             width: this.value(TiffTag.TileWidth),
             height: this.value(TiffTag.TileHeight),
@@ -17,25 +39,24 @@ export class CogTifImageTiled extends CogTifImage {
 
     /**
      * Number of tiles used to create this image
-     *
      */
-    get tileCount() {
+    get tileCount(): CogTiffImageTiledCount {
         const size = this.size;
-        const tileInfo = this.tileInfo;
-        const nx = Math.ceil(size.width / tileInfo.width);
-        const ny = Math.ceil(size.height / tileInfo.height);
-        return { nx, ny, total: nx * ny };
+        const tileSize = this.tileSize;
+        const x = Math.ceil(size.width / tileSize.width);
+        const y = Math.ceil(size.height / tileSize.height);
+        return { x, y };
     }
 
     /**
      * Get the pointer to where the tiles start in the Tiff file
      *
-     * @remarks used to read tile tifs
+     * @remarks Used to read tiled tiffs
      *
-     * @returns file offset to where the tifs are stored
+     * @returns file offset to where the tiffs are stored
      */
-    get tileOffset(): CogTifTagOffset {
-        const tileOffset = this.tags.get(TiffTag.TileOffsets) as CogTifTagOffset;
+    get tileOffset(): CogTiffTagOffset {
+        const tileOffset = this.tags.get(TiffTag.TileOffsets) as CogTiffTagOffset;
         if (tileOffset == null) {
             throw new Error('No Tile Offsets found');
         }
@@ -48,7 +69,7 @@ export class CogTifImageTiled extends CogTifImage {
      * @param index tile index
      * @returns file offset of the specified tile
      */
-    async getTileOffset(index: number): Promise<number> {
+    protected async getTileOffset(index: number): Promise<number> {
         const tileOffset = this.tileOffset;
         if (index < 0 || index > tileOffset.dataCount) {
             throw new Error(`Tile offset: ${index} out of range: 0 -> ${tileOffset.dataCount}`);
@@ -66,12 +87,11 @@ export class CogTifImageTiled extends CogTifImage {
      * TODO apply JPEG masks
      * @param x Tile x offset
      * @param y Tile y offset
-     *
      */
     async getTile(x: number, y: number) {
         const mimeType = this.compression;
         const size = this.size;
-        const tiles = this.tileInfo;
+        const tiles = this.tileSize;
 
         if (tiles == null) {
             throw new Error('Tiff is not tiled');
@@ -90,16 +110,16 @@ export class CogTifImageTiled extends CogTifImage {
         }
 
         const idx = y * nxTiles + x;
-        if (idx >= this.tileCount.total) {
+        const totalTiles = nxTiles * nyTiles;
+        if (idx >= totalTiles) {
             return null; // TODO should this throw a error?
         }
 
         const bytes = await this.getTileBytes(idx);
 
-        if (this.compression == MimeType.JPEG) {
+        if (this.compression == TiffMimeType.JPEG) {
             const tables: number[] = this.value(TiffTag.JPEGTables);
             // Both the JPEGTable and the Bytes with have the start of image and end of image markers
-
             // SOI 0xffd8 EOI 0xffd9
             // Remove EndOfImage marker
             const tableData = tables.slice(0, tables.length - 2);
@@ -124,7 +144,7 @@ export class CogTifImageTiled extends CogTifImage {
             return { offset, imageSize: this.tif.source.uint(offset - leaderBytes, leaderBytes) };
         }
 
-        const byteCounts = this.tags.get(TiffTag.TileByteCounts) as CogTifTagOffset;
+        const byteCounts = this.tags.get(TiffTag.TileByteCounts) as CogTiffTagOffset;
         if (byteCounts == null) {
             throw new Error('No tile byte counts found');
         }

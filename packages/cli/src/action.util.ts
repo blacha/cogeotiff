@@ -1,6 +1,6 @@
-import { CogSource, CogTif } from '@coginfo/core';
-import { CogSourceUrl } from '@coginfo/source-url';
+import { CogSource, CogTiff } from '@coginfo/core';
 import { CogSourceFile } from '@coginfo/source-file';
+import { CogSourceUrl } from '@coginfo/source-url';
 import { CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 
@@ -25,7 +25,7 @@ export const ActionUtil = {
             source = new CogSourceFile(file.value);
         }
 
-        const tif = new CogTif(source);
+        const tif = new CogTiff(source);
         await tif.init();
         return { source, tif };
     },

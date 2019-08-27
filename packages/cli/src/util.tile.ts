@@ -1,9 +1,9 @@
-import { CogLogger, CogTif, TileUtil } from '@coginfo/core';
+import { CogLogger, CogTiff, TileUtil } from '@coginfo/core';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
 export async function writeTile(
-    tif: CogTif,
+    tif: CogTiff,
     x: number,
     y: number,
     zoom: number,

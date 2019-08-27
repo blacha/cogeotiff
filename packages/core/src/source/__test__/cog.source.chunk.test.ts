@@ -1,7 +1,7 @@
 import * as o from 'ospec';
 import 'source-map-support/register';
-import { ByteSize } from '../../read/byte.size';
-import { TiffEndian } from '../../read/tif';
+import { ByteSize } from '../../const/byte.size';
+import { TiffEndian } from '../../const/tiff.endian';
 import { FakeCogSource } from '../../__test__/fake.source';
 
 // Reference uin64 from MDN

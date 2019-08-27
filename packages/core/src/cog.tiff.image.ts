@@ -1,25 +1,28 @@
+import { CogTiff } from './cog.tiff';
+import { CogTiffImageTiled } from './cog.tiff.image.tiled';
+import { TiffCompression } from './const/tiff.mime';
+import { TiffTag } from './const/tiff.tag.id';
+import { CogTiffTagBase } from './read/tag/tiff.tag.base';
+import { CogTiffTag } from './read/tiff.tag';
 import { Size } from './vector';
-import { CogTif } from './cog.tif';
-import { CogTifImageTiled } from './cog.tif.image.tiled';
-import { CogTifTag } from './read/cog.tif.tag';
-import { TiffCompression, TiffTag } from './read/tif';
-import { CogSource } from './source/cog.source';
 
-export class CogTifImage {
-    tags: Map<TiffTag, CogTifTag<any>>;
+export class CogTiffImage {
+    /** All IFD tags that have been read for the image */
+    tags: Map<TiffTag, CogTiffTagBase>;
+
+    /** Id of the tif image, generally the image index inside the tif */
     id: number;
-    offset: number;
-    tif: CogTif;
 
-    constructor(tif: CogTif, id: number, offset: number, tags: Map<TiffTag, CogTifTag<any>>) {
+    tif: CogTiff;
+
+    constructor(tif: CogTiff, id: number, tags: Map<TiffTag, CogTiffTagBase>) {
         this.tif = tif;
         this.id = id;
-        this.offset = offset;
         this.tags = tags;
     }
 
     /**
-     * Get the value of the tag if it exists null otherwise
+     * Get the value of a TiffTag if it exists null otherwise
      */
     value(tag: TiffTag) {
         const sourceTag = this.tags.get(tag);
@@ -29,12 +32,12 @@ export class CogTifImage {
         return sourceTag.value;
     }
 
-    async fetch(tag: TiffTag) {
+    protected async fetch(tag: TiffTag) {
         const sourceTag = this.tags.get(tag);
         if (sourceTag == null) {
             return null;
         }
-        if (sourceTag.isLazy()) {
+        if (CogTiffTag.isLazy(sourceTag)) {
             return sourceTag.fetch();
         }
         return sourceTag.value;
@@ -46,9 +49,9 @@ export class CogTifImage {
      * @returns origin point of the image
      */
     get origin(): [number, number, number] {
-        const tiePoints: number[] | null = this.value(TiffTag.ModelTiepoint);
+        const tiePoints: number[] | null = this.value(TiffTag.ModelTiePoint);
         if (tiePoints == null || tiePoints.length !== 6) {
-            throw new Error('Tiff image does not have a ModelTiepoint');
+            throw new Error('Tiff image does not have a ModelTiePoint');
         }
 
         return [tiePoints[0], tiePoints[1], tiePoints[2]];
@@ -127,7 +130,7 @@ export class CogTifImage {
     /**
      * Determine if this image is tiled
      */
-    isTiled(): this is CogTifImageTiled {
+    isTiled(): this is CogTiffImageTiled {
         return this.value(TiffTag.TileWidth) !== null;
     }
 }

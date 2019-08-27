@@ -1,9 +1,9 @@
 import * as ieee754 from 'ieee754';
-import { CogSourceView } from '../cog.source.view';
-import { ByteSize } from '../read/byte.size';
-import { TiffVersion } from '../read/tif';
-import { TiffIfdEntry } from '../read/tif.ifd';
+import { ByteSize } from '../const/byte.size';
+import { TiffVersion } from '../const/tiff.version';
+import { TiffIfdEntry } from '../read/tiff.ifd.config';
 import { CogChunk } from './cog.chunk';
+import { CogSourceView } from './cog.source.view';
 
 /** Shifting `<< 32` does not work in javascript */
 const POW_32 = 2 ** 32;
@@ -226,6 +226,15 @@ export abstract class CogSource {
         await Promise.all(promises);
     }
 
-    abstract fetchBytes(offset: number, length: number): Promise<ArrayBuffer>;
+    /**
+     * Load the required bytes from the source
+     *
+     * @param offset byte offset to start loading from
+     * @param count  number of bytes required
+     */
+    abstract fetchBytes(offset: number, count: number): Promise<ArrayBuffer>;
+    /**
+     * Name of the source, generally information like filename or url
+     */
     abstract name: string;
 }

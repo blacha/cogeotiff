@@ -1,8 +1,9 @@
-export * from './source/cog.source';
-export * from './cog.tif';
-export * from './source/cog.source.chunked';
-
-export * from './read/tif';
-export * from './util/util.log';
+export * from './cog.tiff';
+export * from './cog.tiff.image';
+export * from './cog.tiff.image.tiled';
+export * from './const';
+export * from './read/tiff.value.reader';
+export * from './source';
 export * from './util/util.bytes';
+export * from './util/util.log';
 export * from './util/util.tile';

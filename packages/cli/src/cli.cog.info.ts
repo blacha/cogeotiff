@@ -1,11 +1,11 @@
-import { CommandLineParser, CommandLineFlagParameter } from '@microsoft/ts-command-line';
-import { ActionDumpTile } from './action.dump.tile';
+import * as Core from '@coginfo/core';
+import { CommandLineParser } from '@microsoft/ts-command-line';
+import { Log } from 'bblog';
 import chalk from 'chalk';
-import { ChalkLogStream } from './cli.log';
+import { ActionDumpTile } from './action.dump.tile';
 import { ActionCogInfo } from './action.info';
 import { ActionTile } from './action.tile';
-import { Log } from 'bblog';
-import * as Core from '@coginfo/core';
+import { ChalkLogStream } from './cli.log';
 
 export class CogInfoCommandLine extends CommandLineParser {
     verbose = this.defineFlagParameter({

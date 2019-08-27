@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import { basename } from 'path';
-import { CogSource, CogTif } from '@coginfo/core';
+import { CogSource, CogTiff } from '@coginfo/core';
 
 const SourceType = 'file';
 
@@ -21,8 +21,8 @@ export class CogSourceFile extends CogSource {
      *
      * @param filePath location of the cog
      */
-    static async create(filePath: string): Promise<CogTif> {
-        return new CogTif(new CogSourceFile(filePath)).init();
+    static async create(filePath: string): Promise<CogTiff> {
+        return new CogTiff(new CogSourceFile(filePath)).init();
     }
 
     constructor(fileName: string) {

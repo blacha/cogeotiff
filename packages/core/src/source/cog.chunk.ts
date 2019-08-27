@@ -10,10 +10,15 @@ export interface CogSourceChunkFetched extends CogChunk {
  * A chunk of data inside of a COG
  */
 export class CogChunk {
+    /**Where the chunk has been loaded from */
     source: CogSource;
+    /** Id of the chunk, the index of the chunk starting at 0 */
     id: number;
+    /** Lazy load the chunk when requested */
     fetchable: Fetchable<CogChunk>;
-    _buffer: ArrayBuffer | null = null; // Often is null, best to wait for ready promise
+    /** Raw buffer object, often is null @see this.buffer */
+    _buffer: ArrayBuffer | null = null;
+    /** Raw view, often is null @see this.view */
     _view: DataView | null = null;
 
     constructor(source: CogSource, id: number) {
@@ -25,7 +30,7 @@ export class CogChunk {
                 return this;
             }
 
-            const buffer = await this.source.fetchBytes(id * this.source.chunkSize, this.source.chunkSize);
+            const buffer = await this.source.fetchBytes(this.offset, this.source.chunkSize);
             this.init(buffer);
             return this;
         });
@@ -91,7 +96,7 @@ export class CogChunk {
 
     /**
      * Does this chunk contain the byte offset
-     * @param offset
+     * @param offset byte offset to check
      */
     contains(offset: number) {
         if (offset < this.offset) {

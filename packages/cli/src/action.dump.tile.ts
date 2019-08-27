@@ -1,4 +1,4 @@
-import { CogTif, Log, TiffVersion, TileUtil, toByteSizeString, CogLogger } from '@coginfo/core';
+import { CogLogger, CogTiff, Log, TiffVersion, TileUtil, toByteSizeString } from '@coginfo/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 import { promises as fs } from 'fs';
@@ -52,7 +52,7 @@ export class ActionDumpTile extends CommandLineAction {
     }
 
     // TODO this only works for WSG84
-    async dumpBounds(tif: CogTif, output: string, zoom: number) {
+    async dumpBounds(tif: CogTiff, output: string, zoom: number) {
         this.logger.info({ zoom }, 'CreateTileBounds');
         const img = tif.getImage(zoom);
         if (!img.isTiled()) {
@@ -66,7 +66,7 @@ export class ActionDumpTile extends CommandLineAction {
         };
 
         const tileCount = img.tileCount;
-        const tileInfo = img.tileInfo;
+        const tileInfo = img.tileSize;
         const tileSize = img.size;
 
         const firstImage = tif.images[0];
@@ -77,10 +77,10 @@ export class ActionDumpTile extends CommandLineAction {
         const xScale = (resolution[0] * firstTileSize.width) / tileSize.width;
         const yScale = (resolution[1] * firstTileSize.height) / tileSize.height;
 
-        for (let y = 0; y < tileCount.ny; y++) {
+        for (let y = 0; y < tileCount.y; y++) {
             const yMax = origin[1] + y * tileInfo.height * yScale;
             const yMin = yMax + tileInfo.height * yScale;
-            for (let x = 0; x < tileCount.nx; x++) {
+            for (let x = 0; x < tileCount.x; x++) {
                 const xMin = origin[0] + x * tileInfo.width * xScale;
                 const xMax = xMin + tileInfo.width * xScale;
                 features.push(makePolygon(xMin, yMin, xMax, yMax));
@@ -90,7 +90,7 @@ export class ActionDumpTile extends CommandLineAction {
         await fs.writeFile(path.join(output, `z${zoom}.bounds.geojson`), JSON.stringify(featureCollection, null, 2));
     }
 
-    async dumpIndex(tif: CogTif, output: string, zoom: number) {
+    async dumpIndex(tif: CogTiff, output: string, zoom: number) {
         this.logger.info({ zoom }, 'CreateIndexHtml');
         const img = tif.getImage(zoom);
         if (!img.isTiled()) {
@@ -100,9 +100,9 @@ export class ActionDumpTile extends CommandLineAction {
         const tileCount = img.tileCount;
 
         const html = ['<html>'];
-        for (let y = 0; y < tileCount.ny; y++) {
+        for (let y = 0; y < tileCount.y; y++) {
             html.push('\t<div style="display:flex;">');
-            for (let x = 0; x < tileCount.nx; x++) {
+            for (let x = 0; x < tileCount.x; x++) {
                 const tile = await tif.getTileRaw(x, y, zoom);
                 if (tile == null) {
                     continue;
@@ -117,21 +117,21 @@ export class ActionDumpTile extends CommandLineAction {
         await fs.writeFile(path.join(output, 'index.html'), html.join('\n'));
     }
 
-    async dumpTiles(tif: CogTif, output: string, zoom: number) {
+    async dumpTiles(tif: CogTiff, output: string, zoom: number) {
         const promises: Promise<void>[] = [];
         const img = tif.getImage(zoom);
         if (!img.isTiled()) {
             return;
         }
 
-        this.logger.info({ ...img.tileInfo, ...img.tileCount }, 'TileInfo');
+        this.logger.info({ ...img.tileSize, ...img.tileCount }, 'TileInfo');
         const tileCount = img.tileCount;
 
         // Load all offsets in
         await img.tileOffset.load();
 
-        for (let x = 0; x < tileCount.nx; x++) {
-            for (let y = 0; y < tileCount.ny; y++) {
+        for (let x = 0; x < tileCount.x; x++) {
+            for (let y = 0; y < tileCount.y; y++) {
                 // TODO should limit how many of these we run at a time
                 promises.push(writeTile(tif, x, y, zoom, output, this.logger));
                 this.outputCount++;

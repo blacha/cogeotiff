@@ -53,7 +53,8 @@ export class ActionCogInfo extends CommandLineAction {
                                 if (!i.isTiled()) {
                                     return '';
                                 }
-                                return `${i.tileInfo.width}x${i.tileInfo.height} (${i.tileCount.total})`;
+                                const tc = i.tileCount;
+                                return `${tc.x}x${tc.y} (${tc.x * tc.y})`;
                             })
                             .join(' '),
                     },

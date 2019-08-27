@@ -1,30 +1,33 @@
+import { CogTiffImage } from './cog.tiff.image';
+import { CogTiffImageTiled } from './cog.tiff.image.tiled';
+import { TiffEndian } from './const/tiff.endian';
+import { TiffTag } from './const/tiff.tag.id';
+import { TiffVersion } from './const/tiff.version';
+import { CogTiffTagBase } from './read/tag/tiff.tag.base';
+import { CogTifGhostOptions } from './read/tiff.gdal';
+import { CogTiffTag } from './read/tiff.tag';
 import { CogSource } from './source/cog.source';
-import { CogTifImage } from './cog.tif.image';
-import { CogTifTag, CogTifTagFactory } from './read/cog.tif.tag';
-import { TiffEndian, TiffTag, TiffVersion } from './read/tif';
-import { CogTifGhostOptions } from './read/tif.gdal';
 import { toHexString } from './util/util.hex';
 import { getLogger } from './util/util.log';
-import { CogTifImageTiled } from './cog.tif.image.tiled';
 
-export class CogTif {
+export class CogTiff {
     source: CogSource;
     version: number = -1;
-    images: CogTifImage[] = [];
+    images: CogTiffImage[] = [];
     options = new CogTifGhostOptions();
 
     constructor(source: CogSource) {
         this.source = source;
     }
 
-    async init(): Promise<CogTif> {
+    async init(): Promise<CogTiff> {
         // Load the first few KB in, more loads will run as more data is required
         await this.source.loadBytes(0, 4 * 1024);
         await this.fetchIfd();
         return this;
     }
 
-    async fetchIfd() {
+    private async fetchIfd() {
         const view = this.source.getView(0);
         const endian = view.uint16();
         this.source.isLittleEndian = endian === TiffEndian.LITTLE;
@@ -77,14 +80,14 @@ export class CogTif {
         return image.getTile(x, y);
     }
 
-    async processIfd(offset: number) {
+    private async processIfd(offset: number) {
         const { image, nextOffset } = await this.readIfd(offset);
         this.images.push(image);
         const size = image.size;
         if (!image.isTiled()) {
             getLogger().warn('Tiff is not tiled');
         } else {
-            const tile = image.tileInfo;
+            const tile = image.tileSize;
             getLogger().debug(
                 {
                     ...size,
@@ -108,11 +111,11 @@ export class CogTif {
         const tagCount = view.offset();
         const byteStart = offset + this.source.config.offset;
         const logger = getLogger().child({ imageId: this.images.length });
-        const tags: Map<TiffTag, CogTifTag<any>> = new Map();
+        const tags: Map<TiffTag, CogTiffTagBase> = new Map();
 
         let pos = byteStart;
         for (let i = 0; i < tagCount; i++) {
-            const tag = CogTifTagFactory.create(this.source, pos);
+            const tag = CogTiffTag.create(this.source, pos);
             pos += tag.size;
 
             if (tag.name == null) {
@@ -134,12 +137,12 @@ export class CogTif {
             tags.set(tag.id, tag);
         }
 
-        let image: CogTifImage;
+        let image: CogTiffImage;
         const tileWidth = tags.get(TiffTag.TileWidth);
         if (tileWidth != null && tileWidth.value > 0) {
-            image = new CogTifImageTiled(this, this.images.length, offset, tags);
+            image = new CogTiffImageTiled(this, this.images.length, tags);
         } else {
-            image = new CogTifImage(this, this.images.length, byteStart, tags);
+            image = new CogTiffImage(this, this.images.length, tags);
         }
         const nextOffset = await this.source.pointer(pos);
         return { nextOffset, image };

@@ -1,4 +1,4 @@
-import { CogTif } from '../../core/src/cog.tif';
+import { CogTif } from '@coginfo/core/src/cog.tiff';
 import { CogSourceFetch } from '@coginfo/source-url';
 import * as L from 'leaflet';
 import { LoggerConfig, LoggerType } from '../util/util.log';
