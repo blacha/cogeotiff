@@ -1,5 +1,4 @@
 import { CogTiffImage } from './cog.tiff.image';
-import { CogTiffImageTiled } from './cog.tiff.image.tiled';
 import { TiffEndian } from './const/tiff.endian';
 import { TiffTag } from './const/tiff.tag.id';
 import { TiffVersion } from './const/tiff.version';
@@ -137,13 +136,7 @@ export class CogTiff {
             tags.set(tag.id, tag);
         }
 
-        let image: CogTiffImage;
-        const tileWidth = tags.get(TiffTag.TileWidth);
-        if (tileWidth != null && tileWidth.value > 0) {
-            image = new CogTiffImageTiled(this, this.images.length, tags);
-        } else {
-            image = new CogTiffImage(this, this.images.length, tags);
-        }
+        const image = new CogTiffImage(this, this.images.length, tags);
         const nextOffset = await this.source.pointer(pos);
         return { nextOffset, image };
     }

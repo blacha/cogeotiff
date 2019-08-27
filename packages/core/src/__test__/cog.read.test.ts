@@ -1,8 +1,8 @@
 import * as o from 'ospec';
 import * as path from 'path';
 import 'source-map-support/register';
+
 import { CogTiff } from '../cog.tiff';
-import { CogTiffImageTiled } from '../cog.tiff.image.tiled';
 import { TiffVersion } from '../const/tiff.version';
 import { TestFileCogSource } from './fake.source';
 
@@ -26,7 +26,7 @@ o.spec('CogRead', () => {
     function validate(tif: CogTiff) {
         o(tif.images.length).equals(5);
 
-        const [firstTif] = tif.images as CogTiffImageTiled[];
+        const [firstTif] = tif.images;
         o(firstTif.isTiled()).equals(true);
         o(firstTif.tileSize).deepEquals({ width: 256, height: 256 });
         o(firstTif.size).deepEquals({ width: 64, height: 64 });
