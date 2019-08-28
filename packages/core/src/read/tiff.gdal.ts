@@ -1,6 +1,6 @@
+import { ByteSize } from '../const/byte.size';
 import { CogSource } from '../source/cog.source';
 import { getReverseEnumValue } from '../util/util.enum';
-import { ByteSize } from './byte.size';
 
 //   GDAL_STRUCTURAL_METADATA_SIZE: '000140 bytes',
 //   LAYOUT: 'IFDS_BEFORE_DATA',

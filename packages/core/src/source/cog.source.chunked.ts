@@ -1,8 +1,12 @@
-import { Log, CogLogger } from '../util/util.log';
+import { CogLogger, Log } from '../util/util.log';
 import { CogSource } from './cog.source';
 
 /**
  * Chunked source for COGS
+ *
+ * Split a source into smaller chunks and load the bytes required in chunkSize amounts at a time
+ *
+ * This will also handle joining of consecutive requests, even when it is semi consecutive
  */
 export abstract class CogSourceChunked extends CogSource {
     /** size of chunks to fetch (Bytes) */
@@ -21,8 +25,17 @@ export abstract class CogSourceChunked extends CogSource {
     blankFillCount = 16;
 
     /* List of chunk ids to fetch */
-    toFetch: boolean[] = [];
-    toFetchPromise: Promise<ArrayBuffer[]> | null = null;
+    protected toFetch: boolean[] = [];
+    protected toFetchPromise: Promise<ArrayBuffer[]> | null = null;
+    /**
+     * Load the required chunks from the source
+     *
+     * @param firstChunk first chunkId to load
+     * @param lastChunk last chunkId to load
+     * @param log Logger for debugging
+     *
+     * @returns loaded chunk data as one buffer
+     */
     protected abstract loadChunks(firstChunk: number, lastChunk: number, log: CogLogger): Promise<ArrayBuffer>;
 
     /**
@@ -71,7 +84,7 @@ export abstract class CogSourceChunked extends CogSource {
         return { chunks, blankFill };
     }
 
-    async fetchData(): Promise<ArrayBuffer[]> {
+    private async fetchData(): Promise<ArrayBuffer[]> {
         const chunkIds = Object.keys(this.toFetch);
         this.toFetch = [];
         delete this.toFetchPromise;

@@ -1,4 +1,4 @@
-import { CogLogger, CogSourceChunked, CogTif, CogSource } from '@coginfo/core';
+import { CogLogger, CogSource, CogSourceChunked, CogTiff } from '@coginfo/core';
 import * as S3 from 'aws-sdk/clients/s3';
 
 export class CogSourceAwsS3 extends CogSourceChunked {
@@ -35,8 +35,8 @@ export class CogSourceAwsS3 extends CogSourceChunked {
      * @param bucket AWS S3 Bucket name
      * @param key Path to COG inside of bucket
      */
-    static async create(bucket: string, key: string): Promise<CogTif> {
-        return new CogTif(new CogSourceAwsS3(bucket, key)).init();
+    static async create(bucket: string, key: string): Promise<CogTiff> {
+        return new CogTiff(new CogSourceAwsS3(bucket, key)).init();
     }
 
     protected async loadChunks(firstChunk: number, lastChunk: number, log: CogLogger): Promise<ArrayBuffer> {

@@ -1,5 +1,5 @@
-import { ByteSize } from './byte.size';
-import { TiffVersion } from './tif';
+import { ByteSize } from '../const/byte.size';
+import { TiffVersion } from '../const/tiff.version';
 
 export const TagTiffConfig = {
     version: TiffVersion.Tiff,

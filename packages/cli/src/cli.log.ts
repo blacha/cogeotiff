@@ -1,4 +1,3 @@
-import { LoggerConfig } from '@coginfo/core';
 import { Log, LogLevel, LogMessage } from 'bblog';
 import chalk from 'chalk';
 

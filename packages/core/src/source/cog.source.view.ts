@@ -1,16 +1,16 @@
-import { CogSource } from './source/cog.source';
-import { ByteSize } from './read/byte.size';
+import { ByteSize } from '../const/byte.size';
+import { CogSource } from './cog.source';
 
 /**
  * View of a Cog source used for reading bytes from the cog while keeping
  * track of the offset
  */
 export class CogSourceView {
-    source: CogSource;
+    private source: CogSource;
     /** Starting offset for the view */
-    byteOffset: number;
+    private byteOffset: number;
     /** number of bytes that have been read since starting */
-    relativeOffset: number;
+    private relativeOffset: number;
 
     constructor(source: CogSource, offset = 0) {
         this.source = source;

@@ -1,6 +1,5 @@
-import 'source-map-support/register';
-
 import * as o from 'ospec';
+import 'source-map-support/register';
 import { CogSourceUrl } from '../cog.source.url';
 
 export interface HttpHeaders {

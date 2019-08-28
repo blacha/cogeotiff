@@ -1,9 +1,9 @@
-import { MimeType } from '../read/mime';
+import { TiffMimeType } from '../const/tiff.mime';
 
 const FileExtension: { [key: string]: string } = {
-    [MimeType.JPEG]: 'jpeg',
-    [MimeType.JP2]: 'jp2',
-    [MimeType.WEBP]: 'webp',
+    [TiffMimeType.JPEG]: 'jpeg',
+    [TiffMimeType.JP2]: 'jp2',
+    [TiffMimeType.WEBP]: 'webp',
 };
 
 /**

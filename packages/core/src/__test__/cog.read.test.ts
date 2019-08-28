@@ -2,9 +2,8 @@ import * as o from 'ospec';
 import * as path from 'path';
 import 'source-map-support/register';
 
-import { CogTif } from '../cog.tif';
-import { CogTifImageTiled } from '../cog.tif.image.tiled';
-import { TiffVersion } from '../read/tif';
+import { CogTiff } from '../cog.tiff';
+import { TiffVersion } from '../const/tiff.version';
 import { TestFileCogSource } from './fake.source';
 
 o.spec('CogRead', () => {
@@ -24,18 +23,18 @@ o.spec('CogRead', () => {
     //     // o(firstTif.compression).equals('image/jpeg')
     // })
 
-    function validate(tif: CogTif) {
+    function validate(tif: CogTiff) {
         o(tif.images.length).equals(5);
 
-        const [firstTif] = tif.images as CogTifImageTiled[];
+        const [firstTif] = tif.images;
         o(firstTif.isTiled()).equals(true);
-        o(firstTif.tileInfo).deepEquals({ width: 256, height: 256 });
+        o(firstTif.tileSize).deepEquals({ width: 256, height: 256 });
         o(firstTif.size).deepEquals({ width: 64, height: 64 });
     }
 
     o('should read big tiff', async () => {
         const source = new TestFileCogSource(path.join(__dirname, '../..' + '/data/big_cog.tif'));
-        const tif = new CogTif(source);
+        const tif = new CogTiff(source);
 
         await tif.init();
 
@@ -46,7 +45,7 @@ o.spec('CogRead', () => {
 
     o('should read tiff', async () => {
         const source = new TestFileCogSource(path.join(__dirname, '../..' + '/data/cog.tif'));
-        const tif = new CogTif(source);
+        const tif = new CogTiff(source);
 
         await tif.init();
 

@@ -1,4 +1,5 @@
-import { CogSource, CogSourceChunked, CogTif, CogLogger } from '@coginfo/core';
+/// <reference lib="dom" />
+import { CogLogger, CogSource, CogSourceChunked, CogTiff } from '@coginfo/core';
 
 export class CogSourceUrl extends CogSourceChunked {
     type = 'url';
@@ -28,8 +29,8 @@ export class CogSourceUrl extends CogSourceChunked {
      *
      * @param url location of the cog
      */
-    static async create(url: string): Promise<CogTif> {
-        return new CogTif(new CogSourceUrl(url)).init();
+    static async create(url: string): Promise<CogTiff> {
+        return new CogTiff(new CogSourceUrl(url)).init();
     }
 
     protected async loadChunks(firstChunk: number, lastChunk: number, logger: CogLogger): Promise<ArrayBuffer> {
