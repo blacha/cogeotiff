@@ -9,5 +9,6 @@
         "sourceMap": true,
         "strict": true,
         "declaration": true,
+        "declarationMap": true
     },
 }
