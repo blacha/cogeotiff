@@ -1,4 +1,6 @@
-# cog-viewer
+# coginfo
+**NOTE** This version has not been released to NPM (yet)
+
 [![Build Status](https://github.com/blacha/coginfo/workflows/Main/badge.svg)](https://github.com/blacha/coginfo/actions)
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
