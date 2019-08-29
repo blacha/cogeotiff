@@ -61,5 +61,5 @@ export class CogSourceUrl extends CogSourceChunked {
     }
 
     // Allow overwriting the fetcher used (eg testing/node-js)
-    static fetch: GlobalFetch['fetch'] = (a, b) => fetch(a, b);
+    static fetch: WindowOrWorkerGlobalScope['fetch'] = (a, b) => fetch(a, b);
 }
