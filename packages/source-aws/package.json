@@ -9,7 +9,7 @@
     "scripts": {},
     "dependencies": {
         "@coginfo/core": "^0.1.0",
-        "aws-sdk": "^2.522.0"
+        "aws-sdk": "^2.523.0"
     },
     "devDependencies": {}
 }
