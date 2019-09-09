@@ -70,11 +70,14 @@ export class CogTiffImage {
      */
     get origin(): [number, number, number] {
         const tiePoints: number[] | null = this.value(TiffTag.ModelTiePoint);
-        if (tiePoints == null || tiePoints.length !== 6) {
-            throw new Error('Tiff image does not have a ModelTiePoint');
+        if (tiePoints != null && tiePoints.length === 6) {
+            return [tiePoints[0], tiePoints[1], tiePoints[2]];
         }
-
-        return [tiePoints[0], tiePoints[1], tiePoints[2]];
+        const modelTransformation = this.value(TiffTag.ModelTransformation);
+        if (modelTransformation != null) {
+            return [modelTransformation[3], modelTransformation[7], modelTransformation[11]];
+        }
+        throw new Error('Image does not have a geo transformation.');
     }
 
     /**
@@ -84,10 +87,14 @@ export class CogTiffImage {
      */
     get resolution(): [number, number, number] {
         const modelPixelScale: number[] | null = this.value(TiffTag.ModelPixelScale);
-        if (modelPixelScale == null) {
-            throw new Error('Tiff image does not have a ModelPixelScale');
+        if (modelPixelScale != null) {
+            return [modelPixelScale[0], -modelPixelScale[1], modelPixelScale[2]];
         }
-        return [modelPixelScale[0], -modelPixelScale[1], modelPixelScale[2]];
+        const modelTransformation: number[] | null = this.value(TiffTag.ModelTransformation);
+        if (modelTransformation != null) {
+            return [modelTransformation[0], modelTransformation[5], modelTransformation[10]];
+        }
+        throw new Error('Image does not have a geo transformation.');
     }
 
     /**
