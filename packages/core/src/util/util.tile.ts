@@ -4,6 +4,8 @@ const FileExtension: { [key: string]: string } = {
     [TiffMimeType.JPEG]: 'jpeg',
     [TiffMimeType.JP2]: 'jp2',
     [TiffMimeType.WEBP]: 'webp',
+    [TiffMimeType.LZW]: 'lzw',
+    [TiffMimeType.DEFLATE]: 'deflate',
 };
 
 /**
