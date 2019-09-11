@@ -102,6 +102,8 @@ export class CogTiff {
             getLogger().trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
             await this.source.loadBytes(nextOffset, 1024);
             await this.processIfd(nextOffset);
+        } else {
+            await Promise.all(this.images.map(c => c.init()));
         }
     }
 

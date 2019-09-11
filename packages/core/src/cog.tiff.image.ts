@@ -41,6 +41,22 @@ export class CogTiffImage {
         this.tags = tags;
     }
 
+    /** Force loading of important tags if they have not already been loaded */
+    async init() {
+        const requiredTags = [
+            TiffTag.Compression,
+            TiffTag.ImageHeight,
+            TiffTag.ImageWidth,
+            TiffTag.ModelPixelScale,
+            TiffTag.ModelTiePoint,
+            TiffTag.ModelTransformation,
+            TiffTag.TileHeight,
+            TiffTag.TileWidth,
+        ];
+
+        return Promise.all(requiredTags.map(c => this.fetch(c)));
+    }
+
     /**
      * Get the value of a TiffTag if it exists null otherwise
      */
@@ -71,9 +87,10 @@ export class CogTiffImage {
     get origin(): [number, number, number] {
         const tiePoints: number[] | null = this.value(TiffTag.ModelTiePoint);
         if (tiePoints != null && tiePoints.length === 6) {
-            return [tiePoints[0], tiePoints[1], tiePoints[2]];
+            return [tiePoints[3], tiePoints[4], tiePoints[5]];
         }
         const modelTransformation = this.value(TiffTag.ModelTransformation);
+
         if (modelTransformation != null) {
             return [modelTransformation[3], modelTransformation[7], modelTransformation[11]];
         }
