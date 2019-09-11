@@ -11,7 +11,7 @@
         "@coginfo/core": "^0.1.0"
     },
     "devDependencies": {
-        "@types/node": "^12.7.2",
+        "@types/node": "^12.7.5",
         "ospec": "^4.0.0"
     }
 }
