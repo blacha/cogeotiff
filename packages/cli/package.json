@@ -1,11 +1,11 @@
 {
     "name": "@cogeotiff/cli",
     "version": "0.1.0",
-    "repository": "git@github.com:blacha/coginfo.git",
+    "repository": "git@github.com:blacha/cogeotiff.git",
     "author": "",
     "license": "MIT",
     "bin": {
-        "coginfo": "bin/coginfo"
+        "cogeotiff": "bin/cogeotiff"
     },
     "scripts": {},
     "dependencies": {

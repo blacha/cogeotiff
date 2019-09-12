@@ -2,7 +2,7 @@
     "name": "@cogeotiff/source-web",
     "version": "0.1.0",
     "private": true,
-    "repository": "git@github.com:blacha/coginfo.git",
+    "repository": "git@github.com:blacha/cogeotiff.git",
     "author": "",
     "license": "MIT",
     "scripts": {},

@@ -1,7 +1,7 @@
 {
     "name": "@cogeotiff/source-aws",
     "version": "0.1.0",
-    "repository": "git@github.com:blacha/coginfo.git",
+    "repository": "git@github.com:blacha/cogeotiff.git",
     "author": "",
     "main": "./build/index.js",
     "types": "./build/index.d.ts",

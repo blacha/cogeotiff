@@ -1,7 +1,7 @@
-# coginfo
+# cogeotiff
 **NOTE** This version has not been released to NPM (yet)
 
-[![Build Status](https://github.com/blacha/coginfo/workflows/Main/badge.svg)](https://github.com/blacha/coginfo/actions)
+[![Build Status](https://github.com/blacha/cogeotiff/workflows/Main/badge.svg)](https://github.com/blacha/cogeotiff/actions)
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
@@ -28,12 +28,12 @@ const tile = await cog.getTileRaw(2, 2, 5);
 npm i -g @cogeotiff/cli
 ```
 
-### coginfo info
+### cogeotiff info
 
 Display basic information about COG
 
 ```shell
-coginfo info --file webp.cog.tif
+cogeotiff info --file webp.cog.tif
 ```
 
 Output:
@@ -62,20 +62,20 @@ COG File Info - /home/blacha/Downloads/tif-new/bg43.webp.cog.tif
 ```
 
 
-### coginfo dump
+### cogeotiff dump
 
 Dump all tiles for a zoom level (**Warning** if you do this for a large cog this will create millions of files.)
 
 ```
-coginfo dump --file webp.cog.tif --zoom 2 --output output
+cogeotiff dump --file webp.cog.tif --zoom 2 --output output
 ```
 
-### coginfo tile
+### cogeotiff tile
 
 Load and dump a individual tile
 
 ```
-coginfo tile --file webp.cog.tif --xyz 1,1,1
+cogeotiff tile --file webp.cog.tif --xyz 1,1,1
 ```
 
 # Building
