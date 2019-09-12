@@ -1,11 +1,11 @@
-# @coginfo/core
+# @cogeotiff/core
 
 Reading logic for GeoTiffs
 
 ## Usage
 
 ```javascript
-import { CogSourceUrl } from '@coginfo/source-url';
+import { CogSourceUrl } from '@cogeotiff/source-url';
 
 const cog = await CogSourceUrl.create('https://example.com/cog.tif');
 

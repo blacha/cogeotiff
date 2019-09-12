@@ -1,4 +1,4 @@
-# @coginfo/source-url
+# @cogeotiff/source-url
 
 
 Load a COG from a URL Source using `fetch`
@@ -6,7 +6,7 @@ Load a COG from a URL Source using `fetch`
 ## Usage
 
 ```javascript
-import { CogSourceUrl } from '@coginfo/source-url';
+import { CogSourceUrl } from '@cogeotiff/source-url';
 
 const cog = await CogSourceUrl.create('https://example.com/cog.tif');
 ```

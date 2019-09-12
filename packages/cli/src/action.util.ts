@@ -1,6 +1,6 @@
-import { CogSource, CogTiff } from '@coginfo/core';
-import { CogSourceFile } from '@coginfo/source-file';
-import { CogSourceUrl } from '@coginfo/source-url';
+import { CogSource, CogTiff } from '@cogeotiff/core';
+import { CogSourceFile } from '@cogeotiff/source-file';
+import { CogSourceUrl } from '@cogeotiff/source-url';
 import { CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 

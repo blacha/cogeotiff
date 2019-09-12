@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import { basename } from 'path';
-import { CogSource, CogTiff } from '@coginfo/core';
+import { CogSource, CogTiff } from '@cogeotiff/core';
 
 const SourceType = 'file';
 

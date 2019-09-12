@@ -1,4 +1,4 @@
-import * as Core from '@coginfo/core';
+import * as Core from '@cogeotiff/core';
 import { CommandLineParser } from '@microsoft/ts-command-line';
 import { Log } from 'bblog';
 import chalk from 'chalk';

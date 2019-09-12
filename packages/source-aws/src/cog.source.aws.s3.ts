@@ -1,4 +1,4 @@
-import { CogLogger, CogSource, CogSourceChunked, CogTiff } from '@coginfo/core';
+import { CogLogger, CogSource, CogSourceChunked, CogTiff } from '@cogeotiff/core';
 import * as S3 from 'aws-sdk/clients/s3';
 
 export class CogSourceAwsS3 extends CogSourceChunked {

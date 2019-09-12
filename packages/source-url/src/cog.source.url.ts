@@ -1,5 +1,5 @@
 /// <reference lib="dom" />
-import { CogLogger, CogSource, CogSourceChunked, CogTiff } from '@coginfo/core';
+import { CogLogger, CogSource, CogSourceChunked, CogTiff } from '@cogeotiff/core';
 
 export class CogSourceUrl extends CogSourceChunked {
     type = 'url';

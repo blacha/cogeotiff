@@ -16,7 +16,7 @@ Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
 Load a COG from a URL using `fetch`
 ```javascript
-import { CogSourceUrl } from '@coginfo/source-url';
+import { CogSourceUrl } from '@cogeotiff/source-url';
 
 const cog = await CogSourceUrl.create('https://example.com/cog.tif');
 const tile = await cog.getTileRaw(2, 2, 5);
@@ -25,7 +25,7 @@ const tile = await cog.getTileRaw(2, 2, 5);
 ## Scripts
 
 ```bash
-npm i -g @coginfo/cli
+npm i -g @cogeotiff/cli
 ```
 
 ### coginfo info

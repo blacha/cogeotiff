@@ -1,4 +1,4 @@
-import { CogLogger, CogTiff, Log, TiffVersion, TileUtil, toByteSizeString } from '@coginfo/core';
+import { CogLogger, CogTiff, Log, TiffVersion, TileUtil, toByteSizeString } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 import { promises as fs } from 'fs';

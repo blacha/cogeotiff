@@ -1,5 +1,5 @@
-import { CogTif } from '@coginfo/core/src/cog.tiff';
-import { CogSourceFetch } from '@coginfo/source-url';
+import { CogTif } from '@cogeotiff/core/src/cog.tiff';
+import { CogSourceFetch } from '@cogeotiff/source-url';
 import * as L from 'leaflet';
 import { LoggerConfig, LoggerType } from '../util/util.log';
 import { Vector } from '../../core/src/vector';

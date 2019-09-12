@@ -1,4 +1,4 @@
-import { CogLogger, CogTiff, TileUtil } from '@coginfo/core';
+import { CogLogger, CogTiff, TileUtil } from '@cogeotiff/core';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 

@@ -1,5 +1,5 @@
 {
-    "name": "@coginfo/core",
+    "name": "@cogeotiff/core",
     "version": "0.1.0",
     "repository": "git@github.com:blacha/coginfo.git",
     "main": "./build/index.js",
