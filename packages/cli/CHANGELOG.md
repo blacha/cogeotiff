@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.3](https://github.com/blacha/cogeotiff/compare/v0.2.2...v0.2.3) (2019-09-12)
+
+
+### Bug Fixes
+
+* missed rename on file ([62160b7](https://github.com/blacha/cogeotiff/commit/62160b7))
+
+
+
+
+
 ## [0.2.2](https://github.com/blacha/cogeotiff/compare/v0.2.1...v0.2.2) (2019-09-12)
 
 
