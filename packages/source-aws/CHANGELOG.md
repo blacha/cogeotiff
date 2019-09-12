@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2](https://github.com/blacha/cogeotiff/compare/v0.2.1...v0.2.2) (2019-09-12)
+
+
+### Bug Fixes
+
+* ignore tsconfig.tsbuildinfo when publishing ([8a27600](https://github.com/blacha/cogeotiff/commit/8a27600))
+
+
+
+
+
 ## [0.2.1](https://github.com/blacha/cogeotiff/compare/v0.2.0...v0.2.1) (2019-09-12)
 
 
