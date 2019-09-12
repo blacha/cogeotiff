@@ -9,5 +9,8 @@
     "dependencies": {
         "@cogeotiff/core": "^0.2.0",
         "@cogeotiff/source-url": "^0.2.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

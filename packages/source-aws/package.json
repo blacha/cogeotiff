@@ -10,5 +10,8 @@
     "dependencies": {
         "@cogeotiff/core": "^0.2.0",
         "aws-sdk": "^2.524.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }
