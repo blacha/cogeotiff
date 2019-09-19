@@ -63,11 +63,7 @@ export abstract class CogTiffTagBase<T = any> {
      * @returns size in bytes of the tag data
      */
     get dataTypeSize(): number {
-        const size = getTiffTagSize(this.dataType);
-        if (size == null) {
-            throw new Error(`Invalid ss type: "${this.dataType}"`);
-        }
-        return size;
+        return getTiffTagSize(this.dataType);
     }
 
     /**
