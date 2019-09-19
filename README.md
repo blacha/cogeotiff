@@ -1,7 +1,7 @@
 # cogeotiff
-**NOTE** This version has not been released to NPM (yet)
 
 [![Build Status](https://github.com/blacha/cogeotiff/workflows/Main/badge.svg)](https://github.com/blacha/cogeotiff/actions)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/blacha/cogeotiff.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/blacha/cogeotiff/context:javascript)
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
