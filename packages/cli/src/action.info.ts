@@ -1,7 +1,8 @@
-import { TiffVersion, toByteSizeString } from '@cogeotiff/core';
+import { TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 import { ActionUtil, CliResultMap } from './action.util';
+import { toByteSizeString } from './util.bytes';
 
 export class ActionCogInfo extends CommandLineAction {
     private file: CommandLineStringParameter | null = null;

@@ -9,7 +9,7 @@ export enum TiffMimeType {
     DEFLATE = 'application/deflate',
 }
 
-export const TiffCompression: { [key: number]: TiffMimeType | string } = {
+export const TiffCompression: { [key: number]: TiffMimeType } = {
     5: TiffMimeType.LZW,
     6: TiffMimeType.JPEG,
     7: TiffMimeType.JPEG,

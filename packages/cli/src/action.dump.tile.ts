@@ -1,10 +1,11 @@
-import { CogLogger, CogTiff, Log, TiffVersion, TileUtil, toByteSizeString } from '@cogeotiff/core';
+import { CogLogger, CogTiff, Log, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { ActionUtil, CliResultMap } from './action.util';
-import { writeTile } from './util.tile';
+import { writeTile, getTileName } from './util.tile';
+import { toByteSizeString } from './util.bytes';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
@@ -108,7 +109,7 @@ export class ActionDumpTile extends CommandLineAction {
                     continue;
                 }
 
-                html.push(`\t\t<img src="./${TileUtil.name(tile.mimeType, zoom, x, y)}" >`);
+                html.push(`\t\t<img src="./${getTileName(tile.mimeType, zoom, x, y)}" >`);
             }
 
             html.push('\t</div>');

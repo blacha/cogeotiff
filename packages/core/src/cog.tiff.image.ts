@@ -117,7 +117,7 @@ export class CogTiffImage {
     /**
      * Bounding box of the image
      *
-     * @returns [west, south, east, north] bounding box
+     * @returns [minX, minY, maxX, maxY] bounding box
      */
     get bbox(): [number, number, number, number] | null {
         const size = this.size;
@@ -144,7 +144,7 @@ export class CogTiffImage {
      *
      * @returns Compression type eg webp
      */
-    get compression() {
+    get compression(): TiffMimeType | null {
         const compression = this.value(TiffTag.Compression);
         if (compression == null || typeof compression !== 'number') {
             return null;

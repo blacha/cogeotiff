@@ -5,6 +5,7 @@ import 'source-map-support/register';
 import { CogTiff } from '../cog.tiff';
 import { TiffVersion } from '../const/tiff.version';
 import { TestFileCogSource } from './fake.source';
+import { TiffMimeType } from '../const';
 
 o.spec('CogRead', () => {
     // TODO this does not load 100% yet
@@ -54,6 +55,6 @@ o.spec('CogRead', () => {
         validate(tif);
 
         const [firstTif] = tif.images;
-        o(firstTif.compression).equals('image/jpeg');
+        o(firstTif.compression).equals(TiffMimeType.JPEG);
     });
 });
