@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/blacha/coginfo/compare/v0.2.3...v0.3.0) (2019-09-24)
+
+
+### Bug Fixes
+
+* guard always evaluates false ([dd9550b](https://github.com/blacha/coginfo/commit/dd9550b))
+
+
+### Features
+
+* adding support for getting by resolution ([69d3a5d](https://github.com/blacha/coginfo/commit/69d3a5d))
+* include image size of a tile ([31aa174](https://github.com/blacha/coginfo/commit/31aa174))
+
+
+
+
+
 ## [0.2.2](https://github.com/blacha/coginfo/compare/v0.2.1...v0.2.2) (2019-09-12)
 
 
