@@ -67,6 +67,33 @@ export class CogTiff {
         return this.images[z];
     }
 
+    /**
+     * Find a image which has a resolution similar to the provided resolution
+     *
+     * @param resolution resolution to find
+     */
+    getImageByResolution(resolution: number): CogTiffImage {
+        const firstImage = this.images[0];
+        const firstImageSize = firstImage.size;
+        const [refX, refY] = firstImage.resolution;
+
+        const resolutionBaseX = refX * firstImageSize.width;
+        const resolutionBaseY = refY * firstImageSize.height;
+        for (let i = this.images.length - 1; i > 0; i--) {
+            const img = this.images[i];
+            const imgSize = img.size;
+
+            const imgResolutionX = resolutionBaseX / imgSize.width;
+            // TODO do we care about y resolution
+            // const imgResolutionY = resolutionBaseY / imgSize.height;
+
+            if (imgResolutionX - resolution <= 0.01) {
+                return img;
+            }
+        }
+        return firstImage;
+    }
+
     async getTileRaw(x: number, y: number, z: number): Promise<{ mimeType: string; bytes: ArrayBuffer } | null> {
         const image = this.getImage(z);
         if (image == null) {

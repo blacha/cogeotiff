@@ -89,11 +89,17 @@ export class CogTiffImage {
         if (tiePoints != null && tiePoints.length === 6) {
             return [tiePoints[3], tiePoints[4], tiePoints[5]];
         }
-        const modelTransformation = this.value(TiffTag.ModelTransformation);
 
+        const modelTransformation = this.value(TiffTag.ModelTransformation);
         if (modelTransformation != null) {
             return [modelTransformation[3], modelTransformation[7], modelTransformation[11]];
         }
+
+        // If this is a sub image, use the origin from the top level image
+        if (this.value(TiffTag.NewSubFileType) === 1 && this.id !== 0) {
+            return this.tif.images[0].origin;
+        }
+
         throw new Error('Image does not have a geo transformation.');
     }
 
@@ -110,6 +116,16 @@ export class CogTiffImage {
         const modelTransformation: number[] | null = this.value(TiffTag.ModelTransformation);
         if (modelTransformation != null) {
             return [modelTransformation[0], modelTransformation[5], modelTransformation[10]];
+        }
+
+        // If this is a sub image, use the resolution from the top level image
+        if (this.value(TiffTag.NewSubFileType) === 1 && this.id !== 0) {
+            const firstImg = this.tif.images[0];
+            const [resX, resY, resZ] = firstImg.resolution;
+            const firstImgSize = firstImg.size;
+            const imgSize = this.size;
+            // scale resolution based on the size difference between the two images
+            return [(resX * firstImgSize.width) / imgSize.width, (resY * firstImgSize.height) / imgSize.height, resZ];
         }
         throw new Error('Image does not have a geo transformation.');
     }
