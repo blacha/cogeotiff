@@ -3,7 +3,7 @@ import { TiffCompression, TiffMimeType } from './const/tiff.mime';
 import { TiffTag } from './const/tiff.tag.id';
 import { CogTiffTagBase } from './read/tag/tiff.tag.base';
 import { CogTiffTag } from './read/tiff.tag';
-import { Size } from './vector';
+import { Size, BoundingBox } from './vector';
 import { CogTiffTagOffset } from './read/tag/tiff.tag.offset';
 
 /**
@@ -127,6 +127,7 @@ export class CogTiffImage {
             // scale resolution based on the size difference between the two images
             return [(resX * firstImgSize.width) / imgSize.width, (resY * firstImgSize.height) / imgSize.height, resZ];
         }
+
         throw new Error('Image does not have a geo transformation.');
     }
 
@@ -135,13 +136,13 @@ export class CogTiffImage {
      *
      * @returns [minX, minY, maxX, maxY] bounding box
      */
-    get bbox(): [number, number, number, number] | null {
+    get bbox(): [number, number, number, number] {
         const size = this.size;
         const origin = this.origin;
         const resolution = this.resolution;
 
         if (origin == null || size == null || resolution == null) {
-            return null;
+            throw new Error('Unable to calculate bounding box');
         }
 
         const x1 = origin[0];
@@ -255,7 +256,7 @@ export class CogTiffImage {
      * @param x Tile x offset
      * @param y Tile y offset
      */
-    async getTile(x: number, y: number) {
+    async getTile(x: number, y: number): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array; bounds: BoundingBox }> {
         const mimeType = this.compression;
         const size = this.size;
         const tiles = this.tileSize;
@@ -273,14 +274,21 @@ export class CogTiffImage {
         const nxTiles = Math.ceil(size.width / tiles.width);
 
         if (x >= nxTiles || y >= nyTiles) {
-            return null;
+            throw new Error(`Tile index is outside of range x:${x} >= ${nxTiles} or y:${y} >= ${nyTiles}`);
         }
 
         const idx = y * nxTiles + x;
         const totalTiles = nxTiles * nyTiles;
         if (idx >= totalTiles) {
-            return null; // TODO should this throw a error?
+            throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
         }
+
+        // Clamp the bounds of the output image to the size of the image, as sometimes the edge tiles are not full tiles
+        const top = y * tiles.height;
+        const left = x * tiles.width;
+        const width = left + tiles.width >= size.width ? size.width - left : tiles.width;
+        const height = top + tiles.height >= size.height ? size.height - top : tiles.height;
+        const bounds = { top, left, width, height };
 
         const bytes = await this.getTileBytes(idx);
 
@@ -294,9 +302,9 @@ export class CogTiffImage {
             actualBytes.set(tableData, 0);
             actualBytes.set(bytes.slice(2), tableData.length);
 
-            return { mimeType, bytes: actualBytes };
+            return { mimeType, bytes: actualBytes, bounds };
         }
-        return { mimeType, bytes: new Uint8Array(bytes) };
+        return { mimeType, bytes: new Uint8Array(bytes), bounds };
     }
 
     protected async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {

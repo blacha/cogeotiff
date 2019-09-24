@@ -42,6 +42,13 @@ o.spec('CogTiled', () => {
         }
     });
 
+    o('should get bounding box from all images', () => {
+        const baseOrigin = cog.images[0].bbox;
+        for (const img of cog.images) {
+            o(img.bbox).deepEquals(baseOrigin);
+        }
+    });
+
     o('should scale image resolution for all images', () => {
         const [resX, resY, resZ] = cog.images[0].resolution;
         for (let i = 0; i < cog.images.length; i++) {
