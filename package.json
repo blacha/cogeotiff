@@ -2,6 +2,7 @@
   "name": "@cogeotiff/base",
   "version": "0.1.0",
   "scripts": {
+    "clean": "tsc -b --clean && rimraf 'packages/*/build'",
     "build": "tsc -b --pretty",
     "build-watch": "tsc -b --pretty --watch",
     "version": "lerna version --conventional-commits --no-push --sign-git-commit --sign-git-tag",
@@ -25,6 +26,7 @@
     "lerna": "^3.16.4",
     "ospec": "^4.0.0",
     "prettier": "^1.18.2",
+    "rimraf": "^3.0.0",
     "typescript": "^3.5.1"
   },
   "workspaces": [
