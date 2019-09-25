@@ -288,7 +288,7 @@ export class CogTiffImage {
         const left = x * tiles.width;
         const width = left + tiles.width >= size.width ? size.width - left : tiles.width;
         const height = top + tiles.height >= size.height ? size.height - top : tiles.height;
-        const bounds = { top, left, width, height };
+        const bounds = { x: left, y: top, width, height };
 
         const bytes = await this.getTileBytes(idx);
 
