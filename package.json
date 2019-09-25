@@ -4,6 +4,7 @@
   "scripts": {
     "build": "tsc -b --pretty",
     "build-watch": "tsc -b --pretty --watch",
+    "version": "lerna version --conventional-commits --no-push --sign-git-commit --sign-git-tag",
     "lint": "eslint 'packages/*/{src,test}/**/*.{js,ts,tsx}' --quiet --fix",
     "test": "ospec packages/*/build/**/*.test.js"
   },
