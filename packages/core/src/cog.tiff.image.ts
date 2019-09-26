@@ -247,6 +247,15 @@ export class CogTiffImage {
         return tileOffset.getValueAt(index);
     }
 
+    // Clamp the bounds of the output image to the size of the image, as sometimes the edge tiles are not full tiles
+    getTileBounds(x: number, y: number): BoundingBox {
+        const { size, tileSize } = this;
+        const top = y * tileSize.height;
+        const left = x * tileSize.width;
+        const width = left + tileSize.width >= size.width ? size.width - left : tileSize.width;
+        const height = top + tileSize.height >= size.height ? size.height - top : tileSize.height;
+        return { x: left, y: top, width, height };
+    }
     /**
      * Load the tile buffer, this works best with webp
      *
@@ -283,13 +292,7 @@ export class CogTiffImage {
             throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
         }
 
-        // Clamp the bounds of the output image to the size of the image, as sometimes the edge tiles are not full tiles
-        const top = y * tiles.height;
-        const left = x * tiles.width;
-        const width = left + tiles.width >= size.width ? size.width - left : tiles.width;
-        const height = top + tiles.height >= size.height ? size.height - top : tiles.height;
-        const bounds = { x: left, y: top, width, height };
-
+        const bounds = this.getTileBounds(x, y);
         const bytes = await this.getTileBytes(idx);
 
         if (this.compression == TiffMimeType.JPEG) {
