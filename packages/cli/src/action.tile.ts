@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { ActionUtil, CliResultMap } from './action.util';
 import { writeTile } from './util.tile';
 import { toByteSizeString } from './util.bytes';
+import { CliLogger } from './cli.log';
 
 export class ActionTile extends CommandLineAction {
     private file: CommandLineStringParameter | null = null;
@@ -18,7 +19,7 @@ export class ActionTile extends CommandLineAction {
     }
 
     async onExecute(): Promise<void> {
-        const logger = Log.get().child({ action: 'tile' });
+        const logger = CliLogger.child({ action: 'tile' });
         // abstract
         const { tif } = await ActionUtil.getCogSource(this.file);
         if (this.xyz == null || this.xyz.value == null) {

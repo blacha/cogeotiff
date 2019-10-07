@@ -78,3 +78,9 @@ export const ChalkLogStream = {
         console.log(`${output} ${kvString}`);
     },
 };
+
+export const CliLogger = Log.createLogger({
+    name: 'coginfo',
+    hostname: '',
+    streams: [ChalkLogStream],
+});

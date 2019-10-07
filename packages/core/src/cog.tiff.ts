@@ -111,10 +111,10 @@ export class CogTiff {
         this.images.push(image);
         const size = image.size;
         if (!image.isTiled()) {
-            getLogger().warn('Tiff is not tiled');
+            getLogger()?.warn('Tiff is not tiled');
         } else {
             const tile = image.tileSize;
-            getLogger().debug(
+            getLogger()?.debug(
                 {
                     ...size,
                     tileWidth: tile.width,
@@ -126,7 +126,7 @@ export class CogTiff {
         }
 
         if (nextOffset) {
-            getLogger().trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
+            getLogger()?.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
             await this.source.loadBytes(nextOffset, 1024);
             await this.processIfd(nextOffset);
         } else {
@@ -138,7 +138,7 @@ export class CogTiff {
         const view = this.source.getView(offset);
         const tagCount = view.offset();
         const byteStart = offset + this.source.config.offset;
-        const logger = getLogger().child({ imageId: this.images.length });
+        const logger = getLogger()?.child({ imageId: this.images.length });
         const tags: Map<TiffTag, CogTiffTagBase> = new Map();
 
         let pos = byteStart;
@@ -147,7 +147,7 @@ export class CogTiff {
             pos += tag.size;
 
             if (tag.name == null) {
-                logger.error({ code: toHexString(tag.id) }, `IFDUnknown`);
+                logger?.error({ code: toHexString(tag.id) }, `IFDUnknown`);
                 continue;
             }
 
@@ -157,10 +157,10 @@ export class CogTiff {
                 tagName: tag.name,
             };
             if (tag.value == null) {
-                logger.trace({ ...logObj, ptr: toHexString(tag.valuePointer) }, 'PartialReadIFD');
+                logger?.trace({ ...logObj, ptr: toHexString(tag.valuePointer) }, 'PartialReadIFD');
             } else {
                 const displayValue = Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value;
-                logger.trace({ ...logObj, value: displayValue }, 'ReadIFD');
+                logger?.trace({ ...logObj, value: displayValue }, 'ReadIFD');
             }
             tags.set(tag.id, tag);
         }

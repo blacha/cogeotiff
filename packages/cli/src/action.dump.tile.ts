@@ -6,6 +6,7 @@ import * as path from 'path';
 import { ActionUtil, CliResultMap } from './action.util';
 import { writeTile, getTileName } from './util.tile';
 import { toByteSizeString } from './util.bytes';
+import { CliLogger } from './cli.log';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
@@ -49,7 +50,7 @@ export class ActionDumpTile extends CommandLineAction {
             summary: 'Dump tiles from a COG',
             documentation: 'Stuff',
         });
-        this.logger = Log.get().child({ action: 'tile' });
+        this.logger = CliLogger.child({ action: 'tile' });
     }
 
     // TODO this only works for WSG84

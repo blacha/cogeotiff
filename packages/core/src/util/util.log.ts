@@ -11,16 +11,7 @@ export interface CogLogger {
     child(keys: Record<string, any>): CogLogger;
 }
 
-const FakeLogger: CogLogger = {
-    trace: noop,
-    debug: noop,
-    info: noop,
-    warn: noop,
-    error: noop,
-    fatal: noop,
-    child: (keys: Record<string, any>) => FakeLogger,
-};
-export const LoggerConfig: { log: CogLogger } = { log: FakeLogger };
+export const LoggerConfig: { log: CogLogger | null } = { log: null };
 
 /**
  * Get the current logger

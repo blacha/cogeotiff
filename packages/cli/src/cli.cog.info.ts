@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import { ActionDumpTile } from './action.dump.tile';
 import { ActionCogInfo } from './action.info';
 import { ActionTile } from './action.tile';
-import { ChalkLogStream } from './cli.log';
+import { ChalkLogStream, CliLogger } from './cli.log';
 
 export class CogInfoCommandLine extends CommandLineParser {
     verbose = this.defineFlagParameter({
@@ -34,12 +34,7 @@ export class CogInfoCommandLine extends CommandLineParser {
         if (!chalk.supportsColor) {
             return super.onExecute();
         }
-        const logger = Log.createLogger({
-            name: 'coginfo',
-            hostname: '',
-            streams: [ChalkLogStream],
-        });
-        Core.Log.set(logger);
+        Core.Log.set(CliLogger);
 
         if (this.verbose.value) {
             ChalkLogStream.level = Log.INFO;
