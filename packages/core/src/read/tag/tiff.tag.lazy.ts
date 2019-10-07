@@ -5,8 +5,8 @@ import { CogTiffTagBase } from './tiff.tag.base';
 
 export class CogTiffTagLazy<T> extends CogTiffTagBase<T> {
     private fetchable: Fetchable<T>;
-    constructor(source: CogSource, offset: number, view: CogSourceView) {
-        super(source, offset, view);
+    constructor(tagId: number, source: CogSource, offset: number, view: CogSourceView) {
+        super(tagId, source, offset, view);
         this.fetchable = new Fetchable(this.loadValueFromPtr.bind(this));
     }
 

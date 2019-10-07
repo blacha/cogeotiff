@@ -154,8 +154,8 @@ export class CogTiff {
                 continue;
             }
 
-            if (tag.value == null) {
-                if (logger != null) {
+            if (logger != null) {
+                if (!tag.isReady) {
                     logger.trace(
                         {
                             offset: toHexString(pos - offset),
@@ -165,10 +165,8 @@ export class CogTiff {
                         },
                         'PartialReadIFD',
                     );
-                }
-            } else {
-                const displayValue = Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value;
-                if (logger != null) {
+                } else {
+                    const displayValue = Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value;
                     logger.trace(
                         {
                             offset: toHexString(pos - offset),

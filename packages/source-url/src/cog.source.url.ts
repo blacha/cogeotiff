@@ -33,27 +33,31 @@ export class CogSourceUrl extends CogSourceChunked {
         return new CogTiff(new CogSourceUrl(url)).init();
     }
 
-    protected async loadChunks(firstChunk: number, lastChunk: number, logger: CogLogger): Promise<ArrayBuffer> {
+    protected async loadChunks(firstChunk: number, lastChunk: number, logger: CogLogger | null): Promise<ArrayBuffer> {
         const Range = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
         const chunkCount = lastChunk - firstChunk || 1;
 
-        logger.info(
-            { firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange: Range },
-            'HTTPGet',
-        );
+        if (logger != null) {
+            logger.info(
+                { firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange: Range },
+                'HTTPGet',
+            );
+        }
 
         const headers = { Range };
         const response = await CogSourceUrl.fetch(this.url, { headers });
 
         if (!response.ok) {
-            logger.error(
-                {
-                    status: response.status,
-                    statusText: response.statusText,
-                    url: this.url,
-                },
-                'Failed to fetch',
-            );
+            if (logger != null) {
+                logger.error(
+                    {
+                        status: response.status,
+                        statusText: response.statusText,
+                        url: this.url,
+                    },
+                    'Failed to fetch',
+                );
+            }
             throw new Error('Failed to fetch');
         }
 

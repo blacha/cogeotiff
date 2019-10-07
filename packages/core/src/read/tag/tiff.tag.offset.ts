@@ -10,8 +10,8 @@ import { CogTiffTagBase } from './tiff.tag.base';
 export class CogTiffTagOffset extends CogTiffTagBase<number[]> {
     private loadedValues: number[] | null = null;
 
-    constructor(source: CogSource, offset: number, view: CogSourceView) {
-        super(source, offset, view);
+    constructor(tagId: number, source: CogSource, offset: number, view: CogSourceView) {
+        super(tagId, source, offset, view);
     }
 
     get value(): number[] | null {

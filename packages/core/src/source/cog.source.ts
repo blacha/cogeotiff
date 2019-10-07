@@ -233,8 +233,10 @@ export abstract class CogSource {
 
     /** Check if the number of bytes has been cached so far */
     hasBytes(offset: number, count = 1) {
-        const requiredChunks = this.getRequiredChunks(offset, count);
-        for (const chunk of requiredChunks) {
+        const startChunk = Math.floor(offset / this.chunkSize);
+        const endChunk = Math.ceil((offset + count) / this.chunkSize) - 1;
+        for (let chunkId = startChunk; chunkId <= endChunk; chunkId++) {
+            const chunk = this.chunk(chunkId);
             if (!chunk.isReady()) {
                 return false;
             }
