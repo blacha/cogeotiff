@@ -75,10 +75,10 @@ export class CogTiff {
     getImageByResolution(resolution: number): CogTiffImage {
         const firstImage = this.images[0];
         const firstImageSize = firstImage.size;
-        const [refX, refY] = firstImage.resolution;
+        const [refX] = firstImage.resolution;
 
         const resolutionBaseX = refX * firstImageSize.width;
-        const resolutionBaseY = refY * firstImageSize.height;
+        // const resolutionBaseY = refY * firstImageSize.height;
         for (let i = this.images.length - 1; i > 0; i--) {
             const img = this.images[i];
             const imgSize = img.size;
@@ -110,23 +110,26 @@ export class CogTiff {
         const { image, nextOffset } = await this.readIfd(offset);
         this.images.push(image);
         const size = image.size;
-        if (!image.isTiled()) {
-            getLogger()?.warn('Tiff is not tiled');
-        } else {
+        const logger = getLogger();
+        if (image.isTiled()) {
             const tile = image.tileSize;
-            getLogger()?.debug(
-                {
-                    ...size,
-                    tileWidth: tile.width,
-                    tileHeight: tile.height,
-                    tileCount: Math.ceil(size.width / tile.width),
-                },
-                'GotImage',
-            );
+            if (logger != null) {
+                logger.debug(
+                    {
+                        ...size,
+                        tileWidth: tile.width,
+                        tileHeight: tile.height,
+                        tileCount: Math.ceil(size.width / tile.width),
+                    },
+                    'GotImage',
+                );
+            }
         }
 
         if (nextOffset) {
-            getLogger()?.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
+            if (logger != null) {
+                logger.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
+            }
             await this.source.loadBytes(nextOffset, 1024);
             await this.processIfd(nextOffset);
         } else {
@@ -138,7 +141,7 @@ export class CogTiff {
         const view = this.source.getView(offset);
         const tagCount = view.offset();
         const byteStart = offset + this.source.config.offset;
-        const logger = getLogger()?.child({ imageId: this.images.length });
+        const logger = getLogger({ imageId: this.images.length });
         const tags: Map<TiffTag, CogTiffTagBase> = new Map();
 
         let pos = byteStart;
@@ -147,20 +150,35 @@ export class CogTiff {
             pos += tag.size;
 
             if (tag.name == null) {
-                logger?.error({ code: toHexString(tag.id) }, `IFDUnknown`);
+                if (logger != null) logger.error({ code: toHexString(tag.id) }, `IFDUnknown`);
                 continue;
             }
 
-            const logObj = {
-                offset: toHexString(pos - offset),
-                code: toHexString(tag.id),
-                tagName: tag.name,
-            };
             if (tag.value == null) {
-                logger?.trace({ ...logObj, ptr: toHexString(tag.valuePointer) }, 'PartialReadIFD');
+                if (logger != null) {
+                    logger.trace(
+                        {
+                            offset: toHexString(pos - offset),
+                            code: toHexString(tag.id),
+                            tagName: tag.name,
+                            ptr: toHexString(tag.valuePointer),
+                        },
+                        'PartialReadIFD',
+                    );
+                }
             } else {
                 const displayValue = Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value;
-                logger?.trace({ ...logObj, value: displayValue }, 'ReadIFD');
+                if (logger != null) {
+                    logger.trace(
+                        {
+                            offset: toHexString(pos - offset),
+                            code: toHexString(tag.id),
+                            tagName: tag.name,
+                            value: displayValue,
+                        },
+                        'ReadIFD',
+                    );
+                }
             }
             tags.set(tag.id, tag);
         }

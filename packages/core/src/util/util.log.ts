@@ -16,7 +16,10 @@ export const LoggerConfig: { log: CogLogger | null } = { log: null };
 /**
  * Get the current logger
  */
-export function getLogger() {
+export function getLogger(keys?: Record<string, any>) {
+    if (keys && LoggerConfig.log != null) {
+        return LoggerConfig.log.child(keys);
+    }
     return LoggerConfig.log;
 }
 /** Set a logger to be used */
