@@ -1,5 +1,3 @@
-const noop = (data: Record<string, any>, msg?: string) => undefined;
-
 /** Interface required for a logger, should match common loggers, bunyan, pino, bblog */
 export interface CogLogger {
     trace(data: Record<string, any> | string, msg?: string): void;
@@ -11,21 +9,15 @@ export interface CogLogger {
     child(keys: Record<string, any>): CogLogger;
 }
 
-const FakeLogger: CogLogger = {
-    trace: noop,
-    debug: noop,
-    info: noop,
-    warn: noop,
-    error: noop,
-    fatal: noop,
-    child: (keys: Record<string, any>) => FakeLogger,
-};
-export const LoggerConfig: { log: CogLogger } = { log: FakeLogger };
+export const LoggerConfig: { log: CogLogger | null } = { log: null };
 
 /**
  * Get the current logger
  */
-export function getLogger() {
+export function getLogger(keys?: Record<string, any>) {
+    if (keys && LoggerConfig.log != null) {
+        return LoggerConfig.log.child(keys);
+    }
     return LoggerConfig.log;
 }
 /** Set a logger to be used */

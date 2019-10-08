@@ -18,15 +18,15 @@ export const CogTiffTag = {
         const view = source.getView(offset);
         const tagId = view.uint16At(0);
         if (tagId === TiffTag.TileOffsets || tagId === TiffTag.TileByteCounts) {
-            return new CogTiffTagOffset(source, offset, view);
+            return new CogTiffTagOffset(tagId, source, offset, view);
         }
 
-        const staticTag = new CogTifTagStatic(source, offset, view);
+        const staticTag = new CogTifTagStatic(tagId, source, offset, view);
         if (staticTag.hasBytes) {
             return staticTag;
         }
 
-        return new CogTiffTagLazy(source, offset, view);
+        return new CogTiffTagLazy(tagId, source, offset, view);
     },
 
     isStatic<T>(tiffTag: CogTiffTagBase<T>): tiffTag is CogTifTagStatic<T> {

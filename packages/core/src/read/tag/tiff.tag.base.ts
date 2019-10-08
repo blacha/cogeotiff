@@ -28,16 +28,18 @@ export abstract class CogTiffTagBase<T = any> {
     /** Number of records inside the tag */
     dataCount: number;
 
-    constructor(source: CogSource, offset: number, view: CogSourceView) {
+    constructor(id: number, source: CogSource, offset: number, view: CogSourceView) {
         this.view = view;
         this.source = source;
         this.byteOffset = offset;
 
-        this.id = this.view.uint16At(0);
+        this.id = id;
         this.name = TiffTag[this.id];
 
         this.dataType = this.view.uint16At(2);
         this.dataCount = this.view.uintAt(4, this.source.config.offset);
+        this.dataTypeSize = getTiffTagSize(this.dataType);
+        this.dataLength = this.dataTypeSize * this.dataCount;
     }
 
     /**
@@ -60,11 +62,8 @@ export abstract class CogTiffTagBase<T = any> {
      * @remarks
      * This is only the size of one instance of the data @see this.dataLength for total byte size
      *
-     * @returns size in bytes of the tag data
      */
-    get dataTypeSize(): number {
-        return getTiffTagSize(this.dataType);
-    }
+    dataTypeSize: number;
 
     /**
      * Get a human readable name for a datatype
@@ -77,9 +76,7 @@ export abstract class CogTiffTagBase<T = any> {
     /**
      * Get the number of bytes used for the all of the data
      */
-    get dataLength(): number {
-        return this.dataTypeSize * this.dataCount;
-    }
+    dataLength: number;
 
     /** absolute offset of the Tag value */
     get valuePointer(): number {

@@ -1,11 +1,12 @@
-import { CogLogger, CogTiff, Log, TiffVersion } from '@cogeotiff/core';
+import { CogLogger, CogTiff, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { ActionUtil, CliResultMap } from './action.util';
-import { writeTile, getTileName } from './util.tile';
+import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
+import { getTileName, writeTile } from './util.tile';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
@@ -49,7 +50,7 @@ export class ActionDumpTile extends CommandLineAction {
             summary: 'Dump tiles from a COG',
             documentation: 'Stuff',
         });
-        this.logger = Log.get().child({ action: 'tile' });
+        this.logger = CliLogger.child({ action: 'tile' });
     }
 
     // TODO this only works for WSG84

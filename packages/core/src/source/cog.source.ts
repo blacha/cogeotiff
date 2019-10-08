@@ -43,6 +43,21 @@ export abstract class CogSource {
     }
 
     /**
+     * Determine if the number of bytes are included in a single chunk
+     *
+     * @returns chunkId if the data is contained inside one chunk otherwise null.
+     */
+    private isOneChunk(offset: number, byteCount: ByteSize): number | null {
+        const chunkSize = this.chunkSize;
+        const startChunk = offset / chunkSize;
+        const endChunk = (offset + byteCount) / chunkSize;
+        if (endChunk - startChunk < 1) {
+            return Math.floor(startChunk);
+        }
+        return null;
+    }
+
+    /**
      * Read a Uint8 at the offset
      * @param offset Offset relative to the view
      */
@@ -53,6 +68,12 @@ export abstract class CogSource {
 
     /** Read a UInt16 at the offset */
     uint16(offset: number): number {
+        const chunkId = this.isOneChunk(offset, ByteSize.UInt8);
+        if (chunkId != null) {
+            const chunk = this.chunk(chunkId);
+            return chunk.view.getUint16(offset - chunk.offset, this.isLittleEndian);
+        }
+
         const intA = this.uint8(offset);
         const intB = this.uint8(offset + ByteSize.UInt8);
         if (this.isLittleEndian) {
@@ -63,6 +84,13 @@ export abstract class CogSource {
 
     /** Read a UInt32 at the offset */
     uint32(offset: number): number {
+        // If all the data is contained inside one Chunk, Load the bytes directly
+        const chunkId = this.isOneChunk(offset, ByteSize.UInt32);
+        if (chunkId != null) {
+            const chunk = this.chunk(chunkId);
+            return chunk.view.getUint32(offset - chunk.offset, this.isLittleEndian);
+        }
+
         const intA = this.uint8(offset);
         const intB = this.uint8(offset + 1);
         const intC = this.uint8(offset + 2);
@@ -81,6 +109,13 @@ export abstract class CogSource {
      * @param offset offset to read
      */
     uint64(offset: number): number {
+        // If all the data is contained inside one Chunk, Load the bytes directly
+        const chunkId = this.isOneChunk(offset, ByteSize.UInt64);
+        if (chunkId != null) {
+            const chunk = this.chunk(chunkId);
+            return Number(chunk.view.getBigUint64(offset - chunk.offset, this.isLittleEndian));
+        }
+
         const intA = this.uint32(offset);
         const intB = this.uint32(offset + ByteSize.UInt32);
         if (this.isLittleEndian) {
@@ -198,8 +233,10 @@ export abstract class CogSource {
 
     /** Check if the number of bytes has been cached so far */
     hasBytes(offset: number, count = 1) {
-        const requiredChunks = this.getRequiredChunks(offset, count);
-        for (const chunk of requiredChunks) {
+        const startChunk = Math.floor(offset / this.chunkSize);
+        const endChunk = Math.ceil((offset + count) / this.chunkSize) - 1;
+        for (let chunkId = startChunk; chunkId <= endChunk; chunkId++) {
+            const chunk = this.chunk(chunkId);
             if (!chunk.isReady()) {
                 return false;
             }
