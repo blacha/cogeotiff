@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/blacha/cogeotiff/compare/v0.3.1...v0.4.0) (2019-10-08)
+
+
+### Bug Fixes
+
+* eslint complains about log?.trace() syntax ([337224c](https://github.com/blacha/cogeotiff/commit/337224c))
+* lgtm issues ([5ccde83](https://github.com/blacha/cogeotiff/commit/5ccde83))
+
+
+### Features
+
+* expose img.getTileBounds ([9bfd1c1](https://github.com/blacha/cogeotiff/commit/9bfd1c1))
+* lazy load more data to reduce initial read time for ifd ([74e1dc7](https://github.com/blacha/cogeotiff/commit/74e1dc7))
+* optimize reads if they are contained within one chunk ([824a629](https://github.com/blacha/cogeotiff/commit/824a629))
+* switch to typescript 3.7 to remove some costly logging ([a585195](https://github.com/blacha/cogeotiff/commit/a585195))
+
+
+
+
+
 ## [0.3.1](https://github.com/blacha/cogeotiff/compare/v0.3.0...v0.3.1) (2019-09-25)
 
 **Note:** Version bump only for package @cogeotiff/base
