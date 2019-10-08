@@ -1,12 +1,12 @@
-import { CogLogger, CogTiff, Log, TiffVersion } from '@cogeotiff/core';
+import { CogLogger, CogTiff, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
 import chalk from 'chalk';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { ActionUtil, CliResultMap } from './action.util';
-import { writeTile, getTileName } from './util.tile';
-import { toByteSizeString } from './util.bytes';
 import { CliLogger } from './cli.log';
+import { toByteSizeString } from './util.bytes';
+import { getTileName, writeTile } from './util.tile';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.

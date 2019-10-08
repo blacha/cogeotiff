@@ -1,5 +1,3 @@
-const noop = (data: Record<string, any>, msg?: string) => undefined;
-
 /** Interface required for a logger, should match common loggers, bunyan, pino, bblog */
 export interface CogLogger {
     trace(data: Record<string, any> | string, msg?: string): void;
