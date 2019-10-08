@@ -150,7 +150,9 @@ export class CogTiff {
             pos += tag.size;
 
             if (tag.name == null) {
-                if (logger != null) logger.error({ code: toHexString(tag.id) }, `IFDUnknown`);
+                if (logger != null) {
+                    logger.error({ code: toHexString(tag.id) }, `IFDUnknown`);
+                }
                 continue;
             }
 
