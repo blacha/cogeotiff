@@ -5376,9 +5376,9 @@ typedarray@^0.0.6:
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
 typescript@^3.7.0-beta:
-  version "3.7.0-dev.20191006"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.0-dev.20191006.tgz#b455c0bdbc29625b6f95886e17c85ded1271f588"
-  integrity sha512-0uxLQ41QwguSZdMlQ5GUXljS42Ti1+AFJ1EnTsQOSX4Z0eG2bwxHDJItIRDGV6yZGBMXJ6HGapxv2qxSeW5svA==
+  version "3.7.0-dev.20191013"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.0-dev.20191013.tgz#a05c662f91826829ce8f68e02507a2efa40df1e9"
+  integrity sha512-YQYixdtIJJT9sLjbmrZ5WXqABas3DfVzIFVQj9mT/NkU16k/7mtVnvJlk5O7UpiZ3N5QsPzyt0Isbmu0eu2imw==
 
 uglify-js@^3.1.4:
   version "3.6.0"
