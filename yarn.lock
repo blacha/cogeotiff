@@ -1022,9 +1022,9 @@
   integrity sha512-6N8Sa5AaENRtJnpKXZgvc119PKxT1Lk9VPy4kfT8JF23tIe1qDfaGkBR2DRKJFIA7NptMz+fps//C6aLi1Uoug==
 
 "@types/ospec@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@types/ospec/-/ospec-4.0.0.tgz#959d1580de9cb4b4b2310324c470270b6b689056"
-  integrity sha512-VvR3nySOffswzhDSaC20Q1YQEFqi+5bjesk+VwA4Kfhhbx5HhWP9j9qbqStRhFIvMbP8Nt5/ZY5LpI3d20hOWg==
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@types/ospec/-/ospec-4.0.2.tgz#cb516a7c576df74d41d9fd4c6f810241750af31c"
+  integrity sha512-AFAcbt+oRaDd9zAPIW583oKNKUHWeisAI/soH3odv0Jm9ZFHGPYhU6L769StwOxxtaW8fu5i5SXqLBx7u+7lSA==
 
 "@types/semver@^6.0.1":
   version "6.0.2"
