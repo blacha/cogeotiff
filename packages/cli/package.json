@@ -14,7 +14,6 @@
         "@cogeotiff/source-url": "^0.4.1",
         "@microsoft/ts-command-line": "^4.2.8",
         "bblog": "^2.0.0",
-        "chalk": "^2.4.2",
         "source-map-support": "^0.5.12"
     },
     "devDependencies": {
