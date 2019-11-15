@@ -37,14 +37,14 @@ export class CogInfoCommandLine extends CommandLineParser {
         Core.Log.set(CliLogger);
 
         if (this.verbose.value) {
-            ChalkLogStream.level = Log.INFO;
+            ChalkLogStream.setLevel(Log.INFO);
         } else if (this.extraVerbose.value) {
-            ChalkLogStream.level = Log.TRACE;
+            ChalkLogStream.setLevel(Log.TRACE);
         } else {
-            ChalkLogStream.level = Log.ERROR;
+            ChalkLogStream.setLevel(Log.ERROR);
         }
 
         return super.onExecute();
     }
-    protected onDefineParameters(): void {}
+    protected onDefineParameters(): void { }
 }
