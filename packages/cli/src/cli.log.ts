@@ -12,7 +12,7 @@ export const ChalkLogStream = {
             return;
         }
         process.stdout.write(out);
-        process.stdout.write('\n')
+        process.stdout.write('\n');
     },
 };
 

@@ -32,7 +32,15 @@ function makePolygon(xMin: number, yMin: number, xMax: number, yMax: number): Ge
         properties: {},
         geometry: {
             type: 'Polygon',
-            coordinates: [[[lngMin, latMin], [lngMin, latMax], [lngMax, latMax], [lngMax, latMin], [lngMin, latMin]]],
+            coordinates: [
+                [
+                    [lngMin, latMin],
+                    [lngMin, latMax],
+                    [lngMax, latMax],
+                    [lngMax, latMin],
+                    [lngMin, latMin],
+                ],
+            ],
         },
     };
 }

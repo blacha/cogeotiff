@@ -37,27 +37,24 @@ export class CogSourceUrl extends CogSourceChunked {
         const Range = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
         const chunkCount = lastChunk - firstChunk || 1;
 
-        if (logger != null) {
-            logger.info(
-                { firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange: Range },
-                'HTTPGet',
-            );
-        }
+        logger?.info(
+            { firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange: Range },
+            'HTTPGet',
+        );
 
         const headers = { Range };
         const response = await CogSourceUrl.fetch(this.url, { headers });
 
         if (!response.ok) {
-            if (logger != null) {
-                logger.error(
-                    {
-                        status: response.status,
-                        statusText: response.statusText,
-                        url: this.url,
-                    },
-                    'Failed to fetch',
-                );
-            }
+            logger?.error(
+                {
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: this.url,
+                },
+                'Failed to fetch',
+            );
+
             throw new Error('Failed to fetch');
         }
 

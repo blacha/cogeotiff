@@ -46,5 +46,5 @@ export class CogInfoCommandLine extends CommandLineParser {
 
         return super.onExecute();
     }
-    protected onDefineParameters(): void { }
+    protected onDefineParameters(): void {}
 }

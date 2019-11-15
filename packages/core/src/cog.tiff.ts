@@ -113,23 +113,20 @@ export class CogTiff {
         const logger = getLogger();
         if (image.isTiled()) {
             const tile = image.tileSize;
-            if (logger != null) {
-                logger.debug(
-                    {
-                        ...size,
-                        tileWidth: tile.width,
-                        tileHeight: tile.height,
-                        tileCount: Math.ceil(size.width / tile.width),
-                    },
-                    'GotImage',
-                );
-            }
+            logger?.debug(
+                {
+                    ...size,
+                    tileWidth: tile.width,
+                    tileHeight: tile.height,
+                    tileCount: Math.ceil(size.width / tile.width),
+                },
+                'GotImage',
+            );
         }
 
         if (nextOffset) {
-            if (logger != null) {
-                logger.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
-            }
+            logger?.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
+
             await this.source.loadBytes(nextOffset, 1024);
             await this.processIfd(nextOffset);
         } else {
@@ -156,30 +153,28 @@ export class CogTiff {
                 continue;
             }
 
-            if (logger != null) {
-                if (!tag.isReady) {
-                    logger.trace(
-                        {
-                            offset: toHexString(pos - offset),
-                            code: toHexString(tag.id),
-                            tagName: tag.name,
-                            ptr: toHexString(tag.valuePointer),
-                        },
-                        'PartialReadIFD',
-                    );
-                } else {
-                    const displayValue = Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value;
-                    logger.trace(
-                        {
-                            offset: toHexString(pos - offset),
-                            code: toHexString(tag.id),
-                            tagName: tag.name,
-                            value: displayValue,
-                        },
-                        'ReadIFD',
-                    );
-                }
+            if (!tag.isReady) {
+                logger?.trace(
+                    {
+                        offset: toHexString(pos - offset),
+                        code: toHexString(tag.id),
+                        tagName: tag.name,
+                        ptr: toHexString(tag.valuePointer),
+                    },
+                    'PartialReadIFD',
+                );
+            } else {
+                logger?.trace(
+                    {
+                        offset: toHexString(pos - offset),
+                        code: toHexString(tag.id),
+                        tagName: tag.name,
+                        value: Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value,
+                    },
+                    'ReadIFD',
+                );
             }
+
             tags.set(tag.id, tag);
         }
 

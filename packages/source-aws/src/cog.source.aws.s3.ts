@@ -43,18 +43,16 @@ export class CogSourceAwsS3 extends CogSourceChunked {
         const fetchRange = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
         const chunkCount = lastChunk - firstChunk || 1;
 
-        if (logger != null) {
-            logger.info(
-                {
-                    firstChunk,
-                    lastChunk,
-                    chunkCount,
-                    bytes: chunkCount * this.chunkSize,
-                    fetchRange,
-                },
-                'S3Get',
-            );
-        }
+        logger?.info(
+            {
+                firstChunk,
+                lastChunk,
+                chunkCount,
+                bytes: chunkCount * this.chunkSize,
+                fetchRange,
+            },
+            'S3Get',
+        );
 
         const response = await this.s3
             .getObject({
