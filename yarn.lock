@@ -4335,9 +4335,9 @@ prettier@^1.18.2:
   integrity sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew==
 
 pretty-json-log@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/pretty-json-log/-/pretty-json-log-0.1.3.tgz#292d2b908a61e9478db1246664d741af687e7fa4"
-  integrity sha512-tvNgKExqaKqdmu87A1WZ+y/WcGvCX0uEdKfAcF1zToBR6HZfAKOxIzevj+xb0eHT3DN91TFAlKZ8uiCVvXK5vw==
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/pretty-json-log/-/pretty-json-log-0.1.4.tgz#2892f246ca1e383b70c15b3dc701a02c303b22d9"
+  integrity sha512-4nzMgN+cnqA9rDdpk2FQOhofQTHgP74BV7Wu348zzlvEA5V9wHgg2TU0qRssv+tBE2bvo+Qui91LwISdrpC2UA==
   dependencies:
     chalk "3"
     split2 "^3.1.1"
