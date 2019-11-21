@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/blacha/coginfo/compare/v0.4.1...v0.5.0) (2019-11-21)
+
+
+### Bug Fixes
+
+* force read in a few kb of data around the headers ([bf7a63a](https://github.com/blacha/coginfo/commit/bf7a63a))
+
+
+### Features
+
+* typescript 3.7 ([ada8c2b](https://github.com/blacha/coginfo/commit/ada8c2b))
+
+
+
+
+
 ## [0.4.1](https://github.com/blacha/coginfo/compare/v0.4.0...v0.4.1) (2019-10-08)
 
 **Note:** Version bump only for package @cogeotiff/core

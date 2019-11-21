@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/blacha/cogeotiff/compare/v0.4.1...v0.5.0) (2019-11-21)
+
+
+### Bug Fixes
+
+* remove lefthook ([0f4eb6e](https://github.com/blacha/cogeotiff/commit/0f4eb6e))
+
+
+### Features
+
+* switch to pretty-json-log ([694aa58](https://github.com/blacha/cogeotiff/commit/694aa58))
+* typescript 3.7 ([ada8c2b](https://github.com/blacha/cogeotiff/commit/ada8c2b))
+
+
+
+
+
 ## [0.4.1](https://github.com/blacha/cogeotiff/compare/v0.4.0...v0.4.1) (2019-10-08)
 
 **Note:** Version bump only for package @cogeotiff/cli
