@@ -9,6 +9,8 @@ import { CogSource } from './source/cog.source';
 import { toHexString } from './util/util.hex';
 import { getLogger } from './util/util.log';
 
+const HEADER_BUFFER_SIZE = 2048;
+
 export class CogTiff {
     source: CogSource;
     version: number = -1;
@@ -21,7 +23,7 @@ export class CogTiff {
 
     async init(): Promise<CogTiff> {
         // Load the first few KB in, more loads will run as more data is required
-        await this.source.loadBytes(0, 4 * 1024);
+        await this.source.loadBytes(0, 4 * HEADER_BUFFER_SIZE);
         await this.fetchIfd();
         return this;
     }
@@ -107,6 +109,9 @@ export class CogTiff {
     }
 
     private async processIfd(offset: number) {
+        if (!this.source.hasBytes(offset, HEADER_BUFFER_SIZE)) {
+            await this.source.loadBytes(offset, HEADER_BUFFER_SIZE);
+        }
         const { image, nextOffset } = await this.readIfd(offset);
         this.images.push(image);
         const size = image.size;
@@ -126,8 +131,6 @@ export class CogTiff {
 
         if (nextOffset) {
             logger?.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
-
-            await this.source.loadBytes(nextOffset, 1024);
             await this.processIfd(nextOffset);
         } else {
             await Promise.all(this.images.map(c => c.init()));
