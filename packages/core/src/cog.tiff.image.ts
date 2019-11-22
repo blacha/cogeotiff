@@ -1,10 +1,11 @@
 import { CogTiff } from './cog.tiff';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime';
-import { TiffTag } from './const/tiff.tag.id';
+import { TiffTag, TiffTagGeo } from './const/tiff.tag.id';
 import { CogTiffTagBase } from './read/tag/tiff.tag.base';
 import { CogTiffTag } from './read/tiff.tag';
 import { Size, BoundingBox } from './vector';
 import { CogTiffTagOffset } from './read/tag/tiff.tag.offset';
+import { parseGeoTags, GeoTag } from './read/tiff.geo';
 
 /**
  * Number of tiles used inside this image
@@ -68,7 +69,35 @@ export class CogTiffImage {
         return sourceTag.value;
     }
 
-    protected async fetch(tag: TiffTag) {
+    _geoTiffTags: GeoTag | null = null;
+    geoTiffTags(): GeoTag | null {
+        if (this._geoTiffTags != null) {
+            return this._geoTiffTags;
+        }
+        const sourceTag = this.tags.get(TiffTag.GeoKeyDirectory);
+        if (sourceTag == null || sourceTag.value == null) {
+            return null;
+        }
+        this._geoTiffTags = parseGeoTags(sourceTag.value);
+        return this._geoTiffTags;
+    }
+
+    /**
+     * Get the associated GeoTiffTags
+     */
+    geoTiffTag(tag: TiffTagGeo): string | number | null {
+        const tags = this.geoTiffTags();
+        if (tags == null) {
+            return null;
+        }
+        return tags[tag];
+    }
+
+    /**
+     * Load a tag, if it is not currently loaded, fetch the required data for the tag.
+     * @param tag tag to fetch
+     */
+    public async fetch(tag: TiffTag) {
         const sourceTag = this.tags.get(tag);
         if (sourceTag == null) {
             return null;
