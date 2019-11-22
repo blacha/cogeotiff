@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/blacha/cogeotiff/compare/v0.5.0...v0.6.0) (2019-11-22)
+
+
+### Bug Fixes
+
+* allow closing of file handles ([ea2fde5](https://github.com/blacha/cogeotiff/commit/ea2fde5))
+
+
+### Features
+
+* parse geokeys to get projections ([2b2dcf6](https://github.com/blacha/cogeotiff/commit/2b2dcf6))
+
+
+
+
+
 # [0.5.0](https://github.com/blacha/cogeotiff/compare/v0.4.1...v0.5.0) (2019-11-21)
 
 
