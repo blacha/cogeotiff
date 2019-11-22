@@ -31,6 +31,15 @@ export class CogSourceFile extends CogSource {
         this.chunkSize = CogSourceFile.DEFAULT_CHUNK_SIZE;
     }
 
+    /** Close the file handle */
+    async close(): Promise<void> {
+        const fd = await this.fd;
+        if (fd == null) {
+            return;
+        }
+        return await fd?.close();
+    }
+
     get name() {
         return basename(this.fileName);
     }
