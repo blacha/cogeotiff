@@ -30,13 +30,50 @@ export class CogSourceAwsS3 extends CogSourceChunked {
     }
 
     /**
+     * Parse a URI and create a source
+     *
+     * @example
+     * `s3://foo/bar/baz.tiff`
+     *
+     * @param uri URI to parse
+     */
+    static createFromUri(uri: string): CogSourceAwsS3 | null {
+        if (!uri.startsWith('s3://')) {
+            return null;
+        }
+        const parts = uri.split('/');
+        const bucket = parts[2];
+        if (bucket == null || bucket.trim() == '') {
+            return null;
+        }
+        const key = parts.slice(3).join('/');
+        if (key == null || key.trim() == '') {
+            return null;
+        }
+        return new CogSourceAwsS3(bucket, key);
+    }
+
+    /**
+     * Load a COG from a AWS S3 Bucket
+     * @param uri URI to load `s3://foo/baz.tiff`
+     */
+    static async create(uri: string): Promise<CogTiff>;
+    /**
      * Load a COG from a AWS S3 Bucket
      *
      * @param bucket AWS S3 Bucket name
      * @param key Path to COG inside of bucket
      */
-    static async create(bucket: string, key: string): Promise<CogTiff> {
-        return new CogTiff(new CogSourceAwsS3(bucket, key)).init();
+    static async create(bucket: string, key: string): Promise<CogTiff>;
+    static async create(sA: string, key?: string): Promise<CogTiff> {
+        if (key == null) {
+            const source = CogSourceAwsS3.createFromUri(sA);
+            if (source == null) {
+                throw new Error(`Invalid URI ${sA}`);
+            }
+            return new CogTiff(source).init();
+        }
+        return new CogTiff(new CogSourceAwsS3(sA, key)).init();
     }
 
     protected async loadChunks(firstChunk: number, lastChunk: number, logger: CogLogger | null): Promise<ArrayBuffer> {
