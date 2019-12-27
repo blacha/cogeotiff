@@ -11,7 +11,7 @@
         "@cogeotiff/core": "^0.7.0"
     },
     "devDependencies": {
-        "@types/node": "^12.7.2",
+        "@types/node": "^13.1.1",
         "ospec": "^4.0.0"
     },
     "publishConfig": {
