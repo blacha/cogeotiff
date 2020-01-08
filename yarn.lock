@@ -919,9 +919,9 @@
     rimraf "^2.5.2"
 
 "@microsoft/ts-command-line@^4.2.8":
-  version "4.3.5"
-  resolved "https://registry.yarnpkg.com/@microsoft/ts-command-line/-/ts-command-line-4.3.5.tgz#78026d20244f39978d3397849ac8c40c0c2d4079"
-  integrity sha512-CN3j86apNOmllUmeJ0AyRfTYA2BP2xlnfgmnyp1HWLqcJmR/zLe/fk/+gohGnNt7o5/qHta3681LQhO2Yy3GFw==
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/@microsoft/ts-command-line/-/ts-command-line-4.3.6.tgz#dd173257316ff15112e20f65a8d7b8bc66f53881"
+  integrity sha512-A10mTqs2SzzK1MZANFuqwpFpYa5YqgSPY7hmDtO6sQ1Y3lbZQGmKYLxgwzt+LMaH+7l7xG63eqr4UyMgJoBhyg==
   dependencies:
     "@types/argparse" "1.0.33"
     argparse "~1.0.9"
