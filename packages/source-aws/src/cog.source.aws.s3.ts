@@ -14,11 +14,11 @@ export class CogSourceAwsS3 extends CogSourceChunked {
     key: string;
     s3: S3;
 
-    constructor(bucket: string, key: string) {
+    constructor(bucket: string, key: string, s3: S3 = new S3()) {
         super();
         this.bucket = bucket;
         this.key = key;
-        this.s3 = new S3();
+        this.s3 = s3;
     }
 
     get name() {
