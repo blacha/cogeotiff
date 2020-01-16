@@ -15,7 +15,7 @@ export interface CliResultMap {
 }
 
 export const ActionUtil = {
-    async getCogSource(file: CommandLineStringParameter | null): Promise<{ source: CogSource; tif: CogTiff }> {
+    async getCogSource(file?: CommandLineStringParameter | null): Promise<{ source: CogSource; tif: CogTiff }> {
         if (file == null || file.value == null) {
             throw new Error(`File "${file} is not valid`);
         }

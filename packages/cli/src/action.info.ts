@@ -1,11 +1,12 @@
-import { TiffVersion } from '@cogeotiff/core';
-import { CommandLineAction, CommandLineStringParameter } from '@microsoft/ts-command-line';
+import { TiffVersion, TiffTag } from '@cogeotiff/core';
+import { CommandLineAction, CommandLineStringParameter, CommandLineFlagParameter } from '@microsoft/ts-command-line';
 import * as chalk from 'chalk';
 import { ActionUtil, CliResultMap } from './action.util';
 import { toByteSizeString } from './util.bytes';
 
 export class ActionCogInfo extends CommandLineAction {
-    private file: CommandLineStringParameter | null = null;
+    private file?: CommandLineStringParameter;
+    private tags?: CommandLineFlagParameter;
 
     public constructor() {
         super({
@@ -75,18 +76,41 @@ export class ActionCogInfo extends CommandLineAction {
             },
         ];
 
+        if (this.tags?.value) {
+            const tiffTags = [...firstImage.tags.keys()];
+            result.push({
+                title: 'TAGS',
+                keys: [
+                    ...tiffTags.map(tagId => {
+                        const key = `${String(tagId).padEnd(7, ' ')} ${TiffTag[tagId].padEnd(20)}`;
+                        const value = firstImage.value(tagId);
+                        if (Array.isArray(value)) {
+                            return { key, value: value.slice(0, 250).join(', ') };
+                        }
+                        return { key, value: String(value).substr(0, 1024) };
+                    }),
+                ],
+            });
+        }
+
         const msg = ActionUtil.formatResult(chalk`{bold COG File Info} - {bold ${tif.source.name}}`, result);
         console.log(msg.join('\n'));
     }
 
     protected onDefineParameters(): void {
-        // abstract
         this.file = this.defineStringParameter({
             argumentName: 'FILE',
             parameterLongName: '--file',
             parameterShortName: '-f',
             description: 'cog file to access',
             required: true,
+        });
+
+        this.tags = this.defineFlagParameter({
+            parameterLongName: '--tags',
+            parameterShortName: '-t',
+            description: 'Dump tiff tags',
+            required: false,
         });
     }
 }
