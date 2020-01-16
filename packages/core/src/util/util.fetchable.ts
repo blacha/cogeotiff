@@ -44,7 +44,7 @@ export class Fetchable<T = any> {
      */
     fetch(): Promise<T> {
         if (this._valuePromise == null) {
-            this._valuePromise = new Promise(async resolve => {
+            this._valuePromise = new Promise(async (resolve, reject) => {
                 try {
                     this._value = await this.fetchFunc();
                     if (this._value == null) {
@@ -53,7 +53,7 @@ export class Fetchable<T = any> {
                     resolve(this._value);
                 } catch (e) {
                     this._error = e;
-                    throw e;
+                    reject(e);
                 }
             });
         }
