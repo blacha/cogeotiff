@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/blacha/cogeotiff/compare/v0.8.0...v0.9.0) (2020-01-16)
+
+
+### Bug Fixes
+
+* correctly reject excpetions thrown inside of a fetch ([ab8fe9a](https://github.com/blacha/cogeotiff/commit/ab8fe9a))
+* force chalk v3 ([c68f498](https://github.com/blacha/cogeotiff/commit/c68f498))
+* let the cli logger handle error messages ([4cedda6](https://github.com/blacha/cogeotiff/commit/4cedda6))
+
+
+### Features
+
+* allow the cli to load geotiffs from s3 ([8db14c9](https://github.com/blacha/cogeotiff/commit/8db14c9))
+
+
+
+
+
 # [0.8.0](https://github.com/blacha/cogeotiff/compare/v0.7.0...v0.8.0) (2020-01-16)
 
 
