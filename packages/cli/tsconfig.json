@@ -12,5 +12,7 @@
         "path": "../source-url"
     }, {
         "path": "../source-file"
+    }, {
+        "path": "../source-aws"
     }]
 }

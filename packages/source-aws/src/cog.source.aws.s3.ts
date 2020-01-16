@@ -28,16 +28,15 @@ export class CogSourceAwsS3 extends CogSourceChunked {
     static isSource(source: CogSource): source is CogSourceAwsS3 {
         return source.type === 'aws-s3';
     }
-
     /**
-     * Parse a URI and create a source
+     * Parse a s3 URI and return the components
      *
      * @example
      * `s3://foo/bar/baz.tiff`
      *
      * @param uri URI to parse
      */
-    static createFromUri(uri: string): CogSourceAwsS3 | null {
+    static parse(uri: string): { key: string; bucket: string } | null {
         if (!uri.startsWith('s3://')) {
             return null;
         }
@@ -50,7 +49,23 @@ export class CogSourceAwsS3 extends CogSourceChunked {
         if (key == null || key.trim() == '') {
             return null;
         }
-        return new CogSourceAwsS3(bucket, key);
+        return { key, bucket };
+    }
+
+    /**
+     * Parse a URI and create a source
+     *
+     * @example
+     * `s3://foo/bar/baz.tiff`
+     *
+     * @param uri URI to parse
+     */
+    static createFromUri(uri: string): CogSourceAwsS3 | null {
+        const res = CogSourceAwsS3.parse(uri);
+        if (res == null) {
+            return null;
+        }
+        return new CogSourceAwsS3(res.bucket, res.key);
     }
 
     /**

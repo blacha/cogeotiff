@@ -25,6 +25,7 @@ export class CogTiff {
         // Load the first few KB in, more loads will run as more data is required
         await this.source.loadBytes(0, 4 * HEADER_BUFFER_SIZE);
         await this.fetchIfd();
+
         return this;
     }
 

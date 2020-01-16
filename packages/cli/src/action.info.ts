@@ -16,12 +16,9 @@ export class ActionCogInfo extends CommandLineAction {
     }
 
     async onExecute(): Promise<void> {
-        // abstract
         const { tif } = await ActionUtil.getCogSource(this.file);
-        // tif.options.options.clear()
         const [firstImage] = tif.images;
 
-        // return;
         const isCogOptimized = tif.options.isCogOptimized;
         const chunkIds = Object.keys(tif.source.chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
 
