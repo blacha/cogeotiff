@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.1](https://github.com/blacha/cogeotiff/compare/v0.9.0...v0.9.1) (2020-01-16)
+
+
+### Bug Fixes
+
+* missing dep on source-aws ([f13f2a4](https://github.com/blacha/cogeotiff/commit/f13f2a4))
+
+
+
+
+
 # [0.9.0](https://github.com/blacha/cogeotiff/compare/v0.8.0...v0.9.0) (2020-01-16)
 
 
