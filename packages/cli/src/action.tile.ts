@@ -1,6 +1,6 @@
 import { TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineStringParameter } from '@microsoft/ts-command-line';
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 import { ActionUtil, CliResultMap } from './action.util';
 import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';

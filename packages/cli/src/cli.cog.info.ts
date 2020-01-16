@@ -1,7 +1,7 @@
 import * as Core from '@cogeotiff/core';
 import { CommandLineParser } from '@microsoft/ts-command-line';
 import { Log } from 'bblog';
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 import { ActionDumpTile } from './action.dump.tile';
 import { ActionCogInfo } from './action.info';
 import { ActionTile } from './action.tile';
