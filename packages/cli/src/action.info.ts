@@ -7,6 +7,7 @@ import { toByteSizeString } from './util.bytes';
 export class ActionCogInfo extends CommandLineAction {
     private file?: CommandLineStringParameter;
     private tags?: CommandLineFlagParameter;
+    private tagsAll?: CommandLineFlagParameter;
 
     public constructor() {
         super({
@@ -76,21 +77,26 @@ export class ActionCogInfo extends CommandLineAction {
             },
         ];
 
-        if (this.tags?.value) {
-            const tiffTags = [...firstImage.tags.keys()];
-            result.push({
-                title: 'TAGS',
-                keys: [
-                    ...tiffTags.map(tagId => {
-                        const key = `${String(tagId).padEnd(7, ' ')} ${TiffTag[tagId].padEnd(20)}`;
-                        const value = firstImage.value(tagId);
-                        if (Array.isArray(value)) {
-                            return { key, value: value.slice(0, 250).join(', ') };
-                        }
-                        return { key, value: String(value).substr(0, 1024) };
-                    }),
-                ],
-            });
+        if (this.tags?.value || this.tagsAll?.value) {
+            for (const img of tif.images) {
+                const tiffTags = [...img.tags.keys()];
+                result.push({
+                    title: `Image: ${img.id} - Tiff tags`,
+                    keys: [
+                        ...tiffTags.map(tagId => {
+                            const key = `${String(tagId).padEnd(7, ' ')} ${TiffTag[tagId].padEnd(20)}`;
+                            const value = img.value(tagId);
+                            if (Array.isArray(value)) {
+                                return { key, value: value.slice(0, 250).join(', ') };
+                            }
+                            return { key, value: String(value).substr(0, 1024) };
+                        }),
+                    ],
+                });
+                if (!this.tagsAll?.value) {
+                    break;
+                }
+            }
         }
 
         const msg = ActionUtil.formatResult(chalk`{bold COG File Info} - {bold ${tif.source.name}}`, result);
@@ -110,6 +116,13 @@ export class ActionCogInfo extends CommandLineAction {
             parameterLongName: '--tags',
             parameterShortName: '-t',
             description: 'Dump tiff tags',
+            required: false,
+        });
+
+        this.tagsAll = this.defineFlagParameter({
+            parameterLongName: '--tags-all',
+            parameterShortName: '-T',
+            description: 'Dump tiff tags for all images',
             required: false,
         });
     }

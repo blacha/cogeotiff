@@ -60,6 +60,10 @@ export class CogTiff {
         const ghostSize = nextOffsetIfd - view.currentOffset;
         // GDAL now stores metadata between the IFD inside a ghost storage area
         if (ghostSize > 0 && ghostSize < 16 * 1024) {
+            getLogger()?.debug(
+                { offset: toHexString(view.currentOffset), length: toHexString(ghostSize) },
+                'GhostOptions',
+            );
             this.options.process(this.source, view.currentOffset, ghostSize);
         }
 
@@ -110,13 +114,15 @@ export class CogTiff {
     }
 
     private async processIfd(offset: number) {
+        const logger = getLogger();
+        logger?.trace({ offset: toHexString(offset) }, 'NextImageOffset');
+
         if (!this.source.hasBytes(offset, HEADER_BUFFER_SIZE)) {
             await this.source.loadBytes(offset, HEADER_BUFFER_SIZE);
         }
         const { image, nextOffset } = await this.readIfd(offset);
         this.images.push(image);
         const size = image.size;
-        const logger = getLogger();
         if (image.isTiled()) {
             const tile = image.tileSize;
             logger?.debug(
@@ -131,7 +137,6 @@ export class CogTiff {
         }
 
         if (nextOffset) {
-            logger?.trace({ offset: toHexString(nextOffset) }, 'NextImageOffset');
             await this.processIfd(nextOffset);
         } else {
             await Promise.all(this.images.map(c => c.init()));
