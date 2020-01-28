@@ -2,10 +2,10 @@ import { CogTiff } from './cog.tiff';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime';
 import { TiffTag, TiffTagGeo } from './const/tiff.tag.id';
 import { CogTiffTagBase } from './read/tag/tiff.tag.base';
-import { CogTiffTag } from './read/tiff.tag';
-import { Size, BoundingBox } from './vector';
+import { CogTiffTagLazy } from './read/tag/tiff.tag.lazy';
 import { CogTiffTagOffset } from './read/tag/tiff.tag.offset';
-import { parseGeoTags, GeoTag } from './read/tiff.geo';
+import { CogTiffTag } from './read/tiff.tag';
+import { BoundingBox, Size } from './vector';
 
 /**
  * Number of tiles used inside this image
@@ -69,28 +69,60 @@ export class CogTiffImage {
         return sourceTag.value;
     }
 
-    _geoTiffTags: GeoTag | null = null;
-    geoTiffTags(): GeoTag | null {
-        if (this._geoTiffTags != null) {
-            return this._geoTiffTags;
-        }
+    async loadGeoTiffTags(): Promise<void> {
         const sourceTag = this.tags.get(TiffTag.GeoKeyDirectory);
-        if (sourceTag == null || sourceTag.value == null) {
-            return null;
+        if (sourceTag == null) {
+            this.tagsGeoLoaded = true;
+            return;
         }
-        this._geoTiffTags = parseGeoTags(sourceTag.value);
-        return this._geoTiffTags;
+        if (!sourceTag.isReady && sourceTag instanceof CogTiffTagLazy) {
+            // Load all the required keys
+            await Promise.all([
+                this.fetch(TiffTag.GeoKeyDirectory),
+                this.fetch(TiffTag.GeoAsciiParams),
+                this.fetch(TiffTag.GeoDoubleParams),
+            ]);
+        }
+        this.tagsGeoLoaded = true;
+        if (sourceTag.value == null) {
+            return;
+        }
+        const geoTags = sourceTag.value;
+        for (let i = 4; i <= geoTags[3] * 4; i += 4) {
+            const key = geoTags[i] as TiffTagGeo;
+            const location = geoTags[i + 1];
+
+            const offset = geoTags[i + 3];
+
+            if (location == 0) {
+                this.tagsGeo.set(key, offset);
+                continue;
+            }
+            const tag = this.tags.get(location);
+            if (tag == null || tag.value == null) {
+                continue;
+            }
+            const count = geoTags[i + 2];
+            if (Array.isArray(tag.value)) {
+                this.tagsGeo.set(key, tag.value[offset + count - 1]);
+            } else if (typeof tag.value == 'string') {
+                this.tagsGeo.set(key, tag.value.substr(offset, offset + count - 1).trim());
+            }
+        }
     }
+    /** Has loadGeoTiffTags been called */
+    private tagsGeoLoaded = false;
+    /** Sub tags stored in TiffTag.GeoKeyDirectory */
+    tagsGeo: Map<TiffTagGeo, string | number> = new Map();
 
     /**
      * Get the associated GeoTiffTags
      */
-    geoTiffTag(tag: TiffTagGeo): string | number | null {
-        const tags = this.geoTiffTags();
-        if (tags == null) {
-            return null;
+    valueGeo(tag: TiffTagGeo): string | number | undefined {
+        if (this.tagsGeoLoaded == false) {
+            throw new Error('loadGeoTiffTags() has not been called');
         }
-        return tags[tag];
+        return this.tagsGeo.get(tag);
     }
 
     /**

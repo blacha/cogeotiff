@@ -1,8 +1,17 @@
-import { TiffVersion, TiffTag } from '@cogeotiff/core';
-import { CommandLineAction, CommandLineStringParameter, CommandLineFlagParameter } from '@microsoft/ts-command-line';
+import { TiffTag, TiffTagGeo, TiffVersion } from '@cogeotiff/core';
+import { CommandLineAction, CommandLineFlagParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
 import * as chalk from 'chalk';
 import { ActionUtil, CliResultMap } from './action.util';
 import { toByteSizeString } from './util.bytes';
+
+function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any) {
+    const key = `${String(tagId).padEnd(7, ' ')} ${String(tagName).padEnd(20)}`;
+
+    if (Array.isArray(tagValue)) {
+        return { key, value: tagValue.slice(0, 250).join(', ') };
+    }
+    return { key, value: String(tagValue).substr(0, 1024) };
+}
 
 export class ActionCogInfo extends CommandLineAction {
     private file?: CommandLineStringParameter;
@@ -82,17 +91,16 @@ export class ActionCogInfo extends CommandLineAction {
                 const tiffTags = [...img.tags.keys()];
                 result.push({
                     title: `Image: ${img.id} - Tiff tags`,
-                    keys: [
-                        ...tiffTags.map(tagId => {
-                            const key = `${String(tagId).padEnd(7, ' ')} ${TiffTag[tagId].padEnd(20)}`;
-                            const value = img.value(tagId);
-                            if (Array.isArray(value)) {
-                                return { key, value: value.slice(0, 250).join(', ') };
-                            }
-                            return { key, value: String(value).substr(0, 1024) };
-                        }),
-                    ],
+                    keys: tiffTags.map(tagId => formatTag(tagId, TiffTag[tagId], img.value(tagId))),
                 });
+                await img.loadGeoTiffTags();
+                if (img.tagsGeo) {
+                    const tiffTagsGeo = [...img.tagsGeo.keys()];
+                    result.push({
+                        title: `Image: ${img.id} - Geo Tiff tags`,
+                        keys: tiffTagsGeo.map(tagId => formatTag(tagId, TiffTagGeo[tagId], img.valueGeo(tagId))),
+                    });
+                }
                 if (!this.tagsAll?.value) {
                     break;
                 }
