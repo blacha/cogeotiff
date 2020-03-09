@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0](https://github.com/blacha/cogeotiff/compare/v0.9.1...v1.0.0) (2020-03-09)
+
+
+* feat!: load geotags from other tiff tags ([a34f323](https://github.com/blacha/cogeotiff/commit/a34f323))
+
+
+### Features
+
+* dump all tiff tags with --tags ([70c4548](https://github.com/blacha/cogeotiff/commit/70c4548))
+* show more information about tiff tags when requested ([d13ea48](https://github.com/blacha/cogeotiff/commit/d13ea48))
+
+
+### BREAKING CHANGES
+
+* this forces a async load to be called before geo tags can be accessed
+
+
+
+
+
 ## [0.9.1](https://github.com/blacha/cogeotiff/compare/v0.9.0...v0.9.1) (2020-01-16)
 
 
