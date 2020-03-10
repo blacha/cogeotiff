@@ -120,4 +120,17 @@ o.spec('CogSourceChunk', () => {
         await Chunk(3);
         o(source.uint32(0)).equals(50462976);
     });
+
+    o('should uint64 when numbers are close', async () => {
+        source.chunkSize = 2048;
+        await Chunk(31);
+        // This causes chunks to be read from chunks 31.9990234375 and 32.0029296875
+        // which when should be reading part from chunk 31 and chunk 32
+
+        o(() => source.uint64(65534)).throws('Chunk:32 is not ready');
+
+        await Chunk(32);
+
+        o(source.uint64(65534) > 0).equals(true);
+    });
 });

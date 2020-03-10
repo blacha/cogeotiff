@@ -49,8 +49,9 @@ export abstract class CogSource {
      */
     private isOneChunk(offset: number, byteCount: ByteSize): number | null {
         const chunkSize = this.chunkSize;
-        const startChunk = offset / chunkSize;
-        const endChunk = (offset + byteCount) / chunkSize;
+        const startChunk = Math.floor(offset / chunkSize);
+        const endChunk = Math.floor((offset + byteCount) / chunkSize);
+
         if (endChunk - startChunk < 1) {
             return Math.floor(startChunk);
         }
