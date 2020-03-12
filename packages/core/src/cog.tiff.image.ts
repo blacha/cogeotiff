@@ -36,26 +36,44 @@ export class CogTiffImage {
 
     tif: CogTiff;
 
+    /** Has loadGeoTiffTags been called */
+    private tagsGeoLoaded = false;
+    /** Sub tags stored in TiffTag.GeoKeyDirectory */
+    tagsGeo: Map<TiffTagGeo, string | number> = new Map();
+
     constructor(tif: CogTiff, id: number, tags: Map<TiffTag, CogTiffTagBase>) {
         this.tif = tif;
         this.id = id;
         this.tags = tags;
     }
 
-    /** Force loading of important tags if they have not already been loaded */
-    async init() {
+    /**
+     * Force loading of important tags if they have not already been loaded
+     *
+     * @param loadGeoTags Whether to load the GeoKeyDirectory and unpack it
+     */
+    async init(loadGeoTags = false) {
         const requiredTags = [
-            TiffTag.Compression,
-            TiffTag.ImageHeight,
-            TiffTag.ImageWidth,
-            TiffTag.ModelPixelScale,
-            TiffTag.ModelTiePoint,
-            TiffTag.ModelTransformation,
-            TiffTag.TileHeight,
-            TiffTag.TileWidth,
+            this.fetch(TiffTag.Compression),
+            this.fetch(TiffTag.ImageHeight),
+            this.fetch(TiffTag.ImageWidth),
+            this.fetch(TiffTag.ModelPixelScale),
+            this.fetch(TiffTag.ModelTiePoint),
+            this.fetch(TiffTag.ModelTransformation),
+            this.fetch(TiffTag.TileHeight),
+            this.fetch(TiffTag.TileWidth),
         ];
 
-        return Promise.all(requiredTags.map(c => this.fetch(c)));
+        if (loadGeoTags) {
+            requiredTags.push(this.fetch(TiffTag.GeoKeyDirectory));
+            requiredTags.push(this.fetch(TiffTag.GeoAsciiParams));
+            requiredTags.push(this.fetch(TiffTag.GeoDoubleParams));
+        }
+
+        await Promise.all(requiredTags);
+        if (loadGeoTags) {
+            await this.loadGeoTiffTags();
+        }
     }
 
     /**
@@ -69,7 +87,14 @@ export class CogTiffImage {
         return sourceTag.value;
     }
 
+    /**
+     * Load and unpack the GeoKeyDirectory
+     */
     async loadGeoTiffTags(): Promise<void> {
+        // Already loaded
+        if (this.tagsGeoLoaded) {
+            return;
+        }
         const sourceTag = this.tags.get(TiffTag.GeoKeyDirectory);
         if (sourceTag == null) {
             this.tagsGeoLoaded = true;
@@ -110,10 +135,6 @@ export class CogTiffImage {
             }
         }
     }
-    /** Has loadGeoTiffTags been called */
-    private tagsGeoLoaded = false;
-    /** Sub tags stored in TiffTag.GeoKeyDirectory */
-    tagsGeo: Map<TiffTagGeo, string | number> = new Map();
 
     /**
      * Get the associated GeoTiffTags
