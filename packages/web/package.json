@@ -1,14 +1,14 @@
 {
     "name": "@cogeotiff/source-web",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "private": true,
     "repository": "git@github.com:blacha/cogeotiff.git",
     "author": "",
     "license": "MIT",
     "scripts": {},
     "dependencies": {
-        "@cogeotiff/core": "^1.0.1",
-        "@cogeotiff/source-url": "^1.0.1"
+        "@cogeotiff/core": "^1.0.2",
+        "@cogeotiff/source-url": "^1.0.2"
     },
     "publishConfig": {
         "access": "public"

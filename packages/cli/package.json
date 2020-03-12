@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/cli",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "repository": "git@github.com:blacha/cogeotiff.git",
     "author": "",
     "license": "MIT",
@@ -9,10 +9,10 @@
     },
     "scripts": {},
     "dependencies": {
-        "@cogeotiff/core": "^1.0.1",
-        "@cogeotiff/source-aws": "^1.0.1",
-        "@cogeotiff/source-file": "^1.0.1",
-        "@cogeotiff/source-url": "^1.0.1",
+        "@cogeotiff/core": "^1.0.2",
+        "@cogeotiff/source-aws": "^1.0.2",
+        "@cogeotiff/source-file": "^1.0.2",
+        "@cogeotiff/source-url": "^1.0.2",
         "@microsoft/ts-command-line": "^4.2.8",
         "bblog": "^2.0.0",
         "chalk": "^3.0.0",
