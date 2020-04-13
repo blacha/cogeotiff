@@ -3,3 +3,4 @@ version = 1
 
 [merge]
 method = "squash" 
+automerge_label = "merge 🚀"
