@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.4](https://github.com/blacha/coginfo/compare/v1.0.3...v1.0.4) (2020-04-29)
+
+
+### Bug Fixes
+
+* **cli:** zoom has no correlation to any real world zoom ([#373](https://github.com/blacha/coginfo/issues/373)) ([dfccc3e](https://github.com/blacha/coginfo/commit/dfccc3e))
+
+
+
+
+
 ## [1.0.3](https://github.com/blacha/coginfo/compare/v1.0.2...v1.0.3) (2020-03-12)
 
 **Note:** Version bump only for package @cogeotiff/core
