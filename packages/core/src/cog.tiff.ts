@@ -107,10 +107,10 @@ export class CogTiff {
         return firstImage;
     }
 
-    async getTileRaw(x: number, y: number, z: number): Promise<{ mimeType: string; bytes: ArrayBuffer } | null> {
-        const image = this.getImage(z);
+    async getTileRaw(x: number, y: number, index: number): Promise<{ mimeType: string; bytes: ArrayBuffer } | null> {
+        const image = this.getImage(index);
         if (image == null) {
-            throw new Error(`Missing z: ${z}`);
+            throw new Error(`Missing z: ${index}`);
         }
 
         if (!image.isTiled()) {
