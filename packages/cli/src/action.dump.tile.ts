@@ -47,7 +47,7 @@ function makePolygon(xMin: number, yMin: number, xMax: number, yMax: number): Ge
 
 export class ActionDumpTile extends CommandLineAction {
     private file: CommandLineStringParameter | null = null;
-    private zoom: CommandLineIntegerParameter | null = null;
+    private imageIndex: CommandLineIntegerParameter | null = null;
     private output: CommandLineStringParameter | null = null;
     private outputCount: number = 0;
     private logger: CogLogger;
@@ -62,9 +62,9 @@ export class ActionDumpTile extends CommandLineAction {
     }
 
     // TODO this only works for WSG84
-    async dumpBounds(tif: CogTiff, output: string, zoom: number) {
-        this.logger.info({ zoom }, 'CreateTileBounds');
-        const img = tif.getImage(zoom);
+    async dumpBounds(tif: CogTiff, output: string, index: number) {
+        this.logger.info({ index }, 'CreateTileBounds');
+        const img = tif.getImage(index);
         if (!img.isTiled()) {
             return;
         }
@@ -97,12 +97,12 @@ export class ActionDumpTile extends CommandLineAction {
             }
         }
 
-        await fs.writeFile(path.join(output, `z${zoom}.bounds.geojson`), JSON.stringify(featureCollection, null, 2));
+        await fs.writeFile(path.join(output, `i${index}.bounds.geojson`), JSON.stringify(featureCollection, null, 2));
     }
 
-    async dumpIndex(tif: CogTiff, output: string, zoom: number) {
-        this.logger.info({ zoom }, 'CreateIndexHtml');
-        const img = tif.getImage(zoom);
+    async dumpIndex(tif: CogTiff, output: string, index: number) {
+        this.logger.info({ index }, 'CreateIndexHtml');
+        const img = tif.getImage(index);
         if (!img.isTiled()) {
             return;
         }
@@ -113,12 +113,12 @@ export class ActionDumpTile extends CommandLineAction {
         for (let y = 0; y < tileCount.y; y++) {
             html.push('\t<div style="display:flex;">');
             for (let x = 0; x < tileCount.x; x++) {
-                const tile = await tif.getTileRaw(x, y, zoom);
+                const tile = await tif.getTileRaw(x, y, index);
                 if (tile == null) {
                     continue;
                 }
 
-                html.push(`\t\t<img src="./${getTileName(tile.mimeType, zoom, x, y)}" >`);
+                html.push(`\t\t<img src="./${getTileName(tile.mimeType, index, x, y)}" >`);
             }
 
             html.push('\t</div>');
@@ -127,9 +127,9 @@ export class ActionDumpTile extends CommandLineAction {
         await fs.writeFile(path.join(output, 'index.html'), html.join('\n'));
     }
 
-    async dumpTiles(tif: CogTiff, output: string, zoom: number) {
+    async dumpTiles(tif: CogTiff, output: string, index: number) {
         const promises: Promise<void>[] = [];
-        const img = tif.getImage(zoom);
+        const img = tif.getImage(index);
         if (!img.isTiled()) {
             return;
         }
@@ -143,7 +143,7 @@ export class ActionDumpTile extends CommandLineAction {
         for (let x = 0; x < tileCount.x; x++) {
             for (let y = 0; y < tileCount.y; y++) {
                 // TODO should limit how many of these we run at a time
-                promises.push(writeTile(tif, x, y, zoom, output, this.logger));
+                promises.push(writeTile(tif, x, y, index, output, this.logger));
                 this.outputCount++;
             }
         }
@@ -152,29 +152,34 @@ export class ActionDumpTile extends CommandLineAction {
     }
 
     async onExecute(): Promise<void> {
-        if (this.zoom == null || this.zoom.value == null || this.output == null || this.output.value == null) {
+        if (
+            this.imageIndex == null ||
+            this.imageIndex.value == null ||
+            this.output == null ||
+            this.output.value == null
+        ) {
             return;
         }
         this.outputCount = 0;
 
         const { tif } = await ActionUtil.getCogSource(this.file);
-        const zoom = this.zoom.value;
-        if (zoom == null || zoom > tif.images.length - 1 || zoom < -1) {
+        const index = this.imageIndex.value;
+        if (index == null || index > tif.images.length - 1 || index < -1) {
             this.renderHelpText();
-            throw Error(`Invalid zoom level "${zoom}" must be between 0 - ${tif.images.length - 1}`);
+            throw Error(`Invalid index level "${index}" must be between 0 - ${tif.images.length - 1}`);
         }
 
-        const img = tif.getImage(zoom);
+        const img = tif.getImage(index);
         if (!img.isTiled()) {
             throw Error('Tif file is not tiled.');
         }
 
-        const output = path.join(this.output.value, `z${zoom}`);
+        const output = path.join(this.output.value, `i${index}`);
         await fs.mkdir(output, { recursive: true });
 
-        await this.dumpTiles(tif, output, zoom);
-        await this.dumpIndex(tif, output, zoom);
-        await this.dumpBounds(tif, this.output.value, zoom);
+        await this.dumpTiles(tif, output, index);
+        await this.dumpIndex(tif, output, index);
+        await this.dumpBounds(tif, this.output.value, index);
 
         const chunkIds = Object.keys(tif.source.chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
         const result: CliResultMap[] = [
@@ -209,11 +214,11 @@ export class ActionDumpTile extends CommandLineAction {
             required: true,
         });
 
-        this.zoom = this.defineIntegerParameter({
-            argumentName: 'ZOOM',
-            parameterShortName: '-z',
-            parameterLongName: '--zoom',
-            description: 'Zoom level to export',
+        this.imageIndex = this.defineIntegerParameter({
+            argumentName: 'IMAGE',
+            parameterShortName: '-i',
+            parameterLongName: '--image',
+            description: 'Image id to export (starting from 0)',
             required: true,
         });
 
@@ -221,7 +226,7 @@ export class ActionDumpTile extends CommandLineAction {
             argumentName: 'OUTPUT',
             parameterShortName: '-o',
             parameterLongName: '--output',
-            description: 'Zoom level to export',
+            description: 'Where to store the output',
             required: true,
         });
     }

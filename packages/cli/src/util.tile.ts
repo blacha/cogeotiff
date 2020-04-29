@@ -14,13 +14,13 @@ const FileExtension: { [key: string]: string } = {
  * Get a human readable tile name
  *
  * @param mimeType image type of tile @see FileExtension
- * @param zoom Zoom level
+ * @param index Image index
  * @param x Tile X
  * @param y Tile Y
  *
- * @returns tile name eg `001_002_z12.png`
+ * @returns tile name eg `001_002_12.png`
  */
-export function getTileName(mimeType: string, zoom: number, x: number, y: number) {
+export function getTileName(mimeType: string, index: number, x: number, y: number) {
     const xS = `${x}`.padStart(3, '0');
     const yS = `${y}`.padStart(3, '0');
 
@@ -29,23 +29,23 @@ export function getTileName(mimeType: string, zoom: number, x: number, y: number
         throw new Error(`Unable to process tile type:${mimeType}`);
     }
 
-    return `${xS}_${yS}_z${zoom}.${fileExt}`;
+    return `${xS}_${yS}_${index}.${fileExt}`;
 }
 
 export async function writeTile(
     tif: CogTiff,
     x: number,
     y: number,
-    zoom: number,
+    index: number,
     outputPath: string,
     logger: CogLogger,
 ) {
-    const tile = await tif.getTileRaw(x, y, zoom);
+    const tile = await tif.getTileRaw(x, y, index);
     if (tile == null) {
         logger.error('Unable to write file, missing data..');
         return;
     }
-    const fileName = getTileName(tile.mimeType, zoom, x, y);
+    const fileName = getTileName(tile.mimeType, index, x, y);
     await fs.writeFile(path.join(outputPath, fileName), tile.bytes);
     logger.debug({ fileName }, 'WriteFile');
 }
