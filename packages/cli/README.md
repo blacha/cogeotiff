@@ -1,9 +1,6 @@
-# cogeotiff
+# coeotiff
 
-[![Build Status](https://github.com/blacha/cogeotiff/workflows/Main/badge.svg)](https://github.com/blacha/cogeotiff/actions)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/blacha/cogeotiff.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/blacha/cogeotiff/context:javascript)
-
-Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
+CLI to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
 -   Completely javascript based, works in the browser and nodejs
 -   Lazy load COG images and metadata
@@ -12,17 +9,6 @@ Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 -   Loads COGs from URL, File or AWS S3
 
 ## Usage
-
-Load a COG from a URL using `fetch`
-
-```javascript
-import { CogSourceUrl } from '@cogeotiff/source-url';
-
-const cog = await CogSourceUrl.create('https://example.com/cog.tif');
-const tile = await cog.getTileRaw(2, 2, 5);
-```
-
-## Scripts
 
 ```bash
 npm i -g @cogeotiff/cli
@@ -82,25 +68,4 @@ Load and dump a individual tile
 
 ```
 cogeotiff tile --file webp.cog.tif --xyz 1,1,1
-```
-
-# Building
-
-This requires [NodeJs](https://nodejs.org/en/) > 12 & [Yarn](https://yarnpkg.com/en/)
-
-Use [n](https://github.com/tj/n) to manage nodeJs versions
-
-```bash
-# Download the latest nodejs & yarn
-n latest
-npm install -g yarn
-
-# Install node deps
-yarn
-
-# Build everything into /build
-yarn run build
-
-# Run the unit tests
-yarn run test
 ```

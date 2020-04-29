@@ -33,6 +33,26 @@ export class ActionCogInfo extends CommandLineAction {
         const isCogOptimized = tif.options.isCogOptimized;
         const chunkIds = Object.keys(tif.source.chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
 
+        const imageInfoHeader =
+            '\n\t\t' + ['Id'.padEnd(4), 'Size'.padEnd(20), 'Tile Size'.padEnd(20), 'Tile Count'].join('\t') + '\n';
+        const imageInfo =
+            imageInfoHeader +
+            tif.images
+                .map((i, index) => {
+                    if (!i.isTiled()) {
+                        return '';
+                    }
+                    const tc = i.tileCount;
+
+                    const imageId = `${index}`.padEnd(4);
+                    const imageSize = `${i.size.width}x${i.size.height}`.padEnd(20);
+                    const tileSize = `${tc.x}x${tc.y}`.padEnd(20);
+                    const tileCount = `${tc.x * tc.y}`;
+
+                    return '\t\t' + [imageId, imageSize, tileSize, tileCount].join('\t');
+                })
+                .join('\n');
+
         const result: CliResultMap[] = [
             {
                 keys: [
@@ -49,24 +69,11 @@ export class ActionCogInfo extends CommandLineAction {
             {
                 title: 'Images',
                 keys: [
-                    { key: 'Count', value: tif.images.length },
                     { key: 'Compression', value: firstImage.compression },
                     { key: 'Origin', value: firstImage.origin },
                     { key: 'Resolution', value: firstImage.resolution },
                     { key: 'BoundingBox', value: firstImage.bbox },
-                    { key: 'Sizes', value: tif.images.map(c => `${c.size.width}x${c.size.height}`).join(' ') },
-                    {
-                        key: 'Tiles',
-                        value: tif.images
-                            .map(i => {
-                                if (!i.isTiled()) {
-                                    return '';
-                                }
-                                const tc = i.tileCount;
-                                return `${tc.x}x${tc.y} (${tc.x * tc.y})`;
-                            })
-                            .join(' '),
-                    },
+                    { key: 'Info', value: imageInfo },
                 ],
             },
             {
