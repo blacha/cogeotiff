@@ -5,16 +5,16 @@
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
-* Completely javascript based, works in the browser and nodejs
-* Lazy load COG images and metadata
-* Supports huge 100GB+ COGs
-* Uses GDAL COG optimizations, generally only one read per tile!
-* Loads COGs from URL, File or AWS S3
+-   Completely javascript based, works in the browser and nodejs
+-   Lazy load COG images and metadata
+-   Supports huge 100GB+ COGs
+-   Uses GDAL COG optimizations, generally only one read per tile!
+-   Loads COGs from URL, File or AWS S3
 
 ## Usage
 
-
 Load a COG from a URL using `fetch`
+
 ```javascript
 import { CogSourceUrl } from '@cogeotiff/source-url';
 
@@ -37,6 +37,7 @@ cogeotiff info --file webp.cog.tif
 ```
 
 Output:
+
 ```
 COG File Info - /home/blacha/Downloads/tif-new/bg43.webp.cog.tif
 
@@ -61,13 +62,12 @@ COG File Info - /home/blacha/Downloads/tif-new/bg43.webp.cog.tif
     Mask interleaved  false
 ```
 
-
 ### cogeotiff dump
 
-Dump all tiles for a zoom level (**Warning** if you do this for a large cog this will create millions of files.)
+Dump all tiles for a image (**Warning** if you do this for a large cog this will create millions of files.)
 
 ```
-cogeotiff dump --file webp.cog.tif --zoom 2 --output output
+cogeotiff dump --file webp.cog.tif --image 2 --output output
 ```
 
 ### cogeotiff tile
@@ -79,6 +79,7 @@ cogeotiff tile --file webp.cog.tif --xyz 1,1,1
 ```
 
 # Building
+
 This requires [NodeJs](https://nodejs.org/en/) > 12 & [Yarn](https://yarnpkg.com/en/)
 
 Use [n](https://github.com/tj/n) to manage nodeJs versions
