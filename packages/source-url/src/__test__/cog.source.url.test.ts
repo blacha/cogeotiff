@@ -22,7 +22,7 @@ o.spec('CogSourceUrl', () => {
     CogSourceUrl.fetch = (url: string, obj: Record<string, HttpHeaders>) => {
         const [startByte, endByte] = obj.headers.Range.split('=')[1]
             .split('-')
-            .map(i => parseInt(i, 10));
+            .map((i) => parseInt(i, 10));
         const bytes = [];
         ranges.push(obj.headers.Range);
         for (let i = startByte; i < endByte; i++) {

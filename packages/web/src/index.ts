@@ -77,7 +77,7 @@ async function loadAndRender(url: string) {
             maxZoom: cog.images.length + 1,
         },
 
-        createTile: function(coords: Vector, done: Function) {
+        createTile: function (coords: Vector, done: Function) {
             const canvas = document.createElement('canvas') as HTMLCanvasElement;
             // Overscale things to make font rendering a little less blury
             canvas.width = 512;
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         throw new Error('Unable to find button');
     }
 
-    btn.addEventListener('click', e => {
+    btn.addEventListener('click', (e) => {
         loadAndRender(inputEl.value);
         e.preventDefault();
         return false;

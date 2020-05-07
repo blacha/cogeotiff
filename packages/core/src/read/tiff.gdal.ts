@@ -78,7 +78,7 @@ export class CogTifGhostOptions {
             .join('')
             .trim()
             .split('\n')
-            .map(c => c.split('='));
+            .map((c) => c.split('='));
 
         for (const [key, value] of keyValPairs) {
             this.options.set(GhostOption[key as GhostOption], value);

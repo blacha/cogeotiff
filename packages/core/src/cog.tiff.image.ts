@@ -267,7 +267,7 @@ export class CogTiffImage {
      * Get the list of IFD tags that were read
      */
     get tagList(): string[] {
-        return [...this.tags.keys()].map(c => TiffTag[c]);
+        return [...this.tags.keys()].map((c) => TiffTag[c]);
     }
 
     /**

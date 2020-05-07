@@ -31,7 +31,7 @@ export class ActionCogInfo extends CommandLineAction {
         const [firstImage] = tif.images;
 
         const isCogOptimized = tif.options.isCogOptimized;
-        const chunkIds = Object.keys(tif.source.chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
+        const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
 
         const imageInfoHeader =
             '\n\t\t' + ['Id'.padEnd(4), 'Size'.padEnd(20), 'Tile Size'.padEnd(20), 'Tile Count'].join('\t') + '\n';
@@ -98,14 +98,14 @@ export class ActionCogInfo extends CommandLineAction {
                 const tiffTags = [...img.tags.keys()];
                 result.push({
                     title: `Image: ${img.id} - Tiff tags`,
-                    keys: tiffTags.map(tagId => formatTag(tagId, TiffTag[tagId], img.value(tagId))),
+                    keys: tiffTags.map((tagId) => formatTag(tagId, TiffTag[tagId], img.value(tagId))),
                 });
                 await img.loadGeoTiffTags();
                 if (img.tagsGeo) {
                     const tiffTagsGeo = [...img.tagsGeo.keys()];
                     result.push({
                         title: `Image: ${img.id} - Geo Tiff tags`,
-                        keys: tiffTagsGeo.map(tagId => formatTag(tagId, TiffTagGeo[tagId], img.valueGeo(tagId))),
+                        keys: tiffTagsGeo.map((tagId) => formatTag(tagId, TiffTagGeo[tagId], img.valueGeo(tagId))),
                     });
                 }
                 if (!this.tagsAll?.value) {

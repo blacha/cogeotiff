@@ -39,7 +39,7 @@ export abstract class CogSource {
      * Get the list of chunks that have been read
      */
     get chunksRead(): string[] {
-        return Object.keys(this.chunks).filter(f => this.chunk(parseInt(f, 10)).isReady());
+        return Object.keys(this.chunks).filter((f) => this.chunk(parseInt(f, 10)).isReady());
     }
 
     /**

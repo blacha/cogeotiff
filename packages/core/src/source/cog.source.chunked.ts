@@ -53,7 +53,7 @@ export abstract class CogSourceChunked extends CogSource {
         if (ranges.length === 0) {
             return { chunks: [], blankFill: [] };
         }
-        const sortedRange = ranges.map(c => parseInt(c, 10)).sort((a, b) => a - b);
+        const sortedRange = ranges.map((c) => parseInt(c, 10)).sort((a, b) => a - b);
 
         const chunks: number[][] = [];
         let current: number[] = [];
@@ -129,13 +129,13 @@ export abstract class CogSourceChunked extends CogSource {
 
         // Queue a fetch
         if (this.toFetchPromise == null) {
-            this.toFetchPromise = new Promise<void>(resolve => setImmediate(resolve)).then(() => this.fetchData());
+            this.toFetchPromise = new Promise<void>((resolve) => setImmediate(resolve)).then(() => this.fetchData());
         }
 
         if (Object.keys(this.toFetch).length > 50) {
             throw new Error('Too many outstanding requests');
         }
 
-        return this.toFetchPromise.then(results => results[startChunk]);
+        return this.toFetchPromise.then((results) => results[startChunk]);
     }
 }

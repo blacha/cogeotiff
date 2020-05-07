@@ -31,14 +31,14 @@ export class ActionTile extends CommandLineAction {
             logger.warn('COG is not optimized, fetching specific tiles will be slow.');
         }
 
-        const [x, y, z] = this.xyz.value.split(',').map(c => parseInt(c));
+        const [x, y, z] = this.xyz.value.split(',').map((c) => parseInt(c));
         if (isNaN(x) || isNaN(y) || isNaN(z)) {
             throw new Error('Invalid XYZ, format: "X,Y,Z"');
         }
 
         await writeTile(tif, x, y, z, '.', logger);
 
-        const chunkIds = Object.keys(tif.source.chunks).filter(f => tif.source.chunk(parseInt(f, 10)).isReady());
+        const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
 
         const result: CliResultMap[] = [
             {
