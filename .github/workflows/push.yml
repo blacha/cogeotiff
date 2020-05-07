@@ -25,3 +25,9 @@ jobs:
 
     - name: Test
       run: yarn run test
+
+    - name: Publish NPM
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: npx lerna publish from-git --yes
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
