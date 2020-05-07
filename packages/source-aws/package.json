@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/source-aws",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "repository": "git@github.com:blacha/cogeotiff.git",
     "author": "",
     "main": "./build/index.js",
@@ -8,7 +8,7 @@
     "license": "MIT",
     "scripts": {},
     "dependencies": {
-        "@cogeotiff/core": "^1.0.5",
+        "@cogeotiff/core": "^1.0.6",
         "aws-sdk": "^2.524.0"
     },
     "publishConfig": {
