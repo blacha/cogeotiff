@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/core",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "repository": "git@github.com:blacha/coginfo.git",
     "main": "./build/index.js",
     "types": "./build/index.d.ts",
