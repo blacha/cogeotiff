@@ -57,4 +57,18 @@ o.spec('CogRead', () => {
         const [firstTif] = tif.images;
         o(firstTif.compression).equals(TiffMimeType.JPEG);
     });
+
+    o('should allow multiple init', async () => {
+        const source = new TestFileCogSource(path.join(__dirname, '../..' + '/data/cog.tif'));
+        const tif = new CogTiff(source);
+
+        o(tif.isInitialized).equals(false);
+        await tif.init();
+        o(tif.isInitialized).equals(true);
+        o(tif.images.length).equals(5);
+
+        o(tif.isInitialized).equals(true);
+        await tif.init();
+        o(tif.images.length).equals(5);
+    });
 });
