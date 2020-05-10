@@ -52,7 +52,7 @@ export class ActionDumpTile extends CommandLineAction {
     private file: CommandLineStringParameter | null = null;
     private imageIndex: CommandLineIntegerParameter | null = null;
     private output: CommandLineStringParameter | null = null;
-    private outputCount: number = 0;
+    private outputCount = 0;
     private logger: CogLogger;
 
     public constructor() {

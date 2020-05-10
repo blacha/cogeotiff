@@ -212,7 +212,7 @@ export abstract class CogSource {
     }
 
     /** Read a array of bytes at the offset */
-    getView(offset: number, count: number = -1): CogSourceView {
+    getView(offset: number, count = -1): CogSourceView {
         return new CogSourceView(this, offset);
     }
 

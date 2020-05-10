@@ -1,5 +1,5 @@
 import * as Core from '@cogeotiff/core';
-import { CommandLineParser } from '@microsoft/ts-command-line';
+import { CommandLineParser, CommandLineFlagParameter } from '@microsoft/ts-command-line';
 import { Log } from 'bblog';
 import * as chalk from 'chalk';
 import { ActionDumpTile } from './action.dump.tile';
@@ -8,16 +8,8 @@ import { ActionTile } from './action.tile';
 import { ChalkLogStream, CliLogger } from './cli.log';
 
 export class CogInfoCommandLine extends CommandLineParser {
-    verbose = this.defineFlagParameter({
-        parameterLongName: '--verbose',
-        parameterShortName: '-v',
-        description: 'Show extra logging detail',
-    });
-    extraVerbose = this.defineFlagParameter({
-        parameterLongName: '--vv',
-        parameterShortName: '-V',
-        description: 'Show extra extra logging detail',
-    });
+    verbose?: CommandLineFlagParameter;
+    extraVerbose?: CommandLineFlagParameter;
 
     constructor() {
         super({
@@ -36,9 +28,9 @@ export class CogInfoCommandLine extends CommandLineParser {
         }
         Core.Log.set(CliLogger);
 
-        if (this.verbose.value) {
+        if (this.verbose?.value) {
             ChalkLogStream.setLevel(Log.INFO);
-        } else if (this.extraVerbose.value) {
+        } else if (this.extraVerbose?.value) {
             ChalkLogStream.setLevel(Log.TRACE);
         } else {
             ChalkLogStream.setLevel(Log.ERROR);
@@ -46,5 +38,16 @@ export class CogInfoCommandLine extends CommandLineParser {
 
         return super.onExecute();
     }
-    protected onDefineParameters(): void {}
+    protected onDefineParameters(): void {
+        this.verbose = this.defineFlagParameter({
+            parameterLongName: '--verbose',
+            parameterShortName: '-v',
+            description: 'Show extra logging detail',
+        });
+        this.extraVerbose = this.defineFlagParameter({
+            parameterLongName: '--vv',
+            parameterShortName: '-V',
+            description: 'Show extra extra logging detail',
+        });
+    }
 }

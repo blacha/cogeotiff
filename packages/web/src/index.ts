@@ -11,7 +11,7 @@ let map: L.Map;
 let cog: CogTif;
 let geoTiffLayer: L.Layer;
 
-let debugCanvas = true;
+const debugCanvas = true;
 
 async function getTile(canvas: HTMLCanvasElement, x: number, y: number, z: number) {
     if (cog == null) {

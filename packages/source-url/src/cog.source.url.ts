@@ -5,7 +5,7 @@ export class CogSourceUrl extends CogSourceChunked {
     type = 'url';
 
     chunkSize: number = 32 * 1024;
-    maxChunkCount: number = 32;
+    maxChunkCount = 32;
 
     delayMs = 5;
 
