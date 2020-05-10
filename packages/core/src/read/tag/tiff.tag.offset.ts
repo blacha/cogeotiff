@@ -29,7 +29,7 @@ export class CogTiffTagOffset extends CogTiffTagBase<number[]> {
 
     /** Load the entire index into memory */
     async load() {
-        await this.source.loadBytes(this.valuePointer, this.dataCount);
+        await this.source.loadBytes(this.valuePointer, this.dataLength);
         this.readValue();
     }
 

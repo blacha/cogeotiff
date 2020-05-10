@@ -7,12 +7,15 @@ import { ActionUtil, CliResultMap } from './action.util';
 import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
 import { getTileName, writeTile } from './util.tile';
+import PLimit from 'p-limit';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
 function toLatLng(x: number, y: number) {
     return [(x * Rad2Deg) / A, (Math.PI * 0.5 - 2.0 * Math.atan(Math.exp(-y / A))) * Rad2Deg];
 }
+
+const TileQueue = PLimit(25);
 
 export interface GeoJsonPolygon {
     type: 'Feature';
@@ -142,8 +145,8 @@ export class ActionDumpTile extends CommandLineAction {
 
         for (let x = 0; x < tileCount.x; x++) {
             for (let y = 0; y < tileCount.y; y++) {
-                // TODO should limit how many of these we run at a time
-                promises.push(writeTile(tif, x, y, index, output, this.logger));
+                const promise = TileQueue(() => writeTile(tif, x, y, index, output, this.logger));
+                promises.push(promise);
                 this.outputCount++;
             }
         }

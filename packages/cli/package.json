@@ -16,6 +16,7 @@
         "@microsoft/ts-command-line": "^4.2.8",
         "bblog": "^2.0.0",
         "chalk": "^4.0.0",
+        "p-limit": "^2.3.0",
         "pretty-json-log": "^0.2.2",
         "source-map-support": "^0.5.12"
     },
