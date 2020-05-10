@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.7](https://github.com/blacha/coginfo/compare/v1.0.6...v1.0.7) (2020-05-10)
+
+
+### Bug Fixes
+
+* **cli:** dump tiles sometimes failed with "Chunk is not ready"  ([#386](https://github.com/blacha/coginfo/issues/386)) ([890ef22](https://github.com/blacha/coginfo/commit/890ef22))
+
+
+
+
+
 ## [1.0.6](https://github.com/blacha/coginfo/compare/v1.0.5...v1.0.6) (2020-05-07)
 
 **Note:** Version bump only for package @cogeotiff/base
