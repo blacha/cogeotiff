@@ -2,7 +2,7 @@ import { CogSource, CogTiff } from '@cogeotiff/core';
 import { CogSourceFile } from '@cogeotiff/source-file';
 import { CogSourceUrl } from '@cogeotiff/source-url';
 import { CogSourceAwsS3 } from '@cogeotiff/source-aws';
-import { CommandLineStringParameter } from '@microsoft/ts-command-line';
+import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as chalk from 'chalk';
 
 export interface CLiResultMapLine {

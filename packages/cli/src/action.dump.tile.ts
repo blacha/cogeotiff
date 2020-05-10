@@ -1,5 +1,5 @@
 import { CogLogger, CogTiff, TiffVersion } from '@cogeotiff/core';
-import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
+import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as chalk from 'chalk';
 import { promises as fs } from 'fs';
 import * as path from 'path';

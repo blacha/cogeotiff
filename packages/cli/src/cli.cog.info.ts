@@ -1,5 +1,5 @@
 import * as Core from '@cogeotiff/core';
-import { CommandLineParser, CommandLineFlagParameter } from '@microsoft/ts-command-line';
+import { CommandLineParser, CommandLineFlagParameter } from '@rushstack/ts-command-line';
 import { Log } from 'bblog';
 import * as chalk from 'chalk';
 import { ActionDumpTile } from './action.dump.tile';
