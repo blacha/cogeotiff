@@ -3,7 +3,7 @@ import { CogSourceView } from '../../source/cog.source.view';
 import { CogTiffTagBase } from './tiff.tag.base';
 
 export class CogTifTagStatic<T> extends CogTiffTagBase<T> {
-    _isRead: boolean = false;
+    _isRead = false;
     _value: T | null = null;
 
     constructor(tagId: number, source: CogSource, offset: number, view: CogSourceView) {

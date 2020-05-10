@@ -1,5 +1,5 @@
 import { CogLogger, CogTiff, TiffVersion } from '@cogeotiff/core';
-import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
+import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as chalk from 'chalk';
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -52,7 +52,7 @@ export class ActionDumpTile extends CommandLineAction {
     private file: CommandLineStringParameter | null = null;
     private imageIndex: CommandLineIntegerParameter | null = null;
     private output: CommandLineStringParameter | null = null;
-    private outputCount: number = 0;
+    private outputCount = 0;
     private logger: CogLogger;
 
     public constructor() {

@@ -6,7 +6,7 @@ export class CogSourceAwsS3 extends CogSourceChunked {
 
     // HTTP gets are slow, get a larger amount
     chunkSize: number = 64 * 1024;
-    maxChunkCount: number = 32;
+    maxChunkCount = 32;
 
     delayMs = 5;
 

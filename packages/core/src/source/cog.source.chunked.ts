@@ -47,7 +47,7 @@ export abstract class CogSourceChunked extends CogSource {
      */
     static getByteRanges(
         ranges: string[],
-        chunkCount: number = 32,
+        chunkCount = 32,
         blankFillCount = 16,
     ): { chunks: number[][]; blankFill: number[] } {
         if (ranges.length === 0) {

@@ -13,7 +13,7 @@ const HEADER_BUFFER_SIZE = 2048;
 
 export class CogTiff {
     source: CogSource;
-    version: number = -1;
+    version = -1;
     images: CogTiffImage[] = [];
     options = new CogTifGhostOptions();
 

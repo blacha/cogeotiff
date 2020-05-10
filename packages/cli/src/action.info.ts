@@ -1,5 +1,5 @@
 import { TiffTag, TiffTagGeo, TiffVersion } from '@cogeotiff/core';
-import { CommandLineAction, CommandLineFlagParameter, CommandLineStringParameter } from '@microsoft/ts-command-line';
+import { CommandLineAction, CommandLineFlagParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as chalk from 'chalk';
 import { ActionUtil, CliResultMap } from './action.util';
 import { toByteSizeString } from './util.bytes';
