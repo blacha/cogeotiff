@@ -400,7 +400,7 @@ export class CogTiffImage {
             const leaderBytes = this.tif.options.tileLeaderByteSize;
             // This fetch will generally load in the bytes needed for the image too
             // provided the image size is less than the size of a chunk
-            await this.tif.source.loadBytes(offset - leaderBytes, this.tif.source.chunkSize);
+            await this.tif.source.loadBytes(offset - leaderBytes, leaderBytes);
             return { offset, imageSize: this.tif.source.uint(offset - leaderBytes, leaderBytes) };
         }
 
