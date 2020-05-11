@@ -1,6 +1,14 @@
 import { CogLogger, CogSource, CogSourceChunked, CogTiff } from '@cogeotiff/core';
 import * as S3 from 'aws-sdk/clients/s3';
 
+class CompositeError extends Error {
+    reason: Error;
+    constructor(msg: string, reason: Error) {
+        super(msg);
+        this.reason = reason;
+    }
+}
+
 export class CogSourceAwsS3 extends CogSourceChunked {
     type = 'aws-s3';
 
@@ -106,14 +114,18 @@ export class CogSourceAwsS3 extends CogSourceChunked {
             'S3Get',
         );
 
-        const response = await this.s3
-            .getObject({
-                Bucket: this.bucket,
-                Key: this.key,
-                Range: fetchRange,
-            })
-            .promise();
-
-        return (response.Body as Buffer).buffer;
+        try {
+            const res = await this.s3
+                .getObject({
+                    Bucket: this.bucket,
+                    Key: this.key,
+                    Range: fetchRange,
+                })
+                .promise();
+            return (res.Body as Buffer).buffer;
+        } catch (error) {
+            logger?.error({ error, source: this.name, firstChunk, lastChunk, fetchRange }, 'FailedToFetch');
+            throw new CompositeError(`Failed to fetch ${this.name} ${fetchRange}`, error);
+        }
     }
 }
