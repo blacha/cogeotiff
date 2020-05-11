@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.8](https://github.com/blacha/cogeotiff/compare/v1.0.7...v1.0.8) (2020-05-11)
+
+
+### Bug Fixes
+
+* **source-aws:** rethrow aws errors with  more context ([#389](https://github.com/blacha/cogeotiff/issues/389)) ([853155a](https://github.com/blacha/cogeotiff/commit/853155a))
+
+
+
+
+
 ## [1.0.7](https://github.com/blacha/cogeotiff/compare/v1.0.6...v1.0.7) (2020-05-10)
 
 **Note:** Version bump only for package @cogeotiff/source-aws
