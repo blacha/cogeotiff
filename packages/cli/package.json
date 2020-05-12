@@ -17,7 +17,7 @@
         "bblog": "^2.0.0",
         "chalk": "^4.0.0",
         "p-limit": "^2.3.0",
-        "pretty-json-log": "^0.2.2",
+        "pretty-json-log": "^0.3.1",
         "source-map-support": "^0.5.12"
     },
     "devDependencies": {
