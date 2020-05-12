@@ -7,6 +7,11 @@ export const ChalkLogStream = {
         ChalkLogStream.pretty.level = level;
     },
     write(msg: LogMessage): void {
+        if (!process.stdout.isTTY) {
+            process.stdout.write(JSON.stringify(msg));
+            process.stdout.write('\n');
+            return;
+        }
         const out = this.pretty.pretty(msg);
         if (out == null) {
             return;

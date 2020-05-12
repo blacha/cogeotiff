@@ -1,7 +1,6 @@
 import * as Core from '@cogeotiff/core';
-import { CommandLineParser, CommandLineFlagParameter } from '@rushstack/ts-command-line';
+import { CommandLineFlagParameter, CommandLineParser } from '@rushstack/ts-command-line';
 import { Log } from 'bblog';
-import * as chalk from 'chalk';
 import { ActionDumpTile } from './action.dump.tile';
 import { ActionCogInfo } from './action.info';
 import { ActionTile } from './action.tile';
@@ -23,9 +22,6 @@ export class CogInfoCommandLine extends CommandLineParser {
     }
 
     protected onExecute(): Promise<void> {
-        if (!chalk.supportsColor) {
-            return super.onExecute();
-        }
         Core.Log.set(CliLogger);
 
         if (this.verbose?.value) {
