@@ -90,8 +90,10 @@ export class CogChunk {
     /**
      * Number of bytes currently ready to be read
      */
-    get length() {
-        return this.isReady() && this._buffer.byteLength;
+    get length(): number | undefined {
+        if (this.isReady()) {
+            return this._buffer.byteLength;
+        }
     }
 
     /**
