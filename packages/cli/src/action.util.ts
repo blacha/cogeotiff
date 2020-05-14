@@ -3,7 +3,7 @@ import { CogSourceFile } from '@cogeotiff/source-file';
 import { CogSourceUrl } from '@cogeotiff/source-url';
 import { CogSourceAwsS3 } from '@cogeotiff/source-aws';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
-import * as chalk from 'chalk';
+import * as c from 'ansi-colors';
 
 export interface CLiResultMapLine {
     key: string;
@@ -41,7 +41,7 @@ export const ActionUtil = {
         for (const group of result) {
             msg.push('');
             if (group.title) {
-                msg.push(chalk`  {bold ${group.title}}`);
+                msg.push(c.bold(group.title));
             }
             for (const kv of group.keys) {
                 if (kv == null) {
@@ -50,7 +50,7 @@ export const ActionUtil = {
                 if (kv.value == null || (typeof kv.value === 'string' && kv.value.trim() === '')) {
                     continue;
                 }
-                msg.push(chalk`    ${kv.key.padEnd(14, ' ')}  ${String(kv.value)}`);
+                msg.push(`    ${kv.key.padEnd(14, ' ')}  ${String(kv.value)}`);
             }
         }
         return msg;

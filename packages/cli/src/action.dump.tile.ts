@@ -1,6 +1,6 @@
 import { CogLogger, CogTiff, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
-import * as chalk from 'chalk';
+import * as c from 'ansi-colors';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { ActionUtil, CliResultMap } from './action.util';
@@ -203,7 +203,7 @@ export class ActionDumpTile extends CommandLineAction {
                 keys: [{ key: 'Images', value: this.outputCount }],
             },
         ];
-        const msg = ActionUtil.formatResult(chalk`{bold COG File Info} - {bold ${tif.source.name}}`, result);
+        const msg = ActionUtil.formatResult(`${c.bold('COG File Info')} - ${c.bold(tif.source.name)}`, result);
         console.log(msg.join('\n'));
         return Promise.resolve();
     }

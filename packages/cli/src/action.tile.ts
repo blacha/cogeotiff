@@ -1,6 +1,6 @@
 import { TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineStringParameter } from '@rushstack/ts-command-line';
-import * as chalk from 'chalk';
+import * as c from 'ansi-colors';
 import { ActionUtil, CliResultMap } from './action.util';
 import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
@@ -55,7 +55,7 @@ export class ActionTile extends CommandLineAction {
             },
         ];
 
-        const msg = ActionUtil.formatResult(chalk`{bold COG File Info} - {bold ${tif.source.name}}`, result);
+        const msg = ActionUtil.formatResult(`${c.bold('COG File Info')} - ${c.bold(tif.source.name)}`, result);
         console.log(msg.join('\n'));
     }
 

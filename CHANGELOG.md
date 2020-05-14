@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/blacha/coginfo/compare/v1.0.8...v1.1.0) (2020-05-12)
+
+
+### Features
+
+* replace chalk with ansi-colors ([#393](https://github.com/blacha/coginfo/issues/393)) ([80abca9](https://github.com/blacha/coginfo/commit/80abca9))
+
+
+
+
+
 ## [1.0.8](https://github.com/blacha/coginfo/compare/v1.0.7...v1.0.8) (2020-05-11)
 
 
