@@ -112,7 +112,16 @@ export class CogTiff {
         return firstImage;
     }
 
-    async getTileRaw(x: number, y: number, index: number): Promise<{ mimeType: string; bytes: ArrayBuffer } | null> {
+    /**
+     * Get the raw bytes for a tile at a given x,y, index.
+     *
+     * This may return null if the tile does not exist eg Sparse cogs,
+     *
+     * @param x tile x index
+     * @param y tile y index
+     * @param index image index
+     */
+    async getTile(x: number, y: number, index: number): Promise<{ mimeType: string; bytes: Uint8Array } | null> {
         const image = this.getImage(index);
         if (image == null) {
             throw new Error(`Missing z: ${index}`);

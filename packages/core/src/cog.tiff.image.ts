@@ -347,7 +347,7 @@ export class CogTiffImage {
      * @param x Tile x offset
      * @param y Tile y offset
      */
-    async getTile(x: number, y: number): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array; bounds: BoundingBox }> {
+    async getTile(x: number, y: number): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
         const mimeType = this.compression;
         const size = this.size;
         const tiles = this.tileSize;
@@ -373,9 +373,8 @@ export class CogTiffImage {
         if (idx >= totalTiles) {
             throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
         }
-
-        const bounds = this.getTileBounds(x, y);
         const bytes = await this.getTileBytes(idx);
+        if (bytes.length == 0) return null;
 
         if (this.compression == TiffMimeType.JPEG) {
             const tables: number[] = this.value(TiffTag.JPEGTables);
@@ -387,9 +386,9 @@ export class CogTiffImage {
             actualBytes.set(tableData, 0);
             actualBytes.set(bytes.slice(2), tableData.length);
 
-            return { mimeType, bytes: actualBytes, bounds };
+            return { mimeType, bytes: actualBytes };
         }
-        return { mimeType, bytes: new Uint8Array(bytes), bounds };
+        return { mimeType, bytes: new Uint8Array(bytes) };
     }
 
     protected async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
@@ -397,6 +396,9 @@ export class CogTiffImage {
         // the few bytes leading up to the tile
         if (this.tif.options.tileLeaderByteSize) {
             const offset = await this.getTileOffset(index);
+            // Sparse COG no data found
+            if (offset == 0) return { offset: 0, imageSize: 0 };
+
             const leaderBytes = this.tif.options.tileLeaderByteSize;
             // This fetch will generally load in the bytes needed for the image too
             // provided the image size is less than the size of a chunk
@@ -415,6 +417,8 @@ export class CogTiffImage {
     /** Load the raw bytes of the tile at the provided index */
     protected async getTileBytes(index: number): Promise<Uint8Array> {
         const { offset, imageSize } = await this.getTileSize(index);
+        // No data was required
+        if (imageSize == 0) return new Uint8Array();
         await this.tif.source.loadBytes(offset, imageSize);
         return this.tif.source.bytes(offset, imageSize);
     }
