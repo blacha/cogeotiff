@@ -110,18 +110,21 @@ export class ActionDumpTile extends CommandLineAction {
             return;
         }
 
-        const tileCount = img.tileCount;
+        const { tileCount, tileSize } = img;
 
-        const html = ['<html>'];
+        const styles = `<style>.c { min-width: ${tileSize.width}px; min-height: ${tileSize.height}px }</style>`;
+
+        const html = ['<html>', styles];
         for (let y = 0; y < tileCount.y; y++) {
             html.push('\t<div style="display:flex;">');
             for (let x = 0; x < tileCount.x; x++) {
-                const tile = await tif.getTileRaw(x, y, index);
+                const tile = await tif.getTile(x, y, index);
                 if (tile == null) {
+                    html.push(`\t\t<div class="c"></div>`);
                     continue;
                 }
 
-                html.push(`\t\t<img src="./${getTileName(tile.mimeType, index, x, y)}" >`);
+                html.push(`\t\t<img class="c" src="./${getTileName(tile.mimeType, index, x, y)}" >`);
             }
 
             html.push('\t</div>');

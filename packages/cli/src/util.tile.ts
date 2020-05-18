@@ -40,12 +40,12 @@ export async function writeTile(
     outputPath: string,
     logger: CogLogger,
 ) {
-    const tile = await tif.getTileRaw(x, y, index);
+    const tile = await tif.getTile(x, y, index);
     if (tile == null) {
-        logger.error('Unable to write file, missing data..');
+        logger.debug({ index, x, y }, 'TileEmpty');
         return;
     }
     const fileName = getTileName(tile.mimeType, index, x, y);
     await fs.writeFile(path.join(outputPath, fileName), tile.bytes);
-    logger.debug({ fileName }, 'WriteFile');
+    logger.debug({ index, x, y, fileName, bytes: tile.bytes.length }, 'TileWrite');
 }
