@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/blacha/coginfo/compare/v1.1.0...v2.0.0) (2020-05-18)
+
+
+* feat!: better support for sparse tiffs (#407) ([869073a](https://github.com/blacha/coginfo/commit/869073a)), closes [#407](https://github.com/blacha/coginfo/issues/407)
+
+
+### BREAKING CHANGES
+
+* getTile now may return null if there is no data for a tile
+
+Co-authored-by: kodiakhq[bot] <49736102+kodiakhq[bot]@users.noreply.github.com>
+
+
+
+
+
 ## [1.0.8](https://github.com/blacha/coginfo/compare/v1.0.7...v1.0.8) (2020-05-11)
 
 
