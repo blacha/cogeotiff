@@ -13,6 +13,9 @@ export class CogSourceFile extends CogSource {
     fileName: string;
     fd: Promise<fs.FileHandle> | null = null;
 
+    /** Automatically close the file descriptor after reading */
+    closeAfterRead = false;
+
     static isSource(source: CogSource): source is CogSourceFile {
         return source.type === SourceType;
     }
@@ -34,10 +37,9 @@ export class CogSourceFile extends CogSource {
     /** Close the file handle */
     async close(): Promise<void> {
         const fd = await this.fd;
-        if (fd == null) {
-            return;
-        }
-        return await fd?.close();
+        if (fd == null) return;
+        await fd.close();
+        this.fd = null;
     }
 
     get name() {
@@ -50,6 +52,7 @@ export class CogSourceFile extends CogSource {
         }
         const fd = await this.fd;
         const { buffer } = await fd.read(Buffer.alloc(length), 0, length, offset);
+        if (this.closeAfterRead) await this.close();
         return buffer.buffer;
     }
 }

@@ -209,4 +209,9 @@ export class CogTiff {
         const nextOffset = await this.source.pointer(pos);
         return { nextOffset, image };
     }
+
+    /** Close the file source if it needs closing */
+    async close(): Promise<void> {
+        await this.source?.close?.();
+    }
 }
