@@ -1,0 +1,13 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: '17:00'
+  open-pull-requests-limit: 10
+  reviewers:
+  - blacha
+  assignees:
+  - blacha
+  versioning-strategy: increase-if-necessary
