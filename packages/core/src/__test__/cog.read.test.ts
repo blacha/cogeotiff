@@ -71,4 +71,17 @@ o.spec('CogRead', () => {
         await tif.init();
         o(tif.images.length).equals(5);
     });
+
+    o('should close a source', async () => {
+        const source = new TestFileCogSource(path.join(__dirname, '../..' + '/data/cog.tif'));
+        const tif = new CogTiff(source);
+        // Should not close if there is no close
+        source.close = undefined;
+        await tif.close();
+
+        const closeSpy = o.spy(() => Promise.resolve());
+        source.close = closeSpy;
+        await tif.close();
+        o(closeSpy.callCount).equals(1);
+    });
 });

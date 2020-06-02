@@ -275,4 +275,10 @@ export abstract class CogSource {
      * Name of the source, generally information like filename or url
      */
     abstract name: string;
+
+    /**
+     * Close the source if it needs closing
+     * eg: close the file descriptors
+     */
+    close?(): Promise<void>;
 }
