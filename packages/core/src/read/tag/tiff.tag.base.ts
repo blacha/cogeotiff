@@ -121,4 +121,16 @@ export abstract class CogTiffTagBase<T = any> {
 
         return output as any;
     }
+
+    /** Get a human(ish) friendly output for the tags */
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            offset: this.byteOffset,
+            isReady: this.isReady,
+            type: this.dataTypeName,
+            value: this.value,
+        };
+    }
 }

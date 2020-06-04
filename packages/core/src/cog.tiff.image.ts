@@ -307,10 +307,21 @@ export class CogTiffImage {
      */
     get tileOffset(): CogTiffTagOffset {
         const tileOffset = this.tags.get(TiffTag.TileOffsets) as CogTiffTagOffset;
-        if (tileOffset == null) {
-            throw new Error('No Tile Offsets found');
-        }
+        if (tileOffset == null) throw new Error('No tile offsets found');
         return tileOffset;
+    }
+
+    /**
+     * Get the number of strip's inside this tiff
+     *
+     * @remarks Used to read striped tiffs
+     *
+     * @returns number of strips present
+     */
+    get stripCount(): number {
+        const tileOffset = this.tags.get(TiffTag.StripByteCounts) as CogTiffTagOffset;
+        if (tileOffset == null) return 0;
+        return tileOffset.dataCount;
     }
 
     /**
@@ -338,12 +349,61 @@ export class CogTiffImage {
         const height = top + tileSize.height >= size.height ? size.height - top : tileSize.height;
         return { x: left, y: top, width, height };
     }
+
+    /**
+     * Read a strip into a uint8 array
+     *
+     * @param index Strip index to read
+     */
+    async getStrip(index: number): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
+        if (this.isTiled()) throw new Error('Cannot read stripes, tiff is tiled');
+
+        const byteCounts = this.tags.get(TiffTag.StripByteCounts) as CogTiffTagOffset;
+        const offsets = this.tags.get(TiffTag.StripOffsets) as CogTiffTagOffset;
+
+        if (index >= byteCounts.dataCount) throw new Error('Cannot read strip, index out of bounds');
+
+        const [byteCount, offset] = await Promise.all([offsets.getValueAt(index), byteCounts.getValueAt(index)]);
+        return this.getBytes(byteCount, offset);
+    }
+
+    /** The jpeg header is stored in the IFD, read the JPEG header and adjust the byte array to include it */
+    private getJpegHeader(bytes: Uint8Array): Uint8Array {
+        // Both the JPEGTable and the Bytes with have the start of image and end of image markers
+        // StartOfImage 0xffd8 EndOfImage 0xffd9
+        const tables: number[] = this.value(TiffTag.JPEGTables);
+
+        // Remove EndOfImage marker
+        const tableData = tables.slice(0, tables.length - 2);
+        const actualBytes = new Uint8Array(bytes.byteLength + tableData.length - 2);
+        actualBytes.set(tableData, 0);
+        actualBytes.set(bytes.slice(2), tableData.length);
+        return actualBytes;
+    }
+
+    /** Read image bytes at the given offset */
+    private async getBytes(
+        offset: number,
+        byteCount: number,
+    ): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
+        const mimeType = this.compression;
+        if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
+        if (byteCount == 0) return { mimeType, bytes: new Uint8Array() };
+
+        await this.tif.source.loadBytes(offset, byteCount);
+        const bytes = this.tif.source.bytes(offset, byteCount);
+
+        if (this.compression == TiffMimeType.JPEG) {
+            return { mimeType, bytes: this.getJpegHeader(bytes) };
+        }
+        return { mimeType, bytes };
+    }
+
     /**
      * Load the tile buffer, this works best with webp
      *
      * This will also apply the JPEG compression tables
      *
-     * TODO apply JPEG masks
      * @param x Tile x offset
      * @param y Tile y offset
      */
@@ -352,13 +412,8 @@ export class CogTiffImage {
         const size = this.size;
         const tiles = this.tileSize;
 
-        if (tiles == null) {
-            throw new Error('Tiff is not tiled');
-        }
-
-        if (mimeType == null) {
-            throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
-        }
+        if (tiles == null) throw new Error('Tiff is not tiled');
+        if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
 
         // TODO support GhostOptionTileOrder
         const nyTiles = Math.ceil(size.height / tiles.height);
@@ -370,25 +425,10 @@ export class CogTiffImage {
 
         const idx = y * nxTiles + x;
         const totalTiles = nxTiles * nyTiles;
-        if (idx >= totalTiles) {
-            throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
-        }
-        const bytes = await this.getTileBytes(idx);
-        if (bytes.length == 0) return null;
+        if (idx >= totalTiles) throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
 
-        if (this.compression == TiffMimeType.JPEG) {
-            const tables: number[] = this.value(TiffTag.JPEGTables);
-            // Both the JPEGTable and the Bytes with have the start of image and end of image markers
-            // SOI 0xffd8 EOI 0xffd9
-            // Remove EndOfImage marker
-            const tableData = tables.slice(0, tables.length - 2);
-            const actualBytes = new Uint8Array(bytes.byteLength + tableData.length - 2);
-            actualBytes.set(tableData, 0);
-            actualBytes.set(bytes.slice(2), tableData.length);
-
-            return { mimeType, bytes: actualBytes };
-        }
-        return { mimeType, bytes: new Uint8Array(bytes) };
+        const { offset, imageSize } = await this.getTileSize(idx);
+        return this.getBytes(offset, imageSize);
     }
 
     protected async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
@@ -412,14 +452,5 @@ export class CogTiffImage {
         }
         const [offset, imageSize] = await Promise.all([this.getTileOffset(index), byteCounts.getValueAt(index)]);
         return { offset, imageSize };
-    }
-
-    /** Load the raw bytes of the tile at the provided index */
-    protected async getTileBytes(index: number): Promise<Uint8Array> {
-        const { offset, imageSize } = await this.getTileSize(index);
-        // No data was required
-        if (imageSize == 0) return new Uint8Array();
-        await this.tif.source.loadBytes(offset, imageSize);
-        return this.tif.source.bytes(offset, imageSize);
     }
 }

@@ -17,7 +17,12 @@ export const CogTiffTag = {
     create(source: CogSource, offset: number) {
         const view = source.getView(offset);
         const tagId = view.uint16At(0);
-        if (tagId === TiffTag.TileOffsets || tagId === TiffTag.TileByteCounts) {
+        if (
+            tagId === TiffTag.TileOffsets ||
+            tagId === TiffTag.TileByteCounts ||
+            tagId == TiffTag.StripByteCounts ||
+            tagId == TiffTag.StripOffsets
+        ) {
             return new CogTiffTagOffset(tagId, source, offset, view);
         }
 
