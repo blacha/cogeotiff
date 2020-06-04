@@ -8,6 +8,7 @@ import { CogTiff } from '@cogeotiff/core';
 const TestDataPath = join(__dirname, '..', '..', '..', 'core', 'data');
 o.spec('CogSourceFile', () => {
     const TestFile = join(TestDataPath, 'rgba8_tiled.tiff');
+
     let source: CogSourceFile;
     o.beforeEach(() => {
         source = new CogSourceFile(TestFile);
@@ -21,6 +22,7 @@ o.spec('CogSourceFile', () => {
         o(source.fd).notEquals(null);
         await source.close();
     });
+
     o('should close after reads', async () => {
         source.closeAfterRead = true;
         o(source.fd).equals(null);
@@ -32,5 +34,15 @@ o.spec('CogSourceFile', () => {
         const bytesB = await source.fetchBytes(10, 1);
         o(bytesB.byteLength).equals(1);
         o(source.fd).equals(null);
+    });
+
+    o('should read very small tiffs', async () => {
+        source.chunkSize = 1024; // Javascript uses shared memory for small buffers
+
+        const tiff = await new CogTiff(source).init();
+        o(tiff.isInitialized).equals(true);
+
+        o(tiff.images.length).equals(5);
+        o(tiff.images[0].tileSize).deepEquals({ width: 16, height: 16 });
     });
 });
