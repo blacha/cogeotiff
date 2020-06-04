@@ -1,8 +1,9 @@
-import { TiffTag, TiffTagGeo, TiffVersion } from '@cogeotiff/core';
+import { TiffTag, TiffTagGeo, TiffVersion, CogTiffImage } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineFlagParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
 import { ActionUtil, CliResultMap } from './action.util';
 import { toByteSizeString } from './util.bytes';
+import { CliTable } from './cli.table';
 
 function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any) {
     const key = `${String(tagId).padEnd(7, ' ')} ${String(tagName).padEnd(20)}`;
@@ -12,6 +13,28 @@ function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any) 
     }
     return { key, value: String(tagValue).substr(0, 1024) };
 }
+
+const TiffImageInfoTable = new CliTable<CogTiffImage>();
+TiffImageInfoTable.add({ name: 'Id', width: 4, get: (i, index) => String(index) });
+TiffImageInfoTable.add({ name: 'Size', width: 20, get: (i) => `${i.size.width}x${i.size.height}` });
+TiffImageInfoTable.add({
+    name: 'Tile Size',
+    width: 20,
+    get: (i) => `${i.tileCount.x}x${i.tileCount.y}`,
+    enabled: (i) => i.isTiled(),
+});
+TiffImageInfoTable.add({
+    name: 'Tile Count',
+    width: 20,
+    get: (i) => `${i.tileCount.x * i.tileCount.y}`,
+    enabled: (i) => i.isTiled(),
+});
+TiffImageInfoTable.add({
+    name: 'Strip Count',
+    width: 20,
+    get: (i) => `${i.tags.get(TiffTag.StripOffsets)?.dataCount}`,
+    enabled: (i) => !i.isTiled(),
+});
 
 export class ActionCogInfo extends CommandLineAction {
     private file?: CommandLineStringParameter;
@@ -33,25 +56,7 @@ export class ActionCogInfo extends CommandLineAction {
         const isCogOptimized = tif.options.isCogOptimized;
         const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
 
-        const imageInfoHeader =
-            '\n\t\t' + ['Id'.padEnd(4), 'Size'.padEnd(20), 'Tile Size'.padEnd(20), 'Tile Count'].join('\t') + '\n';
-        const imageInfo =
-            imageInfoHeader +
-            tif.images
-                .map((i, index) => {
-                    if (!i.isTiled()) {
-                        return '';
-                    }
-                    const tc = i.tileCount;
-
-                    const imageId = `${index}`.padEnd(4);
-                    const imageSize = `${i.size.width}x${i.size.height}`.padEnd(20);
-                    const tileSize = `${tc.x}x${tc.y}`.padEnd(20);
-                    const tileCount = `${tc.x * tc.y}`;
-
-                    return '\t\t' + [imageId, imageSize, tileSize, tileCount].join('\t');
-                })
-                .join('\n');
+        const imageInfo = '\n' + TiffImageInfoTable.print(tif.images, '\t\t').join('\n');
 
         const result: CliResultMap[] = [
             {
