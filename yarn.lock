@@ -899,9 +899,9 @@
     form-data "^3.0.0"
 
 "@types/node@*", "@types/node@^14.0.3":
-  version "14.0.9"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.9.tgz#43896ab87fc82bda1dfd600cdf44a0c8a64e11d2"
-  integrity sha512-0sCTiXKXELOBxvZLN4krQ0FPOAA7ij+6WwvD0k/PHd9/KAkr4dXel5J9fh6F4x1FwAQILqAWkmpeuS6mjf1iKA==
+  version "14.0.11"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.11.tgz#61d4886e2424da73b7b25547f59fdcb534c165a3"
+  integrity sha512-lCvvI24L21ZVeIiyIUHZ5Oflv1hhHQ5E1S25IRlKIXaRkVgmXpJMI3wUJkmym2bTbCe+WoIibQnMVAU3FguaOg==
 
 "@types/ospec@^4.0.0":
   version "4.0.2"
@@ -1191,9 +1191,9 @@ atob@^2.1.1:
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
 aws-sdk@^2.524.0:
-  version "2.688.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.688.0.tgz#3a045f9a75767b4c51f8c2477ef5b080532cfce1"
-  integrity sha512-fu8isXKSHj4w/FG5ulzkswo0/9RC3HJPVNi1Z7z4X4nDPzMcr+nHlcu75IdG7UUBW9zp4MdlAXorky/34VtTKw==
+  version "2.690.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.690.0.tgz#4ef6339a66b52aeb34ecf1d0434a2611a0cd998c"
+  integrity sha512-KZasSKw/nKVA+LnOCaccGbFZ9eLDTz7oDc/6IYp9lbvN+XrdCBb8cQveDX3N9i4uDS2G5nz/47UxtP+MYMBynQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -5300,9 +5300,9 @@ typedarray@^0.0.6:
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
 typescript@^3.7.0:
-  version "3.9.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.3.tgz#d3ac8883a97c26139e42df5e93eeece33d610b8a"
-  integrity sha512-D/wqnB2xzNFIcoBG9FG8cXRDjiqSTbG2wd8DMZeQyJlP1vfTkIxH4GKveWaEBYySKIg+USu+E+EDIR47SqnaMQ==
+  version "3.9.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.5.tgz#586f0dba300cde8be52dd1ac4f7e1009c1b13f36"
+  integrity sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
 
 uglify-js@^3.1.4:
   version "3.9.3"
