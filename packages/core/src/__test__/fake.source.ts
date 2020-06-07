@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import * as fs from 'fs';
 import { CogSource } from '../source/cog.source';
 
 export class FakeCogSource extends CogSource {
@@ -16,20 +16,21 @@ export class FakeCogSource extends CogSource {
     name = 'FakeSource';
 }
 
+let Id = 0;
 export class TestFileCogSource extends CogSource {
+    id = Id++;
     type = 'test-file';
     chunkSize: number = 1024 * 1024 * 1024;
     name: string;
     fileName: string;
-    data: Buffer;
 
     constructor(fileName: string) {
         super();
         this.fileName = fileName;
-        this.name = 'Fake:' + this.fileName;
-        this.data = readFileSync(this.fileName);
+        this.name = `Fake:${this.id}:` + this.fileName;
     }
     async fetchBytes(offset: number, length: number): Promise<ArrayBuffer> {
-        return this.data.slice(offset).buffer;
+        const fileData = await fs.promises.readFile(this.fileName);
+        return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + fileData.byteLength);
     }
 }

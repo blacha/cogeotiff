@@ -51,8 +51,8 @@ export class CogSourceFile extends CogSource {
             this.fd = fs.open(this.fileName, 'r');
         }
         const fd = await this.fd;
-        const { buffer } = await fd.read(Buffer.alloc(length), 0, length, offset);
+        const { buffer } = await fd.read(Buffer.allocUnsafe(length), 0, length, offset);
         if (this.closeAfterRead) await this.close();
-        return buffer.buffer;
+        return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
     }
 }
