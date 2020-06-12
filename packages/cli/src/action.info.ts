@@ -14,8 +14,8 @@ function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any) 
     return { key, value: String(tagValue).substr(0, 1024) };
 }
 
-function round(num: number, places = 5): number {
-    const opt = 10 ** places;
+function round(num: number): number {
+    const opt = 10 ** 4;
     return Math.floor(num * opt) / opt;
 }
 
@@ -43,7 +43,7 @@ TiffImageInfoTable.add({
 TiffImageInfoTable.add({
     name: 'Resolution',
     width: 20,
-    get: (i) => `${round(i.resolution[0], 5)}`,
+    get: (i) => `${round(i.resolution[0])}`,
 });
 
 export class ActionCogInfo extends CommandLineAction {
@@ -62,6 +62,8 @@ export class ActionCogInfo extends CommandLineAction {
     async onExecute(): Promise<void> {
         const { tif } = await ActionUtil.getCogSource(this.file);
         const [firstImage] = tif.images;
+
+        await firstImage.loadGeoTiffTags();
 
         const isCogOptimized = tif.options.isCogOptimized;
         const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
@@ -85,9 +87,12 @@ export class ActionCogInfo extends CommandLineAction {
                 title: 'Images',
                 keys: [
                     { key: 'Compression', value: firstImage.compression },
-                    { key: 'Origin', value: firstImage.origin },
-                    { key: 'Resolution', value: firstImage.resolution },
-                    { key: 'BoundingBox', value: firstImage.bbox },
+                    { key: 'Origin', value: firstImage.origin.map(round).join(', ') },
+                    { key: 'Resolution', value: firstImage.resolution.map(round).join(', ') },
+                    { key: 'BoundingBox', value: firstImage.bbox.map(round).join(', ') },
+                    firstImage.epsg
+                        ? { key: 'EPSG', value: `EPSG:${firstImage.epsg} (https://epsg.io/${firstImage.epsg})` }
+                        : null,
                     { key: 'Info', value: imageInfo },
                 ],
             },
