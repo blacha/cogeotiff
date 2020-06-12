@@ -14,6 +14,11 @@ function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any) 
     return { key, value: String(tagValue).substr(0, 1024) };
 }
 
+function round(num: number, places = 5): number {
+    const opt = 10 ** places;
+    return Math.floor(num * opt) / opt;
+}
+
 const TiffImageInfoTable = new CliTable<CogTiffImage>();
 TiffImageInfoTable.add({ name: 'Id', width: 4, get: (i, index) => String(index) });
 TiffImageInfoTable.add({ name: 'Size', width: 20, get: (i) => `${i.size.width}x${i.size.height}` });
@@ -34,6 +39,11 @@ TiffImageInfoTable.add({
     width: 20,
     get: (i) => `${i.tags.get(TiffTag.StripOffsets)?.dataCount}`,
     enabled: (i) => !i.isTiled(),
+});
+TiffImageInfoTable.add({
+    name: 'Resolution',
+    width: 20,
+    get: (i) => `${round(i.resolution[0], 5)}`,
 });
 
 export class ActionCogInfo extends CommandLineAction {
