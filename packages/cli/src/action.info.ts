@@ -14,6 +14,11 @@ function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any) 
     return { key, value: String(tagValue).substr(0, 1024) };
 }
 
+function round(num: number): number {
+    const opt = 10 ** 4;
+    return Math.floor(num * opt) / opt;
+}
+
 const TiffImageInfoTable = new CliTable<CogTiffImage>();
 TiffImageInfoTable.add({ name: 'Id', width: 4, get: (i, index) => String(index) });
 TiffImageInfoTable.add({ name: 'Size', width: 20, get: (i) => `${i.size.width}x${i.size.height}` });
@@ -35,6 +40,28 @@ TiffImageInfoTable.add({
     get: (i) => `${i.tags.get(TiffTag.StripOffsets)?.dataCount}`,
     enabled: (i) => !i.isTiled(),
 });
+TiffImageInfoTable.add({
+    name: 'Resolution',
+    width: 20,
+    get: (i) => `${round(i.resolution[0])}`,
+});
+
+/**
+ * Parse out the GDAL Metadata to be more friendly to read
+ *
+ * TODO using a XML Parser will make this even better
+ * @param img
+ */
+function parseGdalMetadata(img: CogTiffImage): string[] | null {
+    const metadata = img.value(TiffTag.GDAL_METADATA);
+    if (typeof metadata != 'string') return null;
+    if (!metadata.startsWith('<GDALMetadata>')) return null;
+    return metadata
+        .replace('<GDALMetadata>', '')
+        .replace('</GDALMetadata>', '')
+        .split('\n')
+        .map((c) => c.trim());
+}
 
 export class ActionCogInfo extends CommandLineAction {
     private file?: CommandLineStringParameter;
@@ -53,10 +80,14 @@ export class ActionCogInfo extends CommandLineAction {
         const { tif } = await ActionUtil.getCogSource(this.file);
         const [firstImage] = tif.images;
 
+        await firstImage.loadGeoTiffTags();
+
         const isCogOptimized = tif.options.isCogOptimized;
         const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
 
         const imageInfo = '\n' + TiffImageInfoTable.print(tif.images, '\t\t').join('\n');
+
+        const gdalMetadata = parseGdalMetadata(firstImage);
 
         const result: CliResultMap[] = [
             {
@@ -75,9 +106,12 @@ export class ActionCogInfo extends CommandLineAction {
                 title: 'Images',
                 keys: [
                     { key: 'Compression', value: firstImage.compression },
-                    { key: 'Origin', value: firstImage.origin },
-                    { key: 'Resolution', value: firstImage.resolution },
-                    { key: 'BoundingBox', value: firstImage.bbox },
+                    { key: 'Origin', value: firstImage.origin.map(round).join(', ') },
+                    { key: 'Resolution', value: firstImage.resolution.map(round).join(', ') },
+                    { key: 'BoundingBox', value: firstImage.bbox.map(round).join(', ') },
+                    firstImage.epsg
+                        ? { key: 'EPSG', value: `EPSG:${firstImage.epsg} (https://epsg.io/${firstImage.epsg})` }
+                        : null,
                     { key: 'Info', value: imageInfo },
                 ],
             },
@@ -94,6 +128,7 @@ export class ActionCogInfo extends CommandLineAction {
                           }
                         : null,
                     isCogOptimized ? { key: 'Mask interleaved', value: tif.options.isMaskInterleaved } : null,
+                    gdalMetadata ? { key: 'Metadata', value: gdalMetadata.map((c) => `\t\t${c}`).join('\n') } : null,
                 ],
             },
         ];
