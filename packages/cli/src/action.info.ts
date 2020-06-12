@@ -46,6 +46,23 @@ TiffImageInfoTable.add({
     get: (i) => `${round(i.resolution[0])}`,
 });
 
+/**
+ * Parse out the GDAL Metadata to be more friendly to read
+ *
+ * TODO using a XML Parser will make this even better
+ * @param img
+ */
+function parseGdalMetadata(img: CogTiffImage): string[] | null {
+    const metadata = img.value(TiffTag.GDAL_METADATA);
+    if (typeof metadata != 'string') return null;
+    if (!metadata.startsWith('<GDALMetadata>')) return null;
+    return metadata
+        .replace('<GDALMetadata>', '')
+        .replace('</GDALMetadata>', '')
+        .split('\n')
+        .map((c) => c.trim());
+}
+
 export class ActionCogInfo extends CommandLineAction {
     private file?: CommandLineStringParameter;
     private tags?: CommandLineFlagParameter;
@@ -69,6 +86,8 @@ export class ActionCogInfo extends CommandLineAction {
         const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
 
         const imageInfo = '\n' + TiffImageInfoTable.print(tif.images, '\t\t').join('\n');
+
+        const gdalMetadata = parseGdalMetadata(firstImage);
 
         const result: CliResultMap[] = [
             {
@@ -109,6 +128,7 @@ export class ActionCogInfo extends CommandLineAction {
                           }
                         : null,
                     isCogOptimized ? { key: 'Mask interleaved', value: tif.options.isMaskInterleaved } : null,
+                    gdalMetadata ? { key: 'Metadata', value: gdalMetadata.map((c) => `\t\t${c}`).join('\n') } : null,
                 ],
             },
         ];
