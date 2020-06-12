@@ -7,6 +7,9 @@ import { CogTiffTagOffset } from './read/tag/tiff.tag.offset';
 import { CogTiffTag } from './read/tiff.tag';
 import { BoundingBox, Size } from './vector';
 
+/** Invalid EPSG code */
+export const InvalidProjectionCode = 32767;
+
 /**
  * Number of tiles used inside this image
  */
@@ -249,6 +252,17 @@ export class CogTiffImage {
             return null;
         }
         return TiffCompression[compression];
+    }
+
+    /**
+     * Attempt to read the EPSG Code from TiffGeoTags
+     *
+     * @returns EPSG Code if it exists
+     */
+    get epsg(): number | null {
+        const projection = this.valueGeo(TiffTagGeo.ProjectedCSTypeGeoKey) as number;
+        if (projection == InvalidProjectionCode) return null;
+        return projection;
     }
 
     /**
