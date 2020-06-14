@@ -10,7 +10,7 @@ import { CogSourceUrl } from '@cogeotiff/source-url';
 const cog = await CogSourceUrl.create('https://example.com/cog.tif');
 
 /** Load a specific tile from a specific image */
-const tile = await cog.getTileRaw(2, 2, 5);
+const tile = await cog.getTile(2, 2, 5);
 
 /** Load the 5th image in the Tif */
 const img = cog.getImage(5);

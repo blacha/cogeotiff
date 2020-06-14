@@ -19,7 +19,7 @@ Load a COG from a URL using `fetch`
 import { CogSourceUrl } from '@cogeotiff/source-url';
 
 const cog = await CogSourceUrl.create('https://example.com/cog.tif');
-const tile = await cog.getTileRaw(2, 2, 5);
+const tile = await cog.getTile(2, 2, 5);
 ```
 
 ## Scripts
