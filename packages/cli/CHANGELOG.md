@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/blacha/cogeotiff/compare/v2.0.0...v2.1.0) (2020-06-14)
+
+
+### Features
+
+* **cli:** expose gdal metadata if it exists ([823b142](https://github.com/blacha/cogeotiff/commit/823b142))
+* **cli:** expose resolution of overviews ([a7bf637](https://github.com/blacha/cogeotiff/commit/a7bf637))
+* **core:** expose epsg information ([54ab940](https://github.com/blacha/cogeotiff/commit/54ab940))
+* **core:** support striped tiffs ([#435](https://github.com/blacha/cogeotiff/issues/435)) ([8a5d68e](https://github.com/blacha/cogeotiff/commit/8a5d68e))
+
+
+
+
+
 # [2.0.0](https://github.com/blacha/cogeotiff/compare/v1.1.0...v2.0.0) (2020-05-18)
 
 

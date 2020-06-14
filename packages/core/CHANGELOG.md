@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/blacha/coginfo/compare/v2.0.0...v2.1.0) (2020-06-14)
+
+
+### Features
+
+* **cog:** allow file sources to be closed if they need to be ([#430](https://github.com/blacha/coginfo/issues/430)) ([d2441e0](https://github.com/blacha/coginfo/commit/d2441e0))
+* **core:** expose epsg information ([54ab940](https://github.com/blacha/coginfo/commit/54ab940))
+* **core:** support striped tiffs ([#435](https://github.com/blacha/coginfo/issues/435)) ([8a5d68e](https://github.com/blacha/coginfo/commit/8a5d68e))
+
+
+
+
+
 # [2.0.0](https://github.com/blacha/coginfo/compare/v1.1.0...v2.0.0) (2020-05-18)
 
 
