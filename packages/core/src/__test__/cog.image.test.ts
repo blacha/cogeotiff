@@ -66,6 +66,33 @@ o.spec('CogTiled', () => {
     });
 });
 
+o.spec('Cog.Sparse', () => {
+    const cogSourceFile = new TestFileCogSource(path.join(__dirname, '../../data/sparse.tiff'));
+    const cog = new CogTiff(cogSourceFile);
+    o.beforeEach(() => cog.init(true));
+
+    o('should read metadata', () => {
+        o(cog.getImage(0).epsg).equals(2193);
+    });
+
+    o('should support sparse cogs', async () => {
+        const z = 4;
+        const img = cog.getImage(z);
+
+        const { tileCount } = img;
+        o(tileCount).deepEquals({ x: 2, y: 2 });
+
+        for (let x = 0; x < tileCount.x; x++) {
+            for (let y = 0; y < tileCount.y; y++) {
+                const tileXy = await img.getTile(x, y);
+                const tileXyz = await cog.getTile(x, y, z);
+                o(tileXy).equals(null)(`Tile x:${x} y:${y} should be empty`);
+                o(tileXyz).equals(null)(`Tile x:${x} y:${y} z: ${z} should be empty`);
+            }
+        }
+    });
+});
+
 o.spec('CogStrip', () => {
     const cogSourceFile = new TestFileCogSource(path.join(__dirname, '../../data/rgba8_strip.tiff'));
     const cog = new CogTiff(cogSourceFile);
