@@ -402,7 +402,7 @@ export class CogTiffImage {
     ): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
         const mimeType = this.compression;
         if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
-        if (byteCount == 0) return { mimeType, bytes: new Uint8Array() };
+        if (byteCount == 0) return null;
 
         await this.tif.source.loadBytes(offset, byteCount);
         const bytes = this.tif.source.bytes(offset, byteCount);
