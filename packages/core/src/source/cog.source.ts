@@ -15,6 +15,9 @@ export abstract class CogSource {
     /** Split the Tif into chunks to be read  */
     abstract chunkSize: number;
 
+    /** Reference to the source */
+    abstract uri: string;
+
     // TODO this should ideally be a LRU
     // With a priority for the first few chunks (Generally where the main IFD resides)
     chunks: CogChunk[] = [];

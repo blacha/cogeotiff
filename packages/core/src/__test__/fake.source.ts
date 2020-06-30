@@ -3,6 +3,7 @@ import { CogSource } from '../source/cog.source';
 
 export class FakeCogSource extends CogSource {
     type = 'fake';
+    uri = 'fake';
     chunkSize = 100;
 
     fetchBytes(offset: number, length: number): Promise<ArrayBuffer> {
@@ -20,6 +21,7 @@ let Id = 0;
 export class TestFileCogSource extends CogSource {
     id = Id++;
     type = 'test-file';
+    uri = '/test/file';
     chunkSize: number = 1024 * 1024 * 1024;
     name: string;
     fileName: string;
