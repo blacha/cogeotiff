@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { basename } from 'path';
+import { basename, resolve } from 'path';
 import { CogSource, CogTiff } from '@cogeotiff/core';
 
 const SourceType = 'file';
@@ -42,6 +42,12 @@ export class CogSourceFile extends CogSource {
         this.fd = null;
     }
 
+    /** Full reference path to the file */
+    get uri() {
+        return resolve(this.fileName);
+    }
+
+    /** name of the file */
     get name() {
         return basename(this.fileName);
     }

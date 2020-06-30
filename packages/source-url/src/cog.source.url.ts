@@ -16,6 +16,10 @@ export class CogSourceUrl extends CogSourceChunked {
         this.url = url;
     }
 
+    get uri() {
+        return this.url;
+    }
+
     get name() {
         return this.url;
     }
