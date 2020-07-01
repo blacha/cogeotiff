@@ -29,6 +29,10 @@ export class CogSourceAwsS3 extends CogSourceChunked {
         this.s3 = s3;
     }
 
+    get uri() {
+        return this.name;
+    }
+
     get name() {
         return `s3://${this.bucket}/${this.key}`;
     }

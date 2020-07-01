@@ -35,7 +35,10 @@ o.spec('CogSourceFile', () => {
         o(bytesB.byteLength).equals(1);
         o(source.fd).equals(null);
     });
-
+    o('should resolve uri', () => {
+        o(source.uri[0]).equals('/');
+        o(source.name).equals('rgba8_tiled.tiff');
+    });
     o('should read very small tiffs', async () => {
         source.chunkSize = 1024; // Javascript uses shared memory for small buffers
 
