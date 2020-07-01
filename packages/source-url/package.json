@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/source-url",
-    "version": "2.1.1",
+    "version": "2.2.0",
     "repository": "git@github.com:blacha/cogeotiff.git",
     "main": "./build/index.node.js",
     "browser": "./build/index.js",
@@ -9,7 +9,7 @@
     "license": "MIT",
     "scripts": {},
     "dependencies": {
-        "@cogeotiff/core": "^2.1.1",
+        "@cogeotiff/core": "^2.2.0",
         "node-fetch": "^2.6.0"
     },
     "devDependencies": {

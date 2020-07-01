@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/blacha/cogeotiff/compare/v2.1.1...v2.2.0) (2020-07-01)
+
+
+### Features
+
+* adding uri for a full reference for any source ([#469](https://github.com/blacha/cogeotiff/issues/469)) ([137d9c9](https://github.com/blacha/cogeotiff/commit/137d9c9))
+
+
+
+
+
 ## [2.1.1](https://github.com/blacha/cogeotiff/compare/v2.1.0...v2.1.1) (2020-06-25)
 
 **Note:** Version bump only for package @cogeotiff/source-file
