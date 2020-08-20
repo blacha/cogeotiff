@@ -843,9 +843,9 @@
     universal-user-agent "^4.0.0"
 
 "@rushstack/ts-command-line@^4.3.14":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@rushstack/ts-command-line/-/ts-command-line-4.5.0.tgz#835e4cc9382b27f8e44db3f7a2398dc5a0786724"
-  integrity sha512-6HCt30yOQix5jvEzjMSkyO/52TTvo2D9UYdWJ3fjEecQimIIQOrBvhjGjcnu2bvYmb89+RLMzw+ibRYBxkFFmg==
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@rushstack/ts-command-line/-/ts-command-line-4.6.0.tgz#3bbbcecf90a8bd27516c9be84485c2d11c26b23d"
+  integrity sha512-myW3frGcErzdCul2Bde5tI2036zwBDAmDMaNs44p0KzFAnefmb2W8M16pmyj216k54UbV/J+eh3sZFCo6+xrlg==
   dependencies:
     "@types/argparse" "1.0.38"
     argparse "~1.0.9"
