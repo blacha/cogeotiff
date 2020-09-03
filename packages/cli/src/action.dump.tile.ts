@@ -23,7 +23,7 @@ export interface GeoJsonPolygon {
         type: 'Polygon';
         coordinates: [[[number, number], [number, number], [number, number], [number, number], [number, number]]];
     };
-    properties: {};
+    properties: Record<string, unknown>;
 }
 
 function makePolygon(xMin: number, yMin: number, xMax: number, yMax: number): GeoJsonPolygon {

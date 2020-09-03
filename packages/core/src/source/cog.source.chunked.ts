@@ -87,7 +87,7 @@ export abstract class CogSourceChunked extends CogSource {
     private async fetchData(): Promise<ArrayBuffer[]> {
         const chunkIds = Object.keys(this.toFetch);
         this.toFetch = [];
-        delete this.toFetchPromise;
+        this.toFetchPromise = null;
 
         const ranges = CogSourceChunked.getByteRanges(chunkIds, this.maxChunkCount, this.blankFillCount);
 
