@@ -77,7 +77,7 @@ async function loadAndRender(url: string) {
             maxZoom: cog.images.length + 1,
         },
 
-        createTile: function (coords: Vector, done: Function) {
+        createTile: function (coords: Vector, done: (err: Error | null, canvas: HTMLCanvasElement) => void) {
             const canvas = document.createElement('canvas') as HTMLCanvasElement;
             // Overscale things to make font rendering a little less blury
             canvas.width = 512;

@@ -7,7 +7,7 @@ import { ActionUtil, CliResultMap } from './action.util';
 import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
 import { getTileName, writeTile } from './util.tile';
-import PLimit from 'p-limit';
+import * as PLimit from 'p-limit';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
@@ -23,7 +23,7 @@ export interface GeoJsonPolygon {
         type: 'Polygon';
         coordinates: [[[number, number], [number, number], [number, number], [number, number], [number, number]]];
     };
-    properties: {};
+    properties: Record<string, unknown>;
 }
 
 function makePolygon(xMin: number, yMin: number, xMax: number, yMax: number): GeoJsonPolygon {
