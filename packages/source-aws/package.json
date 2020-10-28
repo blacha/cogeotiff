@@ -8,8 +8,7 @@
     "license": "MIT",
     "scripts": {},
     "dependencies": {
-        "@cogeotiff/core": "^2.2.0",
-        "aws-sdk": "^2.524.0"
+        "@cogeotiff/core": "^2.2.0"
     },
     "publishConfig": {
         "access": "public"

@@ -15,6 +15,7 @@
         "@cogeotiff/source-url": "^2.2.0",
         "@rushstack/ts-command-line": "^4.3.14",
         "ansi-colors": "^4.1.1",
+        "aws-sdk": "^2.781.0",
         "bblog": "^2.0.0",
         "p-limit": "^3.0.1",
         "pretty-json-log": "^0.3.1",
