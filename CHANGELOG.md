@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/blacha/cogeotiff/compare/v2.2.0...v3.0.0) (2020-10-30)
+
+
+### Features
+
+* **source-aws:** remove aws-sdk typings ([#582](https://github.com/blacha/cogeotiff/issues/582)) ([45527e3](https://github.com/blacha/cogeotiff/commit/45527e3))
+
+
+### BREAKING CHANGES
+
+* **source-aws:** a default s3 object needs to be used when using the S3 Source, this can be set with `
+CogSourceAwsS3.DefaultS3 = new S3();`
+
+* build(deps): squash deps
+
+
+
+
+
 # [2.2.0](https://github.com/blacha/coginfo/compare/v2.1.1...v2.2.0) (2020-07-01)
 
 
