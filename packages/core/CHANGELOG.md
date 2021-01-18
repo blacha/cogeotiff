@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/blacha/coginfo/compare/v3.0.0...v3.1.0) (2021-01-18)
+
+
+### Features
+
+* **cli:** support cogs that are not geolocated ([#632](https://github.com/blacha/coginfo/issues/632)) ([da73964](https://github.com/blacha/coginfo/commit/da73964944620dd32094eab14e475225de021857))
+
+
+
+
+
 # [3.0.0](https://github.com/blacha/coginfo/compare/v2.2.0...v3.0.0) (2020-10-30)
 
 **Note:** Version bump only for package @cogeotiff/core
