@@ -68,9 +68,7 @@ export class ActionDumpTile extends CommandLineAction {
     async dumpBounds(tif: CogTiff, output: string, index: number) {
         this.logger.info({ index }, 'CreateTileBounds');
         const img = tif.getImage(index);
-        if (!img.isTiled()) {
-            return;
-        }
+        if (!img.isTiled() || !img.isGeoLocated) return;
 
         const features: GeoJsonPolygon[] = [];
         const featureCollection = {
