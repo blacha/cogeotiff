@@ -44,6 +44,19 @@ TiffImageInfoTable.add({
     name: 'Resolution',
     width: 20,
     get: (i) => `${round(i.resolution[0])}`,
+    enabled: (i) => i.isGeoLocated,
+});
+
+// Show compression only if it varies between images
+TiffImageInfoTable.add({
+    name: 'Compression',
+    width: 20,
+    get: (i) => i.compression,
+    enabled: (i) => {
+        const formats = new Set();
+        i.tif.images.forEach((f) => formats.add(f.compression));
+        return formats.size > 1;
+    },
 });
 
 /**
@@ -89,6 +102,8 @@ export class ActionCogInfo extends CommandLineAction {
 
         const gdalMetadata = parseGdalMetadata(firstImage);
 
+        const isGeoLocated = firstImage.isGeoLocated;
+
         const result: CliResultMap[] = [
             {
                 keys: [
@@ -106,9 +121,9 @@ export class ActionCogInfo extends CommandLineAction {
                 title: 'Images',
                 keys: [
                     { key: 'Compression', value: firstImage.compression },
-                    { key: 'Origin', value: firstImage.origin.map(round).join(', ') },
-                    { key: 'Resolution', value: firstImage.resolution.map(round).join(', ') },
-                    { key: 'BoundingBox', value: firstImage.bbox.map(round).join(', ') },
+                    isGeoLocated ? { key: 'Origin', value: firstImage.origin.map(round).join(', ') } : null,
+                    isGeoLocated ? { key: 'Resolution', value: firstImage.resolution.map(round).join(', ') } : null,
+                    isGeoLocated ? { key: 'BoundingBox', value: firstImage.bbox.map(round).join(', ') } : null,
                     firstImage.epsg
                         ? { key: 'EPSG', value: `EPSG:${firstImage.epsg} (https://epsg.io/${firstImage.epsg})` }
                         : null,

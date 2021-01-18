@@ -188,6 +188,16 @@ export class CogTiffImage {
         throw new Error('Image does not have a geo transformation.');
     }
 
+    /** Is there enough geo information on this image to figure out where its actually located */
+    get isGeoLocated(): boolean {
+        const isImageLocated =
+            this.value(TiffTag.ModelPixelScale) != null || this.value(TiffTag.ModelTransformation) != null;
+        if (isImageLocated) return true;
+        // If this is a sub image, use the isGeoLocated from the top level image
+        if (this.value(TiffTag.NewSubFileType) === 1 && this.id !== 0) return this.tif.images[0].isGeoLocated;
+        return false;
+    }
+
     /**
      * Get the resolution of the image
      *
