@@ -50,6 +50,10 @@ o.spec('CogTiled', () => {
         }
     });
 
+    o('should be geolocated', () => {
+        for (const img of cog.images) o(img.isGeoLocated).equals(true);
+    });
+
     o('should scale image resolution for all images', () => {
         const [resX, resY, resZ] = cog.images[0].resolution;
         for (let i = 0; i < cog.images.length; i++) {
@@ -73,6 +77,10 @@ o.spec('Cog.Sparse', () => {
 
     o('should read metadata', () => {
         o(cog.getImage(0).epsg).equals(2193);
+    });
+
+    o('should be geolocated', () => {
+        for (const img of cog.images) o(img.isGeoLocated).equals(true);
     });
 
     o('should support sparse cogs', async () => {
