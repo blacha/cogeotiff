@@ -1,10 +1,14 @@
 {
     "name": "@cogeotiff/fetchable",
     "version": "3.1.0",
-    "repository": "git@github.com:blacha/cogeotiff.git",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/blacha/cogeotiff.git",
+        "directory": "packages/source-fetchable"
+    },
     "main": "./build/index.js",
     "types": "./build/index.d.ts",
-    "author": "",
+    "author": "Blayne Chard",
     "license": "MIT",
     "scripts": {},
     "dependencies": {},
