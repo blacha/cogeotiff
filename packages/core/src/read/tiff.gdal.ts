@@ -1,6 +1,4 @@
-import { ChunkSource } from '@cogeotiff/chunk';
-import { ByteSize } from '../const/byte.size';
-import { CogSource } from '../source/cog.source';
+import { ByteSize, ChunkSource } from '@cogeotiff/chunk';
 import { getReverseEnumValue } from '../util/util.enum';
 
 //   GDAL_STRUCTURAL_METADATA_SIZE: '000140 bytes',
@@ -53,7 +51,7 @@ export class CogTifGhostOptions {
         return this.options.get(GhostOption.KNOWN_INCOMPATIBLE_EDITION) === 'YES';
     }
 
-    private set(key: GhostOption, val: string) {
+    private set(key: GhostOption, val: string): void {
         this.options.set(key, val);
     }
 

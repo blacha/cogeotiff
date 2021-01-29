@@ -1,4 +1,4 @@
-import { ChunkSource, LogType } from '@cogeotiff/chunk';
+import { ChunkSource } from '@cogeotiff/chunk';
 import { CogTiff } from '@cogeotiff/core';
 import { promises as fs } from 'fs';
 import { basename, resolve } from 'path';
@@ -52,7 +52,7 @@ export class CogSourceFile extends ChunkSource {
         return basename(this.fileName);
     }
 
-    async fetchBytesZ(offset: number, length: number, log?: LogType): Promise<ArrayBuffer> {
+    async fetchBytesZ(offset: number, length: number): Promise<ArrayBuffer> {
         if (this.fd == null) this.fd = fs.open(this.fileName, 'r');
         const fd = await this.fd;
         const { buffer } = await fd.read(Buffer.allocUnsafe(length), 0, length, offset);

@@ -44,10 +44,10 @@ export class CogTiff {
         return this;
     }
 
-    private async fetchIfd(logger?: LogType) {
+    private async fetchIfd(logger?: LogType): Promise<void> {
         const view = this.cursor.seekTo(0);
         const endian = view.uint16();
-        this.source.isLittleEndian = endian === TiffEndian.LITTLE;
+        this.source.isLittleEndian = endian === TiffEndian.Little;
         if (!this.source.isLittleEndian) throw new Error('Only little endian is supported');
         this.version = view.uint16();
 
@@ -75,7 +75,7 @@ export class CogTiff {
             // this.options.process(this.source, view.currentOffset, ghostSize);
         }
 
-        return this.processIfd(nextOffsetIfd);
+        return this.processIfd(nextOffsetIfd, logger);
     }
 
     getImage(z: number): CogTiffImage {
@@ -124,7 +124,7 @@ export class CogTiff {
         return image.getTile(x, y);
     }
 
-    private async processIfd(offset: number, logger?: LogType) {
+    private async processIfd(offset: number, logger?: LogType): Promise<void> {
         logger?.trace({ offset: toHexString(offset) }, 'NextImageOffset');
 
         if (!this.source.hasBytes(offset, 4096)) {
@@ -150,7 +150,7 @@ export class CogTiff {
         if (nextOffset) await this.processIfd(nextOffset, logger);
     }
 
-    private async readIfd(offset: number) {
+    private async readIfd(offset: number): Promise<{ nextOffset: number; image: CogTiffImage }> {
         const view = this.cursor.seekTo(offset);
         const tagCount = view.offset();
         const byteStart = offset + this.ifdConfig.offset;

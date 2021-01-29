@@ -114,7 +114,7 @@ export abstract class CogTiffTagBase<T = unknown> {
     }
 
     /** Get a human(ish) friendly output for the tags */
-    toJSON() {
+    toJSON(): Record<string, unknown> {
         return {
             id: this.id,
             name: this.name,

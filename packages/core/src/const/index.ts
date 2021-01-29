@@ -1,4 +1,3 @@
-export { ByteSize } from './byte.size';
 export { TiffEndian } from './tiff.endian';
 export { TiffCompression, TiffMimeType } from './tiff.mime';
 export { TiffTag, TiffTagGeo } from './tiff.tag.id';

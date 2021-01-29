@@ -1,7 +1,6 @@
-import { ChunkSource } from '@cogeotiff/chunk';
-import { CogTiff } from '..';
-import { ByteSize } from '../const/byte.size';
+import { ByteSize } from '@cogeotiff/chunk';
 import * as ieee754 from 'ieee754';
+import { CogTiff } from '..';
 
 /**
  * View of a Cog source used for reading bytes from the cog while keeping
@@ -25,6 +24,7 @@ export class CogSourceCursor {
         return this.byteOffset + this.relativeOffset;
     }
 
+    /** Seek to a position */
     seekTo(offset: number): CogSourceCursor {
         this.byteOffset = offset;
         this.relativeOffset = 0;

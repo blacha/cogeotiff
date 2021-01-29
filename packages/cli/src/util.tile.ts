@@ -20,7 +20,7 @@ const FileExtension: { [key: string]: string } = {
  *
  * @returns tile name eg `001_002_12.png`
  */
-export function getTileName(mimeType: string, index: number, x: number, y: number) {
+export function getTileName(mimeType: string, index: number, x: number, y: number): string {
     const xS = `${x}`.padStart(3, '0');
     const yS = `${y}`.padStart(3, '0');
 
@@ -39,7 +39,7 @@ export async function writeTile(
     index: number,
     outputPath: string,
     logger: CogLogger,
-) {
+): Promise<void> {
     const tile = await tif.getTile(x, y, index);
     if (tile == null) {
         logger.debug({ index, x, y }, 'TileEmpty');

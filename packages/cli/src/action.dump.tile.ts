@@ -11,7 +11,7 @@ import * as PLimit from 'p-limit';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
-function toLatLng(x: number, y: number) {
+function toLatLng(x: number, y: number): [number, number] {
     return [(x * Rad2Deg) / A, (Math.PI * 0.5 - 2.0 * Math.atan(Math.exp(-y / A))) * Rad2Deg];
 }
 
@@ -65,7 +65,7 @@ export class ActionDumpTile extends CommandLineAction {
     }
 
     // TODO this only works for WSG84
-    async dumpBounds(tif: CogTiff, output: string, index: number) {
+    async dumpBounds(tif: CogTiff, output: string, index: number): Promise<void> {
         this.logger.info({ index }, 'CreateTileBounds');
         const img = tif.getImage(index);
         if (!img.isTiled() || !img.isGeoLocated) return;
@@ -101,7 +101,7 @@ export class ActionDumpTile extends CommandLineAction {
         await fs.writeFile(path.join(output, `i${index}.bounds.geojson`), JSON.stringify(featureCollection, null, 2));
     }
 
-    async dumpIndex(tif: CogTiff, output: string, index: number) {
+    async dumpIndex(tif: CogTiff, output: string, index: number): Promise<void> {
         this.logger.info({ index }, 'CreateIndexHtml');
         const img = tif.getImage(index);
         if (!img.isTiled()) {
@@ -131,7 +131,7 @@ export class ActionDumpTile extends CommandLineAction {
         await fs.writeFile(path.join(output, 'index.html'), html.join('\n'));
     }
 
-    async dumpTiles(tif: CogTiff, output: string, index: number) {
+    async dumpTiles(tif: CogTiff, output: string, index: number): Promise<void> {
         const promises: Promise<void>[] = [];
         const img = tif.getImage(index);
         if (!img.isTiled()) {

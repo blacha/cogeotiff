@@ -24,7 +24,7 @@ o.spec('CogRead', () => {
     //     // o(firstTif.compression).equals('image/jpeg')
     // })
 
-    function validate(tif: CogTiff) {
+    function validate(tif: CogTiff): void {
         o(tif.images.length).equals(5);
 
         const [firstTif] = tif.images;

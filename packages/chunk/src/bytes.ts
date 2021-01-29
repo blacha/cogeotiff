@@ -9,8 +9,3 @@ export enum ByteSize {
     Double = 8,
     Float = 4,
 }
-
-export enum Endian {
-    Little,
-    Big,
-}

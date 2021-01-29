@@ -17,7 +17,7 @@ o.spec('CogSourceUrl', () => {
     let ranges: string[];
 
     // Fake fetch that returns the number of the byte that was requested
-    CogSourceUrl.fetch = (url: string, obj: Record<string, HttpHeaders>) => {
+    CogSourceUrl.fetch = (url: string, obj: Record<string, HttpHeaders>): any => {
         const [startByte, endByte] = obj.headers.Range.split('=')[1]
             .split('-')
             .map((i) => parseInt(i, 10));
@@ -27,7 +27,7 @@ o.spec('CogSourceUrl', () => {
             bytes.push(i);
         }
         const buffer = new Uint8Array(bytes).buffer;
-        const arrayBuffer = () => Promise.resolve(buffer);
+        const arrayBuffer = (): any => Promise.resolve(buffer);
         return Promise.resolve({ arrayBuffer, ok: true }) as any;
     };
 

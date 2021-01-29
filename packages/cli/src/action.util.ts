@@ -1,12 +1,12 @@
-import { CogSource, CogTiff } from '@cogeotiff/core';
+import { ChunkSource } from '@cogeotiff/chunk';
+import { CogTiff } from '@cogeotiff/core';
+import { CogSourceAwsS3 } from '@cogeotiff/source-aws';
 import { CogSourceFile } from '@cogeotiff/source-file';
 import { CogSourceUrl } from '@cogeotiff/source-url';
-import { CogSourceAwsS3 } from '@cogeotiff/source-aws';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
-import { ChunkSource } from '@cogeotiff/chunk';
-
 import * as S3 from 'aws-sdk/clients/s3';
+
 const DefaultS3 = new S3();
 
 export interface CLiResultMapLine {
@@ -19,7 +19,7 @@ export interface CliResultMap {
 }
 
 export const ActionUtil = {
-    async getCogSource(file?: CommandLineStringParameter | null): Promise<{ source: CogSource; tif: CogTiff }> {
+    async getCogSource(file?: CommandLineStringParameter | null): Promise<{ source: ChunkSource; tif: CogTiff }> {
         if (file == null || file.value == null) {
             throw new Error(`File "${file} is not valid`);
         }

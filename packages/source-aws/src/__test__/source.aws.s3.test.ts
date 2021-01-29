@@ -18,7 +18,7 @@ export class FakeRemote implements S3Like {
     }
     getObject(ctx: { Bucket: string; Key: string; Range: string }): S3LikeResponse {
         this.requests.push(ctx);
-        return { promise: () => Promise.resolve({ Body: this.data.slice() }) };
+        return { promise: (): any => Promise.resolve({ Body: this.data.slice() }) };
     }
 }
 

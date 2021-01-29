@@ -16,7 +16,7 @@ export class Fetchable<T = unknown> {
             this.fetchFunc = fetchFunc as FetchFunc<T>;
         } else {
             this.init(fetchFunc);
-            this.fetchFunc = () => Promise.resolve(this.value);
+            this.fetchFunc = (): Promise<T | null> => Promise.resolve(this.value);
         }
     }
     /** Initialize the fetchable with a value so it does not need to be fetched */

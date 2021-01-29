@@ -1,13 +1,12 @@
 import * as fs from 'fs';
 import { ChunkSource } from '../chunk.source';
-import { LogType } from '../log';
 
 export class FakeChunkSource extends ChunkSource {
     type = 'fake';
     uri = 'fake';
     chunkSize = 100;
 
-    async fetchBytesZ(offset: number, length: number, log?: LogType): Promise<ArrayBuffer> {
+    async fetchBytesZ(offset: number, length: number): Promise<ArrayBuffer> {
         const bytes = new Uint8Array(length);
         for (let i = 0; i < length; i++) {
             bytes[i] = offset + i;
@@ -32,7 +31,7 @@ export class TestFileChunkSource extends ChunkSource {
         this.fileName = fileName;
         this.name = `Fake:${this.id}:` + this.fileName;
     }
-    async fetchBytesZ(offset: number, length: number, log?: LogType): Promise<ArrayBuffer> {
+    async fetchBytesZ(offset: number, length: number): Promise<ArrayBuffer> {
         const fileData = await fs.promises.readFile(this.fileName);
         return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + length);
     }

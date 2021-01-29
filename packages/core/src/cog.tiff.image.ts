@@ -55,7 +55,7 @@ export class CogTiffImage {
      *
      * @param loadGeoTags Whether to load the GeoKeyDirectory and unpack it
      */
-    async init(loadGeoTags = false) {
+    async init(loadGeoTags = false): Promise<void> {
         const requiredTags = [
             this.fetch(TiffTag.Compression),
             this.fetch(TiffTag.ImageHeight),

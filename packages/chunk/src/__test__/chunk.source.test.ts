@@ -1,12 +1,12 @@
 import * as o from 'ospec';
 import 'source-map-support/register';
-import { ByteSize, Endian } from '../bytes';
+import { ByteSize } from '../bytes';
 import { ChunkId } from '../chunk.source';
 import { FakeChunkSource } from './chunk.source.fake';
 
 // Reference uin64 from MDN
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView
-function getUint64(dataview: DataView, byteOffset: number, isLittleEndian: boolean) {
+function getUint64(dataview: DataView, byteOffset: number, isLittleEndian: boolean): number {
     // split 64-bit number into two 32-bit (4-byte) parts
     const left = dataview.getUint32(byteOffset, isLittleEndian);
     const right = dataview.getUint32(byteOffset + 4, isLittleEndian);
@@ -69,8 +69,7 @@ o.spec('CogSourceChunk', () => {
         }
     });
 
-    for (const endian of [Endian.Big, Endian.Little]) {
-        const isLittleEndian = endian === Endian.Little;
+    for (const isLittleEndian of [true, false]) {
         const word = isLittleEndian ? 'LE' : 'BE';
         o(`should fetch uint16 (${word})`, async () => {
             source.isLittleEndian = isLittleEndian;
