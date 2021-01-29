@@ -21,7 +21,7 @@ export class SourceUrl extends ChunkSource {
         return source.type === 'url';
     }
 
-    async fetchBytesZ(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
+    async fetchBytes(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
         const Range = `bytes=${offset}-${offset + length}`;
         const headers = { Range };
         const response = await SourceUrl.fetch(this.uri, { headers });

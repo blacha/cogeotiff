@@ -41,7 +41,7 @@ export class SourceFile extends ChunkSource {
         return basename(this.fileName);
     }
 
-    async fetchBytesZ(offset: number, length: number): Promise<ArrayBuffer> {
+    async fetchBytes(offset: number, length: number): Promise<ArrayBuffer> {
         if (this.fd == null) this.fd = fs.open(this.fileName, 'r');
         const fd = await this.fd;
         const { buffer } = await fd.read(Buffer.allocUnsafe(length), 0, length, offset);

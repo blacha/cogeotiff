@@ -80,7 +80,7 @@ export class SourceAwsS3 extends ChunkSource {
         return new SourceAwsS3(res.bucket, res.key, remote);
     }
 
-    async fetchBytesZ(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
+    async fetchBytes(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
         const fetchRange = `bytes=${offset}-${offset + length}`;
         try {
             const resp = await this.remote

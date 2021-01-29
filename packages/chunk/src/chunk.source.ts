@@ -63,7 +63,7 @@ export abstract class ChunkSource {
      *
      * @returns loaded chunk data as one buffer
      */
-    protected abstract fetchBytesZ(offset: number, length: number, log?: LogType): Promise<ArrayBuffer>;
+    protected abstract fetchBytes(offset: number, length: number, log?: LogType): Promise<ArrayBuffer>;
 
     /** Close the source, cleaning up any open connections/file descriptors */
     close?(): Promise<void>;
@@ -132,7 +132,7 @@ export abstract class ChunkSource {
             const length = lastChunk * this.chunkSize + this.chunkSize - offset;
 
             const startTime = Date.now();
-            const buffer = await this.fetchBytesZ(offset, length, logger);
+            const buffer = await this.fetchBytes(offset, length, logger);
             logger?.info(
                 {
                     uri: this.uri,
