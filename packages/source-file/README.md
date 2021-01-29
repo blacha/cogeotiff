@@ -6,7 +6,11 @@ Load a COG from a file using `fs`
 ## Usage
 
 ```javascript
-import { CogSourceFile } from '@cogeotiff/source-file';
+import { SourceFile } from '@cogeotiff/source-file';
 
-const cog = await CogSourceFile.create('./cog.tif');
+const source = new SourceFile('./cog.tif');
+
+
+// Read in the first 1KB of data
+await source.loadBytes(0, 1024);
 ```

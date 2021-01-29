@@ -1,1 +1,1 @@
-export { CogSourceAwsS3 } from './cog.source.aws.s3';
+export { SourceAwsS3 } from './source.aws.s3';

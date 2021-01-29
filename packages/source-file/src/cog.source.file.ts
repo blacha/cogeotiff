@@ -2,13 +2,11 @@ import { ChunkSource } from '@cogeotiff/chunk';
 import { promises as fs } from 'fs';
 import { basename, resolve } from 'path';
 
-const SourceType = 'file';
-
-export class CogSourceFile extends ChunkSource {
-    type = SourceType;
+export class SourceFile extends ChunkSource {
+    type = 'file';
 
     static DefaultChunkSize = 16 * 1024;
-    chunkSize: number = CogSourceFile.DefaultChunkSize;
+    chunkSize: number = SourceFile.DefaultChunkSize;
 
     fileName: string;
     fd: Promise<fs.FileHandle> | null = null;
@@ -16,8 +14,8 @@ export class CogSourceFile extends ChunkSource {
     /** Automatically close the file descriptor after reading */
     closeAfterRead = false;
 
-    static isSource(source: ChunkSource): source is CogSourceFile {
-        return source.type === SourceType;
+    static isSource(source: ChunkSource): source is SourceFile {
+        return source.type === 'file';
     }
 
     constructor(fileName: string) {

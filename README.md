@@ -5,11 +5,12 @@
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
--   Completely javascript based, works in the browser and nodejs
--   Lazy load COG images and metadata
--   Supports huge 100GB+ COGs
--   Uses GDAL COG optimizations, generally only one read per tile!
--   Loads COGs from URL, File or AWS S3
+-  Completely javascript based, works in the browser and nodejs
+-  Lazy load COG images and metadata
+-  Supports huge 100GB+ COGs
+-  Uses GDAL COG optimizations, generally only one or two reads per tile!
+-  Loads COGs from URL, File or AWS S3
+-  Used in production for [Basemaps](https://github.com/basemaps) Over 1 billion tiles fetched from COGs!
 
 ## Usage
 
@@ -18,8 +19,12 @@ Load a COG from a URL using `fetch`
 ```javascript
 import { CogSourceUrl } from '@cogeotiff/source-url';
 
-const cog = await CogSourceUrl.create('https://example.com/cog.tif');
-const tile = await cog.getTile(2, 2, 5);
+const source = new CogSourceUrl('https://example.com/cog.tif');
+const cog = await CogTiff.create(source);
+
+const img = cog.getImage(0);
+if (img.isTiled()) throw new Error('Tiff is not tiled');
+const tile = await img.getTile(2, 2); // Fetch a tile from a tiff x:2, y:2
 ```
 
 ## Scripts

@@ -24,6 +24,10 @@ export abstract class ChunkSource {
     /** Is this source little endian */
     isLittleEndian = true;
 
+    /**
+     * Number of ms to wait before performing a fetch
+     * Larger numbers means more fetches will be grouped together
+     */
     delayMs = 1;
     /**
      * Max number of chunks to load in one go
@@ -61,6 +65,7 @@ export abstract class ChunkSource {
      */
     protected abstract fetchBytesZ(offset: number, length: number, log?: LogType): Promise<ArrayBuffer>;
 
+    /** Close the source, cleaning up any open connections/file descriptors */
     close?(): Promise<void>;
 
     /**

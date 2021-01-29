@@ -1,8 +1,8 @@
 import { ChunkSource } from '@cogeotiff/chunk';
 import { CogTiff } from '@cogeotiff/core';
-import { CogSourceAwsS3 } from '@cogeotiff/source-aws';
-import { CogSourceFile } from '@cogeotiff/source-file';
-import { CogSourceUrl } from '@cogeotiff/source-url';
+import { SourceAwsS3 } from '@cogeotiff/source-aws';
+import { SourceFile } from '@cogeotiff/source-file';
+import { SourceUrl } from '@cogeotiff/source-url';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
 import * as S3 from 'aws-sdk/clients/s3';
@@ -26,13 +26,13 @@ export const ActionUtil = {
         }
         let source: ChunkSource;
         if (file.value.startsWith('http')) {
-            source = new CogSourceUrl(file.value);
+            source = new SourceUrl(file.value);
         } else if (file.value.startsWith('s3://')) {
-            const src = CogSourceAwsS3.fromUri(file.value, DefaultS3);
+            const src = SourceAwsS3.fromUri(file.value, DefaultS3);
             if (src == null) throw new Error(`Unable to parse s3 uri: ${file.value}`);
             source = src;
         } else {
-            source = new CogSourceFile(file.value);
+            source = new SourceFile(file.value);
         }
 
         const tif = new CogTiff(source);

@@ -1,1 +1,1 @@
-export { CogSourceFile } from './cog.source.file';
+export { SourceFile } from './cog.source.file';

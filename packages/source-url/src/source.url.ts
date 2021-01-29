@@ -1,10 +1,10 @@
 import { ChunkSource, LogType } from '@cogeotiff/chunk';
 
-export class CogSourceUrl extends ChunkSource {
+export class SourceUrl extends ChunkSource {
     type = 'url';
 
     static DefaultChunkSize = 32 * 1024;
-    chunkSize: number = CogSourceUrl.DefaultChunkSize;
+    chunkSize: number = SourceUrl.DefaultChunkSize;
 
     uri: string;
 
@@ -17,14 +17,14 @@ export class CogSourceUrl extends ChunkSource {
         return this.uri;
     }
 
-    static isSource(source: ChunkSource): source is CogSourceUrl {
+    static isSource(source: ChunkSource): source is SourceUrl {
         return source.type === 'url';
     }
 
     async fetchBytesZ(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
         const Range = `bytes=${offset}-${offset + length}`;
         const headers = { Range };
-        const response = await CogSourceUrl.fetch(this.uri, { headers });
+        const response = await SourceUrl.fetch(this.uri, { headers });
 
         if (!response.ok) {
             logger?.error(

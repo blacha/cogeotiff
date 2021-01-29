@@ -15,15 +15,15 @@ export interface S3Like {
     getObject(req: { Bucket: string; Key: string; Range: string }): S3LikeResponse;
 }
 
-export class CogSourceAwsS3 extends ChunkSource {
+export class SourceAwsS3 extends ChunkSource {
     type = 'aws-s3';
 
     static DefaultChunkSize = 64 * 1024;
     static DefaultMaxChunkCount = 32;
 
     // HTTP gets are slow, get a larger amount
-    chunkSize: number = CogSourceAwsS3.DefaultChunkSize;
-    maxChunkCount = CogSourceAwsS3.DefaultMaxChunkCount;
+    chunkSize: number = SourceAwsS3.DefaultChunkSize;
+    maxChunkCount = SourceAwsS3.DefaultMaxChunkCount;
 
     bucket: string;
     key: string;
@@ -44,7 +44,7 @@ export class CogSourceAwsS3 extends ChunkSource {
         return `s3://${this.bucket}/${this.key}`;
     }
 
-    static isSource(source: ChunkSource): source is CogSourceAwsS3 {
+    static isSource(source: ChunkSource): source is SourceAwsS3 {
         return source.type === 'aws-s3';
     }
     /**
@@ -74,10 +74,10 @@ export class CogSourceAwsS3 extends ChunkSource {
      *
      * @param uri URI to parse
      */
-    static fromUri(uri: string, remote: S3Like): CogSourceAwsS3 | null {
-        const res = CogSourceAwsS3.parse(uri);
+    static fromUri(uri: string, remote: S3Like): SourceAwsS3 | null {
+        const res = SourceAwsS3.parse(uri);
         if (res == null) return null;
-        return new CogSourceAwsS3(res.bucket, res.key, remote);
+        return new SourceAwsS3(res.bucket, res.key, remote);
     }
 
     async fetchBytesZ(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {

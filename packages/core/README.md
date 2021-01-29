@@ -4,10 +4,11 @@ Reading logic for GeoTiffs
 
 ## Usage
 
-```javascript
+```typescript
 import { CogSourceUrl } from '@cogeotiff/source-url';
 
-const cog = await CogSourceUrl.create('https://example.com/cog.tif');
+const source = new  CogSourceUrl('https://example.com/cog.tif');
+const tiff = await CogTiff.create(source)
 
 /** Load a specific tile from a specific image */
 const tile = await cog.getTile(2, 2, 5);

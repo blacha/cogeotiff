@@ -1,11 +1,15 @@
 # @cogeotiff/source-aws
 
-Load a COG from a AWS using `aws-sdk`
+Load a chunks of a file from a AWS using `aws-sdk`
 
 ## Usage
 
-```javascript
-import { CogSourceAwsS3 } from '@cogeotiff/source-aws';
+```typescript
+import { SourceAwsS3 } from '@cogeotiff/source-aws';
+import S3 from 'aws-sdk/clients/s3';
 
-const cog = await CogSourceAwsS3.create('bucket', 'path/to/cog.tif');
+const source = new SourceAwsS3('bucket', 'path/to/cog.tif', new S3());
+
+// Load the first 1KB
+await source.fetchBytes(0, 1024);
 ```

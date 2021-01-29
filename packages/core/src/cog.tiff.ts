@@ -24,6 +24,11 @@ export class CogTiff {
         this.cursor = new CogSourceCursor(this);
     }
 
+    /** Create and initialize a CogTiff */
+    static create(source: ChunkSource): Promise<CogTiff> {
+        return new CogTiff(source).init();
+    }
+
     /** Has init() been called */
     isInitialized = false;
 

@@ -1,1 +1,1 @@
-export { CogSourceUrl } from './cog.source.url';
+export { SourceUrl } from './source.url';
