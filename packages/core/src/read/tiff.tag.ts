@@ -1,5 +1,5 @@
+import { CogTiff } from '../cog.tiff';
 import { TiffTag } from '../const/tiff.tag.id';
-import { CogSource } from '../source/cog.source';
 import { CogTiffTagBase } from './tag/tiff.tag.base';
 import { CogTiffTagLazy } from './tag/tiff.tag.lazy';
 import { CogTiffTagOffset } from './tag/tiff.tag.offset';
@@ -14,24 +14,21 @@ export const CogTiffTag = {
      * @param source
      * @param offset
      */
-    create(source: CogSource, offset: number) {
-        const view = source.getView(offset);
-        const tagId = view.uint16At(0);
+    create(tiff: CogTiff, offset: number): CogTiffTagBase<unknown> {
+        const tagId = tiff.source.uint16(offset);
         if (
             tagId === TiffTag.TileOffsets ||
             tagId === TiffTag.TileByteCounts ||
             tagId == TiffTag.StripByteCounts ||
             tagId == TiffTag.StripOffsets
         ) {
-            return new CogTiffTagOffset(tagId, source, offset, view);
+            return new CogTiffTagOffset(tagId, tiff, offset);
         }
 
-        const staticTag = new CogTifTagStatic(tagId, source, offset, view);
-        if (staticTag.hasBytes) {
-            return staticTag;
-        }
+        const staticTag = new CogTifTagStatic(tagId, tiff, offset);
+        if (staticTag.hasBytes) return staticTag;
 
-        return new CogTiffTagLazy(tagId, source, offset, view);
+        return new CogTiffTagLazy(tagId, tiff, offset);
     },
 
     isStatic<T>(tiffTag: CogTiffTagBase<T>): tiffTag is CogTifTagStatic<T> {

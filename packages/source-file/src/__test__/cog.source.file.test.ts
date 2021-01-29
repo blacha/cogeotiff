@@ -27,11 +27,11 @@ o.spec('CogSourceFile', () => {
         source.closeAfterRead = true;
         o(source.fd).equals(null);
 
-        const bytes = await source.fetchBytes(0, 1);
+        const bytes = await source.fetchBytesZ(0, 1);
         o(bytes.byteLength).equals(1);
         o(source.fd).equals(null);
 
-        const bytesB = await source.fetchBytes(10, 1);
+        const bytesB = await source.fetchBytesZ(10, 1);
         o(bytesB.byteLength).equals(1);
         o(source.fd).equals(null);
     });

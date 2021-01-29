@@ -6,13 +6,11 @@
         "lib": ["es2018", "dom"]
     },
     "include": ["src/**/*"],
-    "references": [{
-        "path": "../core"
-    }, {
-        "path": "../source-url"
-    }, {
-        "path": "../source-file"
-    }, {
-        "path": "../source-aws"
-    }]
+    "references": [
+        { "path": "../chunk" },
+        { "path": "../core" },
+        { "path": "../source-url" },
+        { "path": "../source-file" },
+        { "path": "../source-aws" }
+    ]
 }

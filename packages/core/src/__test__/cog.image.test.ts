@@ -2,7 +2,7 @@ import * as o from 'ospec';
 import * as path from 'path';
 import 'source-map-support/register';
 
-import { TestFileCogSource } from './fake.source';
+import { TestFileChunkSource } from '@cogeotiff/chunk/build/__test__/chunk.source.fake';
 import { CogTiff } from '../cog.tiff';
 import { TiffMimeType } from '../const';
 
@@ -15,7 +15,7 @@ function getResolution(zoom: number): number {
 }
 
 o.spec('CogTiled', () => {
-    const cogSourceFile = new TestFileCogSource(path.join(__dirname, '../../data/rgba8_tiled.tiff'));
+    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../data/rgba8_tiled.tiff'));
     const cog = new CogTiff(cogSourceFile);
 
     o.beforeEach(() => cog.init());
@@ -71,7 +71,7 @@ o.spec('CogTiled', () => {
 });
 
 o.spec('Cog.Sparse', () => {
-    const cogSourceFile = new TestFileCogSource(path.join(__dirname, '../../data/sparse.tiff'));
+    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../data/sparse.tiff'));
     const cog = new CogTiff(cogSourceFile);
     o.beforeEach(() => cog.init(true));
 
@@ -102,7 +102,7 @@ o.spec('Cog.Sparse', () => {
 });
 
 o.spec('CogStrip', () => {
-    const cogSourceFile = new TestFileCogSource(path.join(__dirname, '../../data/rgba8_strip.tiff'));
+    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../data/rgba8_strip.tiff'));
     const cog = new CogTiff(cogSourceFile);
 
     o.beforeEach(() => cog.init());

@@ -4,6 +4,10 @@ import { CogSourceUrl } from '@cogeotiff/source-url';
 import { CogSourceAwsS3 } from '@cogeotiff/source-aws';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
+import { ChunkSource } from '@cogeotiff/chunk';
+
+import * as S3 from 'aws-sdk/clients/s3';
+const DefaultS3 = new S3();
 
 export interface CLiResultMapLine {
     key: string;
@@ -19,14 +23,12 @@ export const ActionUtil = {
         if (file == null || file.value == null) {
             throw new Error(`File "${file} is not valid`);
         }
-        let source: CogSource;
+        let source: ChunkSource;
         if (file.value.startsWith('http')) {
             source = new CogSourceUrl(file.value);
         } else if (file.value.startsWith('s3://')) {
-            const src = CogSourceAwsS3.createFromUri(file.value);
-            if (src == null) {
-                throw new Error(`Unable to parse s3 uri: ${file.value}`);
-            }
+            const src = CogSourceAwsS3.fromUri(file.value, DefaultS3);
+            if (src == null) throw new Error(`Unable to parse s3 uri: ${file.value}`);
             source = src;
         } else {
             source = new CogSourceFile(file.value);

@@ -4,13 +4,13 @@ import 'source-map-support/register';
 
 import { CogTiff } from '../cog.tiff';
 import { TiffVersion } from '../const/tiff.version';
-import { TestFileCogSource } from './fake.source';
 import { TiffMimeType } from '../const';
+import { TestFileChunkSource } from '@cogeotiff/chunk/build/__test__/chunk.source.fake';
 
 o.spec('CogRead', () => {
     // TODO this does not load 100% yet
     // o('should read big endian', async () => {
-    //     const source = new TestFileCogSource(path.join(__dirname, '../..' + '/test/data/be_cog.tif'))
+    //     const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/test/data/be_cog.tif'))
     //     const tif = new CogTif(source);
 
     //     await tif.init();
@@ -34,54 +34,54 @@ o.spec('CogRead', () => {
     }
 
     o('should read big tiff', async () => {
-        const source = new TestFileCogSource(path.join(__dirname, '../..' + '/data/big_cog.tif'));
-        const tif = new CogTiff(source);
+        const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/big_cog.tif'));
+        const tiff = new CogTiff(source);
 
-        await tif.init();
+        await tiff.init(true, console as any);
 
         o(source.isLittleEndian).equals(true);
-        o(source.version).equals(TiffVersion.BigTiff);
-        validate(tif);
+        o(tiff.version).equals(TiffVersion.BigTiff);
+        validate(tiff);
     });
 
     o('should read tiff', async () => {
-        const source = new TestFileCogSource(path.join(__dirname, '../..' + '/data/cog.tif'));
-        const tif = new CogTiff(source);
+        const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/cog.tif'));
+        const tiff = new CogTiff(source);
 
-        await tif.init();
+        await tiff.init();
 
         o(source.isLittleEndian).equals(true);
-        o(source.version).equals(TiffVersion.Tiff);
-        validate(tif);
+        o(tiff.version).equals(TiffVersion.Tiff);
+        validate(tiff);
 
-        const [firstTif] = tif.images;
+        const [firstTif] = tiff.images;
         o(firstTif.compression).equals(TiffMimeType.JPEG);
     });
 
     o('should allow multiple init', async () => {
-        const source = new TestFileCogSource(path.join(__dirname, '../..' + '/data/cog.tif'));
-        const tif = new CogTiff(source);
+        const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/cog.tif'));
+        const tiff = new CogTiff(source);
 
-        o(tif.isInitialized).equals(false);
-        await tif.init();
-        o(tif.isInitialized).equals(true);
-        o(tif.images.length).equals(5);
+        o(tiff.isInitialized).equals(false);
+        await tiff.init();
+        o(tiff.isInitialized).equals(true);
+        o(tiff.images.length).equals(5);
 
-        o(tif.isInitialized).equals(true);
-        await tif.init();
-        o(tif.images.length).equals(5);
+        o(tiff.isInitialized).equals(true);
+        await tiff.init();
+        o(tiff.images.length).equals(5);
     });
 
     o('should close a source', async () => {
-        const source = new TestFileCogSource(path.join(__dirname, '../..' + '/data/cog.tif'));
-        const tif = new CogTiff(source);
+        const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/cog.tif'));
+        const tiff = new CogTiff(source);
         // Should not close if there is no close
         source.close = undefined;
-        await tif.close();
+        await tiff.close();
 
         const closeSpy = o.spy(() => Promise.resolve());
         source.close = closeSpy;
-        await tif.close();
+        await tiff.close();
         o(closeSpy.callCount).equals(1);
     });
 });

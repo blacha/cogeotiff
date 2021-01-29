@@ -185,11 +185,11 @@ export class ActionDumpTile extends CommandLineAction {
         await this.dumpIndex(tif, output, index);
         await this.dumpBounds(tif, this.output.value, index);
 
-        const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
+        const chunkIds = [...tif.source.chunks.values()];
         const result: CliResultMap[] = [
             {
                 keys: [
-                    { key: 'Tiff type', value: `${TiffVersion[tif.source.version]} (v${String(tif.source.version)})` },
+                    { key: 'Tiff type', value: `${TiffVersion[tif.version]} (v${String(tif.version)})` },
                     { key: 'Chunk size', value: toByteSizeString(tif.source.chunkSize) },
                     {
                         key: 'Bytes read',

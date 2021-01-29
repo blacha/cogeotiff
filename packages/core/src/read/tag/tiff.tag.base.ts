@@ -1,13 +1,9 @@
+import { CogTiff } from '../..';
 import { TiffTag } from '../../const/tiff.tag.id';
 import { TiffTagValueType } from '../../const/tiff.tag.value';
-import { CogSource } from '../../source/cog.source';
-import { CogSourceView } from '../../source/cog.source.view';
 import { getTiffTagSize, getTiffTagValueReader } from '../tiff.value.reader';
 
-export abstract class CogTiffTagBase<T = any> {
-    protected source: CogSource;
-    protected view: CogSourceView;
-
+export abstract class CogTiffTagBase<T = unknown> {
     /**
      * Value of the tiff tag, may be null if the value has not been read
      */
@@ -28,16 +24,17 @@ export abstract class CogTiffTagBase<T = any> {
     /** Number of records inside the tag */
     dataCount: number;
 
-    constructor(id: number, source: CogSource, offset: number, view: CogSourceView) {
-        this.view = view;
-        this.source = source;
+    tiff: CogTiff;
+
+    constructor(id: number, tiff: CogTiff, offset: number) {
+        this.tiff = tiff;
         this.byteOffset = offset;
 
         this.id = id;
         this.name = TiffTag[this.id];
 
-        this.dataType = this.view.uint16At(2);
-        this.dataCount = this.view.uintAt(4, this.source.config.offset);
+        this.dataType = this.tiff.source.uint16(offset + 2);
+        this.dataCount = this.tiff.source.uint(offset + 4, this.tiff.ifdConfig.offset);
         this.dataTypeSize = getTiffTagSize(this.dataType);
         this.dataLength = this.dataTypeSize * this.dataCount;
     }
@@ -45,14 +42,14 @@ export abstract class CogTiffTagBase<T = any> {
     /**
      * Have the bytes for the tag been loaded, or is a fetch required to read the tag
      */
-    get hasBytes() {
-        return this.source.hasBytes(this.valuePointer, this.dataLength);
+    get hasBytes(): boolean {
+        return this.tiff.source.hasBytes(this.valuePointer, this.dataLength);
     }
 
     /**
      * is the tag ready to be read
      */
-    get isReady() {
+    get isReady(): boolean {
         return true;
     }
 
@@ -80,21 +77,19 @@ export abstract class CogTiffTagBase<T = any> {
 
     /** absolute offset of the Tag value */
     get valuePointer(): number {
-        const valueOffset = this.size - this.source.config.pointer;
-        if (this.isValueInline) {
-            return this.byteOffset + valueOffset;
-        }
-        return this.view.uintAt(valueOffset, this.source.config.pointer);
+        const valueOffset = this.size - this.tiff.ifdConfig.pointer;
+        if (this.isValueInline) return this.byteOffset + valueOffset;
+        return this.tiff.source.uint(this.byteOffset + valueOffset, this.tiff.ifdConfig.pointer);
     }
 
     /** Size of the IFD (bytes) */
     get size(): number {
-        return this.source.config.ifd;
+        return this.tiff.ifdConfig.ifd;
     }
 
     /** Is the value of this tag inline, or is it a pointer to the real value */
     get isValueInline(): boolean {
-        return this.dataLength <= this.source.config.pointer;
+        return this.dataLength <= this.tiff.ifdConfig.pointer;
     }
 
     /** Read the value in from the byte array */
@@ -105,21 +100,17 @@ export abstract class CogTiffTagBase<T = any> {
         const count = this.dataCount;
         const dataLength = count * dataTypeSize;
 
-        if (count == 1) {
-            return convert(this.source, offset) as any;
-        }
+        if (count == 1) return (convert(this.tiff.source, offset) as unknown) as T;
 
         const output = [];
         for (let i = 0; i < dataLength; i += dataTypeSize) {
-            output.push(convert(this.source, offset + i));
+            output.push(convert(this.tiff.source, offset + i));
         }
 
         // Convert to a string if ascii
-        if (this.dataType === TiffTagValueType.ASCII) {
-            return output.join('').trim() as any;
-        }
+        if (this.dataType === TiffTagValueType.ASCII) return (output.join('').trim() as unknown) as T;
 
-        return output as any;
+        return (output as unknown) as T;
     }
 
     /** Get a human(ish) friendly output for the tags */

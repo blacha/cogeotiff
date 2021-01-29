@@ -5,5 +5,9 @@
         "outDir": "./build",
         "lib": ["es2018", "dom"]
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "references": [
+        {"path": "../fetchable"},
+        {"path": "../chunk"}
+    ]
 }

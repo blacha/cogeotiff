@@ -1,29 +1,28 @@
-import { CogSource } from '../../source/cog.source';
-import { CogSourceView } from '../../source/cog.source.view';
-import { Fetchable } from '../../util/util.fetchable';
+import { Fetchable } from '@cogeotiff/fetchable';
+import { CogTiff } from '../../cog.tiff';
 import { CogTiffTagBase } from './tiff.tag.base';
 
 export class CogTiffTagLazy<T> extends CogTiffTagBase<T> {
     private fetchable: Fetchable<T>;
-    constructor(tagId: number, source: CogSource, offset: number, view: CogSourceView) {
-        super(tagId, source, offset, view);
-        this.fetchable = new Fetchable(this.loadValueFromPtr.bind(this));
+    constructor(tagId: number, tiff: CogTiff, offset: number) {
+        super(tagId, tiff, offset);
+        this.fetchable = new Fetchable(this.loadValueFromPtr);
     }
 
-    async loadValueFromPtr() {
-        await this.source.loadBytes(this.valuePointer, this.dataLength);
+    loadValueFromPtr = async (): Promise<T> => {
+        await this.tiff.source.loadBytes(this.valuePointer, this.dataLength);
         return this.readValue();
-    }
+    };
 
-    get isReady() {
+    get isReady(): boolean {
         return this.fetchable.value != null;
     }
 
-    get value() {
+    get value(): T | null {
         return this.fetchable.value;
     }
 
-    fetch() {
+    fetch(): Promise<T> {
         return this.fetchable.fetch();
     }
 }

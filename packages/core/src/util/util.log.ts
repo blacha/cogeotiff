@@ -14,18 +14,15 @@ export const LoggerConfig: { log: CogLogger | null } = { log: null };
 /**
  * Get the current logger
  */
-export function getLogger(keys?: Record<string, any>) {
+export function getLogger(keys?: Record<string, any>): CogLogger | null {
     if (keys && LoggerConfig.log != null) {
         return LoggerConfig.log.child(keys);
     }
     return LoggerConfig.log;
 }
 /** Set a logger to be used */
-export function setLogger(l: CogLogger) {
+export function setLogger(l: CogLogger): void {
     LoggerConfig.log = l;
 }
 
-export const Log = {
-    get: getLogger,
-    set: setLogger,
-};
+export const Log = { get: getLogger, set: setLogger };

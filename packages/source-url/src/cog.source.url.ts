@@ -1,30 +1,24 @@
-/// <reference lib="dom" />
-import { CogLogger, CogSource, CogSourceChunked, CogTiff } from '@cogeotiff/core';
+import { ChunkSource, LogType } from '@cogeotiff/chunk';
+import { CogTiff } from '@cogeotiff/core';
 
-export class CogSourceUrl extends CogSourceChunked {
+export class CogSourceUrl extends ChunkSource {
     type = 'url';
 
-    chunkSize: number = 32 * 1024;
-    maxChunkCount = 32;
+    static DefaultChunkSize = 32 * 1024;
+    chunkSize: number = CogSourceUrl.DefaultChunkSize;
 
-    delayMs = 5;
+    uri: string;
 
-    url: string;
-
-    constructor(url: string) {
+    constructor(uri: string) {
         super();
-        this.url = url;
+        this.uri = uri;
     }
 
-    get uri() {
-        return this.url;
+    get name(): string {
+        return this.uri;
     }
 
-    get name() {
-        return this.url;
-    }
-
-    static isSource(source: CogSource): source is CogSourceUrl {
+    static isSource(source: ChunkSource): source is CogSourceUrl {
         return source.type === 'url';
     }
 
@@ -37,24 +31,19 @@ export class CogSourceUrl extends CogSourceChunked {
         return new CogTiff(new CogSourceUrl(url)).init();
     }
 
-    protected async loadChunks(firstChunk: number, lastChunk: number, logger: CogLogger | null): Promise<ArrayBuffer> {
-        const Range = `bytes=${firstChunk * this.chunkSize}-${lastChunk * this.chunkSize + this.chunkSize}`;
-        const chunkCount = lastChunk - firstChunk || 1;
-
-        logger?.info(
-            { firstChunk, lastChunk, chunkCount, bytes: chunkCount * this.chunkSize, fetchRange: Range },
-            'HTTPGet',
-        );
-
+    async fetchBytesZ(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
+        const Range = `bytes=${offset}-${offset + length}`;
         const headers = { Range };
-        const response = await CogSourceUrl.fetch(this.url, { headers });
+        const response = await CogSourceUrl.fetch(this.uri, { headers });
 
         if (!response.ok) {
             logger?.error(
                 {
+                    offset,
+                    bytes: length,
                     status: response.status,
                     statusText: response.statusText,
-                    url: this.url,
+                    url: this.uri,
                 },
                 'Failed to fetch',
             );

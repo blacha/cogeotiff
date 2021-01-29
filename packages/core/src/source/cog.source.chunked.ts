@@ -50,73 +50,73 @@ export abstract class CogSourceChunked extends CogSource {
         chunkCount = 32,
         blankFillCount = 16,
     ): { chunks: number[][]; blankFill: number[] } {
-        if (ranges.length === 0) {
-            return { chunks: [], blankFill: [] };
-        }
-        const sortedRange = ranges.map((c) => parseInt(c, 10)).sort((a, b) => a - b);
+        // if (ranges.length === 0) {
+        return { chunks: [], blankFill: [] };
+        // }
+        // const sortedRange = ranges.map((c) => parseInt(c, 10)).sort((a, b) => a - b);
 
-        const chunks: number[][] = [];
-        let current: number[] = [];
-        chunks.push(current);
-        const blankFill = [];
+        // const chunks: number[][] = [];
+        // let current: number[] = [];
+        // chunks.push(current);
+        // const blankFill = [];
 
-        for (let i = 0; i < sortedRange.length; ++i) {
-            const currentValue = sortedRange[i];
-            const lastValue = sortedRange[i - 1];
-            if (current.length >= chunkCount) {
-                current = [currentValue];
-                chunks.push(current);
-            } else if (i === 0 || currentValue === lastValue + 1) {
-                current.push(currentValue);
-            } else if (currentValue < lastValue + blankFillCount) {
-                // Allow for non continuos chunks to be requested to save on fetches
-                for (let x = lastValue; x < currentValue; x++) {
-                    current.push(x + 1);
-                    blankFill.push(x + 1);
-                }
-                // Last value was actually requested so its not a blank fill
-                blankFill.pop();
-            } else {
-                current = [currentValue];
-                chunks.push(current);
-            }
-        }
-        return { chunks, blankFill };
+        // for (let i = 0; i < sortedRange.length; ++i) {
+        //     const currentValue = sortedRange[i];
+        //     const lastValue = sortedRange[i - 1];
+        //     if (current.length >= chunkCount) {
+        //         current = [currentValue];
+        //         chunks.push(current);
+        //     } else if (i === 0 || currentValue === lastValue + 1) {
+        //         current.push(currentValue);
+        //     } else if (currentValue < lastValue + blankFillCount) {
+        //         // Allow for non continuos chunks to be requested to save on fetches
+        //         for (let x = lastValue; x < currentValue; x++) {
+        //             current.push(x + 1);
+        //             blankFill.push(x + 1);
+        //         }
+        //         // Last value was actually requested so its not a blank fill
+        //         blankFill.pop();
+        //     } else {
+        //         current = [currentValue];
+        //         chunks.push(current);
+        //     }
+        // }
+        // return { chunks, blankFill };
     }
 
     private async fetchData(): Promise<ArrayBuffer[]> {
-        const chunkIds = Object.keys(this.toFetch);
-        this.toFetch = [];
-        this.toFetchPromise = null;
+        // const chunkIds = Object.keys(this.toFetch);
+        // this.toFetch = [];
+        // this.toFetchPromise = null;
 
-        const ranges = CogSourceChunked.getByteRanges(chunkIds, this.maxChunkCount, this.blankFillCount);
+        // const ranges = CogSourceChunked.getByteRanges(chunkIds, this.maxChunkCount, this.blankFillCount);
 
-        const chunkData: ArrayBuffer[] = [];
+        // const chunkData: ArrayBuffer[] = [];
 
-        // TODO putting this in a promise queue to do multiple requests
-        // at a time would be a good idea.
-        for (const chunkRange of ranges.chunks) {
-            const firstChunk = chunkRange[0];
-            const lastChunk = chunkRange[chunkRange.length - 1];
-            const buffer = await this.loadChunks(firstChunk, lastChunk, Log.get());
-            if (chunkRange.length == 1) {
-                chunkData[chunkRange[0]] = buffer;
-                continue;
-            }
+        // // TODO putting this in a promise queue to do multiple requests
+        // // at a time would be a good idea.
+        // for (const chunkRange of ranges.chunks) {
+        //     const firstChunk = chunkRange[0];
+        //     const lastChunk = chunkRange[chunkRange.length - 1];
+        //     const buffer = await this.loadChunks(firstChunk, lastChunk, Log.get());
+        //     if (chunkRange.length == 1) {
+        //         chunkData[chunkRange[0]] = buffer;
+        //         continue;
+        //     }
 
-            const rootOffset = firstChunk * this.chunkSize;
-            for (const chunkId of chunkRange) {
-                const chunkOffset = chunkId * this.chunkSize - rootOffset;
-                chunkData[chunkId] = buffer.slice(chunkOffset, chunkOffset + this.chunkSize);
-            }
-        }
+        //     const rootOffset = firstChunk * this.chunkSize;
+        //     for (const chunkId of chunkRange) {
+        //         const chunkOffset = chunkId * this.chunkSize - rootOffset;
+        //         chunkData[chunkId] = buffer.slice(chunkOffset, chunkOffset + this.chunkSize);
+        //     }
+        // }
 
-        // These are extra chunks that were fetched, so lets prime the cache
-        for (const chunkId of ranges.blankFill) {
-            this.chunk(chunkId).init(chunkData[chunkId]);
-        }
+        // // These are extra chunks that were fetched, so lets prime the cache
+        // for (const chunkId of ranges.blankFill) {
+        //     this.chunk(chunkId).init(chunkData[chunkId]);
+        // }
 
-        return chunkData;
+        return [];
     }
 
     async fetchBytes(offset: number, count: number): Promise<ArrayBuffer> {
