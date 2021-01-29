@@ -121,7 +121,7 @@ export abstract class ChunkSource {
         for (const chunkRange of ranges.chunks) {
             const firstChunk = chunkRange[0];
             const lastChunk = chunkRange[chunkRange.length - 1];
-            logger?.trace({ chunks: chunkRange, chunkCount: chunkRange.length }, 'FetchChunk');
+            logger?.info({ chunks: chunkRange, chunkCount: chunkRange.length }, 'FetchChunk');
             const buffer = await this.fetchBytesZ(
                 firstChunk * this.chunkSize,
                 lastChunk * this.chunkSize + this.chunkSize,
@@ -153,7 +153,6 @@ export abstract class ChunkSource {
         const startChunk = Math.floor(offset / this.chunkSize);
         const endChunk = Math.ceil((offset + length) / this.chunkSize) - 1;
 
-        console.log('loadBytes', { offset, length, startChunk, endChunk, size: this.chunkSize });
         for (let i = startChunk; i <= endChunk; i++) this.toFetch.add(i);
 
         // Queue a fetch

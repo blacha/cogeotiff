@@ -1,4 +1,5 @@
-import { CogLogger, CogTiff, TiffMimeType } from '@cogeotiff/core';
+import { LogType } from '@cogeotiff/chunk';
+import { CogTiff, TiffMimeType } from '@cogeotiff/core';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
@@ -38,7 +39,7 @@ export async function writeTile(
     y: number,
     index: number,
     outputPath: string,
-    logger: CogLogger,
+    logger: LogType,
 ): Promise<void> {
     const tile = await tif.getTile(x, y, index);
     if (tile == null) {

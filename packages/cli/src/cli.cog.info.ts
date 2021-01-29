@@ -22,8 +22,6 @@ export class CogInfoCommandLine extends CommandLineParser {
     }
 
     protected onExecute(): Promise<void> {
-        Core.Log.set(CliLogger);
-
         if (this.verbose?.value) {
             ChalkLogStream.setLevel(Log.INFO);
         } else if (this.extraVerbose?.value) {

@@ -6,6 +6,7 @@ import { CogSourceUrl } from '@cogeotiff/source-url';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
 import * as S3 from 'aws-sdk/clients/s3';
+import { CliLogger } from './cli.log';
 
 const DefaultS3 = new S3();
 
@@ -35,7 +36,7 @@ export const ActionUtil = {
         }
 
         const tif = new CogTiff(source);
-        await tif.init();
+        await tif.init(false, CliLogger);
         return { source, tif };
     },
     formatResult(title: string, result: CliResultMap[]): string[] {

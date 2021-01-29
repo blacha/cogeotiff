@@ -1,4 +1,4 @@
-import { CogLogger, CogTiff, TiffVersion } from '@cogeotiff/core';
+import { CogTiff, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
 import { promises as fs } from 'fs';
@@ -8,6 +8,7 @@ import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
 import { getTileName, writeTile } from './util.tile';
 import * as PLimit from 'p-limit';
+import { LogType } from '@cogeotiff/chunk';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
@@ -53,7 +54,7 @@ export class ActionDumpTile extends CommandLineAction {
     private imageIndex: CommandLineIntegerParameter | null = null;
     private output: CommandLineStringParameter | null = null;
     private outputCount = 0;
-    private logger: CogLogger;
+    private logger: LogType;
 
     public constructor() {
         super({

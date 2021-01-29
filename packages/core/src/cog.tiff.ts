@@ -9,7 +9,6 @@ import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.
 import { CogTiffTag } from './read/tiff.tag';
 import { CogSourceCursor } from './source/cog.source.view';
 import { toHexString } from './util/util.hex';
-import { getLogger } from './util/util.log';
 
 export class CogTiff {
     source: ChunkSource;
@@ -68,7 +67,7 @@ export class CogTiff {
         const ghostSize = nextOffsetIfd - this.cursor.currentOffset;
         // GDAL now stores metadata between the IFD inside a ghost storage area
         if (ghostSize > 0 && ghostSize < 16 * 1024) {
-            getLogger()?.debug(
+            logger?.debug(
                 { offset: toHexString(this.cursor.currentOffset), length: toHexString(ghostSize) },
                 'GhostOptions',
             );
@@ -131,7 +130,7 @@ export class CogTiff {
             await this.source.loadBytes(offset, 4096, logger);
         }
 
-        const { image, nextOffset } = await this.readIfd(offset);
+        const { image, nextOffset } = await this.readIfd(offset, logger);
         this.images.push(image);
         const size = image.size;
         if (image.isTiled()) {
@@ -150,11 +149,11 @@ export class CogTiff {
         if (nextOffset) await this.processIfd(nextOffset, logger);
     }
 
-    private async readIfd(offset: number): Promise<{ nextOffset: number; image: CogTiffImage }> {
+    private async readIfd(offset: number, log?: LogType): Promise<{ nextOffset: number; image: CogTiffImage }> {
         const view = this.cursor.seekTo(offset);
         const tagCount = view.offset();
         const byteStart = offset + this.ifdConfig.offset;
-        const logger = getLogger({ imageId: this.images.length });
+        const logger = log?.child({ imageId: this.images.length });
         const tags: Map<TiffTag, CogTiffTagBase> = new Map();
 
         let pos = byteStart;

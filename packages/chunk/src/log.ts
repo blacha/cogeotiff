@@ -7,7 +7,6 @@ export interface LogFunc {
  * Expose log type so functions that do not have direct access to pino have access to the log type
  */
 export interface LogType {
-    level: string;
     trace: LogFunc;
     debug: LogFunc;
     info: LogFunc;

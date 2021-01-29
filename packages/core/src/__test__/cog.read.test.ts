@@ -37,7 +37,7 @@ o.spec('CogRead', () => {
         const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/big_cog.tif'));
         const tiff = new CogTiff(source);
 
-        await tiff.init(true, console as any);
+        await tiff.init();
 
         o(source.isLittleEndian).equals(true);
         o(tiff.version).equals(TiffVersion.BigTiff);
