@@ -1,3 +1,4 @@
+import { LogType } from '@cogeotiff/chunk';
 import { CogTiff } from './cog.tiff';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime';
 import { TiffTag, TiffTagGeo } from './const/tiff.tag.id';
@@ -55,27 +56,27 @@ export class CogTiffImage {
      *
      * @param loadGeoTags Whether to load the GeoKeyDirectory and unpack it
      */
-    async init(loadGeoTags = false): Promise<void> {
+    async init(loadGeoTags = false, l: LogType = null as any): Promise<void> {
         const requiredTags = [
-            this.fetch(TiffTag.Compression),
-            this.fetch(TiffTag.ImageHeight),
-            this.fetch(TiffTag.ImageWidth),
-            this.fetch(TiffTag.ModelPixelScale),
-            this.fetch(TiffTag.ModelTiePoint),
-            this.fetch(TiffTag.ModelTransformation),
-            this.fetch(TiffTag.TileHeight),
-            this.fetch(TiffTag.TileWidth),
+            this.fetch(TiffTag.Compression, l),
+            this.fetch(TiffTag.ImageHeight, l),
+            this.fetch(TiffTag.ImageWidth, l),
+            this.fetch(TiffTag.ModelPixelScale, l),
+            this.fetch(TiffTag.ModelTiePoint, l),
+            this.fetch(TiffTag.ModelTransformation, l),
+            this.fetch(TiffTag.TileHeight, l),
+            this.fetch(TiffTag.TileWidth, l),
         ];
 
         if (loadGeoTags) {
-            requiredTags.push(this.fetch(TiffTag.GeoKeyDirectory));
-            requiredTags.push(this.fetch(TiffTag.GeoAsciiParams));
-            requiredTags.push(this.fetch(TiffTag.GeoDoubleParams));
+            requiredTags.push(this.fetch(TiffTag.GeoKeyDirectory, l));
+            requiredTags.push(this.fetch(TiffTag.GeoAsciiParams, l));
+            requiredTags.push(this.fetch(TiffTag.GeoDoubleParams, l));
         }
 
         await Promise.all(requiredTags);
         if (loadGeoTags) {
-            await this.loadGeoTiffTags();
+            await this.loadGeoTiffTags(l);
         }
     }
 
@@ -91,7 +92,7 @@ export class CogTiffImage {
     /**
      * Load and unpack the GeoKeyDirectory
      */
-    async loadGeoTiffTags(): Promise<void> {
+    async loadGeoTiffTags(l: LogType): Promise<void> {
         // Already loaded
         if (this.tagsGeoLoaded) return;
         const sourceTag = this.tags.get(TiffTag.GeoKeyDirectory);
@@ -102,9 +103,9 @@ export class CogTiffImage {
         if (!sourceTag.isReady && sourceTag instanceof CogTiffTagLazy) {
             // Load all the required keys
             await Promise.all([
-                this.fetch(TiffTag.GeoKeyDirectory),
-                this.fetch(TiffTag.GeoAsciiParams),
-                this.fetch(TiffTag.GeoDoubleParams),
+                this.fetch(TiffTag.GeoKeyDirectory, l),
+                this.fetch(TiffTag.GeoAsciiParams, l),
+                this.fetch(TiffTag.GeoDoubleParams, l),
             ]);
         }
         this.tagsGeoLoaded = true;
@@ -144,10 +145,10 @@ export class CogTiffImage {
      * Load a tag, if it is not currently loaded, fetch the required data for the tag.
      * @param tag tag to fetch
      */
-    public async fetch<T>(tag: TiffTag): Promise<T | null> {
+    public async fetch<T>(tag: TiffTag, l: LogType): Promise<T | null> {
         const sourceTag = this.tags.get(tag);
         if (sourceTag == null) return null;
-        if (CogTiffTag.isLazy(sourceTag)) return sourceTag.fetch() as any;
+        if (CogTiffTag.isLazy(sourceTag)) return sourceTag.fetch(l) as any;
         return sourceTag.value as T;
     }
 
@@ -341,14 +342,14 @@ export class CogTiffImage {
      * @param index tile index
      * @returns file offset of the specified tile
      */
-    protected async getTileOffset(index: number): Promise<number> {
+    protected async getTileOffset(index: number, l?: LogType): Promise<number> {
         const tileOffset = this.tileOffset;
         if (index < 0 || index > tileOffset.dataCount) {
             throw new Error(`Tile offset: ${index} out of range: 0 -> ${tileOffset.dataCount}`);
         }
 
         // Fetch only the part of the offsets that are needed
-        return tileOffset.getValueAt(index);
+        return tileOffset.getValueAt(index, l);
     }
 
     // Clamp the bounds of the output image to the size of the image, as sometimes the edge tiles are not full tiles
@@ -397,12 +398,13 @@ export class CogTiffImage {
     private async getBytes(
         offset: number,
         byteCount: number,
+        l?: LogType,
     ): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
         const mimeType = this.compression;
         if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
         if (byteCount == 0) return null;
 
-        await this.tif.source.loadBytes(offset, byteCount);
+        await this.tif.source.loadBytes(offset, byteCount, l);
         const bytes = this.tif.source.bytes(offset, byteCount);
 
         if (this.compression == TiffMimeType.JPEG) {
@@ -419,7 +421,7 @@ export class CogTiffImage {
      * @param x Tile x offset
      * @param y Tile y offset
      */
-    async getTile(x: number, y: number): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
+    async getTile(x: number, y: number, l?: LogType): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
         const mimeType = this.compression;
         const size = this.size;
         const tiles = this.tileSize;
@@ -439,22 +441,22 @@ export class CogTiffImage {
         const totalTiles = nxTiles * nyTiles;
         if (idx >= totalTiles) throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
 
-        const { offset, imageSize } = await this.getTileSize(idx);
-        return this.getBytes(offset, imageSize);
+        const { offset, imageSize } = await this.getTileSize(idx, l);
+        return this.getBytes(offset, imageSize, l);
     }
 
-    protected async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
+    protected async getTileSize(index: number, l?: LogType): Promise<{ offset: number; imageSize: number }> {
         // GDAL optimizes tiles by storing the size of the tile in
         // the few bytes leading up to the tile
         if (this.tif.options.tileLeaderByteSize) {
-            const offset = await this.getTileOffset(index);
+            const offset = await this.getTileOffset(index, l);
             // Sparse COG no data found
             if (offset == 0) return { offset: 0, imageSize: 0 };
 
             const leaderBytes = this.tif.options.tileLeaderByteSize;
             // This fetch will generally load in the bytes needed for the image too
             // provided the image size is less than the size of a chunk
-            await this.tif.source.loadBytes(offset - leaderBytes, leaderBytes);
+            await this.tif.source.loadBytes(offset - leaderBytes, leaderBytes, l);
             return { offset, imageSize: this.tif.source.uint(offset - leaderBytes, leaderBytes) };
         }
 
@@ -462,7 +464,7 @@ export class CogTiffImage {
         if (byteCounts == null) {
             throw new Error('No tile byte counts found');
         }
-        const [offset, imageSize] = await Promise.all([this.getTileOffset(index), byteCounts.getValueAt(index)]);
+        const [offset, imageSize] = await Promise.all([this.getTileOffset(index, l), byteCounts.getValueAt(index, l)]);
         return { offset, imageSize };
     }
 }

@@ -37,7 +37,7 @@ export class CogTiff {
         // Load the first few KB in, more loads will run as more data is required
         await this.source.loadBytes(0, this.source.chunkSize, logger);
         await this.fetchIfd(logger);
-        await Promise.all(this.images.map((c) => c.init(loadGeoKeys)));
+        await Promise.all(this.images.map((c) => c.init(loadGeoKeys, logger)));
 
         this.isInitialized = true;
         return this;

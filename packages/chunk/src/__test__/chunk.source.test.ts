@@ -26,7 +26,7 @@ o.spec('CogSourceChunk', () => {
     });
 
     async function Chunk(chunkId: number): Promise<DataView> {
-        await source.loadBytes(chunkId * source.chunkSize, source.chunkSize);
+        await source.loadBytes(chunkId * source.chunkSize, source.chunkSize, undefined);
         return source.getView(chunkId as ChunkId);
     }
 

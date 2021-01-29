@@ -143,7 +143,7 @@ export class ActionDumpTile extends CommandLineAction {
         const tileCount = img.tileCount;
 
         // Load all offsets in
-        await img.tileOffset.load();
+        await img.tileOffset.load(CliLogger);
 
         for (let x = 0; x < tileCount.x; x++) {
             for (let y = 0; y < tileCount.y; y++) {

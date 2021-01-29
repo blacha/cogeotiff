@@ -24,6 +24,7 @@ export abstract class ChunkSource {
     /** Is this source little endian */
     isLittleEndian = true;
 
+    delayMs = 1;
     /**
      * Max number of chunks to load in one go
      * Requested chunks could be more than this number if blankFillCount is used
@@ -121,16 +122,26 @@ export abstract class ChunkSource {
         for (const chunkRange of ranges.chunks) {
             const firstChunk = chunkRange[0];
             const lastChunk = chunkRange[chunkRange.length - 1];
-            logger?.info({ chunks: chunkRange, chunkCount: chunkRange.length }, 'FetchChunk');
-            const buffer = await this.fetchBytesZ(
-                firstChunk * this.chunkSize,
-                lastChunk * this.chunkSize + this.chunkSize,
-                logger,
+
+            const offset = firstChunk * this.chunkSize;
+            const length = lastChunk * this.chunkSize + this.chunkSize - offset;
+
+            const startTime = Date.now();
+            const buffer = await this.fetchBytesZ(offset, length, logger);
+            logger?.info(
+                {
+                    uri: this.uri,
+                    source: this.type,
+                    bytes: length,
+                    chunks: chunkRange,
+                    chunkCount: chunkRange.length,
+                    duration: Date.now() - startTime,
+                },
+                'FetchChunk',
             );
             if (chunkRange.length == 1) {
                 chunkData[firstChunk] = buffer;
                 this.chunks.set(firstChunk, new DataView(buffer));
-
                 continue;
             }
 
@@ -143,9 +154,6 @@ export abstract class ChunkSource {
             }
         }
 
-        // These are extra chunks that were fetched, so lets prime the cache
-        for (const chunkId of ranges.blankFill) this.chunks.set(chunkId, new DataView(chunkData[chunkId]));
-
         return chunkData;
     }
 
@@ -153,11 +161,16 @@ export abstract class ChunkSource {
         const startChunk = Math.floor(offset / this.chunkSize);
         const endChunk = Math.ceil((offset + length) / this.chunkSize) - 1;
 
-        for (let i = startChunk; i <= endChunk; i++) this.toFetch.add(i);
+        for (let i = startChunk; i <= endChunk; i++) {
+            if (this.chunks.has(i)) continue;
+            this.toFetch.add(i);
+        }
 
         // Queue a fetch
         if (this.toFetchPromise == null) {
-            this.toFetchPromise = new Promise<void>((resolve) => setImmediate(resolve)).then(() => this.fetchData(log));
+            this.toFetchPromise = new Promise<void>((resolve) => setTimeout(resolve, 5)).then(() => {
+                return this.fetchData(log);
+            });
         }
 
         if (this.toFetch.size > this.maxConcurrentRequests) throw new Error('Too many outstanding requests');

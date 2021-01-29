@@ -4,6 +4,7 @@ import * as c from 'ansi-colors';
 import { ActionUtil, CliResultMap } from './action.util';
 import { toByteSizeString } from './util.bytes';
 import { CliTable } from './cli.table';
+import { CliLogger } from './cli.log';
 
 function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any): { key: string; value: string } {
     const key = `${String(tagId).padEnd(7, ' ')} ${String(tagName).padEnd(20)}`;
@@ -93,7 +94,7 @@ export class ActionCogInfo extends CommandLineAction {
         const { tif } = await ActionUtil.getCogSource(this.file);
         const [firstImage] = tif.images;
 
-        await firstImage.loadGeoTiffTags();
+        await firstImage.loadGeoTiffTags(CliLogger);
 
         const isCogOptimized = tif.options.isCogOptimized;
         const chunkIds = [...tif.source.chunks.values()];
@@ -155,7 +156,7 @@ export class ActionCogInfo extends CommandLineAction {
                     title: `Image: ${img.id} - Tiff tags`,
                     keys: tiffTags.map((tagId) => formatTag(tagId, TiffTag[tagId], img.value(tagId))),
                 });
-                await img.loadGeoTiffTags();
+                await img.loadGeoTiffTags(CliLogger);
                 if (img.tagsGeo) {
                     const tiffTagsGeo = [...img.tagsGeo.keys()];
                     result.push({
