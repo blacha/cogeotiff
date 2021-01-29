@@ -1,5 +1,4 @@
 import { ChunkSource } from '@cogeotiff/chunk';
-import { CogTiff } from '@cogeotiff/core';
 import { promises as fs } from 'fs';
 import { basename, resolve } from 'path';
 
@@ -19,14 +18,6 @@ export class CogSourceFile extends ChunkSource {
 
     static isSource(source: ChunkSource): source is CogSourceFile {
         return source.type === SourceType;
-    }
-    /**
-     * Create and initialize a COG from a file path
-     *
-     * @param filePath location of the cog
-     */
-    static async create(filePath: string): Promise<CogTiff> {
-        return new CogTiff(new CogSourceFile(filePath)).init();
     }
 
     constructor(fileName: string) {

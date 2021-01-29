@@ -9,7 +9,7 @@
     "license": "MIT",
     "scripts": {},
     "dependencies": {
-        "@cogeotiff/core": "^3.1.0",
+        "@cogeotiff/chunk": "^3.1.0",
         "node-fetch": "^2.6.0"
     },
     "devDependencies": {

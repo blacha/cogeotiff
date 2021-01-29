@@ -1,5 +1,4 @@
 import { ChunkSource, LogType } from '@cogeotiff/chunk';
-import { CogTiff } from '@cogeotiff/core';
 
 export class CogSourceUrl extends ChunkSource {
     type = 'url';
@@ -20,15 +19,6 @@ export class CogSourceUrl extends ChunkSource {
 
     static isSource(source: ChunkSource): source is CogSourceUrl {
         return source.type === 'url';
-    }
-
-    /**
-     * Create and initialize a COG from a url
-     *
-     * @param url location of the cog
-     */
-    static async create(url: string): Promise<CogTiff> {
-        return new CogTiff(new CogSourceUrl(url)).init();
     }
 
     async fetchBytesZ(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
