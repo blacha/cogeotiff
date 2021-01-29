@@ -38,12 +38,12 @@ export class ActionTile extends CommandLineAction {
 
         await writeTile(tif, x, y, z, '.', logger);
 
-        const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
+        const chunkIds = [...tif.source.chunks.values()];
 
         const result: CliResultMap[] = [
             {
                 keys: [
-                    { key: 'Tiff type', value: `${TiffVersion[tif.source.version]} (v${String(tif.source.version)})` },
+                    { key: 'Tiff type', value: `${TiffVersion[tif.version]} (v${String(tif.version)})` },
                     { key: 'Chunk size', value: toByteSizeString(tif.source.chunkSize) },
                     {
                         key: 'Bytes read',

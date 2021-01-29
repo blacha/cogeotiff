@@ -1,15 +1,19 @@
 {
     "name": "@cogeotiff/source-url",
     "version": "3.1.0",
-    "repository": "git@github.com:blacha/cogeotiff.git",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/blacha/cogeotiff.git",
+        "directory": "packages/source-url"
+    },
     "main": "./build/index.node.js",
     "browser": "./build/index.js",
     "types": "./build/index.d.ts",
-    "author": "",
+    "author": "Blayne Chard",
     "license": "MIT",
     "scripts": {},
     "dependencies": {
-        "@cogeotiff/core": "^3.1.0",
+        "@cogeotiff/chunk": "^3.1.0",
         "node-fetch": "^2.6.0"
     },
     "devDependencies": {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as o from 'ospec';
 import 'source-map-support/register';
-import { CogSourceFile } from '../cog.source.file';
+import { SourceFile } from '../cog.source.file';
 import { join } from 'path';
 import { CogTiff } from '@cogeotiff/core';
 
@@ -9,9 +9,9 @@ const TestDataPath = join(__dirname, '..', '..', '..', 'core', 'data');
 o.spec('CogSourceFile', () => {
     const TestFile = join(TestDataPath, 'rgba8_tiled.tiff');
 
-    let source: CogSourceFile;
+    let source: SourceFile;
     o.beforeEach(() => {
-        source = new CogSourceFile(TestFile);
+        source = new SourceFile(TestFile);
     });
     o.afterEach(async () => source.close());
 

@@ -1,24 +1,32 @@
+import { ChunkSource, LogType } from '@cogeotiff/chunk';
 import { CogTiffImage } from './cog.tiff.image';
 import { TiffEndian } from './const/tiff.endian';
 import { TiffTag } from './const/tiff.tag.id';
 import { TiffVersion } from './const/tiff.version';
 import { CogTiffTagBase } from './read/tag/tiff.tag.base';
 import { CogTifGhostOptions } from './read/tiff.gdal';
+import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config';
 import { CogTiffTag } from './read/tiff.tag';
-import { CogSource } from './source/cog.source';
+import { CogSourceCursor } from './source/cog.source.view';
 import { toHexString } from './util/util.hex';
-import { getLogger } from './util/util.log';
-
-const HEADER_BUFFER_SIZE = 2048;
 
 export class CogTiff {
-    source: CogSource;
-    version = -1;
+    source: ChunkSource;
+    version = TiffVersion.Tiff;
     images: CogTiffImage[] = [];
     options = new CogTifGhostOptions();
 
-    constructor(source: CogSource) {
+    private cursor: CogSourceCursor;
+    ifdConfig: TiffIfdConfig = TagTiffConfig;
+
+    constructor(source: ChunkSource) {
         this.source = source;
+        this.cursor = new CogSourceCursor(this);
+    }
+
+    /** Create and initialize a CogTiff */
+    static create(source: ChunkSource): Promise<CogTiff> {
+        return new CogTiff(source).init();
     }
 
     /** Has init() been called */
@@ -29,59 +37,52 @@ export class CogTiff {
      *
      * @param loadGeoKeys Whether to also initialize the GeoKeyDirectory
      */
-    async init(loadGeoKeys = false): Promise<CogTiff> {
+    async init(loadGeoKeys = false, logger?: LogType): Promise<CogTiff> {
         if (this.isInitialized) return this;
         // Load the first few KB in, more loads will run as more data is required
-        await this.source.loadBytes(0, 4 * HEADER_BUFFER_SIZE);
-        await this.fetchIfd();
-        await Promise.all(this.images.map((c) => c.init(loadGeoKeys)));
+        await this.source.loadBytes(0, this.source.chunkSize, logger);
+        await this.fetchIfd(logger);
+        await Promise.all(this.images.map((c) => c.init(loadGeoKeys, logger)));
 
         this.isInitialized = true;
         return this;
     }
 
-    private async fetchIfd() {
-        const view = this.source.getView(0);
+    private async fetchIfd(logger?: LogType): Promise<void> {
+        const view = this.cursor.seekTo(0);
         const endian = view.uint16();
-        this.source.isLittleEndian = endian === TiffEndian.LITTLE;
-        if (!this.source.isLittleEndian) {
-            throw new Error('Only little endian is supported');
-        }
+        this.source.isLittleEndian = endian === TiffEndian.Little;
+        if (!this.source.isLittleEndian) throw new Error('Only little endian is supported');
         this.version = view.uint16();
 
         let nextOffsetIfd: number;
         if (this.version == TiffVersion.BigTiff) {
+            this.ifdConfig = TagTiffBigConfig;
             const pointerSize = view.uint16();
-            if (pointerSize !== 8) {
-                throw new Error('Only 8byte pointers are supported');
-            }
+            if (pointerSize !== 8) throw new Error('Only 8byte pointers are supported');
             const zeros = view.uint16();
-            if (zeros !== 0) {
-                throw new Error('Invalid big tiff header');
-            }
-            this.source.setVersion(TiffVersion.BigTiff);
+            if (zeros !== 0) throw new Error('Invalid big tiff header');
             nextOffsetIfd = view.pointer();
         } else if (this.version === TiffVersion.Tiff) {
-            this.source.setVersion(TiffVersion.Tiff);
             nextOffsetIfd = view.pointer();
         } else {
             throw new Error(`Only tiff supported version:${this.version}`);
         }
 
-        const ghostSize = nextOffsetIfd - view.currentOffset;
+        const ghostSize = nextOffsetIfd - this.cursor.currentOffset;
         // GDAL now stores metadata between the IFD inside a ghost storage area
         if (ghostSize > 0 && ghostSize < 16 * 1024) {
-            getLogger()?.debug(
-                { offset: toHexString(view.currentOffset), length: toHexString(ghostSize) },
+            logger?.debug(
+                { offset: toHexString(this.cursor.currentOffset), length: toHexString(ghostSize) },
                 'GhostOptions',
             );
-            this.options.process(this.source, view.currentOffset, ghostSize);
+            // this.options.process(this.source, view.currentOffset, ghostSize);
         }
 
-        return this.processIfd(nextOffsetIfd);
+        return this.processIfd(nextOffsetIfd, logger);
     }
 
-    getImage(z: number) {
+    getImage(z: number): CogTiffImage {
         return this.images[z];
     }
 
@@ -105,9 +106,7 @@ export class CogTiff {
             // TODO do we care about y resolution
             // const imgResolutionY = resolutionBaseY / imgSize.height;
 
-            if (imgResolutionX - resolution <= 0.01) {
-                return img;
-            }
+            if (imgResolutionX - resolution <= 0.01) return img;
         }
         return firstImage;
     }
@@ -123,24 +122,20 @@ export class CogTiff {
      */
     async getTile(x: number, y: number, index: number): Promise<{ mimeType: string; bytes: Uint8Array } | null> {
         const image = this.getImage(index);
-        if (image == null) {
-            throw new Error(`Missing z: ${index}`);
-        }
+        if (image == null) throw new Error(`Missing z: ${index}`);
+        if (!image.isTiled()) throw new Error('Tif is not tiled');
 
-        if (!image.isTiled()) {
-            throw new Error('Tif is not tiled');
-        }
         return image.getTile(x, y);
     }
 
-    private async processIfd(offset: number) {
-        const logger = getLogger();
+    private async processIfd(offset: number, logger?: LogType): Promise<void> {
         logger?.trace({ offset: toHexString(offset) }, 'NextImageOffset');
 
-        if (!this.source.hasBytes(offset, HEADER_BUFFER_SIZE)) {
-            await this.source.loadBytes(offset, HEADER_BUFFER_SIZE);
+        if (!this.source.hasBytes(offset, 4096)) {
+            await this.source.loadBytes(offset, 4096, logger);
         }
-        const { image, nextOffset } = await this.readIfd(offset);
+
+        const { image, nextOffset } = await this.readIfd(offset, logger);
         this.images.push(image);
         const size = image.size;
         if (image.isTiled()) {
@@ -156,27 +151,23 @@ export class CogTiff {
             );
         }
 
-        if (nextOffset) {
-            await this.processIfd(nextOffset);
-        }
+        if (nextOffset) await this.processIfd(nextOffset, logger);
     }
 
-    private async readIfd(offset: number) {
-        const view = this.source.getView(offset);
+    private async readIfd(offset: number, log?: LogType): Promise<{ nextOffset: number; image: CogTiffImage }> {
+        const view = this.cursor.seekTo(offset);
         const tagCount = view.offset();
-        const byteStart = offset + this.source.config.offset;
-        const logger = getLogger({ imageId: this.images.length });
+        const byteStart = offset + this.ifdConfig.offset;
+        const logger = log?.child({ imageId: this.images.length });
         const tags: Map<TiffTag, CogTiffTagBase> = new Map();
 
         let pos = byteStart;
         for (let i = 0; i < tagCount; i++) {
-            const tag = CogTiffTag.create(this.source, pos);
+            const tag = CogTiffTag.create(this, pos);
             pos += tag.size;
 
             if (tag.name == null) {
-                if (logger != null) {
-                    logger.error({ code: toHexString(tag.id) }, `IFDUnknown`);
-                }
+                logger?.error({ code: toHexString(tag.id) }, `IFDUnknown`);
                 continue;
             }
 
@@ -206,7 +197,7 @@ export class CogTiff {
         }
 
         const image = new CogTiffImage(this, this.images.length, tags);
-        const nextOffset = await this.source.pointer(pos);
+        const nextOffset = this.source.uint(pos, this.ifdConfig.pointer);
         return { nextOffset, image };
     }
 

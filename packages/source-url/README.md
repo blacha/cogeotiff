@@ -1,14 +1,16 @@
 # @cogeotiff/source-url
 
 
-Load a COG from a URL Source using `fetch`
+Load a chunks of a file from a URL Source using `fetch`
 
 ## Usage
 
 ```javascript
-import { CogSourceUrl } from '@cogeotiff/source-url';
+import { SourceUrl } from '@cogeotiff/source-url';
 
-const cog = await CogSourceUrl.create('https://example.com/cog.tif');
+const source= new SourceUrl('https://example.com/cog.tif');
+
+await source.loadBytes(0, 1024)
 ```
 
 #### Nodejs

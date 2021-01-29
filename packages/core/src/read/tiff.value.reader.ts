@@ -1,5 +1,6 @@
+import { ByteSize, ChunkSource } from '@cogeotiff/chunk';
 import { TiffTagValueType } from '../const/tiff.tag.value';
-import { CogSource } from '../source/cog.source';
+import * as ieee754 from 'ieee754';
 
 export function getTiffTagSize(fieldType: TiffTagValueType): number {
     switch (fieldType) {
@@ -28,19 +29,18 @@ export function getTiffTagSize(fieldType: TiffTagValueType): number {
 }
 
 export type TiffTagValueRational = [number, number];
-export type TiffTagValueReaderFunc = (
-    view: CogSource,
-    offset: number,
-) => number | bigint | TiffTagValueRational | string;
+export type TiffTagValueReaderFunc = (view: ChunkSource, offset: number) => number | TiffTagValueRational | string;
 
 const TiffTagValueReader: { [key: string]: TiffTagValueReaderFunc } = {
-    char: (view: CogSource, offset: number) => String.fromCharCode(view.uint8(offset)),
-    uint8: (view: CogSource, offset: number) => view.uint8(offset),
-    uint16: (view: CogSource, offset: number) => view.uint16(offset),
-    uint32: (view: CogSource, offset: number) => view.uint32(offset),
-    uint64: (view: CogSource, offset: number) => view.uint64(offset),
-    double: (view: CogSource, offset: number) => view.double(offset),
-    rational: (view: CogSource, offset: number) => [view.uint32(offset), view.uint32(offset + 4)],
+    char: (s: ChunkSource, offset: number) => String.fromCharCode(s.uint8(offset)),
+    uint8: (s: ChunkSource, offset: number) => s.uint8(offset),
+    uint16: (s: ChunkSource, offset: number) => s.uint16(offset),
+    uint32: (s: ChunkSource, offset: number) => s.uint32(offset),
+    uint64: (s: ChunkSource, offset: number) => s.uint64(offset),
+    double: (s: ChunkSource, offset: number) => {
+        return ieee754.read(s.bytes(offset, ByteSize.Double), 0, s.isLittleEndian, 52, 8);
+    },
+    rational: (s: ChunkSource, offset: number) => [s.uint32(offset), s.uint32(offset + 4)],
 };
 export function getTiffTagValueReader(fieldType: TiffTagValueType): TiffTagValueReaderFunc {
     switch (fieldType) {

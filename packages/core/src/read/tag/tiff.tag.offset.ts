@@ -1,5 +1,5 @@
-import { CogSource, getTiffTagValueReader } from '../..';
-import { CogSourceView } from '../../source/cog.source.view';
+import { LogType } from '@cogeotiff/chunk';
+import { CogTiff, getTiffTagValueReader } from '../..';
 import { CogTiffTagBase } from './tiff.tag.base';
 
 /**
@@ -10,14 +10,12 @@ import { CogTiffTagBase } from './tiff.tag.base';
 export class CogTiffTagOffset extends CogTiffTagBase<number[]> {
     private loadedValues: number[] | null = null;
 
-    constructor(tagId: number, source: CogSource, offset: number, view: CogSourceView) {
-        super(tagId, source, offset, view);
+    constructor(tagId: number, tiff: CogTiff, offset: number) {
+        super(tagId, tiff, offset);
     }
 
     get value(): number[] | null {
-        if (this.loadedValues != null) {
-            return this.loadedValues;
-        }
+        if (this.loadedValues != null) return this.loadedValues;
 
         if (this.hasBytes) {
             this.readValue();
@@ -28,12 +26,12 @@ export class CogTiffTagOffset extends CogTiffTagBase<number[]> {
     }
 
     /** Load the entire index into memory */
-    async load() {
-        await this.source.loadBytes(this.valuePointer, this.dataLength);
+    async load(l: LogType): Promise<void> {
+        await this.tiff.source.loadBytes(this.valuePointer, this.dataLength, l);
         this.readValue();
     }
 
-    readValue() {
+    readValue(): number[] {
         const val = super.readValue();
         // if only one value is read in, it will not be returned as a array
         if (typeof val === 'number') {
@@ -48,18 +46,16 @@ export class CogTiffTagOffset extends CogTiffTagBase<number[]> {
      * Read a specific value from the offset array
      * @param index index to read at
      */
-    async getValueAt(index: number): Promise<number> {
-        if (this.loadedValues) {
-            return this.loadedValues[index];
-        }
+    async getValueAt(index: number, l?: LogType): Promise<number> {
+        if (this.loadedValues) return this.loadedValues[index];
 
         const dataSize = this.dataTypeSize;
         const valueOffset = this.valuePointer + dataSize * index;
         const convert = getTiffTagValueReader(this.dataType);
 
-        if (!this.source.hasBytes(valueOffset, dataSize)) {
-            await this.source.loadBytes(valueOffset, dataSize);
+        if (!this.tiff.source.hasBytes(valueOffset, dataSize)) {
+            await this.tiff.source.loadBytes(valueOffset, dataSize, l);
         }
-        return convert(this.source, valueOffset) as number;
+        return convert(this.tiff.source, valueOffset) as number;
     }
 }

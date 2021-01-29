@@ -1,24 +1,19 @@
 {
-    "name": "@cogeotiff/core",
+    "name": "@cogeotiff/fetchable",
     "version": "3.1.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/blacha/cogeotiff.git",
-        "directory": "packages/core"
+        "directory": "packages/source-fetchable"
     },
     "main": "./build/index.js",
     "types": "./build/index.d.ts",
     "author": "Blayne Chard",
     "license": "MIT",
-    "scripts": {
-        "test": "ospec build/**/*.test.js"
-    },
-    "dependencies": {
-        "ieee754": "^1.1.13"
-    },
+    "scripts": {},
+    "dependencies": {},
     "devDependencies": {
-        "@types/ospec": "^4.0.0",
-        "ospec": "^4.0.0"
+        "@types/ospec": "^4.0.0"
     },
     "publishConfig": {
         "access": "public"

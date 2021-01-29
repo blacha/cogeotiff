@@ -1,25 +1,23 @@
 import * as o from 'ospec';
 import 'source-map-support/register';
-import { CogSourceUrl } from '../cog.source.url';
+import { SourceUrl } from '../source.url';
 
 export interface HttpHeaders {
     Range: string;
 }
 
-function getCB(source: CogSourceUrl, index: number) {
-    const chunk = source.chunks[index];
-    if (chunk.isReady()) {
-        return chunk._buffer;
-    }
+function getCB(source: SourceUrl, index: number): DataView {
+    const chunk = source.chunks.get(index);
+    if (chunk != null) return chunk;
     throw Error(`Missing chunk ${index}`);
 }
 
 o.spec('CogSourceUrl', () => {
-    let source: CogSourceUrl;
+    let source: SourceUrl;
     let ranges: string[];
 
     // Fake fetch that returns the number of the byte that was requested
-    CogSourceUrl.fetch = (url: string, obj: Record<string, HttpHeaders>) => {
+    SourceUrl.fetch = (url: string, obj: Record<string, HttpHeaders>): any => {
         const [startByte, endByte] = obj.headers.Range.split('=')[1]
             .split('-')
             .map((i) => parseInt(i, 10));
@@ -29,44 +27,33 @@ o.spec('CogSourceUrl', () => {
             bytes.push(i);
         }
         const buffer = new Uint8Array(bytes).buffer;
-        const arrayBuffer = () => Promise.resolve(buffer);
+        const arrayBuffer = (): any => Promise.resolve(buffer);
         return Promise.resolve({ arrayBuffer, ok: true }) as any;
     };
 
     o.beforeEach(() => {
-        source = new CogSourceUrl('https://foo');
+        source = new SourceUrl('https://foo');
         source.chunkSize = 1;
         ranges = [];
-    });
-
-    o('should get some data', async () => {
-        await source.loadBytes(0, 1);
-        o(Object.keys(source.chunks)).deepEquals(['0']);
-        o(source.chunks[0].offset).equals(0);
-        o(source.chunks[0].offsetEnd).equals(1);
     });
 
     o('should group fetches together', async () => {
         await source.loadBytes(0, 2);
 
-        o(Object.keys(source.chunks)).deepEquals(['0', '1']);
-        const viewA = new DataView(getCB(source, 0));
-        const viewB = new DataView(getCB(source, 1));
-
-        o(viewA.getUint8(0)).equals(0);
-        o(viewB.getUint8(0)).equals(1);
+        o([...source.chunks.keys()]).deepEquals([0, 1]);
+        o(source.uint8(0)).equals(0);
+        o(source.uint8(1)).equals(1);
     });
 
     o('should group big fetches', async () => {
         await source.loadBytes(0, 2);
         await source.loadBytes(0, 5);
 
-        o(Object.keys(source.chunks)).deepEquals(['0', '1', '2', '3', '4']);
+        o([...source.chunks.keys()]).deepEquals([0, 1, 2, 3, 4]);
 
         for (let i = 0; i < 5; i++) {
             o(source.uint8(i)).equals(i);
-
-            o(source.chunks[i].view.getUint8(0)).equals(i);
+            o(source.chunks.get(i)?.getUint8(0)).equals(i);
         }
     });
 
@@ -76,14 +63,14 @@ o.spec('CogSourceUrl', () => {
 
         await source.loadBytes(0, MAX_BYTE);
 
-        o(Object.keys(source.chunks)).deepEquals(['0', '1', '2', '3', '4', '5', '6', '7']);
+        o([...source.chunks.keys()]).deepEquals([0, 1, 2, 3, 4, 5, 6, 7]);
 
         for (let i = 0; i < MAX_BYTE; i++) {
             o(source.uint8(i)).equals(i);
         }
 
         for (let i = 0; i < MAX_BYTE / source.chunkSize; i++) {
-            const view = new DataView(getCB(source, i));
+            const view = getCB(source, i);
             for (let x = 0; x < source.chunkSize; x++) {
                 o(view.getUint8(x)).equals(i * source.chunkSize + x);
             }

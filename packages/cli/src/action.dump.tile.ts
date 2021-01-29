@@ -1,4 +1,4 @@
-import { CogLogger, CogTiff, TiffVersion } from '@cogeotiff/core';
+import { CogTiff, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
 import { promises as fs } from 'fs';
@@ -8,10 +8,11 @@ import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
 import { getTileName, writeTile } from './util.tile';
 import * as PLimit from 'p-limit';
+import { LogType } from '@cogeotiff/chunk';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
-function toLatLng(x: number, y: number) {
+function toLatLng(x: number, y: number): [number, number] {
     return [(x * Rad2Deg) / A, (Math.PI * 0.5 - 2.0 * Math.atan(Math.exp(-y / A))) * Rad2Deg];
 }
 
@@ -53,7 +54,7 @@ export class ActionDumpTile extends CommandLineAction {
     private imageIndex: CommandLineIntegerParameter | null = null;
     private output: CommandLineStringParameter | null = null;
     private outputCount = 0;
-    private logger: CogLogger;
+    private logger: LogType;
 
     public constructor() {
         super({
@@ -65,7 +66,7 @@ export class ActionDumpTile extends CommandLineAction {
     }
 
     // TODO this only works for WSG84
-    async dumpBounds(tif: CogTiff, output: string, index: number) {
+    async dumpBounds(tif: CogTiff, output: string, index: number): Promise<void> {
         this.logger.info({ index }, 'CreateTileBounds');
         const img = tif.getImage(index);
         if (!img.isTiled() || !img.isGeoLocated) return;
@@ -101,7 +102,7 @@ export class ActionDumpTile extends CommandLineAction {
         await fs.writeFile(path.join(output, `i${index}.bounds.geojson`), JSON.stringify(featureCollection, null, 2));
     }
 
-    async dumpIndex(tif: CogTiff, output: string, index: number) {
+    async dumpIndex(tif: CogTiff, output: string, index: number): Promise<void> {
         this.logger.info({ index }, 'CreateIndexHtml');
         const img = tif.getImage(index);
         if (!img.isTiled()) {
@@ -131,7 +132,7 @@ export class ActionDumpTile extends CommandLineAction {
         await fs.writeFile(path.join(output, 'index.html'), html.join('\n'));
     }
 
-    async dumpTiles(tif: CogTiff, output: string, index: number) {
+    async dumpTiles(tif: CogTiff, output: string, index: number): Promise<void> {
         const promises: Promise<void>[] = [];
         const img = tif.getImage(index);
         if (!img.isTiled()) {
@@ -142,7 +143,7 @@ export class ActionDumpTile extends CommandLineAction {
         const tileCount = img.tileCount;
 
         // Load all offsets in
-        await img.tileOffset.load();
+        await img.tileOffset.load(CliLogger);
 
         for (let x = 0; x < tileCount.x; x++) {
             for (let y = 0; y < tileCount.y; y++) {
@@ -185,11 +186,11 @@ export class ActionDumpTile extends CommandLineAction {
         await this.dumpIndex(tif, output, index);
         await this.dumpBounds(tif, this.output.value, index);
 
-        const chunkIds = Object.keys(tif.source.chunks).filter((f) => tif.source.chunk(parseInt(f, 10)).isReady());
+        const chunkIds = [...tif.source.chunks.values()];
         const result: CliResultMap[] = [
             {
                 keys: [
-                    { key: 'Tiff type', value: `${TiffVersion[tif.source.version]} (v${String(tif.source.version)})` },
+                    { key: 'Tiff type', value: `${TiffVersion[tif.version]} (v${String(tif.version)})` },
                     { key: 'Chunk size', value: toByteSizeString(tif.source.chunkSize) },
                     {
                         key: 'Bytes read',

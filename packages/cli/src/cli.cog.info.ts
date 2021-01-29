@@ -1,10 +1,9 @@
-import * as Core from '@cogeotiff/core';
 import { CommandLineFlagParameter, CommandLineParser } from '@rushstack/ts-command-line';
 import { Log } from 'bblog';
 import { ActionDumpTile } from './action.dump.tile';
 import { ActionCogInfo } from './action.info';
 import { ActionTile } from './action.tile';
-import { ChalkLogStream, CliLogger } from './cli.log';
+import { ChalkLogStream } from './cli.log';
 
 export class CogInfoCommandLine extends CommandLineParser {
     verbose?: CommandLineFlagParameter;
@@ -22,8 +21,6 @@ export class CogInfoCommandLine extends CommandLineParser {
     }
 
     protected onExecute(): Promise<void> {
-        Core.Log.set(CliLogger);
-
         if (this.verbose?.value) {
             ChalkLogStream.setLevel(Log.INFO);
         } else if (this.extraVerbose?.value) {

@@ -1,7 +1,7 @@
-import { ByteSize } from '../const/byte.size';
+import { ByteSize } from '@cogeotiff/chunk';
 import { TiffVersion } from '../const/tiff.version';
 
-export const TagTiffConfig = {
+export const TagTiffConfig: TiffIfdConfig = {
     version: TiffVersion.Tiff,
     pointer: ByteSize.UInt32,
     offset: ByteSize.UInt16,
@@ -15,7 +15,7 @@ export const TagTiffConfig = {
     ifd: ByteSize.UInt16 + ByteSize.UInt16 + 2 * ByteSize.UInt32,
 };
 
-export const TagTiffBigConfig = {
+export const TagTiffBigConfig: TiffIfdConfig = {
     version: TiffVersion.BigTiff,
     /** Size of most pointers */
     pointer: ByteSize.UInt64,
@@ -31,6 +31,13 @@ export const TagTiffBigConfig = {
      */
     ifd: ByteSize.UInt16 + ByteSize.UInt16 + 2 * ByteSize.UInt64,
 };
+
+export interface TiffIfdConfig {
+    version: TiffVersion;
+    pointer: ByteSize;
+    offset: ByteSize;
+    ifd: number;
+}
 
 export const TiffIfdEntry = {
     [TiffVersion.BigTiff]: TagTiffBigConfig,

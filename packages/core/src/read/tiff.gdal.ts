@@ -1,5 +1,4 @@
-import { ByteSize } from '../const/byte.size';
-import { CogSource } from '../source/cog.source';
+import { ByteSize, ChunkSource } from '@cogeotiff/chunk';
 import { getReverseEnumValue } from '../util/util.enum';
 
 //   GDAL_STRUCTURAL_METADATA_SIZE: '000140 bytes',
@@ -40,10 +39,8 @@ export class CogTifGhostOptions {
     /**
      * Has GDAL optimized this tif
      */
-    get isCogOptimized() {
-        if (this.isBroken) {
-            return false;
-        }
+    get isCogOptimized(): boolean {
+        if (this.isBroken) return false;
         return this.options.get(GhostOption.LAYOUT) === 'IFDS_BEFORE_DATA';
     }
 
@@ -54,7 +51,7 @@ export class CogTifGhostOptions {
         return this.options.get(GhostOption.KNOWN_INCOMPATIBLE_EDITION) === 'YES';
     }
 
-    private set(key: GhostOption, val: string) {
+    private set(key: GhostOption, val: string): void {
         this.options.set(key, val);
     }
 
@@ -64,7 +61,7 @@ export class CogTifGhostOptions {
      * @param offset Byte offset to start reading
      * @param length max number of bytes to read
      */
-    process(source: CogSource, offset: number, length: number) {
+    process(source: ChunkSource, offset: number, length: number): void {
         const chars: string[] = [];
         for (let i = offset; i < offset + length; i++) {
             const char = source.uint8(i);
@@ -87,9 +84,7 @@ export class CogTifGhostOptions {
 
     private _getReverse<T>(e: Record<string, any>, key: GhostOption): T | null {
         const opt = this.options.get(key);
-        if (opt == null) {
-            return null;
-        }
+        if (opt == null) return null;
         return getReverseEnumValue<T>(e, opt);
     }
 
@@ -111,9 +106,7 @@ export class CogTifGhostOptions {
      * If the tile leader is set, how many bytes are allocated to the tile size
      */
     get tileLeaderByteSize(): ByteSize | null {
-        if (this.tileLeader == null) {
-            return null;
-        }
+        if (this.tileLeader == null) return null;
         return GhostOptionTileLeaderSize[this.tileLeader];
     }
 

@@ -1,8 +1,8 @@
 import { CogTif } from '@cogeotiff/core/src/cog.tiff';
 import { CogSourceFetch } from '@cogeotiff/source-url';
 import * as L from 'leaflet';
-import { LoggerConfig, LoggerType } from '../util/util.log';
 import { Vector } from '../../core/src/vector';
+import { LoggerConfig, LoggerType } from '../util/util.log';
 
 LoggerConfig.level = 30;
 LoggerConfig.type = LoggerType.WEB;
@@ -13,7 +13,7 @@ let geoTiffLayer: L.Layer;
 
 const debugCanvas = true;
 
-async function getTile(canvas: HTMLCanvasElement, x: number, y: number, z: number) {
+async function getTile(canvas: HTMLCanvasElement, x: number, y: number, z: number): Promise<unknown> {
     if (cog == null) {
         return;
     }
@@ -39,7 +39,7 @@ async function getTile(canvas: HTMLCanvasElement, x: number, y: number, z: numbe
     const img = new Image();
     img.style.outline = '1px solid black';
     const blob = new Blob([tileRaw.bytes], { type: 'image/webp' });
-    img.onload = () => {
+    img.onload = (): void => {
         URL.revokeObjectURL(img.src);
         ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
         ctx.textBaseline = 'top';
@@ -55,7 +55,7 @@ async function getTile(canvas: HTMLCanvasElement, x: number, y: number, z: numbe
     img.src = URL.createObjectURL(blob);
 }
 
-async function loadAndRender(url: string) {
+async function loadAndRender(url: string): Promise<unknown> {
     const statusEl = document.getElementById('status');
     if (statusEl == null) {
         throw new Error('Missing status element');
