@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/chunk",
-    "version": "3.1.0",
+    "version": "4.0.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/blacha/cogeotiff.git",
@@ -11,8 +11,6 @@
     "types": "./build/index.d.ts",
     "license": "MIT",
     "scripts": {},
-    "dependencies": {},
-    "devDependencies": {},
     "publishConfig": {
         "access": "public"
     }
