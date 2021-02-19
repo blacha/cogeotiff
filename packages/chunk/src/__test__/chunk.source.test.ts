@@ -51,6 +51,12 @@ o.spec('CogSourceChunk', () => {
         o(source.uint8(10)).equals(10);
     });
 
+    o('should disable request tracking', async () => {
+        source.isRequestsTracked = false;
+        await Chunk(1);
+        o(source.requests.length).equals(0);
+    });
+
     o('should support multiple chunks', async () => {
         await Chunk(1);
         await Chunk(2);
@@ -59,6 +65,11 @@ o.spec('CogSourceChunk', () => {
         for (let i = 10; i < source.chunkSize * 3; i++) {
             o(source.uint8(i)).equals(i);
         }
+
+        o(source.requests.length).equals(3);
+        o(source.requests[0].chunks).deepEquals([1]);
+        o(source.requests[1].chunks).deepEquals([2]);
+        o(source.requests[2].chunks).deepEquals([3]);
     });
 
     o('should fetch big endian', async () => {
