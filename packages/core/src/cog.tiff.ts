@@ -32,12 +32,19 @@ export class CogTiff {
     /** Has init() been called */
     isInitialized = false;
 
+    _initPromise?: Promise<CogTiff>;
     /**
      * Initialize the COG loading in the header and all image headers
      *
      * @param loadGeoKeys Whether to also initialize the GeoKeyDirectory
      */
-    async init(loadGeoKeys = false, logger?: LogType): Promise<CogTiff> {
+    init(loadGeoKeys = false, logger?: LogType): Promise<CogTiff> {
+        if (this._initPromise) return this._initPromise;
+        this._initPromise = this.doInit(loadGeoKeys, logger);
+        return this._initPromise;
+    }
+
+    private async doInit(loadGeoKeys = false, logger?: LogType): Promise<CogTiff> {
         if (this.isInitialized) return this;
         // Load the first few KB in, more loads will run as more data is required
         await this.source.loadBytes(0, this.source.chunkSize, logger);
