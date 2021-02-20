@@ -4,6 +4,17 @@ export type ChunkId = number & { _type: 'chunkId' };
 
 /** Shifting `<< 32` does not work in javascript */
 const POW_32 = 2 ** 32;
+
+export interface RequestLog {
+    /** Time of start of the batch this was apart of */
+    startAt: number;
+    /** Time of the actual request start */
+    requestStartAt: number;
+    /** Time of request done */
+    endAt: number;
+    /** Chunks requested */
+    chunks: number[];
+}
 /**
  * Chunked source for remote data
  *
@@ -12,6 +23,9 @@ const POW_32 = 2 ** 32;
  * This will also handle joining of consecutive requests, even when it is semi consecutive
  */
 export abstract class ChunkSource {
+    /** By default record a log of requests made by chunked sources */
+    static DefaultTrackRequests = true;
+
     /** size of chunks to fetch (Bytes) */
     abstract chunkSize: number;
     /** Reference to the source */
@@ -40,6 +54,12 @@ export abstract class ChunkSource {
     // TODO this should ideally be a LRU
     // With a priority for the first few chunks (Generally where the main IFD resides)
     chunks: Map<number, DataView> = new Map();
+    /**
+     * List of all requests made by this source,
+     */
+    requests: RequestLog[] = [];
+    /** Should this source track requests  */
+    isRequestsTracked: boolean = ChunkSource.DefaultTrackRequests;
 
     /**
      * number non requested chunks to load even
@@ -122,17 +142,21 @@ export abstract class ChunkSource {
 
         const chunkData: ArrayBuffer[] = [];
 
+        const startAt = Date.now();
         // TODO putting this in a promise queue to do multiple requests
         // at a time would be a good idea.
         for (const chunkRange of ranges.chunks) {
             const firstChunk = chunkRange[0];
             const lastChunk = chunkRange[chunkRange.length - 1];
+            const req = { startAt, requestStartAt: Date.now(), endAt: -1, chunks: chunkRange };
 
             const offset = firstChunk * this.chunkSize;
             const length = lastChunk * this.chunkSize + this.chunkSize - offset;
 
             const startTime = Date.now();
             const buffer = await this.fetchBytes(offset, length, logger);
+            req.endAt = Date.now();
+            if (this.isRequestsTracked) this.requests.push(req);
             logger?.info(
                 {
                     uri: this.uri,
