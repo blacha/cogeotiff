@@ -3,7 +3,7 @@
     "compilerOptions": {
         "rootDir": "./src",
         "outDir": "./build",
-        "lib": ["es2018",]
+        "lib": ["es2020",]
     },
     "include": ["src/**/*"],
     "references": []

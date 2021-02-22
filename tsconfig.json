@@ -8,5 +8,6 @@
         { "path": "./packages/source-aws"  },
         { "path": "./packages/source-file"  },
         { "path": "./packages/cli"  },
+        { "path": "./packages/web"  },
     ]
 }
