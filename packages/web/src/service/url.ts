@@ -33,9 +33,9 @@ export class UrlService {
         } else search.set(key, String(value));
 
         const newUrl =
-            search.toString() == '' ? window.location.pathname : `${window.location.pathname}?${search.toString()}`;
+            search.toString() === '' ? window.location.pathname : `${window.location.pathname}?${search.toString()}`;
 
-        if (newUrl == oldUrl) return;
+        if (newUrl === oldUrl) return;
         window.history.pushState(null, '', newUrl);
         fireEvents(this.onSearchChangeHandlers.get(key));
     }

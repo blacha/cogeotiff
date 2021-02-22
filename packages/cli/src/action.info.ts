@@ -68,7 +68,7 @@ TiffImageInfoTable.add({
  */
 function parseGdalMetadata(img: CogTiffImage): string[] | null {
     const metadata = img.value(TiffTag.GDAL_METADATA);
-    if (typeof metadata != 'string') return null;
+    if (typeof metadata !== 'string') return null;
     if (!metadata.startsWith('<GDALMetadata>')) return null;
     return metadata
         .replace('<GDALMetadata>', '')

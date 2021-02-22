@@ -118,7 +118,7 @@ export class CogTiffImage {
 
             const offset = geoTags[i + 3];
 
-            if (location == 0) {
+            if (location === 0) {
                 this.tagsGeo.set(key, offset);
                 continue;
             }
@@ -127,7 +127,7 @@ export class CogTiffImage {
             const count = geoTags[i + 2];
             if (Array.isArray(tag.value)) {
                 this.tagsGeo.set(key, tag.value[offset + count - 1]);
-            } else if (typeof tag.value == 'string') {
+            } else if (typeof tag.value === 'string') {
                 this.tagsGeo.set(key, tag.value.substr(offset, offset + count - 1).trim());
             }
         }
@@ -137,7 +137,7 @@ export class CogTiffImage {
      * Get the associated GeoTiffTags
      */
     valueGeo(tag: TiffTagGeo): string | number | undefined {
-        if (this.tagsGeoLoaded == false) throw new Error('loadGeoTiffTags() has not been called');
+        if (this.tagsGeoLoaded === false) throw new Error('loadGeoTiffTags() has not been called');
         return this.tagsGeo.get(tag);
     }
 
@@ -259,7 +259,7 @@ export class CogTiffImage {
      */
     get epsg(): number | null {
         const projection = this.valueGeo(TiffTagGeo.ProjectedCSTypeGeoKey) as number;
-        if (projection == InvalidProjectionCode) return null;
+        if (projection === InvalidProjectionCode) return null;
         return projection;
     }
 
@@ -402,12 +402,12 @@ export class CogTiffImage {
     ): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
         const mimeType = this.compression;
         if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
-        if (byteCount == 0) return null;
+        if (byteCount === 0) return null;
 
         await this.tif.source.loadBytes(offset, byteCount, l);
         const bytes = this.tif.source.bytes(offset, byteCount);
 
-        if (this.compression == TiffMimeType.JPEG) {
+        if (this.compression === TiffMimeType.JPEG) {
             return { mimeType, bytes: this.getJpegHeader(bytes) };
         }
         return { mimeType, bytes };
@@ -451,7 +451,7 @@ export class CogTiffImage {
         if (this.tif.options.tileLeaderByteSize) {
             const offset = await this.getTileOffset(index, l);
             // Sparse COG no data found
-            if (offset == 0) return { offset: 0, imageSize: 0 };
+            if (offset === 0) return { offset: 0, imageSize: 0 };
 
             const leaderBytes = this.tif.options.tileLeaderByteSize;
             // This fetch will generally load in the bytes needed for the image too

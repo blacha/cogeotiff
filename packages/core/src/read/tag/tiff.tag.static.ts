@@ -6,7 +6,7 @@ export class CogTifTagStatic<T> extends CogTiffTagBase<T> {
 
     /** Lazy read the inline tiff tags */
     get value(): T {
-        if (this._isRead == false) {
+        if (this._isRead === false) {
             this._value = this.readValue();
             this._isRead = true;
         }

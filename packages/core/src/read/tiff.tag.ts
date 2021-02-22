@@ -19,8 +19,8 @@ export const CogTiffTag = {
         if (
             tagId === TiffTag.TileOffsets ||
             tagId === TiffTag.TileByteCounts ||
-            tagId == TiffTag.StripByteCounts ||
-            tagId == TiffTag.StripOffsets
+            tagId === TiffTag.StripByteCounts ||
+            tagId === TiffTag.StripOffsets
         ) {
             return new CogTiffTagOffset(tagId, tiff, offset);
         }

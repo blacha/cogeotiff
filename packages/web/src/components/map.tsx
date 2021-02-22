@@ -34,8 +34,8 @@ export const MapCss = {
 function getView(view: string | null, defaultValue = WebMapView.World): WebMapView {
     console.log('GetView', { view });
     if (view == null) return defaultValue;
-    if (view == WebMapView.Cog) return WebMapView.Cog;
-    if (view == WebMapView.World) return WebMapView.World;
+    if (view === WebMapView.Cog) return WebMapView.Cog;
+    if (view === WebMapView.World) return WebMapView.World;
     return defaultValue;
 }
 
@@ -58,7 +58,7 @@ export class WebMap extends Component<WebMapProps, WebMapState> {
         this.setState({ view: getView(Url.search.get('view')), isDebug: Url.search.has('debug') });
     }
     changeState<K extends keyof WebMapState>(key: K, value: WebMapState[K]): void {
-        if (this.state[key] == value) return;
+        if (this.state[key] === value) return;
         this.setState({ ...this.state, [key]: value });
     }
 
@@ -93,12 +93,12 @@ export class WebMap extends Component<WebMapProps, WebMapState> {
             const cog = cogLoad.v;
             if (!cog.isInitialized) continue;
             const img = cog.getImage(0);
-            if (this.state.view == 'world' && img.epsg != 3857) continue;
+            if (this.state.view === 'world' && img.epsg !== 3857) continue;
             this.ct.cogs.push(cog);
         }
 
         const afterCogs = this.ct.id;
-        if (afterCogs != beforeCogs) {
+        if (afterCogs !== beforeCogs) {
             this.layerCog.removeFrom(this.map);
             this.layerCog = new CogLayer(this.ct);
             this.layerCog.addTo(this.map);
@@ -107,7 +107,7 @@ export class WebMap extends Component<WebMapProps, WebMapState> {
             }
         }
 
-        state.view == 'world' ? this.map.addLayer(this.layerOsm) : this.map.removeLayer(this.layerOsm);
+        state.view === 'world' ? this.map.addLayer(this.layerOsm) : this.map.removeLayer(this.layerOsm);
         state.isDebug ? this.map.addLayer(this.layerDebug) : this.map.removeLayer(this.layerDebug);
 
         this.layerOsm.bringToBack();
@@ -159,7 +159,7 @@ export class WebMap extends Component<WebMapProps, WebMapState> {
 
     onToggleDebug = (): void => Url.updateUrl('debug', !this.state.isDebug);
     onToggleGoogle = (): void => {
-        if (this.state.view == WebMapView.World) Url.updateUrl('view', WebMapView.Cog);
+        if (this.state.view === WebMapView.World) Url.updateUrl('view', WebMapView.Cog);
         else Url.updateUrl('view', WebMapView.World);
     };
 }

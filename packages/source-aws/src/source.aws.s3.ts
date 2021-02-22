@@ -60,9 +60,9 @@ export class SourceAwsS3 extends ChunkSource {
 
         const parts = uri.split('/');
         const bucket = parts[2];
-        if (bucket == null || bucket.trim() == '') return null;
+        if (bucket == null || bucket.trim() === '') return null;
         const key = parts.slice(3).join('/');
-        if (key == null || key.trim() == '') return null;
+        if (key == null || key.trim() === '') return null;
         return { key, bucket };
     }
 

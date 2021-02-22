@@ -46,17 +46,17 @@ export class CogService {
 
     move(direction: 'up' | 'down', url: string): void {
         const cogIndex = this.cogs.indexOf(url);
-        if (cogIndex == -1) return;
-        if (direction == 'up' && cogIndex == 0) return;
-        if (direction == 'down' && cogIndex == this.cogs.length - 1) return;
-        const nextIndex = direction == 'up' ? cogIndex - 1 : cogIndex + 1;
+        if (cogIndex === -1) return;
+        if (direction === 'up' && cogIndex === 0) return;
+        if (direction === 'down' && cogIndex === this.cogs.length - 1) return;
+        const nextIndex = direction === 'up' ? cogIndex - 1 : cogIndex + 1;
         this.cogs.splice(nextIndex, 0, this.cogs.splice(cogIndex, 1)[0]);
         fireEvents(this.onChangeHandlers);
     }
 
     delete(url: string): void {
         const cogIndex = this.cogs.indexOf(url);
-        if (cogIndex == -1) return;
+        if (cogIndex === -1) return;
 
         this.cogs.splice(cogIndex, 1);
         fireEvents(this.onChangeHandlers);

@@ -18,7 +18,7 @@ export async function drawTile(
 
     const maxSize = { width: bounds.width, height: bounds.height };
     if (comp.extract) {
-        if (comp.extract.width == bounds.width && comp.extract.height == bounds.height) {
+        if (comp.extract.width === bounds.width && comp.extract.height === bounds.height) {
             comp.extract = undefined;
         } else {
             bounds.width = comp.extract.width;
