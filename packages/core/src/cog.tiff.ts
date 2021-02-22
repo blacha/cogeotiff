@@ -63,7 +63,7 @@ export class CogTiff {
         this.version = view.uint16();
 
         let nextOffsetIfd: number;
-        if (this.version == TiffVersion.BigTiff) {
+        if (this.version === TiffVersion.BigTiff) {
             this.ifdConfig = TagTiffBigConfig;
             const pointerSize = view.uint16();
             if (pointerSize !== 8) throw new Error('Only 8byte pointers are supported');

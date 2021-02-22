@@ -168,7 +168,7 @@ export abstract class ChunkSource {
                 },
                 'FetchChunk',
             );
-            if (chunkRange.length == 1) {
+            if (chunkRange.length === 1) {
                 chunkData[firstChunk] = buffer;
                 this.chunks.set(firstChunk, new DataView(buffer));
                 continue;

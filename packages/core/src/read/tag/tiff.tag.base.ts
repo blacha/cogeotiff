@@ -100,7 +100,7 @@ export abstract class CogTiffTagBase<T = unknown> {
         const count = this.dataCount;
         const dataLength = count * dataTypeSize;
 
-        if (count == 1) return (convert(this.tiff.source, offset) as unknown) as T;
+        if (count === 1) return (convert(this.tiff.source, offset) as unknown) as T;
 
         const output = [];
         for (let i = 0; i < dataLength; i += dataTypeSize) {

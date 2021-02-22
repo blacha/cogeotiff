@@ -65,9 +65,7 @@ export class CogTifGhostOptions {
         const chars: string[] = [];
         for (let i = offset; i < offset + length; i++) {
             const char = source.uint8(i);
-            if (char == 0) {
-                continue;
-            }
+            if (char === 0) continue;
             chars.push(String.fromCharCode(char));
         }
 
