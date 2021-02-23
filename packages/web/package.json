@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/web",
-    "version": "4.0.0",
+    "version": "4.1.0",
     "private": true,
     "repository": {
         "type": "git",
@@ -10,14 +10,13 @@
     "author": "Blayne Chard",
     "license": "MIT",
     "scripts": {},
-    "dependencies": {},
     "publishConfig": {
         "access": "public"
     },
     "devDependencies": {
         "@basemaps/geo": "^4.0.0",
-        "@cogeotiff/core": "^4.0.0",
-        "@cogeotiff/source-url": "^4.0.0",
+        "@cogeotiff/core": "^4.1.0",
+        "@cogeotiff/source-url": "^4.1.0",
         "@types/geojson": "^7946.0.7",
         "@types/leaflet": "^1.5.15",
         "@types/ospec": "^4.0.2",
