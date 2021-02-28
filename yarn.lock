@@ -24,9 +24,9 @@
     js-tokens "^4.0.0"
 
 "@basemaps/geo@^4.0.0":
-  version "4.19.0"
-  resolved "https://registry.yarnpkg.com/@basemaps/geo/-/geo-4.19.0.tgz#f80ac2ea5cee10526e44d7dcf868fbb3ab070d83"
-  integrity sha512-JViXjHkhuDb0RlWb1ijRBxKZg21jceAyKfaffazl9Ri6sjYxXstnGyuwFWb9NoyJAFHZmHNK7y/Bg/VT02cUpw==
+  version "4.20.0"
+  resolved "https://registry.yarnpkg.com/@basemaps/geo/-/geo-4.20.0.tgz#9ca0a541f8da51f36c0ad5a1ac7a2a63a93f864b"
+  integrity sha512-Emn26L0LI9KRBW85SHETeTMsNkcJa16LIp6L01GtbtpVpg/FsLS8Lu/FeoUndEo1Q7rgNjkubm99/VuYLIEkvA==
 
 "@eslint/eslintrc@^0.3.0":
   version "0.3.0"
