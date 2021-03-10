@@ -9,7 +9,7 @@ export class CogTiffTagLazy<T> extends CogTiffTagBase<T> {
     }
 
     async fetch(l: LogType): Promise<T> {
-        if (this.tiff.source.hasBytes(this.valuePointer, this.dataLength)) {
+        if (this.tiff.source.hasBytes(this.valuePointer, this.dataLength) === false) {
             await this.tiff.source.loadBytes(this.valuePointer, this.dataLength, l);
         }
         return this.readValue();
