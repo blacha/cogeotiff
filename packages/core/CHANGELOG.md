@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/blacha/cogeotiff/compare/v4.1.0...v4.1.1) (2021-03-10)
+
+
+### Bug Fixes
+
+* **core:** actually fetch bytes when needed by a lazy tag loader ([0cb8e50](https://github.com/blacha/cogeotiff/commit/0cb8e5074d6753809c00def18dd6d900923b9085))
+
+
+
+
+
 # [4.1.0](https://github.com/blacha/cogeotiff/compare/v4.0.0...v4.1.0) (2021-02-23)
 
 

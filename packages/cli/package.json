@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/cli",
-    "version": "4.1.0",
+    "version": "4.1.1",
     "repository": {
         "type": "git",
         "url": "https://github.com/blacha/cogeotiff.git",
@@ -13,7 +13,7 @@
     },
     "scripts": {},
     "dependencies": {
-        "@cogeotiff/core": "^4.1.0",
+        "@cogeotiff/core": "^4.1.1",
         "@cogeotiff/source-aws": "^4.1.0",
         "@cogeotiff/source-file": "^4.1.0",
         "@cogeotiff/source-url": "^4.1.0",
