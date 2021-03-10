@@ -2133,10 +2133,10 @@ csso@^4.0.2:
   dependencies:
     css-tree "^1.1.2"
 
-csstype@^2.4.0:
-  version "2.6.15"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.15.tgz#655901663db1d652f10cb57ac6af5a05972aea1f"
-  integrity sha512-FNeiVKudquehtR3t9TRRnsHL+lJhuHF5Zn9dt01jpojlurLEPDhhEtUkWmAUJ7/fOLaLG4dCDEnUsR0N1rZSsg==
+csstype@2.6.9:
+  version "2.6.9"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.9.tgz#05141d0cd557a56b8891394c1911c40c8a98d098"
+  integrity sha512-xz39Sb4+OaTsULgUERcCk+TJj8ylkL4aSVDQiX/ksxbELSqwkgt4d4RD7fovIdgJGSuNYqwZEiVjYY5l0ask+Q==
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -2894,10 +2894,10 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-free-style@2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/free-style/-/free-style-2.5.1.tgz#5e3f684c470d3bba7e4dbb43524e0a08917e873c"
-  integrity sha512-X7dtUSTrlS1KRQBtiQ618NWIRDdRgD91IeajKCSh0fgTqArSixv+n3ea6F/OSvrvg14tPLR+yCq2s+O602+pRw==
+free-style@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/free-style/-/free-style-3.1.0.tgz#4e2996029534e6b1731611d843437b9e2f473f08"
+  integrity sha512-vJujYSIyT30iDoaoeigNAxX4yB1RUrh+N2ZMhIElMr3BvCuGXOw7XNJMEEJkDUeamK2Rnb/IKFGKRKlTWIGRWA==
 
 from2@^2.1.0:
   version "2.3.0"
@@ -6482,13 +6482,13 @@ typescript@^4.2.2:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.2.tgz#1450f020618f872db0ea17317d16d8da8ddb8c4c"
   integrity sha512-tbb+NVrLfnsJy3M59lsDgrzWIflR4d4TIUjz+heUnHZwdF7YsrMTKoRERiIvI2lvBG95dfpLxB21WZhys1bgaQ==
 
-typestyle@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/typestyle/-/typestyle-2.0.2.tgz#e22f24f5d7e8506aa36b1fd3606824ac16291104"
-  integrity sha512-2nKRvMFE12MYudRu0UxYryZw3vbSOnZyuZiGTblYKIEi/U+VaH/hThv69AWCu89V7qc9uqrcQme1GCXmObomuQ==
+typestyle@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/typestyle/-/typestyle-2.1.0.tgz#7c5cc567de72cd8bfb686813150b92791aaa7636"
+  integrity sha512-6uCYPdG4xWLeEcl9O0GtNFnNGhami+irKiLsXSuvWHC/aTS7wdj49WeikWAKN+xHN3b1hm+9v0svwwgSBhCsNA==
   dependencies:
-    csstype "^2.4.0"
-    free-style "2.5.1"
+    csstype "2.6.9"
+    free-style "3.1.0"
 
 uglify-js@^3.1.4:
   version "3.12.5"

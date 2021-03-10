@@ -23,7 +23,7 @@
         "cssnano": "^4.1.10",
         "leaflet": "^1.6.0",
         "preact": "^10.5.12",
-        "typestyle": "2.0.2",
+        "typestyle": "2.1.0",
         "water.css": "^2.0.0"
     },
     "browserslist": [
