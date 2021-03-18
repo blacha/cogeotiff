@@ -12,7 +12,7 @@ export class CogTiffTagLazy<T> extends CogTiffTagBase<T> {
         if (this.tiff.source.hasBytes(this.valuePointer, this.dataLength) === false) {
             await this.tiff.source.loadBytes(this.valuePointer, this.dataLength, l);
         }
-        this.value = await this.readValue();
+        this.value = this.readValue();
         return this.value;
     }
 }
