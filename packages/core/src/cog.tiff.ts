@@ -162,6 +162,7 @@ export class CogTiff {
     }
 
     private async readIfd(offset: number, log?: LogType): Promise<{ nextOffset: number; image: CogTiffImage }> {
+        if (!this.source.hasBytes(offset, 1024)) await this.source.loadBytes(offset, this.source.chunkSize, log);
         const view = this.cursor.seekTo(offset);
         const tagCount = view.offset();
         const byteStart = offset + this.ifdConfig.offset;
