@@ -13,6 +13,13 @@ export class FakeChunkSource extends ChunkSource {
         }
         return Promise.resolve(bytes.buffer);
     }
+    async fetchAllBytes(): Promise<ArrayBuffer> {
+        const bytes = new Uint8Array(1024);
+        for (let i = 0; i < 1024; i++) {
+            bytes[i] = i;
+        }
+        return Promise.resolve(bytes.buffer);
+    }
 
     name = 'FakeSource';
 }
@@ -34,5 +41,10 @@ export class TestFileChunkSource extends ChunkSource {
     async fetchBytes(offset: number, length: number): Promise<ArrayBuffer> {
         const fileData = await fs.promises.readFile(this.fileName);
         return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + length);
+    }
+
+    async fetchAllBytes(): Promise<ArrayBuffer> {
+        const fileData = await fs.promises.readFile(this.fileName);
+        return fileData.buffer;
     }
 }

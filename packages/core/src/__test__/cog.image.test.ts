@@ -70,6 +70,24 @@ o.spec('CogTiled', () => {
     });
 });
 
+o.spec('Cog.Big', () => {
+    o('should support reading from memory', async () => {
+        const fullSource = new TestFileChunkSource(path.join(__dirname, '../../data/sparse.tiff'));
+        await fullSource.read();
+        const cog = new CogTiff(fullSource);
+        await cog.init();
+
+        o(fullSource.chunkSize).equals(27902);
+        o(fullSource.chunks.size).equals(1);
+        const [firstImage] = cog.images;
+        o(firstImage.stripCount).equals(0);
+        o(firstImage.isTiled()).equals(true);
+
+        const img = cog.getImage(4);
+        o(img.tileCount).deepEquals({ x: 2, y: 2 });
+    });
+});
+
 o.spec('Cog.Sparse', () => {
     const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../data/sparse.tiff'));
     const cog = new CogTiff(cogSourceFile);
