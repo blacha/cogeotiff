@@ -15,6 +15,9 @@ export interface RequestLog {
     /** Chunks requested */
     chunks: number[];
 }
+
+const setNext = typeof setImmediate === 'undefined' ? setTimeout : setImmediate;
+
 /**
  * Chunked source for remote data
  *
@@ -73,7 +76,7 @@ export abstract class ChunkSource {
 
     /* List of chunk ids to fetch */
     protected toFetch: Set<number> = new Set();
-    protected toFetchPromise: Promise<ArrayBuffer[]> | null = null;
+    protected toFetchPromise: Promise<void> | null = null;
     /**
      * Load the required chunks from the source
      *
@@ -84,6 +87,7 @@ export abstract class ChunkSource {
      * @returns loaded chunk data as one buffer
      */
     protected abstract fetchBytes(offset: number, length: number, log?: LogType): Promise<ArrayBuffer>;
+    protected abstract fetchAllBytes(log?: LogType): Promise<ArrayBuffer>;
 
     /** Close the source, cleaning up any open connections/file descriptors */
     close?(): Promise<void>;
@@ -133,7 +137,8 @@ export abstract class ChunkSource {
         return { chunks, blankFill };
     }
 
-    private async fetchData(logger?: LogType): Promise<ArrayBuffer[]> {
+    private async fetchData(logger?: LogType): Promise<void> {
+        if (this.toFetch.size === 0) return;
         const chunkIds = this.toFetch;
         this.toFetch = new Set();
         this.toFetchPromise = null;
@@ -182,8 +187,6 @@ export abstract class ChunkSource {
                 this.chunks.set(chunkId, new DataView(chunkBuffer));
             }
         }
-
-        return chunkData;
     }
 
     async loadBytes(offset: number, length: number, log?: LogType): Promise<void> {
@@ -194,10 +197,11 @@ export abstract class ChunkSource {
             if (this.chunks.has(i)) continue;
             this.toFetch.add(i);
         }
+        if (this.toFetch.size === 0) return;
 
         // Queue a fetch
         if (this.toFetchPromise == null) {
-            this.toFetchPromise = new Promise<void>((resolve) => setTimeout(resolve, 5)).then(() => {
+            this.toFetchPromise = new Promise<void>((resolve) => setNext(resolve, 1)).then(() => {
                 return this.fetchData(log);
             });
         }
@@ -347,5 +351,15 @@ export abstract class ChunkSource {
             if (!this.chunks.has(chunkId)) return false;
         }
         return true;
+    }
+
+    /**
+     * Read the entirety of the file into memory
+     */
+    async read(): Promise<ArrayBuffer> {
+        const buffer = await this.fetchAllBytes();
+        this.chunkSize = buffer.byteLength;
+        this.chunks.set(0, new DataView(buffer));
+        return buffer;
     }
 }

@@ -12,7 +12,7 @@ export interface S3LikeResponse {
     promise(): Promise<{ Body?: Buffer | unknown }>;
 }
 export interface S3Like {
-    getObject(req: { Bucket: string; Key: string; Range: string }): S3LikeResponse;
+    getObject(req: { Bucket: string; Key: string; Range?: string }): S3LikeResponse;
 }
 
 export class SourceAwsS3 extends ChunkSource {
@@ -80,8 +80,7 @@ export class SourceAwsS3 extends ChunkSource {
         return new SourceAwsS3(res.bucket, res.key, remote);
     }
 
-    async fetchBytes(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
-        const fetchRange = `bytes=${offset}-${offset + length}`;
+    async fetch(fetchRange: string | undefined, logger?: LogType): Promise<ArrayBuffer> {
         try {
             const resp = await this.remote
                 .getObject({ Bucket: this.bucket, Key: this.key, Range: fetchRange })
@@ -93,5 +92,14 @@ export class SourceAwsS3 extends ChunkSource {
             logger?.error({ error, source: this.name, fetchRange }, 'FailedToFetch');
             throw new CompositeError(`Failed to fetch ${this.name} ${fetchRange}`, error);
         }
+    }
+
+    async fetchAllBytes(logger: LogType): Promise<ArrayBuffer> {
+        return this.fetch(undefined, logger);
+    }
+
+    async fetchBytes(offset: number, length: number, logger?: LogType): Promise<ArrayBuffer> {
+        const fetchRange = `bytes=${offset}-${offset + length}`;
+        return this.fetch(fetchRange, logger);
     }
 }

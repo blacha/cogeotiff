@@ -138,4 +138,11 @@ o.spec('CogSourceChunk', () => {
 
         o(source.uint64(65534) > 0).equals(true);
     });
+
+    o('should read the entire file into memory', async () => {
+        const data = await source.read();
+        o(source.chunkSize).equals(1024);
+        o(source.chunks.size).equals(1);
+        o(data.byteLength).equals(1024);
+    });
 });
