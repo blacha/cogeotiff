@@ -24,9 +24,11 @@
     js-tokens "^4.0.0"
 
 "@basemaps/geo@^4.0.0":
-  version "4.19.0"
-  resolved "https://registry.yarnpkg.com/@basemaps/geo/-/geo-4.19.0.tgz#f80ac2ea5cee10526e44d7dcf868fbb3ab070d83"
-  integrity sha512-JViXjHkhuDb0RlWb1ijRBxKZg21jceAyKfaffazl9Ri6sjYxXstnGyuwFWb9NoyJAFHZmHNK7y/Bg/VT02cUpw==
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/@basemaps/geo/-/geo-4.24.0.tgz#ad78d406e590f2517001cbaf39e4c15bcf1c14fd"
+  integrity sha512-1jx4g6mGm0+25tV5Jndqq/oy8yxxHu25kS1yq4saUY2qt5pp9epAzeMrBdoMKgGQWWZidtfRGKa2hlnbm3fjFQ==
+  dependencies:
+    "@linzjs/tile-matrix-set" "^0.0.1"
 
 "@eslint/eslintrc@^0.4.0":
   version "0.4.0"
@@ -814,6 +816,11 @@
     eslint-plugin-prettier "^3.3.1"
     prettier "^2.2.1"
     typescript "^4.2.3"
+
+"@linzjs/tile-matrix-set@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@linzjs/tile-matrix-set/-/tile-matrix-set-0.0.1.tgz#62d2742e74e6c3a72ba1d29bcef92c7d10a5aa24"
+  integrity sha512-qGyk/PUw6JWdYzHh4RHi3NUDdBCVJLQuT3HJbDwWZQF9bsqZcBSv8Irtd7Gu3U8WdyTNtazxh2eUxKRG7IzqYQ==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
