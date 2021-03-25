@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/core",
-    "version": "4.1.1",
+    "version": "4.1.2",
     "repository": {
         "type": "git",
         "url": "https://github.com/blacha/cogeotiff.git",
@@ -11,7 +11,7 @@
     "author": "Blayne Chard",
     "license": "MIT",
     "scripts": {
-        "test": "ospec build/**/*.test.js"
+        "test": "ospec --globs 'build/**/*.test.js'"
     },
     "dependencies": {
         "ieee754": "^1.1.13"

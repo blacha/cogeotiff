@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/blacha/cogeotiff/compare/v4.1.1...v4.1.2) (2021-03-18)
+
+
+### Bug Fixes
+
+* **core:** lazy tags should cache the lazy value ([a30c0e1](https://github.com/blacha/cogeotiff/commit/a30c0e1b976cdf4956b2d962d1cfafdf0f74dce0))
+* **core:** load additional bytes for ifdReading if needed ([d59bf2d](https://github.com/blacha/cogeotiff/commit/d59bf2d383d8748ba13dabd8915ea11bcb46adeb))
+
+
+
+
+
 ## [4.1.1](https://github.com/blacha/cogeotiff/compare/v4.1.0...v4.1.1) (2021-03-10)
 
 

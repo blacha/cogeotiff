@@ -40,7 +40,7 @@ export class TestFileChunkSource extends ChunkSource {
     }
     async fetchBytes(offset: number, length: number): Promise<ArrayBuffer> {
         const fileData = await fs.promises.readFile(this.fileName);
-        return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + length);
+        return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + offset + length);
     }
 
     async fetchAllBytes(): Promise<ArrayBuffer> {
