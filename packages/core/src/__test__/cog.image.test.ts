@@ -1,10 +1,13 @@
 import * as o from 'ospec';
 import * as path from 'path';
+import { promises as fs } from 'fs';
+
 import 'source-map-support/register';
 
 import { TestFileChunkSource } from '@cogeotiff/chunk/build/__test__/chunk.source.fake';
 import { CogTiff } from '../cog.tiff';
 import { TiffMimeType } from '../const';
+import { SourceMemory } from '@cogeotiff/chunk';
 
 // 900913 properties.
 const A = 6378137.0;
@@ -79,6 +82,22 @@ o.spec('Cog.Big', () => {
 
         o(fullSource.chunkSize).equals(27902);
         o(fullSource.chunks.size).equals(1);
+        const [firstImage] = cog.images;
+        o(firstImage.stripCount).equals(0);
+        o(firstImage.isTiled()).equals(true);
+
+        const img = cog.getImage(4);
+        o(img.tileCount).deepEquals({ x: 2, y: 2 });
+    });
+
+    o('should read using a memory source', async () => {
+        const bytes = await fs.readFile(path.join(__dirname, '../../data/sparse.tiff'));
+        const source = new SourceMemory('Sparse.tiff', bytes.buffer);
+        const cog = new CogTiff(source);
+        await cog.init();
+
+        o(source.chunkSize).equals(27902);
+        o(source.chunks.size).equals(1);
         const [firstImage] = cog.images;
         o(firstImage.stripCount).equals(0);
         o(firstImage.isTiled()).equals(true);
