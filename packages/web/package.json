@@ -20,7 +20,7 @@
         "@types/geojson": "^7946.0.7",
         "@types/leaflet": "^1.5.15",
         "@types/ospec": "^4.0.2",
-        "cssnano": "^4.1.10",
+        "cssnano": "^5.0.0",
         "leaflet": "^1.6.0",
         "preact": "^10.5.12",
         "typestyle": "2.1.0",
