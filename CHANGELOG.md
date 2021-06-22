@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/blacha/cogeotiff/compare/v4.2.0...v4.3.0) (2021-06-22)
+
+
+### Features
+
+* **chunk:** expose a in memory chunk reader ([a550682](https://github.com/blacha/cogeotiff/commit/a5506820569d8e56f1a28648b78d86aa61d7e453))
+
+
+
+
+
 # [4.2.0](https://github.com/blacha/cogeotiff/compare/v4.1.2...v4.2.0) (2021-03-25)
 
 
