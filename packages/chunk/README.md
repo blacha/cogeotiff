@@ -1,5 +1,8 @@
 # Chunked object reading
 
+**Deprecated**: this module has moved to `@chunkd/core`
+
+
 Split up a file into chunks and then read the chunks as needed.
 
 ## Example Sources

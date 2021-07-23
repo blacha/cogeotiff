@@ -1,5 +1,6 @@
 # @cogeotiff/source-url
 
+**Deprecated**: this module has moved to `@chunkd/source-url`
 
 Load a chunks of a file from a URL Source using `fetch`
 

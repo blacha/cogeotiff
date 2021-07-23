@@ -1,5 +1,6 @@
 # @cogeotiff/source-file
 
+**Deprecated**: this module has moved to `@chunkd/source-file`
 
 Load a COG from a file using `fs`
 

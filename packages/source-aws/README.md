@@ -1,5 +1,7 @@
 # @cogeotiff/source-aws
 
+**Deprecated**: this module has moved to `@chunkd/source-aws`
+
 Load a chunks of a file from a AWS using `aws-sdk`
 
 ## Usage
