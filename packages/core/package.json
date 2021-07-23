@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/core",
-    "version": "4.3.0",
+    "version": "5.0.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/blacha/cogeotiff.git",

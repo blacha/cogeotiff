@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0](https://github.com/blacha/cogeotiff/compare/v4.4.0...v5.0.0) (2021-07-23)
+
+
+### Features
+
+* extract all chunk source logic into `@chunkd/*` ([#723](https://github.com/blacha/cogeotiff/issues/723)) ([fa42393](https://github.com/blacha/cogeotiff/commit/fa4239358b11821b21fc78652b0744bc3c839c06))
+
+
+
+
+
 # [4.4.0](https://github.com/blacha/cogeotiff/compare/v4.3.0...v4.4.0) (2021-07-23)
 
 **Note:** Version bump only for package @cogeotiff/web
