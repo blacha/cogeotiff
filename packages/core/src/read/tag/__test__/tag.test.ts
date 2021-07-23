@@ -1,4 +1,4 @@
-import { TestFileChunkSource } from '@cogeotiff/chunk/build/__test__/chunk.source.fake';
+import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake';
 import * as o from 'ospec';
 import { CogTiff } from '../../../cog.tiff';
 import * as path from 'path';

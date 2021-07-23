@@ -1,4 +1,4 @@
-import { LogType } from '@cogeotiff/chunk';
+import { LogType } from '@chunkd/core';
 import { CogTiff, getTiffTagValueReader } from '../..';
 import { CogTiffTagBase } from './tiff.tag.base';
 

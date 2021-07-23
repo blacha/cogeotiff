@@ -1,4 +1,4 @@
-import { ChunkSource, LogType } from '@cogeotiff/chunk';
+import { ChunkSource, LogType } from '@chunkd/core';
 import { CogTiffImage } from './cog.tiff.image';
 import { TiffEndian } from './const/tiff.endian';
 import { TiffTag } from './const/tiff.tag.id';

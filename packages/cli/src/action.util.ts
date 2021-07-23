@@ -1,8 +1,8 @@
-import { ChunkSource } from '@cogeotiff/chunk';
+import { ChunkSource } from '@chunkd/core';
 import { CogTiff } from '@cogeotiff/core';
-import { SourceAwsS3 } from '@cogeotiff/source-aws';
-import { SourceFile } from '@cogeotiff/source-file';
-import { SourceUrl } from '@cogeotiff/source-url';
+import { SourceAwsS3 } from '@chunkd/source-aws';
+import { SourceFile } from '@chunkd/source-file';
+import { SourceUrl } from '@chunkd/source-url';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
 import * as S3 from 'aws-sdk/clients/s3';

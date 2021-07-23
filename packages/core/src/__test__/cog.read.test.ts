@@ -5,7 +5,7 @@ import 'source-map-support/register';
 import { CogTiff } from '../cog.tiff';
 import { TiffVersion } from '../const/tiff.version';
 import { TiffMimeType } from '../const';
-import { TestFileChunkSource } from '@cogeotiff/chunk/build/__test__/chunk.source.fake';
+import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake';
 
 o.spec('CogRead', () => {
     // TODO this does not load 100% yet

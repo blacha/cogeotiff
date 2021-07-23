@@ -17,7 +17,7 @@ Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 Load a COG from a URL using `fetch`
 
 ```typescript
-import { CogSourceUrl } from '@cogeotiff/source-url';
+import { CogSourceUrl } from '@chunkd/source-url';
 
 const source = new CogSourceUrl('https://example.com/cog.tif');
 const cog = await CogTiff.create(source);

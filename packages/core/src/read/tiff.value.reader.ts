@@ -1,4 +1,4 @@
-import { ByteSize, ChunkSource } from '@cogeotiff/chunk';
+import { ByteSize, ChunkSource } from '@chunkd/core';
 import { TiffTagValueType } from '../const/tiff.tag.value';
 import * as ieee754 from 'ieee754';
 

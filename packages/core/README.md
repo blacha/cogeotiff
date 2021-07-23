@@ -5,7 +5,7 @@ Reading logic for GeoTiffs
 ## Usage
 
 ```typescript
-import { CogSourceUrl } from '@cogeotiff/source-url';
+import { CogSourceUrl } from '@chunkd/source-url';
 
 const source = new  CogSourceUrl('https://example.com/cog.tif');
 const tiff = await CogTiff.create(source)
