@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/blacha/cogeotiff/compare/v4.3.0...v4.4.0) (2021-07-23)
+
+
+### Features
+
+* deprecate chunk sources as they have been split into `[@chunkd](https://github.com/chunkd)` ([26cd785](https://github.com/blacha/cogeotiff/commit/26cd78535fce84e887ce97eed1b3b5785e3a8bc2))
+
+
+
+
+
 # [4.3.0](https://github.com/blacha/cogeotiff/compare/v4.2.0...v4.3.0) (2021-06-22)
 
 **Note:** Version bump only for package @cogeotiff/source-aws
