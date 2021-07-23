@@ -36,7 +36,7 @@ export interface CogInfoProps {
 }
 
 function shortCogName(cog: CogTiff): string {
-    const name = cog.source.name;
+    const name = cog.source.uri;
     if (name.length < 40) return name;
     return name.includes('/') ? name.slice(name.lastIndexOf('/') + 1) : name;
 }
@@ -50,7 +50,7 @@ export class CogInfo extends Component<CogInfoProps> {
         if (state.isLoading) {
             return (
                 <div class={CogCss.container}>
-                    <div title={cog.source.name} class={CogCss.title}>
+                    <div title={cog.source.uri} class={CogCss.title}>
                         {cogName}
                     </div>
                     Loading...
@@ -64,7 +64,7 @@ export class CogInfo extends Component<CogInfoProps> {
         const tileCounter = TileCount.get(cog.source.uri);
         return (
             <div class={CogCss.container}>
-                <div title={cog.source.name} class={CogCss.title}>
+                <div title={cog.source.uri} class={CogCss.title}>
                     {cogName}
                 </div>
                 {this.renderCogButtons(cog, p.index, p.total)}

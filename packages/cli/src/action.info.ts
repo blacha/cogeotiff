@@ -170,7 +170,7 @@ export class ActionCogInfo extends CommandLineAction {
             }
         }
 
-        const msg = ActionUtil.formatResult(`${c.bold('COG File Info')} - ${c.bold(tif.source.name)}`, result);
+        const msg = ActionUtil.formatResult(`${c.bold('COG File Info')} - ${c.bold(tif.source.uri)}`, result);
         console.log(msg.join('\n'));
     }
 

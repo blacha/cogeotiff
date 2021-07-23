@@ -1,4 +1,4 @@
-import { ByteSize, ChunkSource } from '@cogeotiff/chunk';
+import { ByteSize, ChunkSource } from '@chunkd/core';
 import { getReverseEnumValue } from '../util/util.enum';
 
 //   GDAL_STRUCTURAL_METADATA_SIZE: '000140 bytes',

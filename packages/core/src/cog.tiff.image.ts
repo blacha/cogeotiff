@@ -1,4 +1,4 @@
-import { LogType } from '@cogeotiff/chunk';
+import { LogType } from '@chunkd/core';
 import { CogTiff } from './cog.tiff';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime';
 import { TiffTag, TiffTagGeo } from './const/tiff.tag.id';

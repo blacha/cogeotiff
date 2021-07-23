@@ -1,12 +1,8 @@
 {
     "files": [],
     "references": [
-        { "path": "./packages/chunk"  },
         { "path": "./packages/fetchable"  },
         { "path": "./packages/core"  },
-        { "path": "./packages/source-url"  },
-        { "path": "./packages/source-aws"  },
-        { "path": "./packages/source-file"  },
         { "path": "./packages/cli"  },
         { "path": "./packages/web"  },
     ]

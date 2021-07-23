@@ -1,4 +1,4 @@
-import { LogType } from '@cogeotiff/chunk';
+import { LogType } from '@chunkd/core';
 import { CogTiff, TiffMimeType } from '@cogeotiff/core';
 import { promises as fs } from 'fs';
 import * as path from 'path';

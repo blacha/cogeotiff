@@ -1,4 +1,4 @@
-import { ByteSize } from '@cogeotiff/chunk';
+import { ByteSize } from '@chunkd/core';
 import * as ieee754 from 'ieee754';
 import { CogTiff } from '..';
 

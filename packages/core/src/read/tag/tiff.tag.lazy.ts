@@ -1,4 +1,4 @@
-import { LogType } from '@cogeotiff/chunk';
+import { LogType } from '@chunkd/core';
 import { CogTiffTagBase } from './tiff.tag.base';
 
 export class CogTiffTagLazy<T> extends CogTiffTagBase<T> {

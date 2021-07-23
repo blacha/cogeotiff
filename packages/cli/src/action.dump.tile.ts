@@ -8,7 +8,7 @@ import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
 import { getTileName, writeTile } from './util.tile';
 import * as PLimit from 'p-limit';
-import { LogType } from '@cogeotiff/chunk';
+import { LogType } from '@chunkd/core';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
@@ -205,7 +205,7 @@ export class ActionDumpTile extends CommandLineAction {
                 keys: [{ key: 'Images', value: this.outputCount }],
             },
         ];
-        const msg = ActionUtil.formatResult(`${c.bold('COG File Info')} - ${c.bold(tif.source.name)}`, result);
+        const msg = ActionUtil.formatResult(`${c.bold('COG File Info')} - ${c.bold(tif.source.uri)}`, result);
         console.log(msg.join('\n'));
         return Promise.resolve();
     }

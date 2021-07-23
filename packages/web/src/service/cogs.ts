@@ -1,5 +1,5 @@
 import { CogTiff } from '@cogeotiff/core';
-import { SourceUrl } from '@cogeotiff/source-url';
+import { SourceUrl } from '@chunkd/source-url';
 import { CallBack, fireEvents } from './events';
 
 interface LoadingState<T> {

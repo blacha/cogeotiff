@@ -4,10 +4,10 @@ import { promises as fs } from 'fs';
 
 import 'source-map-support/register';
 
-import { TestFileChunkSource } from '@cogeotiff/chunk/build/__test__/chunk.source.fake';
+import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake';
 import { CogTiff } from '../cog.tiff';
 import { TiffMimeType } from '../const';
-import { SourceMemory } from '@cogeotiff/chunk';
+import { SourceMemory } from '@chunkd/core';
 
 // 900913 properties.
 const A = 6378137.0;
@@ -76,7 +76,8 @@ o.spec('CogTiled', () => {
 o.spec('Cog.Big', () => {
     o('should support reading from memory', async () => {
         const fullSource = new TestFileChunkSource(path.join(__dirname, '../../data/sparse.tiff'));
-        await fullSource.read();
+        fullSource.chunkSize = 27902;
+        await fullSource.loadBytes(0, 27902);
         const cog = new CogTiff(fullSource);
         await cog.init();
 

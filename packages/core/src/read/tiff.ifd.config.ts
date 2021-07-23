@@ -1,4 +1,4 @@
-import { ByteSize } from '@cogeotiff/chunk';
+import { ByteSize } from '@chunkd/core';
 import { TiffVersion } from '../const/tiff.version';
 
 export const TagTiffConfig: TiffIfdConfig = {

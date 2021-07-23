@@ -7,10 +7,6 @@
     },
     "include": ["src/**/*"],
     "references": [
-        { "path": "../chunk" },
-        { "path": "../core" },
-        { "path": "../source-url" },
-        { "path": "../source-file" },
-        { "path": "../source-aws" }
+        { "path": "../core" }
     ]
 }
