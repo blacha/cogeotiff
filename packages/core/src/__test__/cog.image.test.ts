@@ -2,13 +2,15 @@ import o from 'ospec';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 
-import 'source-map-support/register';
+import 'source-map-support/register.js';
 
 import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake.js';
 import { CogTiff } from '../cog.tiff.js';
 import { TiffMimeType } from '../const/index.js';
 import { SourceMemory } from '@chunkd/core';
+import { fileURLToPath } from 'url';
 
+const __dirname = fileURLToPath(import.meta.url);
 // 900913 properties.
 const A = 6378137.0;
 const InitialResolution = (2 * Math.PI * A) / 256;
@@ -18,7 +20,7 @@ function getResolution(zoom: number): number {
 }
 
 o.spec('CogTiled', () => {
-    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../data/rgba8_tiled.tiff'));
+    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../../data/rgba8_tiled.tiff'));
     const cog = new CogTiff(cogSourceFile);
 
     o.beforeEach(() => cog.init());
@@ -75,7 +77,7 @@ o.spec('CogTiled', () => {
 
 o.spec('Cog.Big', () => {
     o('should support reading from memory', async () => {
-        const fullSource = new TestFileChunkSource(path.join(__dirname, '../../data/sparse.tiff'));
+        const fullSource = new TestFileChunkSource(path.join(__dirname, '../../../data/sparse.tiff'));
         fullSource.chunkSize = 27902;
         await fullSource.loadBytes(0, 27902);
         const cog = new CogTiff(fullSource);
@@ -92,7 +94,7 @@ o.spec('Cog.Big', () => {
     });
 
     o('should read using a memory source', async () => {
-        const bytes = await fs.readFile(path.join(__dirname, '../../data/sparse.tiff'));
+        const bytes = await fs.readFile(path.join(__dirname, '../../../data/sparse.tiff'));
         const source = new SourceMemory('Sparse.tiff', bytes.buffer);
         const cog = new CogTiff(source);
         await cog.init();
@@ -109,7 +111,7 @@ o.spec('Cog.Big', () => {
 });
 
 o.spec('Cog.Sparse', () => {
-    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../data/sparse.tiff'));
+    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../../data/sparse.tiff'));
     const cog = new CogTiff(cogSourceFile);
     o.beforeEach(() => cog.init(true));
 
@@ -140,7 +142,7 @@ o.spec('Cog.Sparse', () => {
 });
 
 o.spec('CogStrip', () => {
-    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../data/rgba8_strip.tiff'));
+    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../../data/rgba8_strip.tiff'));
     const cog = new CogTiff(cogSourceFile);
 
     o.beforeEach(() => cog.init());
