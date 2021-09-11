@@ -27,6 +27,9 @@ jobs:
       - name: Lint
         run: yarn run lint
 
+      - name: Check Formatting
+        run: git diff --exit-code
+
       - name: Test
         run: yarn run test
 
