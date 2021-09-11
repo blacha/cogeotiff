@@ -6,7 +6,7 @@ import { SourceUrl } from '@chunkd/source-url';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import c from 'ansi-colors';
 import S3 from 'aws-sdk/clients/s3.js';
-import { CliLogger } from './cli.log.js';
+import { logger as CliLogger } from './cli.log.js';
 
 const DefaultS3 = new S3();
 

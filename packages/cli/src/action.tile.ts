@@ -3,7 +3,7 @@ import { CommandLineAction, CommandLineStringParameter } from '@rushstack/ts-com
 import c from 'ansi-colors';
 import { ChunkSourceBase } from '@chunkd/core';
 import { ActionUtil, CliResultMap } from './action.util.js';
-import { CliLogger } from './cli.log.js';
+import { logger as Logger } from './cli.log.js';
 import { toByteSizeString } from './util.bytes.js';
 import { writeTile } from './util.tile.js';
 
@@ -20,7 +20,7 @@ export class ActionTile extends CommandLineAction {
     }
 
     async onExecute(): Promise<void> {
-        const logger = CliLogger.child({ action: 'tile' });
+        const logger = Logger.child({ action: 'tile' });
 
         // abstract
         const { tif } = await ActionUtil.getCogSource(this.file);
