@@ -1,7 +1,7 @@
 import { TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
-import { ChunkSourceBase } from 'packages/core/node_modules/@chunkd/core/build';
+import { ChunkSourceBase } from '@chunkd/core';
 import { ActionUtil, CliResultMap } from './action.util';
 import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
