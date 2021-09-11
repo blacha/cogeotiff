@@ -1,9 +1,9 @@
 import { CommandLineFlagParameter, CommandLineParser } from '@rushstack/ts-command-line';
 import { Log } from 'bblog';
-import { ActionDumpTile } from './action.dump.tile';
-import { ActionCogInfo } from './action.info';
-import { ActionTile } from './action.tile';
-import { ChalkLogStream } from './cli.log';
+import { ActionDumpTile } from './action.dump.tile.js';
+import { ActionCogInfo } from './action.info.js';
+import { ActionTile } from './action.tile.js';
+import { ChalkLogStream } from './cli.log.js';
 
 export class CogInfoCommandLine extends CommandLineParser {
     verbose?: CommandLineFlagParameter;

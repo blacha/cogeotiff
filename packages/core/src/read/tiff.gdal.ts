@@ -1,5 +1,5 @@
 import { ByteSize, ChunkSource } from '@chunkd/core';
-import { getReverseEnumValue } from '../util/util.enum';
+import { getReverseEnumValue } from '../util/util.enum.js';
 
 //   GDAL_STRUCTURAL_METADATA_SIZE: '000140 bytes',
 //   LAYOUT: 'IFDS_BEFORE_DATA',

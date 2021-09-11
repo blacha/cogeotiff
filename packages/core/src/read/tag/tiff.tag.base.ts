@@ -1,7 +1,7 @@
-import { CogTiff } from '../..';
-import { TiffTag } from '../../const/tiff.tag.id';
-import { TiffTagValueType } from '../../const/tiff.tag.value';
-import { getTiffTagSize, getTiffTagValueReader } from '../tiff.value.reader';
+import { CogTiff } from '../../cog.tiff.js';
+import { TiffTag } from '../../const/tiff.tag.id.js';
+import { TiffTagValueType } from '../../const/tiff.tag.value.js';
+import { getTiffTagSize, getTiffTagValueReader } from '../tiff.value.reader.js';
 
 export abstract class CogTiffTagBase<T = unknown> {
     /**

@@ -1,14 +1,9 @@
 {
+    "extends": "@linzjs/style/tsconfig.base.json",
     "compilerOptions": {
-        "composite": true,
-        "target": "ES2018",
-        "module": "commonjs",
-        "removeComments": true,
-        "lib": [],
-        "baseUrl": "./",
-        "sourceMap": true,
-        "strict": true,
-        "declaration": true,
-        "declarationMap": true
-    },
+        "lib": ["ES2020", "DOM"],
+        "outDir": "build",
+        "module": "ES2020",
+        "moduleResolution": "Node"
+    }
 }

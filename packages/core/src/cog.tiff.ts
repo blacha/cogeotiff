@@ -1,14 +1,14 @@
 import { ChunkSource, LogType } from '@chunkd/core';
-import { CogTiffImage } from './cog.tiff.image';
-import { TiffEndian } from './const/tiff.endian';
-import { TiffTag } from './const/tiff.tag.id';
-import { TiffVersion } from './const/tiff.version';
-import { CogTiffTagBase } from './read/tag/tiff.tag.base';
-import { CogTifGhostOptions } from './read/tiff.gdal';
-import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config';
-import { CogTiffTag } from './read/tiff.tag';
-import { CogSourceCursor } from './source/cog.source.view';
-import { toHexString } from './util/util.hex';
+import { CogTiffImage } from './cog.tiff.image.js';
+import { TiffEndian } from './const/tiff.endian.js';
+import { TiffTag } from './const/tiff.tag.id.js';
+import { TiffVersion } from './const/tiff.version.js';
+import { CogTiffTagBase } from './read/tag/tiff.tag.base.js';
+import { CogTifGhostOptions } from './read/tiff.gdal.js';
+import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config.js';
+import { CogTiffTag } from './read/tiff.tag.js';
+import { CogSourceCursor } from './source/cog.source.view.js';
+import { toHexString } from './util/util.hex.js';
 
 export class CogTiff {
     source: ChunkSource;

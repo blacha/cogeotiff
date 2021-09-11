@@ -1,9 +1,9 @@
-import { CogTiff } from '../cog.tiff';
-import { TiffTag } from '../const/tiff.tag.id';
-import { CogTiffTagBase } from './tag/tiff.tag.base';
-import { CogTiffTagLazy } from './tag/tiff.tag.lazy';
-import { CogTiffTagOffset } from './tag/tiff.tag.offset';
-import { CogTifTagStatic } from './tag/tiff.tag.static';
+import { CogTiff } from '../cog.tiff.js';
+import { TiffTag } from '../const/tiff.tag.id.js';
+import { CogTiffTagBase } from './tag/tiff.tag.base.js';
+import { CogTiffTagLazy } from './tag/tiff.tag.lazy.js';
+import { CogTiffTagOffset } from './tag/tiff.tag.offset.js';
+import { CogTifTagStatic } from './tag/tiff.tag.static.js';
 
 export const CogTiffTag = {
     /**

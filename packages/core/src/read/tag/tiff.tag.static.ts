@@ -1,4 +1,4 @@
-import { CogTiffTagBase } from './tiff.tag.base';
+import { CogTiffTagBase } from './tiff.tag.base.js';
 
 export class CogTifTagStatic<T> extends CogTiffTagBase<T> {
     _isRead = false;

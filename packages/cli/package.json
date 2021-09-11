@@ -9,7 +9,11 @@
     "author": "Blayne Chard",
     "license": "MIT",
     "bin": {
-        "cogeotiff": "bin/cogeotiff"
+        "cogeotiff": "bin/cogeotiff.js"
+    },
+    "type": "module",
+    "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
     },
     "scripts": {},
     "dependencies": {

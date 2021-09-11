@@ -1,6 +1,7 @@
 import { LogType } from '@chunkd/core';
-import { CogTiff, getTiffTagValueReader } from '../..';
-import { CogTiffTagBase } from './tiff.tag.base';
+import { CogTiff } from '../../cog.tiff.js';
+import { getTiffTagValueReader } from '../tiff.value.reader.js';
+import { CogTiffTagBase } from './tiff.tag.base.js';
 
 /**
  * TiffTag for offset arrays

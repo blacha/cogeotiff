@@ -1,5 +1,5 @@
-export { TiffEndian } from './tiff.endian';
-export { TiffCompression, TiffMimeType } from './tiff.mime';
-export { TiffTag, TiffTagGeo } from './tiff.tag.id';
-export { TiffTagValueType } from './tiff.tag.value';
-export { TiffVersion } from './tiff.version';
+export { TiffEndian } from './tiff.endian.js';
+export { TiffCompression, TiffMimeType } from './tiff.mime.js';
+export { TiffTag, TiffTagGeo } from './tiff.tag.id.js';
+export { TiffTagValueType } from './tiff.tag.value.js';
+export { TiffVersion } from './tiff.version.js';

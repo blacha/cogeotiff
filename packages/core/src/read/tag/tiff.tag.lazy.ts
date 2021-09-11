@@ -1,5 +1,5 @@
 import { LogType } from '@chunkd/core';
-import { CogTiffTagBase } from './tiff.tag.base';
+import { CogTiffTagBase } from './tiff.tag.base.js';
 
 export class CogTiffTagLazy<T> extends CogTiffTagBase<T> {
     value: T | null = null;
