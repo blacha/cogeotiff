@@ -7,31 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2.3.4
-        with:
-          fetch-depth: 0
-
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v2.4.0
-        with:
-          node-version: 14.x
-          registry-url: https://registry.npmjs.org
-          cache: "yarn"
-
-      - name: Install
-        run: yarn
-
-      - name: Build
-        run: yarn run build
-
-      - name: Lint
-        run: yarn run lint
-
-      - name: Check Formatting
-        run: git diff --exit-code
-
-      - name: Test
-        run: yarn run test
+      - uses: blacha/yarn-typescript-action@v1
 
       - name: Create github release
         if: startsWith(github.ref, 'refs/tags/v')
@@ -45,5 +21,4 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name: Benchmark
-        uses: blacha/hyperfine-action@v1
+      - uses: blacha/hyperfine-action@v1
