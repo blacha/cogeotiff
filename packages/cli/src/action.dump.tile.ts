@@ -1,13 +1,13 @@
 import { CogTiff, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineIntegerParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
-import * as c from 'ansi-colors';
+import c from 'ansi-colors';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { ActionUtil, CliResultMap } from './action.util';
-import { CliLogger } from './cli.log';
-import { toByteSizeString } from './util.bytes';
-import { getTileName, writeTile } from './util.tile';
-import * as PLimit from 'p-limit';
+import { ActionUtil, CliResultMap } from './action.util.js';
+import { CliLogger } from './cli.log.js';
+import { toByteSizeString } from './util.bytes.js';
+import { getTileName, writeTile } from './util.tile.js';
+import PLimit from 'p-limit';
 import { ChunkSourceBase, LogType } from '@chunkd/core';
 
 const Rad2Deg = 180 / Math.PI;

@@ -1,5 +1,5 @@
 import { ByteSize } from '@chunkd/core';
-import { TiffVersion } from '../const/tiff.version';
+import { TiffVersion } from '../const/tiff.version.js';
 
 export const TagTiffConfig: TiffIfdConfig = {
     version: TiffVersion.Tiff,

@@ -1,11 +1,11 @@
 import { TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineStringParameter } from '@rushstack/ts-command-line';
-import * as c from 'ansi-colors';
+import c from 'ansi-colors';
 import { ChunkSourceBase } from '@chunkd/core';
-import { ActionUtil, CliResultMap } from './action.util';
-import { CliLogger } from './cli.log';
-import { toByteSizeString } from './util.bytes';
-import { writeTile } from './util.tile';
+import { ActionUtil, CliResultMap } from './action.util.js';
+import { CliLogger } from './cli.log.js';
+import { toByteSizeString } from './util.bytes.js';
+import { writeTile } from './util.tile.js';
 
 export class ActionTile extends CommandLineAction {
     private file: CommandLineStringParameter | null = null;

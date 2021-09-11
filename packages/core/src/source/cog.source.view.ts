@@ -1,6 +1,6 @@
 import { ByteSize } from '@chunkd/core';
 import * as ieee754 from 'ieee754';
-import { CogTiff } from '..';
+import { CogTiff } from '../cog.tiff.js';
 
 /**
  * View of a Cog source used for reading bytes from the cog while keeping

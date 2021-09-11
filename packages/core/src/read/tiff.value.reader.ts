@@ -1,5 +1,5 @@
 import { ByteSize, ChunkSource } from '@chunkd/core';
-import { TiffTagValueType } from '../const/tiff.tag.value';
+import { TiffTagValueType } from '../const/tiff.tag.value.js';
 import * as ieee754 from 'ieee754';
 
 export function getTiffTagSize(fieldType: TiffTagValueType): number {

@@ -1,11 +1,13 @@
-import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake';
-import * as o from 'ospec';
-import { CogTiff } from '../../../cog.tiff';
+import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake.js';
+import o from 'ospec';
 import * as path from 'path';
-import { CogTiffTagLazy } from '../tiff.tag.lazy';
+import { fileURLToPath } from 'url';
+import { CogTiff } from '../../../cog.tiff.js';
+import { CogTiffTagLazy } from '../tiff.tag.lazy.js';
 
 o.spec('TiffTag', () => {
-    const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../../../data/rgba8_tiled.tiff'));
+    const dirName = fileURLToPath(import.meta.url);
+    const cogSourceFile = new TestFileChunkSource(path.join(dirName, '../../../../../data/rgba8_tiled.tiff'));
 
     o.beforeEach(() => {
         cogSourceFile.chunks.clear();

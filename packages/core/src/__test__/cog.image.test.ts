@@ -1,12 +1,12 @@
-import * as o from 'ospec';
+import o from 'ospec';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 
 import 'source-map-support/register';
 
-import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake';
-import { CogTiff } from '../cog.tiff';
-import { TiffMimeType } from '../const';
+import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake.js';
+import { CogTiff } from '../cog.tiff.js';
+import { TiffMimeType } from '../const/index.js';
 import { SourceMemory } from '@chunkd/core';
 
 // 900913 properties.

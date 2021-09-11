@@ -1,16 +1,19 @@
-import * as o from 'ospec';
+import o from 'ospec';
 import * as path from 'path';
-import 'source-map-support/register';
+import 'source-map-support/register.js';
 
-import { CogTiff } from '../cog.tiff';
-import { TiffVersion } from '../const/tiff.version';
-import { TiffMimeType } from '../const';
-import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake';
+import { CogTiff } from '../cog.tiff.js';
+import { TiffVersion } from '../const/tiff.version.js';
+import { TiffMimeType } from '../const/tiff.mime.js';
+import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake.js';
+import { fileURLToPath } from 'url';
+
+const __dirname = fileURLToPath(import.meta.url);
 
 o.spec('CogRead', () => {
     // TODO this does not load 100% yet
     // o('should read big endian', async () => {
-    //     const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/test/data/be_cog.tif'))
+    //     const source = new TestFileChunkSource(path.join(__dirname, '../../../test/data/be_cog.tif'))
     //     const tif = new CogTif(source);
 
     //     await tif.init();
@@ -34,7 +37,7 @@ o.spec('CogRead', () => {
     }
 
     o('should read big tiff', async () => {
-        const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/big_cog.tif'));
+        const source = new TestFileChunkSource(path.join(__dirname, '../../../data/big_cog.tif'));
         const tiff = new CogTiff(source);
 
         await tiff.init();
@@ -45,7 +48,7 @@ o.spec('CogRead', () => {
     });
 
     o('should read tiff', async () => {
-        const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/cog.tif'));
+        const source = new TestFileChunkSource(path.join(__dirname, '../../../data/cog.tif'));
         const tiff = new CogTiff(source);
 
         await tiff.init();
@@ -59,7 +62,7 @@ o.spec('CogRead', () => {
     });
 
     o('should allow multiple init', async () => {
-        const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/cog.tif'));
+        const source = new TestFileChunkSource(path.join(__dirname, '../../../data/cog.tif'));
         const tiff = new CogTiff(source);
 
         o(tiff.isInitialized).equals(false);
@@ -73,7 +76,7 @@ o.spec('CogRead', () => {
     });
 
     o('should close a source', async () => {
-        const source = new TestFileChunkSource(path.join(__dirname, '../..' + '/data/cog.tif'));
+        const source = new TestFileChunkSource(path.join(__dirname, '../../../data/cog.tif'));
         const tiff = new CogTiff(source);
         // Should not close if there is no close
         source.close = undefined;

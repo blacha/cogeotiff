@@ -1,6 +1,6 @@
-import 'source-map-support/register';
-import { CogInfoCommandLine } from './cli.cog.info';
-import { CliLogger } from './cli.log';
+import 'source-map-support/register.js';
+import { CogInfoCommandLine } from './cli.cog.info.js';
+import { CliLogger } from './cli.log.js';
 
 const cogInfo: CogInfoCommandLine = new CogInfoCommandLine();
 cogInfo.executeWithoutErrorHandling().catch((error) => {

@@ -4,9 +4,9 @@ import { SourceAwsS3 } from '@chunkd/source-aws';
 import { SourceFile } from '@chunkd/source-file';
 import { SourceUrl } from '@chunkd/source-url';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
-import * as c from 'ansi-colors';
-import * as S3 from 'aws-sdk/clients/s3';
-import { CliLogger } from './cli.log';
+import c from 'ansi-colors';
+import S3 from 'aws-sdk/clients/s3.js';
+import { CliLogger } from './cli.log.js';
 
 const DefaultS3 = new S3();
 

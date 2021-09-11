@@ -1,12 +1,12 @@
 import { LogType } from '@chunkd/core';
-import { CogTiff } from './cog.tiff';
-import { TiffCompression, TiffMimeType } from './const/tiff.mime';
-import { TiffTag, TiffTagGeo } from './const/tiff.tag.id';
-import { CogTiffTagBase } from './read/tag/tiff.tag.base';
-import { CogTiffTagLazy } from './read/tag/tiff.tag.lazy';
-import { CogTiffTagOffset } from './read/tag/tiff.tag.offset';
-import { CogTiffTag } from './read/tiff.tag';
-import { BoundingBox, Size } from './vector';
+import { CogTiff } from './cog.tiff.js';
+import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
+import { TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
+import { CogTiffTagBase } from './read/tag/tiff.tag.base.js';
+import { CogTiffTagLazy } from './read/tag/tiff.tag.lazy.js';
+import { CogTiffTagOffset } from './read/tag/tiff.tag.offset.js';
+import { CogTiffTag } from './read/tiff.tag.js';
+import { BoundingBox, Size } from './vector.js';
 
 /** Invalid EPSG code */
 export const InvalidProjectionCode = 32767;
