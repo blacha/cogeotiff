@@ -3,7 +3,6 @@
     "references": [
         { "path": "./packages/fetchable"  },
         { "path": "./packages/core"  },
-        { "path": "./packages/cli"  },
-        { "path": "./packages/web"  },
+        { "path": "./packages/cli"  }
     ]
 }
