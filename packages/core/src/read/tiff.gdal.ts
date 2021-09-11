@@ -64,7 +64,7 @@ export class CogTifGhostOptions {
     process(source: ChunkSource, offset: number, length: number): void {
         const chars: string[] = [];
         for (let i = offset; i < offset + length; i++) {
-            const char = source.uint8(i);
+            const char = source.getUint8(i);
             if (char === 0) continue;
             chars.push(String.fromCharCode(char));
         }

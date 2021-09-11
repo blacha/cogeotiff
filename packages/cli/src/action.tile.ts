@@ -1,6 +1,7 @@
 import { TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import * as c from 'ansi-colors';
+import { ChunkSourceBase } from 'packages/core/node_modules/@chunkd/core/build';
 import { ActionUtil, CliResultMap } from './action.util';
 import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
@@ -20,6 +21,7 @@ export class ActionTile extends CommandLineAction {
 
     async onExecute(): Promise<void> {
         const logger = CliLogger.child({ action: 'tile' });
+
         // abstract
         const { tif } = await ActionUtil.getCogSource(this.file);
         if (this.xyz == null || this.xyz.value == null) {
@@ -37,8 +39,8 @@ export class ActionTile extends CommandLineAction {
         }
 
         await writeTile(tif, x, y, z, '.', logger);
-
-        const chunkIds = [...tif.source.chunks.values()];
+        const source = tif.source as ChunkSourceBase;
+        const chunkIds = [...source.chunks.values()];
 
         const result: CliResultMap[] = [
             {

@@ -15,7 +15,7 @@ export const CogTiffTag = {
      * @param offset
      */
     create(tiff: CogTiff, offset: number): CogTiffTagBase<unknown> {
-        const tagId = tiff.source.uint16(offset);
+        const tagId = tiff.source.getUint16(offset);
         if (
             tagId === TiffTag.TileOffsets ||
             tagId === TiffTag.TileByteCounts ||

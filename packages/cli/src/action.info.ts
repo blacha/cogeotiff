@@ -5,6 +5,7 @@ import { ActionUtil, CliResultMap } from './action.util';
 import { toByteSizeString } from './util.bytes';
 import { CliTable } from './cli.table';
 import { CliLogger } from './cli.log';
+import { ChunkSourceBase } from '@chunkd/core';
 
 function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any): { key: string; value: string } {
     const key = `${String(tagId).padEnd(7, ' ')} ${String(tagName).padEnd(20)}`;
@@ -97,7 +98,8 @@ export class ActionCogInfo extends CommandLineAction {
         await firstImage.loadGeoTiffTags(CliLogger);
 
         const isCogOptimized = tif.options.isCogOptimized;
-        const chunkIds = [...tif.source.chunks.values()];
+        const source = tif.source as ChunkSourceBase;
+        const chunkIds = [...source.chunks.values()];
 
         const imageInfo = '\n' + TiffImageInfoTable.print(tif.images, '\t\t').join('\n');
 

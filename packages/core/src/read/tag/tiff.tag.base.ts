@@ -33,8 +33,8 @@ export abstract class CogTiffTagBase<T = unknown> {
         this.id = id;
         this.name = TiffTag[this.id];
 
-        this.dataType = this.tiff.source.uint16(offset + 2);
-        this.dataCount = this.tiff.source.uint(offset + 4, this.tiff.ifdConfig.offset);
+        this.dataType = this.tiff.source.getUint16(offset + 2);
+        this.dataCount = this.tiff.source.getUint(offset + 4, this.tiff.ifdConfig.offset);
         this.dataTypeSize = getTiffTagSize(this.dataType);
         this.dataLength = this.dataTypeSize * this.dataCount;
     }
@@ -79,7 +79,7 @@ export abstract class CogTiffTagBase<T = unknown> {
     get valuePointer(): number {
         const valueOffset = this.size - this.tiff.ifdConfig.pointer;
         if (this.isValueInline) return this.byteOffset + valueOffset;
-        return this.tiff.source.uint(this.byteOffset + valueOffset, this.tiff.ifdConfig.pointer);
+        return this.tiff.source.getUint(this.byteOffset + valueOffset, this.tiff.ifdConfig.pointer);
     }
 
     /** Size of the IFD (bytes) */

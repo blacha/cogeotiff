@@ -1,3 +1,4 @@
+import { SourceUrl } from '@chunkd/source-url';
 import { CogTiff } from '@cogeotiff/core';
 import { Component, ComponentChild } from 'preact';
 import { style } from 'typestyle';
@@ -57,6 +58,7 @@ export class CogInfo extends Component<CogInfoProps> {
                 </div>
             );
         }
+        const source = cog.source as SourceUrl;
 
         const firstImage = cog.getImage(0);
         if (firstImage.epsg == null) return null;
@@ -81,9 +83,7 @@ export class CogInfo extends Component<CogInfoProps> {
                 {SideBar.renderLine('COG Optimized', String(cog.options.isCogOptimized))}
                 {SideBar.renderLine(
                     'COG Requests',
-                    String(cog.source.requests.length) +
-                        ' - ' +
-                        formatSize(cog.source.chunks.size * cog.source.chunkSize),
+                    String(source.requests.length) + ' - ' + formatSize(source.chunks.size * cog.source.chunkSize),
                 )}
                 {tileCounter != null ? SideBar.renderLine('Tiles Requested', String(tileCounter.size)) : null}
             </div>

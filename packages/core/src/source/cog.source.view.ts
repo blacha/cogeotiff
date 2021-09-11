@@ -45,27 +45,27 @@ export class CogSourceCursor {
         return this.tiff.source.bytes(this.seek(count), count);
     }
     uint(size: number): number {
-        return this.tiff.source.uint(this.seek(size), size);
+        return this.tiff.source.getUint(this.seek(size), size);
     }
     uint8(): number {
-        return this.tiff.source.uint8(this.seek(ByteSize.UInt8));
+        return this.tiff.source.getUint8(this.seek(ByteSize.UInt8));
     }
     uint16(): number {
-        return this.tiff.source.uint16(this.seek(ByteSize.UInt16));
+        return this.tiff.source.getUint16(this.seek(ByteSize.UInt16));
     }
     uint32(): number {
-        return this.tiff.source.uint32(this.seek(ByteSize.UInt32));
+        return this.tiff.source.getUint32(this.seek(ByteSize.UInt32));
     }
     uint64(): number {
-        return this.tiff.source.uint64(this.seek(ByteSize.UInt64));
+        return this.tiff.source.getUint64(this.seek(ByteSize.UInt64));
     }
     pointer(): number {
         const pointerSize = this.tiff.ifdConfig.pointer;
-        return this.tiff.source.uint(this.seek(pointerSize), pointerSize);
+        return this.tiff.source.getUint(this.seek(pointerSize), pointerSize);
     }
     offset(): number {
         const offsetSize = this.tiff.ifdConfig.offset;
-        return this.tiff.source.uint(this.seek(offsetSize), offsetSize);
+        return this.tiff.source.getUint(this.seek(offsetSize), offsetSize);
     }
 
     float(): number {

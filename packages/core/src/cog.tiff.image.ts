@@ -457,7 +457,7 @@ export class CogTiffImage {
             // This fetch will generally load in the bytes needed for the image too
             // provided the image size is less than the size of a chunk
             await this.tif.source.loadBytes(offset - leaderBytes, leaderBytes, l);
-            return { offset, imageSize: this.tif.source.uint(offset - leaderBytes, leaderBytes) };
+            return { offset, imageSize: this.tif.source.getUint(offset - leaderBytes, leaderBytes) };
         }
 
         const byteCounts = this.tags.get(TiffTag.TileByteCounts) as CogTiffTagOffset;

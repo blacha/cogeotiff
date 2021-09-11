@@ -32,15 +32,15 @@ export type TiffTagValueRational = [number, number];
 export type TiffTagValueReaderFunc = (view: ChunkSource, offset: number) => number | TiffTagValueRational | string;
 
 const TiffTagValueReader: { [key: string]: TiffTagValueReaderFunc } = {
-    char: (s: ChunkSource, offset: number) => String.fromCharCode(s.uint8(offset)),
-    uint8: (s: ChunkSource, offset: number) => s.uint8(offset),
-    uint16: (s: ChunkSource, offset: number) => s.uint16(offset),
-    uint32: (s: ChunkSource, offset: number) => s.uint32(offset),
-    uint64: (s: ChunkSource, offset: number) => s.uint64(offset),
+    char: (s: ChunkSource, offset: number) => String.fromCharCode(s.getUint8(offset)),
+    uint8: (s: ChunkSource, offset: number) => s.getUint8(offset),
+    uint16: (s: ChunkSource, offset: number) => s.getUint16(offset),
+    uint32: (s: ChunkSource, offset: number) => s.getUint32(offset),
+    uint64: (s: ChunkSource, offset: number) => s.getUint64(offset),
     double: (s: ChunkSource, offset: number) => {
         return ieee754.read(s.bytes(offset, ByteSize.Double), 0, s.isLittleEndian, 52, 8);
     },
-    rational: (s: ChunkSource, offset: number) => [s.uint32(offset), s.uint32(offset + 4)],
+    rational: (s: ChunkSource, offset: number) => [s.getUint32(offset), s.getUint32(offset + 4)],
 };
 export function getTiffTagValueReader(fieldType: TiffTagValueType): TiffTagValueReaderFunc {
     switch (fieldType) {
