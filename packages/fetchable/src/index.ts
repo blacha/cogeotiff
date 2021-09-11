@@ -38,7 +38,7 @@ export class Fetchable<T = unknown> {
                     }
                     resolve(this.value);
                 } catch (e) {
-                    this.error = e;
+                    this.error = e as Error;
                     reject(e);
                 }
             });
