@@ -205,7 +205,7 @@ export class CogTiff {
         }
 
         const image = new CogTiffImage(this, this.images.length, tags);
-        const nextOffset = this.source.uint(pos, this.ifdConfig.pointer);
+        const nextOffset = this.source.getUint(pos, this.ifdConfig.pointer);
         return { nextOffset, image };
     }
 

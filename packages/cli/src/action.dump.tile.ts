@@ -8,7 +8,7 @@ import { CliLogger } from './cli.log';
 import { toByteSizeString } from './util.bytes';
 import { getTileName, writeTile } from './util.tile';
 import * as PLimit from 'p-limit';
-import { LogType } from '@chunkd/core';
+import { ChunkSourceBase, LogType } from '@chunkd/core';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
@@ -186,7 +186,8 @@ export class ActionDumpTile extends CommandLineAction {
         await this.dumpIndex(tif, output, index);
         await this.dumpBounds(tif, this.output.value, index);
 
-        const chunkIds = [...tif.source.chunks.values()];
+        const source = tif.source as ChunkSourceBase;
+        const chunkIds = [...source.chunks.values()];
         const result: CliResultMap[] = [
             {
                 keys: [

@@ -13,9 +13,9 @@
     },
     "scripts": {},
     "dependencies": {
-        "@chunkd/source-aws": "^4.4.0",
-        "@chunkd/source-file": "^4.4.0",
-        "@chunkd/source-url": "^4.4.0",
+        "@chunkd/source-aws": "^5.0.0",
+        "@chunkd/source-file": "^5.0.0",
+        "@chunkd/source-url": "^5.0.0",
         "@cogeotiff/core": "^5.0.0",
         "@rushstack/ts-command-line": "^4.3.14",
         "ansi-colors": "^4.1.1",

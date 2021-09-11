@@ -15,7 +15,7 @@
     },
     "devDependencies": {
         "@basemaps/geo": "^4.0.0",
-        "@chunkd/source-url": "^4.4.0",
+        "@chunkd/source-url": "^5.0.0",
         "@cogeotiff/core": "^5.0.0",
         "@types/geojson": "^7946.0.7",
         "@types/leaflet": "^1.5.15",
