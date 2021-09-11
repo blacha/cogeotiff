@@ -18,6 +18,7 @@
         "@chunkd/source-url": "^5.0.0",
         "@cogeotiff/core": "^5.0.0",
         "@rushstack/ts-command-line": "^4.3.14",
+        "@types/node": "^16.4.1",
         "ansi-colors": "^4.1.1",
         "aws-sdk": "^2.781.0",
         "bblog": "^2.0.0",
