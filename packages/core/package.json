@@ -18,7 +18,7 @@
         "test": "ospec --globs 'build/**/*.test.js'"
     },
     "dependencies": {
-        "@chunkd/core": "^5.0.0",
+        "@chunkd/core": "^6.0.0",
         "ieee754": "^1.1.13"
     },
     "devDependencies": {

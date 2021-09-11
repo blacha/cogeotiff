@@ -23,31 +23,31 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@chunkd/core@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-5.0.0.tgz#41e90b3ef62752e66b1032675fc80b0168a0af7a"
-  integrity sha512-6F/R9aBX4g45Q49LuiJP1+j0ck7WY/z2VETQhLuJaXSWwpkxcnVggFKPlSC9qFkogpkFUTpbtyisrxi0aGbENw==
+"@chunkd/core@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-6.0.0.tgz#b1e3a0692cc0b9e1018d9ceef82e27472b274f5b"
+  integrity sha512-3s11Z4c/4GI6a6U7RWeh5R3Wf/kxcQtSCOy1RK/D3ZPWCDoHkiNkTSCtXUodZWkkHmIhvBl5qdOJEpVDt2B+qQ==
 
-"@chunkd/source-aws@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-5.0.0.tgz#9dd8869ee837980498b3c8772fa4523d06c886f8"
-  integrity sha512-zLKfp4aR0+IWiiEYvwS3rBan8x5cJOBfRQIyD09YCbXnrwrsT+eLKjAnXcJ+jtVaTFZSW0/91nxlRESAoYvWTw==
+"@chunkd/source-aws@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-6.0.0.tgz#8d65b61d3cb95439ee6fe505cf3139004b53e512"
+  integrity sha512-ufvPQ7ZbitkNzoqU2FwDYL0tzGgAYCsYXjwsxOF99xSXpGQ+un7mLWKD5Wmh42IwPF1baqPenAxRlhuavs7jTg==
   dependencies:
-    "@chunkd/core" "^5.0.0"
+    "@chunkd/core" "^6.0.0"
 
-"@chunkd/source-file@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-5.0.0.tgz#7be4fae751895a562428c8bf2a3707b70acbd9f8"
-  integrity sha512-CZlTThFm0Pc0pGffovXKfH75Hg7YOD8d/6tbyqNHZ2/66xAyOitqSO6vqwAnRmQKBi1anO1f1pkQSr8iparFZw==
+"@chunkd/source-file@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-6.0.0.tgz#c0cb708b0b4fb144a3b0613e3fc3c5e1e916d22a"
+  integrity sha512-z8L6D6O7MfmSQZaCJZ3GFjBDUeUqbmpHe8L1CTNeYDGoSXaQp2ZVmpC1+ppJbokIzntuzdQVFQc74kkI0jeEvg==
   dependencies:
-    "@chunkd/core" "^5.0.0"
+    "@chunkd/core" "^6.0.0"
 
-"@chunkd/source-url@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-url/-/source-url-5.0.0.tgz#7549d90eb14f512bbf9ec238453046f707cc76b9"
-  integrity sha512-/BB0kdpE6xRRxHRzeyab/gfWLkBFkc37wCXWSh3qhh2HBRO61sATX7RX6wvMfVpEARSaN9ktJxunywYX7rqm0w==
+"@chunkd/source-url@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-url/-/source-url-6.0.0.tgz#8c85d65f243b9a47ff549accc47988256f35a7fc"
+  integrity sha512-BXKweOJu+bNmDcgqfDUqmMKVln+TrmSFZSSJeLpBVGPg4x8CqemESgUaFVORyER9o4Fhq8MDcLsfdApqDSXsIg==
   dependencies:
-    "@chunkd/core" "^5.0.0"
+    "@chunkd/core" "^6.0.0"
     node-fetch "^2.6.0"
 
 "@eslint/eslintrc@^0.4.3":
@@ -1004,14 +1004,6 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.1.tgz#283f669ff76d7b8260df8ab7a4262cc83d988256"
   integrity sha512-fZQQafSREFyuZcdWFAExYjBiCL7AUCdgsk80iO0q4yihYYdcIiH28CcuPTGFgLOCC8RlW49GSQxdHwZP+I7CNg==
 
-"@types/node-fetch@^2.5.0":
-  version "2.5.10"
-  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.10.tgz#9b4d4a0425562f9fcea70b12cb3fcdd946ca8132"
-  integrity sha512-IpkX0AasN44hgEad0gEF/V6EgR5n69VEqPEgnmoM8GsIGro3PowbWs4tR6IhxUTyPLpOn+fiGG6nrQhcmoCuIQ==
-  dependencies:
-    "@types/node" "*"
-    form-data "^3.0.0"
-
 "@types/node@*", "@types/node@>= 8", "@types/node@^14.0.3", "@types/node@^14.14.22":
   version "14.14.41"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.41.tgz#d0b939d94c1d7bd53d04824af45f1139b8c45615"
@@ -1654,7 +1646,7 @@ columnify@^1.5.4:
     strip-ansi "^3.0.0"
     wcwidth "^1.0.0"
 
-combined-stream@^1.0.6, combined-stream@^1.0.8, combined-stream@~1.0.6:
+combined-stream@^1.0.6, combined-stream@~1.0.6:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.8.tgz#c3d45a8b34fd730631a110a8a2520682b31d5a7f"
   integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
@@ -2530,15 +2522,6 @@ forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
   integrity sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=
-
-form-data@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/form-data/-/form-data-3.0.0.tgz#31b7e39c85f1355b7139ee0c647cf0de7f83c682"
-  integrity sha512-CKMFDglpbMi6PyN+brwB9Q/GOw0eAnsrEZDgcsH5Krhz5Od/haKHAX0NmQfha2zPPz0JpWzA7GJHGSnvCRLWsg==
-  dependencies:
-    asynckit "^0.4.0"
-    combined-stream "^1.0.8"
-    mime-types "^2.1.12"
 
 form-data@~2.3.2:
   version "2.3.3"
