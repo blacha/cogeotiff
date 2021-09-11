@@ -4,7 +4,7 @@ import c from 'ansi-colors';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { ActionUtil, CliResultMap } from './action.util.js';
-import { CliLogger } from './cli.log.js';
+import { logger as CliLogger } from './cli.log.js';
 import { toByteSizeString } from './util.bytes.js';
 import { getTileName, writeTile } from './util.tile.js';
 import PLimit from 'p-limit';

@@ -1,9 +1,8 @@
 import { CommandLineFlagParameter, CommandLineParser } from '@rushstack/ts-command-line';
-import { Log } from 'bblog';
 import { ActionDumpTile } from './action.dump.tile.js';
 import { ActionCogInfo } from './action.info.js';
 import { ActionTile } from './action.tile.js';
-import { ChalkLogStream } from './cli.log.js';
+import { logger } from './cli.log.js';
 
 export class CogInfoCommandLine extends CommandLineParser {
     verbose?: CommandLineFlagParameter;
@@ -22,11 +21,11 @@ export class CogInfoCommandLine extends CommandLineParser {
 
     protected onExecute(): Promise<void> {
         if (this.verbose?.value) {
-            ChalkLogStream.setLevel(Log.INFO);
+            logger.level = 'info';
         } else if (this.extraVerbose?.value) {
-            ChalkLogStream.setLevel(Log.TRACE);
+            logger.level = 'trace';
         } else {
-            ChalkLogStream.setLevel(Log.ERROR);
+            logger.level = 'warn';
         }
 
         return super.onExecute();
