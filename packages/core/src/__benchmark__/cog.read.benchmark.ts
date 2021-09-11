@@ -1,4 +1,4 @@
-import { CogTiff } from '../cog.tiff';
+import { CogTiff } from '../cog.tiff.js';
 import { SourceFile } from '@chunkd/source-file';
 
 /** Read a tile from every image inside of a tiff 300 tiles read */
