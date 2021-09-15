@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.1](https://github.com/blacha/cogeotiff/compare/v6.0.0...v6.0.1) (2021-09-15)
+
+
+### Bug Fixes
+
+* missing bin file ([3e5beb0](https://github.com/blacha/cogeotiff/commit/3e5beb03664cbea3b7bfb64c8a3a4e2dac7d623d))
+
+
+
+
+
 # [6.0.0](https://github.com/blacha/cogeotiff/compare/v5.0.0...v6.0.0) (2021-09-11)
 
 
