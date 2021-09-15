@@ -1,14 +1,9 @@
 import { ChunkSource } from '@chunkd/core';
 import { CogTiff } from '@cogeotiff/core';
-import { SourceAwsS3 } from '@chunkd/source-aws';
-import { SourceFile } from '@chunkd/source-file';
-import { SourceUrl } from '@chunkd/source-url';
+import { fsa } from '@chunkd/fs';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import c from 'ansi-colors';
-import S3 from 'aws-sdk/clients/s3.js';
 import { logger as CliLogger } from './cli.log.js';
-
-const DefaultS3 = new S3();
 
 export interface CLiResultMapLine {
     key: string;
@@ -24,16 +19,8 @@ export const ActionUtil = {
         if (file == null || file.value == null) {
             throw new Error(`File "${file} is not valid`);
         }
-        let source: ChunkSource;
-        if (file.value.startsWith('http')) {
-            source = new SourceUrl(file.value);
-        } else if (file.value.startsWith('s3://')) {
-            const src = SourceAwsS3.fromUri(file.value, DefaultS3);
-            if (src == null) throw new Error(`Unable to parse s3 uri: ${file.value}`);
-            source = src;
-        } else {
-            source = new SourceFile(file.value);
-        }
+        const source = fsa.get(file.value).source(file.value);
+        if (source == null) throw new Error(`File "${file} is not valid`);
 
         const tif = new CogTiff(source);
         await tif.init(false, CliLogger);

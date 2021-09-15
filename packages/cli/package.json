@@ -17,9 +17,8 @@
     },
     "scripts": {},
     "dependencies": {
-        "@chunkd/source-aws": "^6.0.0",
-        "@chunkd/source-file": "^6.0.0",
-        "@chunkd/source-url": "^6.0.0",
+        "@chunkd/fs": "^7.2.1",
+        "@chunkd/core": "^7.2.0",
         "@cogeotiff/core": "^6.0.0",
         "@rushstack/ts-command-line": "^4.3.14",
         "@types/pino": "^6.3.11",
