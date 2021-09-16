@@ -28,6 +28,11 @@
   resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-7.2.0.tgz#3c6fd3efc0050443014dd3c1e4311d670caec9b1"
   integrity sha512-S7fCiSPWQFLYGJw+YqUeDIxEptjd0u/q/O7kxFt5mdvSOPOOnds+uDDwwQznrHJW0F6CvGaOzEl8e8W6z+gq5g==
 
+"@chunkd/core@^7.2.2":
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-7.2.2.tgz#fc561df415f5f07ddec92f79b472803be753b439"
+  integrity sha512-OhPXkl4UvQDy2CCGj6rKKDuxwY4OyAmsCtsJ84dQXcgTOER9aVf6DR++ydPc2OfMwcBNmE8ZFpgEW9OUM07wNA==
+
 "@chunkd/fs@^7.2.1":
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-7.2.1.tgz#190faa308744cb3723139545fba8e03c9970d557"
