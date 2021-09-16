@@ -18,7 +18,7 @@
     "scripts": {},
     "dependencies": {
         "@chunkd/core": "^7.2.2",
-        "@chunkd/fs": "^7.2.1",
+        "@chunkd/fs": "^7.2.2",
         "@cogeotiff/core": "^6.0.1",
         "@rushstack/ts-command-line": "^4.3.14",
         "@types/pino": "^6.3.11",

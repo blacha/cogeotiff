@@ -19,7 +19,7 @@ export const ActionUtil = {
         if (file == null || file.value == null) {
             throw new Error(`File "${file} is not valid`);
         }
-        const source = fsa.get(file.value).source(file.value);
+        const source = fsa.source(file.value);
         if (source == null) throw new Error(`File "${file} is not valid`);
 
         const tif = new CogTiff(source);
