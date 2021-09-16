@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/blacha/cogeotiff/compare/v6.0.1...v6.0.2) (2021-09-16)
+
+
+### Bug Fixes
+
+* upgrade to latest chunkd fixes issue with missing fetchBytes function ([9b33cbf](https://github.com/blacha/cogeotiff/commit/9b33cbfe02acaa1248895203c1a55002b82d1a49))
+
+
+
+
+
 ## [6.0.1](https://github.com/blacha/cogeotiff/compare/v6.0.0...v6.0.1) (2021-09-15)
 
 **Note:** Version bump only for package @cogeotiff/core
