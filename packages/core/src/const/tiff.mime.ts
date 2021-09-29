@@ -2,6 +2,7 @@
  * MimeType conversion for common tif image types
  */
 export enum TiffMimeType {
+    NONE = 'application/octet-stream',
     JPEG = 'image/jpeg',
     JP2 = 'image/jp2',
     WEBP = 'image/webp',
@@ -10,6 +11,7 @@ export enum TiffMimeType {
 }
 
 export const TiffCompression: { [key: number]: TiffMimeType } = {
+    1: TiffMimeType.NONE,
     5: TiffMimeType.LZW,
     6: TiffMimeType.JPEG,
     7: TiffMimeType.JPEG,
