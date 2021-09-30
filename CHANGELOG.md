@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/blacha/cogeotiff/compare/v6.0.2...v6.1.0) (2021-09-30)
+
+
+### Features
+
+* **core:** support no compression ([f1f8762](https://github.com/blacha/cogeotiff/commit/f1f8762d6b5a4b2b8eae7f472bd70f0216138be8))
+
+
+
+
+
 ## [6.0.2](https://github.com/blacha/cogeotiff/compare/v6.0.1...v6.0.2) (2021-09-16)
 
 
