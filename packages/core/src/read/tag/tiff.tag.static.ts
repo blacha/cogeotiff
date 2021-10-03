@@ -10,6 +10,6 @@ export class CogTifTagStatic<T> extends CogTiffTagBase<T> {
             this._value = this.readValue();
             this._isRead = true;
         }
-        return this._value!;
+        return this._value as T;
     }
 }

@@ -270,8 +270,8 @@ export class CogTiffImage {
      */
     get size(): Size {
         return {
-            width: this.value<number>(TiffTag.ImageWidth)!,
-            height: this.value<number>(TiffTag.ImageHeight)!,
+            width: this.value<number>(TiffTag.ImageWidth) as number,
+            height: this.value<number>(TiffTag.ImageHeight) as number,
         };
     }
 
@@ -294,8 +294,8 @@ export class CogTiffImage {
      */
     get tileSize(): CogTiffImageTileSize {
         return {
-            width: this.value<number>(TiffTag.TileWidth)!,
-            height: this.value<number>(TiffTag.TileHeight)!,
+            width: this.value<number>(TiffTag.TileWidth) as number,
+            height: this.value<number>(TiffTag.TileHeight) as number,
         };
     }
 
