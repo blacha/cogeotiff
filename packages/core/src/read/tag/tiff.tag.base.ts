@@ -34,7 +34,7 @@ export abstract class CogTiffTagBase<T = unknown> {
         this.name = TiffTag[this.id];
 
         this.dataType = this.tiff.source.getUint16(offset + 2);
-        this.dataCount = this.tiff.source.getUint(offset + 4, this.tiff.ifdConfig.offset);
+        this.dataCount = this.tiff.source.getUint(offset + 4, this.tiff.ifdConfig.pointer);
         this.dataTypeSize = getTiffTagSize(this.dataType);
         this.dataLength = this.dataTypeSize * this.dataCount;
     }
