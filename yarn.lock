@@ -23,15 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@chunkd/core@^7.2.2":
-  version "7.2.2"
-  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-7.2.2.tgz#fc561df415f5f07ddec92f79b472803be753b439"
-  integrity sha512-OhPXkl4UvQDy2CCGj6rKKDuxwY4OyAmsCtsJ84dQXcgTOER9aVf6DR++ydPc2OfMwcBNmE8ZFpgEW9OUM07wNA==
-
-"@chunkd/core@^8.0.1":
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-8.0.1.tgz#d274ef2800d81a202a80fd4c7770a7a52ad860ef"
-  integrity sha512-XQ6aNDSsySM1y7aUmH2X5ZZVuRuYM0qXW5JOS76Y4tQTsVmoiZ67CK3Rjp8TrTJWq4U+Edmt0TFuoqN2DaEqbg==
+"@chunkd/core@^8.0.1", "@chunkd/core@^8.0.2":
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-8.0.2.tgz#7dd293df3c0ce6800449a0b247d20688a6fce2f7"
+  integrity sha512-j26aewe71jzAKzQuY2sy2epkp1ZayDIJ1HcqxY8s06TlrQ0tbatXvHskjz8COX7sB3acU7XRGmvv5NDU4DoBOA==
 
 "@chunkd/fs@^8.0.1":
   version "8.0.1"
