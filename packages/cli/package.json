@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/cli",
-    "version": "6.1.0",
+    "version": "6.1.1",
     "repository": {
         "type": "git",
         "url": "https://github.com/blacha/cogeotiff.git",
@@ -19,7 +19,7 @@
     "dependencies": {
         "@chunkd/core": "^8.0.3",
         "@chunkd/fs": "^8.0.3",
-        "@cogeotiff/core": "^6.1.0",
+        "@cogeotiff/core": "^6.1.1",
         "@rushstack/ts-command-line": "^4.3.14",
         "@types/pino": "^6.3.11",
         "ansi-colors": "^4.1.1",

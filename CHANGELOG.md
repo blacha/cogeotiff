@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.1.1](https://github.com/blacha/cogeotiff/compare/v6.1.0...v6.1.1) (2022-01-26)
+
+
+### Bug Fixes
+
+* **core:** tag data count should be a uint32 for tiff not uint16 ([5e0f66c](https://github.com/blacha/cogeotiff/commit/5e0f66c213db265d83d976424b6a443be6afbe73))
+
+
+
+
+
 # [6.1.0](https://github.com/blacha/cogeotiff/compare/v6.0.2...v6.1.0) (2021-09-30)
 
 
