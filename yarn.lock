@@ -1030,9 +1030,9 @@
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
 "@types/ospec@^4.0.0", "@types/ospec@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@types/ospec/-/ospec-4.0.2.tgz#cb516a7c576df74d41d9fd4c6f810241750af31c"
-  integrity sha512-AFAcbt+oRaDd9zAPIW583oKNKUHWeisAI/soH3odv0Jm9ZFHGPYhU6L769StwOxxtaW8fu5i5SXqLBx7u+7lSA==
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@types/ospec/-/ospec-4.0.3.tgz#a15d0f0a5e3eae481fa19bfe04b5ad621c19ace8"
+  integrity sha512-eE1PW3v2rsX4N9SeEWas7SDdOpESBCw7H5YwsCiFmt0fu5SXAXXz/n7gRCt8xVQpArm0Gsn47V3oPLGxvj8pzA==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
