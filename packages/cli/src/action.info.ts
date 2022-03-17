@@ -1,11 +1,10 @@
-import { TiffTag, TiffTagGeo, TiffVersion, CogTiffImage } from '@cogeotiff/core';
+import { ChunkSourceBase } from '@chunkd/core';
+import { CogTiffImage, TiffTag, TiffTagGeo, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineFlagParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import c from 'ansi-colors';
 import { ActionUtil, CliResultMap } from './action.util.js';
-import { toByteSizeString } from './util.bytes.js';
 import { CliTable } from './cli.table.js';
-import { logger as CliLogger } from './cli.log.js';
-import { ChunkSourceBase } from '@chunkd/core';
+import { toByteSizeString } from './util.bytes.js';
 
 function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any): { key: string; value: string } {
     const key = `${String(tagId).padEnd(7, ' ')} ${String(tagName).padEnd(20)}`;

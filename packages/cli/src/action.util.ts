@@ -1,9 +1,8 @@
 import { ChunkSource } from '@chunkd/core';
-import { CogTiff } from '@cogeotiff/core';
 import { fsa } from '@chunkd/fs';
+import { CogTiff } from '@cogeotiff/core';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import c from 'ansi-colors';
-import { logger as CliLogger } from './cli.log.js';
 
 export interface CLiResultMapLine {
     key: string;
