@@ -1,6 +1,6 @@
 {
     "name": "@cogeotiff/fetchable",
-    "version": "6.0.0",
+    "version": "7.0.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/blacha/cogeotiff.git",
@@ -15,8 +15,6 @@
     "author": "Blayne Chard",
     "license": "MIT",
     "scripts": {},
-    "devDependencies": {
-    },
     "publishConfig": {
         "access": "public"
     }
