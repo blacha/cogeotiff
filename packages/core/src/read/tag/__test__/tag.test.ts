@@ -10,7 +10,7 @@ o.spec('TiffTag', () => {
     const cogSourceFile = new TestFileChunkSource(path.join(dirName, '../../../../../data/rgba8_tiled.tiff'));
 
     o.beforeEach(() => {
-        cogSourceFile.chunks.clear();
+        (cogSourceFile.chunks as Map<unknown, unknown>).clear();
     });
 
     o('should load lazy tags', async () => {

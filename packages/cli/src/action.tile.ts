@@ -40,7 +40,7 @@ export class ActionTile extends CommandLineAction {
 
         await writeTile(tif, x, y, z, '.', logger);
         const source = tif.source as ChunkSourceBase;
-        const chunkIds = [...source.chunks.values()];
+        const chunkIds = [...(source.chunks as Map<unknown, unknown>).values()];
 
         const result: CliResultMap[] = [
             {

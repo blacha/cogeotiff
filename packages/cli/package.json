@@ -17,20 +17,21 @@
     },
     "scripts": {},
     "dependencies": {
-        "@chunkd/core": "^8.0.3",
-        "@chunkd/fs": "^8.0.3",
+        "@chunkd/core": "^8.1.0",
+        "@chunkd/fs": "^8.1.0",
         "@cogeotiff/core": "^6.1.1",
         "@rushstack/ts-command-line": "^4.3.14",
-        "@types/pino": "^6.3.11",
+        
         "ansi-colors": "^4.1.1",
         "aws-sdk": "^2.781.0",
         "p-limit": "^4.0.0",
-        "pino": "^6.13.2",
+        "pino": "^7.8.1",
         "pretty-json-log": "^1.0.0",
         "source-map-support": "^0.5.12"
     },
     "devDependencies": {
-        "@types/node": "^14.0.3"
+        "@types/node": "^14.0.3",
+        "@types/pino": "^7.0.5"
     },
     "publishConfig": {
         "access": "public"

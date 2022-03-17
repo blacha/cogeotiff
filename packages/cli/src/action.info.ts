@@ -95,11 +95,11 @@ export class ActionCogInfo extends CommandLineAction {
         const { tif } = await ActionUtil.getCogSource(this.file);
         const [firstImage] = tif.images;
 
-        await firstImage.loadGeoTiffTags(CliLogger);
+        await firstImage.loadGeoTiffTags();
 
         const isCogOptimized = tif.options.isCogOptimized;
         const source = tif.source as ChunkSourceBase;
-        const chunkIds = [...source.chunks.values()];
+        const chunkIds = [...(source.chunks as Map<unknown, unknown>).values()];
 
         const imageInfo = '\n' + TiffImageInfoTable.print(tif.images, '\t\t').join('\n');
 
@@ -158,7 +158,7 @@ export class ActionCogInfo extends CommandLineAction {
                     title: `Image: ${img.id} - Tiff tags`,
                     keys: tiffTags.map((tagId) => formatTag(tagId, TiffTag[tagId], img.value(tagId))),
                 });
-                await img.loadGeoTiffTags(CliLogger);
+                await img.loadGeoTiffTags();
                 if (img.tagsGeo) {
                     const tiffTagsGeo = [...img.tagsGeo.keys()];
                     result.push({
