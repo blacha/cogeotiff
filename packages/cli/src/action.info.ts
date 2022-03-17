@@ -1,11 +1,10 @@
-import { TiffTag, TiffTagGeo, TiffVersion, CogTiffImage } from '@cogeotiff/core';
+import { ChunkSourceBase } from '@chunkd/core';
+import { CogTiffImage, TiffTag, TiffTagGeo, TiffVersion } from '@cogeotiff/core';
 import { CommandLineAction, CommandLineFlagParameter, CommandLineStringParameter } from '@rushstack/ts-command-line';
 import c from 'ansi-colors';
 import { ActionUtil, CliResultMap } from './action.util.js';
-import { toByteSizeString } from './util.bytes.js';
 import { CliTable } from './cli.table.js';
-import { logger as CliLogger } from './cli.log.js';
-import { ChunkSourceBase } from '@chunkd/core';
+import { toByteSizeString } from './util.bytes.js';
 
 function formatTag(tagId: TiffTag | TiffTagGeo, tagName: string, tagValue: any): { key: string; value: string } {
     const key = `${String(tagId).padEnd(7, ' ')} ${String(tagName).padEnd(20)}`;
@@ -95,11 +94,11 @@ export class ActionCogInfo extends CommandLineAction {
         const { tif } = await ActionUtil.getCogSource(this.file);
         const [firstImage] = tif.images;
 
-        await firstImage.loadGeoTiffTags(CliLogger);
+        await firstImage.loadGeoTiffTags();
 
         const isCogOptimized = tif.options.isCogOptimized;
         const source = tif.source as ChunkSourceBase;
-        const chunkIds = [...source.chunks.values()];
+        const chunkIds = [...(source.chunks as Map<unknown, unknown>).values()];
 
         const imageInfo = '\n' + TiffImageInfoTable.print(tif.images, '\t\t').join('\n');
 
@@ -158,7 +157,7 @@ export class ActionCogInfo extends CommandLineAction {
                     title: `Image: ${img.id} - Tiff tags`,
                     keys: tiffTags.map((tagId) => formatTag(tagId, TiffTag[tagId], img.value(tagId))),
                 });
-                await img.loadGeoTiffTags(CliLogger);
+                await img.loadGeoTiffTags();
                 if (img.tagsGeo) {
                     const tiffTagsGeo = [...img.tagsGeo.keys()];
                     result.push({

@@ -1,9 +1,8 @@
 import { ChunkSource } from '@chunkd/core';
-import { CogTiff } from '@cogeotiff/core';
 import { fsa } from '@chunkd/fs';
+import { CogTiff } from '@cogeotiff/core';
 import { CommandLineStringParameter } from '@rushstack/ts-command-line';
 import c from 'ansi-colors';
-import { logger as CliLogger } from './cli.log.js';
 
 export interface CLiResultMapLine {
     key: string;
@@ -23,7 +22,7 @@ export const ActionUtil = {
         if (source == null) throw new Error(`File "${file} is not valid`);
 
         const tif = new CogTiff(source);
-        await tif.init(false, CliLogger);
+        await tif.init(false);
         return { source, tif };
     },
     formatResult(title: string, result: CliResultMap[]): string[] {

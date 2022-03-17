@@ -16,7 +16,6 @@
     "license": "MIT",
     "scripts": {},
     "devDependencies": {
-        "@types/ospec": "^4.0.0"
     },
     "publishConfig": {
         "access": "public"

@@ -1,7 +1,7 @@
-import { LogType } from '@chunkd/core';
 import { CogTiff, TiffMimeType } from '@cogeotiff/core';
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import type pino from 'pino';
 
 const FileExtension: { [key: string]: string } = {
     [TiffMimeType.JPEG]: 'jpeg',
@@ -39,7 +39,7 @@ export async function writeTile(
     y: number,
     index: number,
     outputPath: string,
-    logger: LogType,
+    logger: pino.Logger,
 ): Promise<void> {
     const tile = await tif.getTile(x, y, index);
     if (tile == null) {

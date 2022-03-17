@@ -1,4 +1,3 @@
-import { LogType } from '@chunkd/core';
 import { CogTiff } from '../../cog.tiff.js';
 import { getTiffTagValueReader } from '../tiff.value.reader.js';
 import { CogTiffTagBase } from './tiff.tag.base.js';
@@ -27,8 +26,8 @@ export class CogTiffTagOffset extends CogTiffTagBase<number[]> {
     }
 
     /** Load the entire index into memory */
-    async load(l: LogType): Promise<void> {
-        await this.tiff.source.loadBytes(this.valuePointer, this.dataLength, l);
+    async load(): Promise<void> {
+        await this.tiff.source.loadBytes(this.valuePointer, this.dataLength);
         this.readValue();
     }
 
@@ -47,7 +46,7 @@ export class CogTiffTagOffset extends CogTiffTagBase<number[]> {
      * Read a specific value from the offset array
      * @param index index to read at
      */
-    async getValueAt(index: number, l?: LogType): Promise<number> {
+    async getValueAt(index: number): Promise<number> {
         if (this.loadedValues) return this.loadedValues[index];
 
         const dataSize = this.dataTypeSize;
@@ -55,7 +54,7 @@ export class CogTiffTagOffset extends CogTiffTagBase<number[]> {
         const convert = getTiffTagValueReader(this.dataType);
 
         if (!this.tiff.source.hasBytes(valueOffset, dataSize)) {
-            await this.tiff.source.loadBytes(valueOffset, dataSize, l);
+            await this.tiff.source.loadBytes(valueOffset, dataSize);
         }
         return convert(this.tiff.source, valueOffset) as number;
     }

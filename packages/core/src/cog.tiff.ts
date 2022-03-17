@@ -1,4 +1,4 @@
-import { ChunkSource, LogType } from '@chunkd/core';
+import { ChunkSource } from '@chunkd/core';
 import { CogTiffImage } from './cog.tiff.image.js';
 import { TiffEndian } from './const/tiff.endian.js';
 import { TiffTag } from './const/tiff.tag.id.js';
@@ -38,24 +38,24 @@ export class CogTiff {
      *
      * @param loadGeoKeys Whether to also initialize the GeoKeyDirectory
      */
-    init(loadGeoKeys = false, logger?: LogType): Promise<CogTiff> {
+    init(loadGeoKeys = false): Promise<CogTiff> {
         if (this._initPromise) return this._initPromise;
-        this._initPromise = this.doInit(loadGeoKeys, logger);
+        this._initPromise = this.doInit(loadGeoKeys);
         return this._initPromise;
     }
 
-    private async doInit(loadGeoKeys = false, logger?: LogType): Promise<CogTiff> {
+    private async doInit(loadGeoKeys = false): Promise<CogTiff> {
         if (this.isInitialized) return this;
         // Load the first few KB in, more loads will run as more data is required
-        await this.source.loadBytes(0, this.source.chunkSize, logger);
-        await this.fetchIfd(logger);
-        await Promise.all(this.images.map((c) => c.init(loadGeoKeys, logger)));
+        await this.source.loadBytes(0, this.source.chunkSize);
+        await this.fetchIfd();
+        await Promise.all(this.images.map((c) => c.init(loadGeoKeys)));
 
         this.isInitialized = true;
         return this;
     }
 
-    private async fetchIfd(logger?: LogType): Promise<void> {
+    private async fetchIfd(): Promise<void> {
         const view = this.cursor.seekTo(0);
         const endian = view.uint16();
         this.source.isLittleEndian = endian === TiffEndian.Little;
@@ -79,14 +79,14 @@ export class CogTiff {
         const ghostSize = nextOffsetIfd - this.cursor.currentOffset;
         // GDAL now stores metadata between the IFD inside a ghost storage area
         if (ghostSize > 0 && ghostSize < 16 * 1024) {
-            logger?.debug(
-                { offset: toHexString(this.cursor.currentOffset), length: toHexString(ghostSize) },
-                'GhostOptions',
-            );
+            // logger?.debug(
+            //     { offset: toHexString(this.cursor.currentOffset), length: toHexString(ghostSize) },
+            //     'GhostOptions',
+            // );
             // this.options.process(this.source, view.currentOffset, ghostSize);
         }
 
-        return this.processIfd(nextOffsetIfd, logger);
+        return this.processIfd(nextOffsetIfd);
     }
 
     getImage(z: number): CogTiffImage {
@@ -135,38 +135,20 @@ export class CogTiff {
         return image.getTile(x, y);
     }
 
-    private async processIfd(offset: number, logger?: LogType): Promise<void> {
-        logger?.trace({ offset: toHexString(offset) }, 'NextImageOffset');
+    private async processIfd(offset: number): Promise<void> {
+        if (!this.source.hasBytes(offset, 4096)) await this.source.loadBytes(offset, 4096);
 
-        if (!this.source.hasBytes(offset, 4096)) {
-            await this.source.loadBytes(offset, 4096, logger);
-        }
-
-        const { image, nextOffset } = await this.readIfd(offset, logger);
+        const { image, nextOffset } = await this.readIfd(offset);
         this.images.push(image);
-        const size = image.size;
-        if (image.isTiled()) {
-            const tile = image.tileSize;
-            logger?.debug(
-                {
-                    ...size,
-                    tileWidth: tile.width,
-                    tileHeight: tile.height,
-                    tileCount: Math.ceil(size.width / tile.width),
-                },
-                'GotImage',
-            );
-        }
 
-        if (nextOffset) await this.processIfd(nextOffset, logger);
+        if (nextOffset) await this.processIfd(nextOffset);
     }
 
-    private async readIfd(offset: number, log?: LogType): Promise<{ nextOffset: number; image: CogTiffImage }> {
-        if (!this.source.hasBytes(offset, 1024)) await this.source.loadBytes(offset, this.source.chunkSize, log);
+    private async readIfd(offset: number): Promise<{ nextOffset: number; image: CogTiffImage }> {
+        if (!this.source.hasBytes(offset, 1024)) await this.source.loadBytes(offset, this.source.chunkSize);
         const view = this.cursor.seekTo(offset);
         const tagCount = view.offset();
         const byteStart = offset + this.ifdConfig.offset;
-        const logger = log?.child({ imageId: this.images.length });
         const tags: Map<TiffTag, CogTiffTagBase> = new Map();
 
         let pos = byteStart;
@@ -174,33 +156,7 @@ export class CogTiff {
             const tag = CogTiffTag.create(this, pos);
             pos += tag.size;
 
-            if (tag.name == null) {
-                logger?.error({ code: toHexString(tag.id) }, `IFDUnknown`);
-                continue;
-            }
-
-            if (!tag.isReady) {
-                logger?.trace(
-                    {
-                        offset: toHexString(pos - offset),
-                        code: toHexString(tag.id),
-                        tagName: tag.name,
-                        ptr: toHexString(tag.valuePointer),
-                    },
-                    'PartialReadIFD',
-                );
-            } else {
-                logger?.trace(
-                    {
-                        offset: toHexString(pos - offset),
-                        code: toHexString(tag.id),
-                        tagName: tag.name,
-                        value: Array.isArray(tag.value) ? `[${tag.value.length}]` : tag.value,
-                    },
-                    'ReadIFD',
-                );
-            }
-
+            if (tag.name == null) throw new Error('Unknown IFD Tag: ' + toHexString(tag.id));
             tags.set(tag.id, tag);
         }
 

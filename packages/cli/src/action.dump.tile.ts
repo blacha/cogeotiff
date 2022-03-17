@@ -8,7 +8,8 @@ import { logger as CliLogger } from './cli.log.js';
 import { toByteSizeString } from './util.bytes.js';
 import { getTileName, writeTile } from './util.tile.js';
 import PLimit from 'p-limit';
-import { ChunkSourceBase, LogType } from '@chunkd/core';
+import { ChunkSourceBase } from '@chunkd/core';
+import pino from 'pino';
 
 const Rad2Deg = 180 / Math.PI;
 const A = 6378137.0; // 900913 properties.
@@ -54,7 +55,7 @@ export class ActionDumpTile extends CommandLineAction {
     private imageIndex: CommandLineIntegerParameter | null = null;
     private output: CommandLineStringParameter | null = null;
     private outputCount = 0;
-    private logger: LogType;
+    private logger: pino.Logger;
 
     public constructor() {
         super({
@@ -143,7 +144,7 @@ export class ActionDumpTile extends CommandLineAction {
         const tileCount = img.tileCount;
 
         // Load all offsets in
-        await img.tileOffset.load(CliLogger);
+        await img.tileOffset.load();
 
         for (let x = 0; x < tileCount.x; x++) {
             for (let y = 0; y < tileCount.y; y++) {
@@ -187,7 +188,7 @@ export class ActionDumpTile extends CommandLineAction {
         await this.dumpBounds(tif, this.output.value, index);
 
         const source = tif.source as ChunkSourceBase;
-        const chunkIds = [...source.chunks.values()];
+        const chunkIds = [...(source.chunks as Map<unknown, unknown>).values()];
         const result: CliResultMap[] = [
             {
                 keys: [
