@@ -4506,9 +4506,9 @@ pino-std-serializers@^4.0.0:
   integrity sha512-cK0pekc1Kjy5w9V2/n+8MkZwusa6EyyxfeQCB799CQRhRt/CqYKiWs5adeu8Shve2ZNffvfC/7J64A2PJo1W/Q==
 
 pino@*, pino@^7.8.1:
-  version "7.8.1"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-7.8.1.tgz#f8a7b590a6f2321e2f23b91515763530efbd61bb"
-  integrity sha512-G0AVnaJBBtbdOpZ3z0/QD3R57BWwjVo4K7e+c5mHKjNCYIY1FIKuNlWjVJfCVQ4Bq6iN/yAAh5OCeeTI7OXosA==
+  version "7.9.2"
+  resolved "https://registry.yarnpkg.com/pino/-/pino-7.9.2.tgz#0519ac79b9db17f0c63bb4267f7e8133f5c517ad"
+  integrity sha512-c8wmB2PuhdJurYPRl/eo3+PosHe7Ep6GZvBJFIrp9oV1YRZQ3qm3MujaEolaKUfwX8cDL96WKCWWMedB2drXqw==
   dependencies:
     fast-redact "^3.0.0"
     on-exit-leak-free "^0.2.0"
@@ -4519,7 +4519,7 @@ pino@*, pino@^7.8.1:
     real-require "^0.1.0"
     safe-stable-stringify "^2.1.0"
     sonic-boom "^2.2.1"
-    thread-stream "^0.13.0"
+    thread-stream "^0.15.0"
 
 pkg-dir@^4.2.0:
   version "4.2.0"
@@ -5454,10 +5454,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-thread-stream@^0.13.0:
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/thread-stream/-/thread-stream-0.13.2.tgz#de8ea87584baee625c631947ec73494aa86131c8"
-  integrity sha512-woZFt0cLFkPdhsa+IGpRo1jiSouaHxMIljzTgt30CMjBWoUYbbcHqnunW5Yv+BXko9H05MVIcxMipI3Jblallw==
+thread-stream@^0.15.0:
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/thread-stream/-/thread-stream-0.15.1.tgz#5aba24a35aa5e9e4eb66173826443d7167b34b07"
+  integrity sha512-SCnuIT27gc2h/F/RY2peuC7brgLy+1oXU+7yOIAITz1z5stDpXCF5rAoFcykjuK6ifbTlKAHL7Ccq8oc5Btv1w==
   dependencies:
     real-require "^0.1.0"
 
