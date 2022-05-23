@@ -23,41 +23,41 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@chunkd/core@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-8.1.0.tgz#724da02f4059eef853c8b690af6729d77d54702c"
-  integrity sha512-Ij+UlGyz9kQW27/NKBDYh89v+6jOHoVdKv6bhxNG1SQzJRThumbnJelbm27rOYzF1MTbgvECIWjEqHTeSljtOQ==
+"@chunkd/core@^8.1.0", "@chunkd/core@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-8.2.0.tgz#4c0ecc63afb827342b0e1fcb6fd2bd8f0a19b6c4"
+  integrity sha512-VQIrNisb/3pU+yOkUClZWzoNid0NwE2mhZQMtaCQYnzh2/IeqFJD+QqPfj9xSoZ3g8GpS7obwqLebxdVe4sczg==
 
 "@chunkd/fs@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-8.1.0.tgz#730ccd29cd8d5d467327d5ba8ada902ca1ec703a"
-  integrity sha512-+xnVWnnWnvPR3HOYwbjmEnwveYodnS7B9rzrEtCi1wS/vAxdJRywyawgTx1RIUIcF9R1Orex5w8kx2vsZgIRfQ==
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-8.2.0.tgz#a1a46472a4a0380361e54587716a41a1037053b9"
+  integrity sha512-RDjHUXhANB1UFHyp8JWnSPnOGXKiz4spdSyusOdzp2lQ++iVV0t/n6dKW07NhsSJaEhiKz/5mW7SlR6KD1diUA==
   dependencies:
-    "@chunkd/core" "^8.1.0"
-    "@chunkd/source-aws" "^8.1.0"
-    "@chunkd/source-file" "^8.1.0"
-    "@chunkd/source-http" "^8.1.0"
+    "@chunkd/core" "^8.2.0"
+    "@chunkd/source-aws" "^8.2.0"
+    "@chunkd/source-file" "^8.2.0"
+    "@chunkd/source-http" "^8.2.0"
 
-"@chunkd/source-aws@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-8.1.0.tgz#2cfe1f32132e363c1389e3ce6242f3fe0faa2eb9"
-  integrity sha512-N1zAOFuPK8J1GfvlW9lbYxExXMud7MIpLTcWV6x9rBlnWrmCV9QtfxvJjSCvb5Ji9xdUNxmAN/C+1nIiLyHuKw==
+"@chunkd/source-aws@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-8.2.0.tgz#4cf657964d497abb30473a89eb826cb6e7f10cd3"
+  integrity sha512-BKfauewBumdxDfmyI0lGwk//4qjOmjPCydmlb0kkV4GnDhbu3Co5in+53XPaF4Vhk6aquUR5cODV5dDhmjnOEA==
   dependencies:
-    "@chunkd/core" "^8.1.0"
+    "@chunkd/core" "^8.2.0"
 
-"@chunkd/source-file@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-8.1.0.tgz#f6b9378a4610194eadda2212185f0cc2df32a27e"
-  integrity sha512-6McqwaoLNjsv0AygZoRvw6ZC1+aPHyNJMCZUG7g5nDPtNwYWFBBTn4RIeRPUyN40m5/O0YTINvpYMnJamfePZw==
+"@chunkd/source-file@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-8.2.0.tgz#fe7581241c0410083769624030cbc2ca32234515"
+  integrity sha512-MDZyP8LVWxkaTONqiB4JxCnCs7V+j3VFZP81GDO2Ln6y2lKtjOuYPMoHqyNIHFnTjdJ9dbFgdZ6AL58BoLLh4Q==
   dependencies:
-    "@chunkd/core" "^8.1.0"
+    "@chunkd/core" "^8.2.0"
 
-"@chunkd/source-http@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-8.1.0.tgz#fadf250f515839f1d8a021f2892ed9cd68641c79"
-  integrity sha512-iRRuimlzZ0shjKkgfp2uCgHWEFySMhQQzINmuJspWU+sDSk5jQC2gnKGz2fDxaqNe8dgRZTb639VAfFMHPkTJg==
+"@chunkd/source-http@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-8.2.0.tgz#2035cc92b761d1002b51a1de8b3cf8c9c32f121b"
+  integrity sha512-tn7CbjJ+kUeXmxNM8WNTvJ6K2oGxIgUYOE8Hw2fzYFZk5fsgtgRZiuvLVmy5WVIi/rZo+UGro0g3lnZKhaRQIg==
   dependencies:
-    "@chunkd/core" "^8.1.0"
+    "@chunkd/core" "^8.2.0"
     node-fetch "^3.1.0"
 
 "@eslint/eslintrc@^1.3.0":
@@ -4532,10 +4532,11 @@ pino-std-serializers@^4.0.0:
   integrity sha512-cK0pekc1Kjy5w9V2/n+8MkZwusa6EyyxfeQCB799CQRhRt/CqYKiWs5adeu8Shve2ZNffvfC/7J64A2PJo1W/Q==
 
 pino@*, pino@^7.8.1:
-  version "7.9.2"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-7.9.2.tgz#0519ac79b9db17f0c63bb4267f7e8133f5c517ad"
-  integrity sha512-c8wmB2PuhdJurYPRl/eo3+PosHe7Ep6GZvBJFIrp9oV1YRZQ3qm3MujaEolaKUfwX8cDL96WKCWWMedB2drXqw==
+  version "7.11.0"
+  resolved "https://registry.yarnpkg.com/pino/-/pino-7.11.0.tgz#0f0ea5c4683dc91388081d44bff10c83125066f6"
+  integrity sha512-dMACeu63HtRLmCG8VKdy4cShCPKaYDR4youZqoSWLxl5Gu99HUw8bw75thbPv9Nip+H+QYX8o3ZJbTdVZZ2TVg==
   dependencies:
+    atomic-sleep "^1.0.0"
     fast-redact "^3.0.0"
     on-exit-leak-free "^0.2.0"
     pino-abstract-transport v0.5.0
@@ -4545,7 +4546,7 @@ pino@*, pino@^7.8.1:
     real-require "^0.1.0"
     safe-stable-stringify "^2.1.0"
     sonic-boom "^2.2.1"
-    thread-stream "^0.15.0"
+    thread-stream "^0.15.1"
 
 pkg-dir@^4.2.0:
   version "4.2.0"
@@ -5487,10 +5488,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-thread-stream@^0.15.0:
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/thread-stream/-/thread-stream-0.15.1.tgz#5aba24a35aa5e9e4eb66173826443d7167b34b07"
-  integrity sha512-SCnuIT27gc2h/F/RY2peuC7brgLy+1oXU+7yOIAITz1z5stDpXCF5rAoFcykjuK6ifbTlKAHL7Ccq8oc5Btv1w==
+thread-stream@^0.15.1:
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/thread-stream/-/thread-stream-0.15.2.tgz#fb95ad87d2f1e28f07116eb23d85aba3bc0425f4"
+  integrity sha512-UkEhKIg2pD+fjkHQKyJO3yoIvAP3N6RlNFt2dUhcS1FGvCD1cQa1M/PGknCLFIyZdtJOWQjejp7bdNqmN7zwdA==
   dependencies:
     real-require "^0.1.0"
 
