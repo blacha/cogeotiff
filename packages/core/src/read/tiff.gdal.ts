@@ -32,7 +32,6 @@ export enum GhostOptionTileLeader {
  */
 export class CogTifGhostOptions {
     options: Map<GhostOption, string> = new Map();
-    isLoaded: boolean;
     source: CogTiff;
 
     /**
