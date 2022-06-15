@@ -443,6 +443,30 @@ export class CogTiffImage {
         return this.getBytes(offset, imageSize);
     }
 
+    /**
+     * Does this tile exist in the tiff and does it actually have a value
+     *
+     * Sparse tiffs can have a lot of empty tiles, this checks to see if the tile actually has data.
+     *
+     * @param x Tile x offset
+     * @param y Tile y offset
+     * @returns if the tile exists and has data
+     */
+    async hasTile(x: number, y: number): Promise<boolean> {
+        const tiles = this.tileSize;
+        const size = this.size;
+
+        if (tiles == null) throw new Error('Tiff is not tiled');
+
+        // TODO support GhostOptionTileOrder
+        const nyTiles = Math.ceil(size.height / tiles.height);
+        const nxTiles = Math.ceil(size.width / tiles.width);
+        if (x >= nxTiles || y >= nyTiles) return false;
+        const idx = y * nxTiles + x;
+        const ret = await this.getTileSize(idx);
+        return ret.offset > 0;
+    }
+
     protected async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
         // GDAL optimizes tiles by storing the size of the tile in
         // the few bytes leading up to the tile

@@ -73,6 +73,16 @@ o.spec('CogTiled', () => {
         o(firstImage.stripCount).equals(0);
         o(firstImage.isTiled()).equals(true);
     });
+
+    o('should hasTile for every tile', async () => {
+        const [firstImage] = cog.images;
+
+        for (let x = 0; x < firstImage.tileCount.x; x++) {
+            for (let y = 0; y < firstImage.tileCount.y; y++) {
+                o(await firstImage.hasTile(x, y)).equals(true);
+            }
+        }
+    });
 });
 
 o.spec('Cog.Big', () => {
@@ -132,6 +142,8 @@ o.spec('Cog.Sparse', () => {
 
         for (let x = 0; x < tileCount.x; x++) {
             for (let y = 0; y < tileCount.y; y++) {
+                const hasTile = await img.hasTile(x, y);
+                o(hasTile).equals(false);
                 const tileXy = await img.getTile(x, y);
                 const tileXyz = await cog.getTile(x, y, z);
                 o(tileXy).equals(null)(`Tile x:${x} y:${y} should be empty`);
