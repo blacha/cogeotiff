@@ -7,7 +7,7 @@ import 'source-map-support/register.js';
 import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake.js';
 import { CogTiff } from '../cog.tiff.js';
 import { TiffMimeType } from '../const/index.js';
-import { SourceMemory } from '@chunkd/core';
+import { ByteSize, SourceMemory } from '@chunkd/core';
 import { fileURLToPath } from 'url';
 
 const __dirname = fileURLToPath(import.meta.url);
@@ -150,6 +150,12 @@ o.spec('Cog.Sparse', () => {
                 o(tileXyz).equals(null)(`Tile x:${x} y:${y} z: ${z} should be empty`);
             }
         }
+    });
+
+    o('should have ghost options', () => {
+        o(cog.options.options.size).equals(6);
+        o(cog.options.tileLeaderByteSize).equals(ByteSize.UInt32);
+        o(cog.options.isCogOptimized).equals(true);
     });
 });
 
