@@ -14,7 +14,7 @@ export class CogTiff {
     source: ChunkSource;
     version = TiffVersion.Tiff;
     images: CogTiffImage[] = [];
-    options = new CogTifGhostOptions();
+    options = new CogTifGhostOptions(this);
 
     private cursor: CogSourceCursor;
     ifdConfig: TiffIfdConfig = TagTiffConfig;
@@ -83,7 +83,7 @@ export class CogTiff {
             //     { offset: toHexString(this.cursor.currentOffset), length: toHexString(ghostSize) },
             //     'GhostOptions',
             // );
-            // this.options.process(this.source, view.currentOffset, ghostSize);
+            this.options.setHeaderLocation(view.currentOffset, ghostSize);
         }
 
         return this.processIfd(nextOffsetIfd);

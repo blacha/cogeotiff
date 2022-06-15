@@ -28,11 +28,6 @@ export class ActionTile extends CommandLineAction {
             throw new Error('XYZ was not defined');
         }
 
-        const isCogOptimized = tif.options.isCogOptimized;
-        if (!isCogOptimized) {
-            logger.warn('COG is not optimized, fetching specific tiles will be slow.');
-        }
-
         const [x, y, z] = this.xyz.value.split(',').map((c) => parseInt(c));
         if (isNaN(x) || isNaN(y) || isNaN(z)) {
             throw new Error('Invalid XYZ, format: "X,Y,Z"');

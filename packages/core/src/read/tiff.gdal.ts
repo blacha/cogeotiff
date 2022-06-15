@@ -1,4 +1,5 @@
 import { ByteSize, ChunkSource } from '@chunkd/core';
+import { CogTiff } from '../cog.tiff.js';
 import { getReverseEnumValue } from '../util/util.enum.js';
 
 //   GDAL_STRUCTURAL_METADATA_SIZE: '000140 bytes',
@@ -34,8 +35,29 @@ export const GhostOptionTileLeaderSize: { [key: string]: ByteSize } = {
  * this class represents the optimizations that can be used
  */
 export class CogTifGhostOptions {
-    options: Map<GhostOption, string> = new Map();
+    _options: Map<GhostOption, string> = new Map();
+    isLoaded: boolean;
+    source: CogTiff;
+    // Load the ghost header bytes later
+    isProcessed = false;
+    headerOffset = -1;
+    headerLength = -1;
+    constructor(source: CogTiff) {
+        this.source = source;
+    }
 
+    setHeaderLocation(offset: number, length: number): void {
+        this.headerOffset = offset;
+        this.headerLength = length;
+    }
+
+    get options(): Map<GhostOption, string> {
+        if (this.isLoaded) return this._options;
+        if (this.headerOffset === -1) throw new Error('No Ghost headers have been loaded');
+        this.process(this.source.source.bytes(this.headerOffset, this.headerLength));
+        this.isLoaded = true;
+        return this._options;
+    }
     /**
      * Has GDAL optimized this tif
      */
@@ -51,20 +73,17 @@ export class CogTifGhostOptions {
         return this.options.get(GhostOption.KNOWN_INCOMPATIBLE_EDITION) === 'YES';
     }
 
-    private set(key: GhostOption, val: string): void {
-        this.options.set(key, val);
-    }
-
     /**
      * Load the ghost options from a source
      * @param source Source to load from
      * @param offset Byte offset to start reading
      * @param length max number of bytes to read
      */
-    process(source: ChunkSource, offset: number, length: number): void {
+    process(bytes: Uint8Array): void {
+        this.isProcessed = true;
         const chars: string[] = [];
-        for (let i = offset; i < offset + length; i++) {
-            const char = source.getUint8(i);
+        for (let i = 0; i < bytes.length; i++) {
+            const char = bytes[i];
             if (char === 0) continue;
             chars.push(String.fromCharCode(char));
         }
@@ -76,7 +95,7 @@ export class CogTifGhostOptions {
             .map((c) => c.split('='));
 
         for (const [key, value] of keyValPairs) {
-            this.options.set(GhostOption[key as GhostOption], value);
+            this._options.set(GhostOption[key as GhostOption], value);
         }
     }
 
