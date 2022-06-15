@@ -1,4 +1,4 @@
-import { ByteSize, ChunkSource } from '@chunkd/core';
+import { ByteSize } from '@chunkd/core';
 import { CogTiff } from '../cog.tiff.js';
 import { getReverseEnumValue } from '../util/util.enum.js';
 
