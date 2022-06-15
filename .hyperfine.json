@@ -1,6 +1,6 @@
 [
     {
-        "name": "Read 300 tiles from sparse.tiff",
+        "name": "Read 15,000 tiles from sparse.tiff",
         "command": "node packages/core/build/__benchmark__/cog.read.benchmark.js packages/core/data/sparse.tiff"
     }
 ]
