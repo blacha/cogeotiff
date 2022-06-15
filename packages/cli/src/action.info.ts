@@ -103,6 +103,7 @@ export class ActionCogInfo extends CommandLineAction {
         const imageInfo = '\n' + TiffImageInfoTable.print(tif.images, '\t\t').join('\n');
 
         const gdalMetadata = parseGdalMetadata(firstImage);
+        const ghostOptions = [...tif.options.options.entries()];
 
         const isGeoLocated = firstImage.isGeoLocated;
 
@@ -137,15 +138,16 @@ export class ActionCogInfo extends CommandLineAction {
                 keys: [
                     { key: 'COG optimized', value: tif.options.isCogOptimized },
                     tif.options.isBroken ? { key: 'COG broken', value: tif.options.isBroken } : null,
-                    isCogOptimized ? { key: 'Tile order', value: tif.options.tileOrder } : null,
-                    isCogOptimized
+                    isCogOptimized ? { key: 'Mask interleaved', value: tif.options.isMaskInterleaved } : null,
+                    ghostOptions.length > 0
                         ? {
-                              key: 'Tile leader',
-                              value: `${tif.options.tileLeader} - ${tif.options.tileLeaderByteSize} Bytes`,
+                              key: 'Ghost Options',
+                              value: '\n' + ghostOptions.map((c) => `\t\t${c[0]}=${c[1]}`).join('\n'),
                           }
                         : null,
-                    isCogOptimized ? { key: 'Mask interleaved', value: tif.options.isMaskInterleaved } : null,
-                    gdalMetadata ? { key: 'Metadata', value: gdalMetadata.map((c) => `\t\t${c}`).join('\n') } : null,
+                    gdalMetadata
+                        ? { key: 'Metadata', value: '\n' + gdalMetadata.map((c) => `\t\t${c}`).join('\n') }
+                        : null,
                 ],
             },
         ];
