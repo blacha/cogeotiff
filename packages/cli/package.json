@@ -24,7 +24,7 @@
         "ansi-colors": "^4.1.1",
         "aws-sdk": "^2.781.0",
         "p-limit": "^4.0.0",
-        "pino": "^7.8.1",
+        "pino": "^8.0.0",
         "pretty-json-log": "^1.0.0",
         "source-map-support": "^0.5.12"
     },
