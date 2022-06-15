@@ -1,6 +1,5 @@
 import { ByteSize } from '@chunkd/core';
 import { CogTiff } from '../cog.tiff.js';
-import { getReverseEnumValue } from '../util/util.enum.js';
 
 //   GDAL_STRUCTURAL_METADATA_SIZE: '000140 bytes',
 //   LAYOUT: 'IFDS_BEFORE_DATA',
@@ -26,9 +25,6 @@ export enum GhostOptionTileOrder {
 export enum GhostOptionTileLeader {
     uint32 = 'SIZE_AS_UINT4',
 }
-export const GhostOptionTileLeaderSize: { [key: string]: ByteSize } = {
-    uint32: ByteSize.UInt32,
-};
 
 /**
  * GDAL has made a ghost set of options for Tif files
