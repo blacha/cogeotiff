@@ -156,6 +156,16 @@ o.spec('Cog.Sparse', () => {
         o(cog.options.options.size).equals(6);
         o(cog.options.tileLeaderByteSize).equals(ByteSize.UInt32);
         o(cog.options.isCogOptimized).equals(true);
+
+        const entries = [...cog.options.options.entries()];
+        o(entries).deepEquals([
+            ['GDAL_STRUCTURAL_METADATA_SIZE', '000140 bytes'],
+            ['LAYOUT', 'IFDS_BEFORE_DATA'],
+            ['BLOCK_ORDER', 'ROW_MAJOR'],
+            ['BLOCK_LEADER', 'SIZE_AS_UINT4'],
+            ['BLOCK_TRAILER', 'LAST_4_BYTES_REPEATED'],
+            ['KNOWN_INCOMPATIBLE_EDITION', 'NO'],
+        ]);
     });
 });
 

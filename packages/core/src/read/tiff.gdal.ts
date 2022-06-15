@@ -1,13 +1,6 @@
 import { ByteSize } from '@chunkd/core';
 import { CogTiff } from '../cog.tiff.js';
 
-//   GDAL_STRUCTURAL_METADATA_SIZE: '000140 bytes',
-//   LAYOUT: 'IFDS_BEFORE_DATA',
-//   BLOCK_ORDER: 'ROW_MAJOR',
-//   BLOCK_LEADER: 'SIZE_AS_UINT4',
-//   BLOCK_TRAILER: 'LAST_4_BYTES_REPEATED',
-//   KNOWN_INCOMPATIBLE_EDITION: 'NO'
-
 export enum GhostOption {
     GDAL_STRUCTURAL_METADATA_SIZE = 'GDAL_STRUCTURAL_METADATA_SIZE',
     LAYOUT = 'LAYOUT',
@@ -31,7 +24,7 @@ export enum GhostOptionTileLeader {
  * this class represents the optimizations that can be used
  */
 export class CogTifGhostOptions {
-    options: Map<GhostOption, string> = new Map();
+    options: Map<string, string> = new Map();
     source: CogTiff;
 
     /**
@@ -51,26 +44,28 @@ export class CogTifGhostOptions {
 
     /**
      * Load the ghost options from a source
-     * @param source Source to load from
-     * @param offset Byte offset to start reading
-     * @param length max number of bytes to read
+     * @param bytes the ghost header bytes
      */
     process(bytes: Uint8Array): void {
-        const chars: string[] = [];
+        let key = '';
+        let value = '';
+        let setValue = false;
         for (let i = 0; i < bytes.length; i++) {
-            const char = bytes[i];
-            if (char === 0) continue;
-            chars.push(String.fromCharCode(char));
-        }
+            const charCode = bytes[i];
+            if (charCode === 0) break;
 
-        const keyValPairs = chars
-            .join('')
-            .trim()
-            .split('\n')
-            .map((c) => c.split('='));
-
-        for (const [key, value] of keyValPairs) {
-            this.options.set(GhostOption[key as GhostOption], value);
+            const char = String.fromCharCode(charCode);
+            if (char === '\n') {
+                this.options.set(key, value);
+                key = '';
+                value = '';
+                setValue = false;
+            } else if (char === '=') {
+                setValue = true;
+            } else {
+                if (setValue) value += char;
+                else key += char;
+            }
         }
     }
 
