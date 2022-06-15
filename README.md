@@ -9,7 +9,7 @@ Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 -  Lazy load COG images and metadata
 -  Supports huge 100GB+ COGs
 -  Uses GDAL COG optimizations, generally only one or two reads per tile!
--  Loads COGs from URL, File or AWS S3
+-  Loads COGs from URL, File, Google Cloud or AWS S3
 -  Used in production for [LINZ's Basemaps](https://github.com/linz/basemaps) with billions of tiles fetched from COGs!
 
 ## Usage
