@@ -446,12 +446,12 @@ export class CogTiffImage {
     protected async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
         // GDAL optimizes tiles by storing the size of the tile in
         // the few bytes leading up to the tile
-        if (this.tif.options.tileLeaderByteSize) {
+        const leaderBytes = this.tif.options.tileLeaderByteSize;
+        if (leaderBytes) {
             const offset = await this.getTileOffset(index);
             // Sparse COG no data found
             if (offset === 0) return { offset: 0, imageSize: 0 };
 
-            const leaderBytes = this.tif.options.tileLeaderByteSize;
             // This fetch will generally load in the bytes needed for the image too
             // provided the image size is less than the size of a chunk
             await this.tif.source.loadBytes(offset - leaderBytes, leaderBytes);

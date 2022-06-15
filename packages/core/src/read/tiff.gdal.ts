@@ -35,29 +35,10 @@ export const GhostOptionTileLeaderSize: { [key: string]: ByteSize } = {
  * this class represents the optimizations that can be used
  */
 export class CogTifGhostOptions {
-    _options: Map<GhostOption, string> = new Map();
+    options: Map<GhostOption, string> = new Map();
     isLoaded: boolean;
     source: CogTiff;
-    // Load the ghost header bytes later
-    isProcessed = false;
-    headerOffset = -1;
-    headerLength = -1;
-    constructor(source: CogTiff) {
-        this.source = source;
-    }
 
-    setHeaderLocation(offset: number, length: number): void {
-        this.headerOffset = offset;
-        this.headerLength = length;
-    }
-
-    get options(): Map<GhostOption, string> {
-        if (this.isLoaded) return this._options;
-        if (this.headerOffset === -1) throw new Error('No Ghost headers have been loaded');
-        this.process(this.source.source.bytes(this.headerOffset, this.headerLength));
-        this.isLoaded = true;
-        return this._options;
-    }
     /**
      * Has GDAL optimized this tif
      */
@@ -80,7 +61,6 @@ export class CogTifGhostOptions {
      * @param length max number of bytes to read
      */
     process(bytes: Uint8Array): void {
-        this.isProcessed = true;
         const chars: string[] = [];
         for (let i = 0; i < bytes.length; i++) {
             const char = bytes[i];
@@ -95,36 +75,20 @@ export class CogTifGhostOptions {
             .map((c) => c.split('='));
 
         for (const [key, value] of keyValPairs) {
-            this._options.set(GhostOption[key as GhostOption], value);
+            this.options.set(GhostOption[key as GhostOption], value);
         }
-    }
-
-    private _getReverse<T>(e: Record<string, any>, key: GhostOption): T | null {
-        const opt = this.options.get(key);
-        if (opt == null) return null;
-        return getReverseEnumValue<T>(e, opt);
-    }
-
-    /**
-     * The ordering of tiles inside the tif
-     */
-    get tileOrder(): GhostOptionTileOrder | null {
-        return this._getReverse(GhostOptionTileOrder, GhostOption.BLOCK_ORDER);
-    }
-
-    /**
-     * Are tiles stored with the file size immediately before the tile
-     */
-    get tileLeader(): GhostOptionTileLeader | null {
-        return this._getReverse(GhostOptionTileLeader, GhostOption.BLOCK_LEADER);
     }
 
     /**
      * If the tile leader is set, how many bytes are allocated to the tile size
      */
     get tileLeaderByteSize(): ByteSize | null {
-        if (this.tileLeader == null) return null;
-        return GhostOptionTileLeaderSize[this.tileLeader];
+        switch (this.options.get(GhostOption.BLOCK_LEADER)) {
+            case GhostOptionTileLeader.uint32:
+                return ByteSize.UInt32;
+            default:
+                return null;
+        }
     }
 
     get isMaskInterleaved(): boolean {
