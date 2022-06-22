@@ -23,50 +23,50 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@chunkd/core@^8.1.0", "@chunkd/core@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-8.3.0.tgz#3bdd25e0d8da12ba0d752ba61a16d90c308eebf9"
-  integrity sha512-tM5ulZ4Jc/vWRtYXNZCYLMXZBhE76mFTs/Ut2Bx0c5yI02EBK9lgVNXt5gRSEPc/A1Zsod0W4kLl6Yq2NcInWg==
+"@chunkd/core@^8.1.0", "@chunkd/core@^8.4.0":
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-8.4.0.tgz#749434f6ae6d8fd95405bb0b33d73ebae6583d79"
+  integrity sha512-ayU+POyD/klSRJVf/x4ePeNnl6o+AFD87gTkqvwCuvh00snaJZGgtO7q8zzErAcDcvLla6mCElHtaQO6kn3dVw==
 
 "@chunkd/fs@^8.1.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-8.3.0.tgz#4c43e7435fe85c02f86584a702249dfd9af8bc42"
-  integrity sha512-aqBGZX1eHjWCHHgQ5l1WSS0fNS+OOQbOwKlO9OS1oZc3P0EUqhfmpawugxTeGREMhVE3VQ6o7t/VGOUoUCouZA==
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-8.4.0.tgz#cbb4add22a163b1a610e2af1339d88de9ea4585d"
+  integrity sha512-0PghRk1R8aJAP6YrGLQlQHlQNDEClAvwD6fN4J/K+FZ4ik0/RqzrcPWP54pNmGoZvGWqnNs0M2gG+bq2hJi8+g==
   dependencies:
-    "@chunkd/core" "^8.3.0"
-    "@chunkd/source-file" "^8.3.0"
-    "@chunkd/source-http" "^8.3.0"
+    "@chunkd/core" "^8.4.0"
+    "@chunkd/source-file" "^8.4.0"
+    "@chunkd/source-http" "^8.4.0"
   optionalDependencies:
-    "@chunkd/source-aws" "^8.3.0"
-    "@chunkd/source-google-cloud" "^8.3.0"
+    "@chunkd/source-aws" "^8.4.0"
+    "@chunkd/source-google-cloud" "^8.4.0"
 
-"@chunkd/source-aws@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-8.3.0.tgz#c58f150d576cdbd718f36506a516b297d15aba0e"
-  integrity sha512-WwtEKpu0sA7xDRE52d9JLAXuxFErf1QoMmWJqE1oD3KymTlbjRN0EbXqIdVjLIynwl83RpGbnJWtwDwLsVO31A==
+"@chunkd/source-aws@^8.4.0":
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-8.4.0.tgz#4dc8ab748a87fd15f29d93ef872375998e90f0e2"
+  integrity sha512-GwUuQ2Z6mdws1hRv7nilszvTnGZx+X3IMtB+wR8oT76ISxd1fXp19tGB7YqtcHnqQIBMWCk+XzjfDoFyGJ2xcg==
   dependencies:
-    "@chunkd/core" "^8.3.0"
+    "@chunkd/core" "^8.4.0"
 
-"@chunkd/source-file@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-8.3.0.tgz#0268d80018a2c2697c66f2b3ca940dd90ea1ba67"
-  integrity sha512-WIYjw06NSeIeW8nlcaAvsDCApagTu6Ne5DslSDFYFlVE4H4Iv7FEdrPghHGjsIZEdPPVPewHNhoQtU4Pfa12SA==
+"@chunkd/source-file@^8.4.0":
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-8.4.0.tgz#6567f4170e3b8b762fb78db01b5d15f8bf3c9dc3"
+  integrity sha512-yk0PRpSO24MrkXJbDseeVErZ7SAOj/FptNvh3GNGd6tUEIFpQIROsQdrRyGWBKh+geK0JI/edE/r+rmDzCC6eQ==
   dependencies:
-    "@chunkd/core" "^8.3.0"
+    "@chunkd/core" "^8.4.0"
 
-"@chunkd/source-google-cloud@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-google-cloud/-/source-google-cloud-8.3.0.tgz#2746f1bd97b9a8f7f5bee76741fd1bdfdfa494ad"
-  integrity sha512-4uo8s6e66QNkL/79nK8zu+pPWDEHfx+GYvz61/xJClihZ7EumcMX1RMHqoIYcwTU55BnzNMZ9GDJjXHa6tIC7g==
+"@chunkd/source-google-cloud@^8.4.0":
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-google-cloud/-/source-google-cloud-8.4.0.tgz#4dc7b74817ac73ceb5bcb1cbd38e99875ad5b8a4"
+  integrity sha512-36q9p5j6tL719y3PMZe+LO0wVZpaWFxAwnoY064aT430+H4FCPjJQ0Eon0Z+akEl0LU6+c3USS7hkHpchsKhMg==
   dependencies:
-    "@chunkd/core" "^8.3.0"
+    "@chunkd/core" "^8.4.0"
 
-"@chunkd/source-http@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-8.3.0.tgz#c328b4d01178a7d50c20290fc858d87a883fb5c2"
-  integrity sha512-IzSnUjxc2IDVve2fqtnVWQygXuUXCOBmfXPYWxZqF2ae5hc5t62ZNCwxoiJOsnTI5gVwrse35Ih9rUcMh6OMhg==
+"@chunkd/source-http@^8.4.0":
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-8.4.0.tgz#a8e2260aaa0c1293f528f8d36d7b2a7e79dcb026"
+  integrity sha512-IXkErCyuKC/WcIZGjREy4OQsXyA29yhFtu2fGXmv5AroEVRltDX7wA9dVzzOBw/jhgLTuvbFvHvtdWn1A8OWxA==
   dependencies:
-    "@chunkd/core" "^8.3.0"
+    "@chunkd/core" "^8.4.0"
     node-fetch "^3.1.0"
 
 "@eslint/eslintrc@^1.3.0":
