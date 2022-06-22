@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/blacha/cogeotiff/compare/v7.0.0...v7.1.0) (2022-06-22)
+
+
+### Bug Fixes
+
+* **core:** load the ghost header bytes if requested ([b1f0116](https://github.com/blacha/cogeotiff/commit/b1f01164da1ad7deed7c3754e0106ccfea773338))
+
+
+### Features
+
+* **cli:** log all the ghost options out ([8c67420](https://github.com/blacha/cogeotiff/commit/8c67420c8ec270e908f17dfe944d2323c1bfb682))
+* **core:** add hasTile function to determine if a tile exists in a sparse tiff ([e56a67c](https://github.com/blacha/cogeotiff/commit/e56a67cc078945c5d96ddd3e6aefbf2d773359a4))
+
+
+### Performance Improvements
+
+* **core:** improve parsing of ghost options ([ffa7928](https://github.com/blacha/cogeotiff/commit/ffa79283a61efd6f9999bd43d222faa24cd5ced7))
+* greatly increase the amount of tiles being read so nodejs startup time affects the timing less ([3e9c0f3](https://github.com/blacha/cogeotiff/commit/3e9c0f305584d95fd79e1fe094477f3589b235c6))
+* **core:** improve lookup speed of ghost options ([7c5f37e](https://github.com/blacha/cogeotiff/commit/7c5f37e114a77a772ca588e62b6d22712d05b2bc))
+
+
+
+
+
 # [7.0.0](https://github.com/blacha/cogeotiff/compare/v6.1.1...v7.0.0) (2022-03-17)
 
 

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/blacha/cogeotiff/compare/v7.0.0...v7.1.0) (2022-06-22)
+
+
+### Bug Fixes
+
+* **core:** load the ghost header bytes if requested ([b1f0116](https://github.com/blacha/cogeotiff/commit/b1f01164da1ad7deed7c3754e0106ccfea773338))
+
+
+### Features
+
+* **cli:** log all the ghost options out ([8c67420](https://github.com/blacha/cogeotiff/commit/8c67420c8ec270e908f17dfe944d2323c1bfb682))
+
+
+
+
+
 # [7.0.0](https://github.com/blacha/cogeotiff/compare/v6.1.1...v7.0.0) (2022-03-17)
 
 
