@@ -139,7 +139,6 @@ export class ActionCogInfo extends CommandLineAction {
                 keys: [
                     { key: 'COG optimized', value: tif.options.isCogOptimized },
                     tif.options.isBroken ? { key: 'COG broken', value: tif.options.isBroken } : null,
-                    isCogOptimized ? { key: 'Mask interleaved', value: tif.options.isMaskInterleaved } : null,
                     ghostOptions.length > 0
                         ? {
                               key: 'Ghost Options',
