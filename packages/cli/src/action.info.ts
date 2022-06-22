@@ -97,7 +97,6 @@ export class ActionCogInfo extends CommandLineAction {
 
         await firstImage.loadGeoTiffTags();
 
-        const isCogOptimized = tif.options.isCogOptimized;
         const source = tif.source as ChunkSourceBase;
         const chunkIds = [...(source.chunks as Map<unknown, unknown>).values()];
 
