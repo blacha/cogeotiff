@@ -71,8 +71,9 @@ function parseGdalMetadata(img: CogTiffImage): string[] | null {
     if (typeof metadata !== 'string') return null;
     if (!metadata.startsWith('<GDALMetadata>')) return null;
     return metadata
-        .replace('<GDALMetadata>', '')
-        .replace('</GDALMetadata>', '')
+        .replace('<GDALMetadata>\n', '')
+        .replace('</GDALMetadata>\n', '')
+        .replace('\n\x00', '')
         .split('\n')
         .map((c) => c.trim());
 }
@@ -142,11 +143,14 @@ export class ActionCogInfo extends CommandLineAction {
                     ghostOptions.length > 0
                         ? {
                               key: 'Ghost Options',
-                              value: '\n' + ghostOptions.map((c) => `\t\t${c[0]}=${c[1]}`).join('\n'),
+                              value: '\n' + ghostOptions.map((c) => `\t\t'${c[0]}'\t'${c[1]}'`).join('\n'),
                           }
                         : null,
                     gdalMetadata
-                        ? { key: 'Metadata', value: '\n' + gdalMetadata.map((c) => `\t\t${c}`).join('\n') }
+                        ? {
+                              key: 'Metadata',
+                              value: '\n' + gdalMetadata.map((c) => `\t\t${c}`).join('\n'),
+                          }
                         : null,
                 ],
             },
