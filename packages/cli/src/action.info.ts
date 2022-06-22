@@ -142,7 +142,7 @@ export class ActionCogInfo extends CommandLineAction {
                     ghostOptions.length > 0
                         ? {
                               key: 'Ghost Options',
-                              value: '\n' + ghostOptions.map((c) => `\t\t'${c[0]}'\t'${c[1]}'`).join('\n'),
+                              value: '\n' + ghostOptions.map((c) => `\t\t${c[0]} = ${c[1]}`).join('\n'),
                           }
                         : null,
                     gdalMetadata

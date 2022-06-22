@@ -56,7 +56,7 @@ export class CogTifGhostOptions {
 
             const char = String.fromCharCode(charCode);
             if (char === '\n') {
-                this.options.set(key, value);
+                this.options.set(key.trim(), value.trim());
                 key = '';
                 value = '';
                 setValue = false;
