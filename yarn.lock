@@ -1099,9 +1099,9 @@
     "@octokit/openapi-types" "^6.0.0"
 
 "@rushstack/ts-command-line@^4.3.14":
-  version "4.11.1"
-  resolved "https://registry.yarnpkg.com/@rushstack/ts-command-line/-/ts-command-line-4.11.1.tgz#10b80960ddaed685445289807c75743e4ef0b5e9"
-  integrity sha512-Xo8LaQOXlNSfp+qIuIPb1tfX7b4H21ksqiMo/HbeZI5AX1klHMqKjWcEs0AqgE9huvQj6cvnCla8Eq/GDcwMIg==
+  version "4.12.2"
+  resolved "https://registry.yarnpkg.com/@rushstack/ts-command-line/-/ts-command-line-4.12.2.tgz#59b7450c5d75190778cce8b159c7d7043c32cc4e"
+  integrity sha512-poBtnumLuWmwmhCEkVAgynWgtnF9Kygekxyp4qtQUSbBrkuyPQTL85c8Cva1YfoUpOdOXxezMAkUt0n5SNKGqw==
   dependencies:
     "@types/argparse" "1.0.38"
     argparse "~1.0.9"
@@ -4567,12 +4567,12 @@ prettier@^2.7.1:
   integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
 
 pretty-json-log@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/pretty-json-log/-/pretty-json-log-1.0.0.tgz#8417783f93a114418dbccdb1302a6a2c0ed38654"
-  integrity sha512-qdsh1G8Gk3QQo3bWDXL+Q8UnQpTVOSfA3DsVlon92KtoX7MK89Tfhxb9rxFpma1W2dKL0K7LZ7V7kku6MMHRLQ==
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/pretty-json-log/-/pretty-json-log-1.1.2.tgz#61a91586f79014b4caa261abe7449a9bc6689f9e"
+  integrity sha512-BWIiHRvEAx8uivEe2yteEknUX0zQjxkGAVIaiM3Ufc3NxSEeUFW+L09F+LSUYihB3WYnmfKEY1ntfooM28SdUw==
   dependencies:
     ansi-colors "^4.1.1"
-    split2 "^3.1.1"
+    split2 "^4.1.0"
 
 proc-log@^2.0.0:
   version "2.0.1"
@@ -5180,14 +5180,14 @@ split2@^2.0.0:
   dependencies:
     through2 "^2.0.2"
 
-split2@^3.0.0, split2@^3.1.1:
+split2@^3.0.0:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/split2/-/split2-3.2.2.tgz#bf2cf2a37d838312c249c89206fd7a17dd12365f"
   integrity sha512-9NThjpgZnifTkJpzTZ7Eue85S49QwpNhZTq6GRJwObb6jnLFNGB7Qm73V5HewTROPyxD0C29xqmaI68bQtV+hg==
   dependencies:
     readable-stream "^3.0.0"
 
-split2@^4.0.0:
+split2@^4.0.0, split2@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/split2/-/split2-4.1.0.tgz#101907a24370f85bb782f08adaabe4e281ecf809"
   integrity sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==
