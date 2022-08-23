@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.2.0](https://github.com/blacha/cogeotiff/compare/v7.1.0...v7.2.0) (2022-08-23)
+
+
+### Bug Fixes
+
+* **core:** sometimes MASK_INTERLEAVED_WITH_IMAGERY is prefixed with a space so trim it ([5002e22](https://github.com/blacha/cogeotiff/commit/5002e22bdd0a6480d210d89ce6878b3e4df0efd9))
+
+
+### Features
+
+* **core:** add zstd compression ([c9f9c4c](https://github.com/blacha/cogeotiff/commit/c9f9c4cf342a7e72657ee2481e600273c0e166c5))
+* **core:** import LERC, LZMA and JpegXL compression types ([49af971](https://github.com/blacha/cogeotiff/commit/49af9716f0400643be2085a933d2db2b8a988226))
+
+
+
+
+
 # [7.1.0](https://github.com/blacha/cogeotiff/compare/v7.0.0...v7.1.0) (2022-06-22)
 
 
