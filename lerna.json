@@ -1,7 +1,5 @@
 {
   "useYarn": true,
-  "packages": [
-    "packages/*"
-  ],
+  "useWorkspaces": true,
   "version": "7.1.0"
 }
