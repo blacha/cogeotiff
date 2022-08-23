@@ -6,6 +6,7 @@ export enum TiffMimeType {
     JPEG = 'image/jpeg',
     JP2 = 'image/jp2',
     WEBP = 'image/webp',
+    ZSTD = 'application/zstd',
     LZW = 'application/lzw',
     DEFLATE = 'application/deflate',
 }
@@ -17,5 +18,6 @@ export const TiffCompression: { [key: number]: TiffMimeType } = {
     7: TiffMimeType.JPEG,
     8: TiffMimeType.DEFLATE,
     34712: TiffMimeType.JP2,
+    50000: TiffMimeType.ZSTD,
     50001: TiffMimeType.WEBP,
 };
