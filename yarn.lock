@@ -1129,9 +1129,9 @@
     node-gyp-build "^4.3.0"
 
 "@rushstack/ts-command-line@^4.3.14":
-  version "4.12.2"
-  resolved "https://registry.yarnpkg.com/@rushstack/ts-command-line/-/ts-command-line-4.12.2.tgz#59b7450c5d75190778cce8b159c7d7043c32cc4e"
-  integrity sha512-poBtnumLuWmwmhCEkVAgynWgtnF9Kygekxyp4qtQUSbBrkuyPQTL85c8Cva1YfoUpOdOXxezMAkUt0n5SNKGqw==
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/@rushstack/ts-command-line/-/ts-command-line-4.13.0.tgz#a56aa90e5742c25d330cdb0cda1da19225d7bfcf"
+  integrity sha512-crLT31kl+qilz0eBRjqqYO06CqwbElc0EvzS6jI69B9Ikt1SkkSzIZ2iDP7zt/rd1ZYipKIS9hf9CQR9swDIKg==
   dependencies:
     "@types/argparse" "1.0.38"
     argparse "~1.0.9"
