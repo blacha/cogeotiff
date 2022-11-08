@@ -28,11 +28,6 @@
   resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-10.0.0.tgz#d66fd49993cad99886eb2eb20df24a3056ebb218"
   integrity sha512-8AvtnYUUwn8AcRrjnjstczCj2wJT1Kj+JUy/Cxo6mdsxxQiR1L+2vD46Wj/Q5s/K2toQta3/bSBys3NfYweWGg==
 
-"@chunkd/core@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-6.0.0.tgz#b1e3a0692cc0b9e1018d9ceef82e27472b274f5b"
-  integrity sha512-3s11Z4c/4GI6a6U7RWeh5R3Wf/kxcQtSCOy1RK/D3ZPWCDoHkiNkTSCtXUodZWkkHmIhvBl5qdOJEpVDt2B+qQ==
-
 "@chunkd/fs@^10.0.0":
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-10.0.0.tgz#9be6a4beb88c0c41c41eeff808f394320dd55e04"
@@ -73,14 +68,6 @@
   dependencies:
     "@chunkd/core" "^10.0.0"
     node-fetch "^3.1.0"
-
-"@chunkd/source-url@^10.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-url/-/source-url-6.0.0.tgz#8c85d65f243b9a47ff549accc47988256f35a7fc"
-  integrity sha512-BXKweOJu+bNmDcgqfDUqmMKVln+TrmSFZSSJeLpBVGPg4x8CqemESgUaFVORyER9o4Fhq8MDcLsfdApqDSXsIg==
-  dependencies:
-    "@chunkd/core" "^6.0.0"
-    node-fetch "^2.6.0"
 
 "@esbuild/android-arm@0.15.13":
   version "0.15.13"
@@ -4491,7 +4478,7 @@ node-domexception@^1.0.0:
   resolved "https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz#6888db46a1f71c0b76b3f7555016b63fe64766e5"
   integrity sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==
 
-node-fetch@^2.6.0, node-fetch@^2.6.1, node-fetch@^2.6.7:
+node-fetch@^2.6.1, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==

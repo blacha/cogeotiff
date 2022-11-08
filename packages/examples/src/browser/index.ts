@@ -1,12 +1,12 @@
-import { SourceUrl } from '@chunkd/source-url';
+import { SourceHttp } from '@chunkd/source-http';
 import { CogTiff } from '@cogeotiff/core';
 import { loadSingleTile } from './example.single.tile';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const tiffSource = new SourceUrl('https://blayne.chard.com/world.webp.google.cog.tiff');
+    const tiffSource = new SourceHttp('https://blayne.chard.com/world.webp.google.cog.tiff');
 
     // Trace all fetch requests
-    SourceUrl.fetch = async (input, init): Promise<Response> => {
+    SourceHttp.fetch = async (input, init): Promise<Response> => {
         const startTime = performance.now();
         const res = await fetch(input, init);
         const duration = performance.now() - startTime;

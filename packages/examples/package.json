@@ -20,7 +20,7 @@
         "bundle": "esbuild src/browser/index.ts --bundle --outfile=dist/index.js"
     },
     "dependencies": {
-        "@chunkd/source-url": "^10.0.0",
+        "@chunkd/source-http": "^10.0.0",
         "@cogeotiff/core": "^7.2.0",
         "maplibre-gl": "^2.4.0",
         "esbuild": "^0.15.13"
