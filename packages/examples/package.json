@@ -1,10 +1,11 @@
 {
-    "name": "@cogeotiff/core",
+    "name": "@cogeotiff/examples",
+    "private": true,
     "version": "7.2.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/blacha/cogeotiff.git",
-        "directory": "packages/core"
+        "directory": "packages/examples"
     },
     "type": "module",
     "engines": {
@@ -15,17 +16,20 @@
     "author": "Blayne Chard",
     "license": "MIT",
     "scripts": {
-        "test": "ospec --globs 'build/**/*.test.js'"
+        "test": "ospec --globs 'build/**/*.test.js'",
+        "bundle": "esbuild src/browser/index.ts --bundle --outfile=dist/index.js"
     },
     "dependencies": {
-        "@chunkd/core": "^10.0.0",
-        "ieee754": "^1.1.13"
+        "@chunkd/source-http": "^10.0.0",
+        "@cogeotiff/core": "^7.2.0",
+        "maplibre-gl": "^2.4.0",
+        "esbuild": "^0.15.13"
     },
     "devDependencies": {
         "@types/node": "^18.0.0",
         "@types/ospec": "^4.0.3"
     },
     "publishConfig": {
-        "access": "public"
+        "access": "restricted"
     }
 }
