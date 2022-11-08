@@ -22,7 +22,6 @@
     "dependencies": {
         "@chunkd/source-http": "^10.0.0",
         "@cogeotiff/core": "^7.2.0",
-        "maplibre-gl": "^2.4.0",
         "esbuild": "^0.15.13"
     },
     "devDependencies": {
