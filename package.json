@@ -22,7 +22,7 @@
         "@linzjs/style": "^3.7.0",
         "@types/node": "^18.0.0",
         "conventional-github-releaser": "^3.1.5",
-        "lerna": "^5.1.2",
+        "lerna": "^6.0.3",
         "ospec": "^4.0.0",
         "rimraf": "^3.0.0"
     },
