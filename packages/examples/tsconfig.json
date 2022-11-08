@@ -6,7 +6,5 @@
         "lib": ["es2018", "dom"]
     },
     "include": ["src/**/*"],
-    "references": [
-        {"path": "../core"}
-    ]
+    "references": [{ "path": "../core" }]
 }

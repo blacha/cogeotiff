@@ -6,7 +6,5 @@
         "lib": ["es2018", "dom"]
     },
     "include": ["src/**/*"],
-    "references": [
-        {"path": "../fetchable"}
-    ]
+    "references": [{ "path": "../fetchable" }]
 }

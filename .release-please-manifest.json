@@ -1,0 +1,6 @@
+{
+  "packages/cli": "7.2.0",
+  "packages/core": "7.2.0",
+  "packages/examples": "7.2.0",
+  "packages/fetchable": "7.0.0"
+}
