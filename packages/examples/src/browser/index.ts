@@ -2,18 +2,17 @@ import { SourceHttp } from '@chunkd/source-http';
 import { CogTiff } from '@cogeotiff/core';
 import { loadSingleTile } from './example.single.tile';
 
+// Trace all fetch requests
+SourceHttp.fetch = async (input, init): Promise<Response> => {
+    const startTime = performance.now();
+    const res = await fetch(input, init);
+    const duration = performance.now() - startTime;
+    console.log(`Fetch: ${input} status: ${res.status} duration: ${Number(duration.toFixed(4))}ms`);
+    return res;
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
     const tiffSource = new SourceHttp('https://blayne.chard.com/world.webp.google.cog.tiff');
-
-    // Trace all fetch requests
-    SourceHttp.fetch = async (input, init): Promise<Response> => {
-        const startTime = performance.now();
-        const res = await fetch(input, init);
-        const duration = performance.now() - startTime;
-        console.log(`Fetch: ${input} status: ${res.status} duration: ${Number(duration.toFixed(4))}ms`);
-        return res;
-    };
-
     const tiff = await CogTiff.create(tiffSource);
 
     const mainEl = document.createElement('div');
