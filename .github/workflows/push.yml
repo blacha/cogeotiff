@@ -7,18 +7,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: blacha/yarn-typescript-action@v1
-
-      - name: Create github release
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: npx conventional-github-releaser -p angular
-        env:
-          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Publish NPM
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: npx lerna publish from-git --yes
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
+      - uses: linz/action-typescript@v1
       - uses: blacha/hyperfine-action@v1
