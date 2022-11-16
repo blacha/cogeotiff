@@ -42,6 +42,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^7.2.0 to ^7.2.1
+
 ## [6.1.1](https://github.com/blacha/cogeotiff/compare/v6.1.0...v6.1.1) (2022-01-26)
 
 **Note:** Version bump only for package @cogeotiff/cli

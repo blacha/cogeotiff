@@ -54,6 +54,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+## [7.2.1](https://github.com/blacha/cogeotiff/compare/core-v7.2.0...core-v7.2.1) (2022-11-16)
+
+
+### Bug Fixes
+
+* **core:** better examples ([bb9fda1](https://github.com/blacha/cogeotiff/commit/bb9fda10a614dfd37e272b48d4f5291d1b2c9542))
+
 ## [6.1.1](https://github.com/blacha/cogeotiff/compare/v6.1.0...v6.1.1) (2022-01-26)
 
 
