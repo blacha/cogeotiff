@@ -26,3 +26,9 @@ if (img.isTiled()) {
 const origin = img.origin;
 const bbox = img.bbox;
 ```
+
+
+More examples can bee seen
+
+- [@cogeotiff/example](https://github.com/blacha/cogeotiff/tree/master/packages/examples)
+- [CogViewer](https://github.com/blacha/cogeotiff-web)
