@@ -23,7 +23,7 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@chunkd/core@^10.0.0":
+"@chunkd/core@^10.0.0", "@chunkd/core@^10.1.1":
   version "10.1.1"
   resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-10.1.1.tgz#2f7193baba36049507354bbadc2e06717a7cca98"
   integrity sha512-dd6+7KluZWFAa4Zzj/SQsi0WVu+I8oTlDAEYDzyyY7deYwgrHUnmtciKBL9Owc0kAChbrzzrAbZrZzqaneSStg==
@@ -62,11 +62,11 @@
     "@chunkd/core" "^10.0.0"
 
 "@chunkd/source-http@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-10.0.0.tgz#09d0449ed72c6264de52f9505c453c6a283dfe1f"
-  integrity sha512-lwCn2hotROHV+XnYryZwigC/0fJZ1oBv5C1wTv/i6JTbL+9wf8h8VrduDGC7aB4z4PBd2hJ2fGp+jnu9S5sy2g==
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-10.0.2.tgz#886a9ba69dcd448e8ff61d06882967d84dbb6bbb"
+  integrity sha512-EEK/H0e1XUDy6MLUoHYqIOxWJOJq9truxrlmAUdwaW1aeMwpz4syYclgRKMzH51y8ie5fjkgdUuE09E3VD2LHA==
   dependencies:
-    "@chunkd/core" "^10.0.0"
+    "@chunkd/core" "^10.1.1"
     node-fetch "^3.1.0"
 
 "@esbuild/android-arm64@0.17.6":
