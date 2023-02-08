@@ -4435,9 +4435,9 @@ pino-std-serializers@^6.0.0:
   integrity sha512-mMMOwSKrmyl+Y12Ri2xhH1lbzQxwwpuru9VjyJpgFIH4asSj88F2csdMwN6+M5g1Ll4rmsYghHLQJw81tgZ7LQ==
 
 pino@*, pino@^8.0.0:
-  version "8.7.0"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-8.7.0.tgz#58621608a3d8540ae643cdd9194cdd94130c78d9"
-  integrity sha512-l9sA5uPxmZzwydhMWUcm1gI0YxNnYl8MfSr2h8cwLvOAzQLBLewzF247h/vqHe3/tt6fgtXeG9wdjjoetdI/vA==
+  version "8.9.0"
+  resolved "https://registry.yarnpkg.com/pino/-/pino-8.9.0.tgz#d7a66968aa8c8140f9335624bbcf2f06082d168c"
+  integrity sha512-/x9qSrFW4wh+7OL5bLIbfl06aK/8yCSIldhD3VmVGiVYWSdFFpXvJh/4xWKENs+DhG1VkJnnpWxMF6fZ2zGXeg==
   dependencies:
     atomic-sleep "^1.0.0"
     fast-redact "^3.1.1"
