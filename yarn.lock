@@ -23,50 +23,50 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@chunkd/core@^10.0.0":
+"@chunkd/core@^10.0.0", "@chunkd/core@^10.1.1":
   version "10.1.1"
   resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-10.1.1.tgz#2f7193baba36049507354bbadc2e06717a7cca98"
   integrity sha512-dd6+7KluZWFAa4Zzj/SQsi0WVu+I8oTlDAEYDzyyY7deYwgrHUnmtciKBL9Owc0kAChbrzzrAbZrZzqaneSStg==
 
 "@chunkd/fs@^10.0.0":
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-10.0.2.tgz#80c916a2a2776c47c076721eee85cbc91bb40cab"
-  integrity sha512-WsU7GD3S/nKJjeoMjvS2f8bHgQcxmBClPLidq1ZsAb+v0CmUnwL2x0GdtzwJH7bmdR5gVqXWVHCZsPCmEeHfiw==
+  version "10.0.4"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-10.0.4.tgz#dcf9147d7c8c81eb95c336d021c7b6e580e4a616"
+  integrity sha512-AHVdgZX79G678XTDcytLWJujQgAApwyeGmeyfn0vQbe1f5rYNEHAKHt1L8z2WnsiKFRebZrhkhij+9E/f4a7sA==
   dependencies:
-    "@chunkd/core" "^10.0.0"
-    "@chunkd/source-file" "^10.0.0"
-    "@chunkd/source-http" "^10.0.0"
+    "@chunkd/core" "^10.1.1"
+    "@chunkd/source-file" "^10.0.2"
+    "@chunkd/source-http" "^10.0.2"
   optionalDependencies:
-    "@chunkd/source-aws" "^10.0.2"
-    "@chunkd/source-google-cloud" "^10.0.0"
+    "@chunkd/source-aws" "^10.1.1"
+    "@chunkd/source-google-cloud" "^10.0.2"
 
-"@chunkd/source-aws@^10.0.2":
+"@chunkd/source-aws@^10.1.1":
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-10.1.1.tgz#a094880081740bbd6a505ce7a4b27b7fa3b764df"
+  integrity sha512-WvAENUBL8SBh3voNEIJSIdRZLXZNyW7/JoyALreEoixAs/0TojiN+frslLRaTxzh94BQU+2wL4kl7oG8E3S2nQ==
+  dependencies:
+    "@chunkd/core" "^10.1.1"
+
+"@chunkd/source-file@^10.0.2":
   version "10.0.2"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-10.0.2.tgz#68d89d0adf81bd746037cc96a7cdae244cd2a710"
-  integrity sha512-N3/IjZIaflB0+HFGGlqQWXkIBx0INN0TnV3OOOlZiCiMvNFgWbmir+Se6slaD4RXr/42zjacdW5+BnNlz9P6IQ==
+  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-10.0.2.tgz#3009860f67fcefd8670ed99401686eefc61c4e76"
+  integrity sha512-QLUiciCE8D3CzWtUmVoRv7BRiwgY6e+ibzkuszGNhjH7QzC8MG0pvWEZSqK7FxpssMirbGSIigjH+Enc6YebzQ==
   dependencies:
-    "@chunkd/core" "^10.0.0"
+    "@chunkd/core" "^10.1.1"
 
-"@chunkd/source-file@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-10.0.0.tgz#3a53a4e3fe5b8a4efbce0e903a281a2b29573ebf"
-  integrity sha512-hqJoYiF50X7+BBdbOYBuwz85nnUuSa/IZAVW1lBIvUz1sjk7xUnITxHGgQTHGy6nBBF+0keA7LsXBAGJOz7V/A==
+"@chunkd/source-google-cloud@^10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-google-cloud/-/source-google-cloud-10.0.2.tgz#99695daf64a8717da40d6c3def116eb5786946eb"
+  integrity sha512-LGBdgFSCX+TEPXf3Fee8HWN10+Tx96NywyyPce8CVg1Nf0IMWCPYMdIjPx+GCNLXusv5QfqJWYDFb1AaPRaXNw==
   dependencies:
-    "@chunkd/core" "^10.0.0"
+    "@chunkd/core" "^10.1.1"
 
-"@chunkd/source-google-cloud@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-google-cloud/-/source-google-cloud-10.0.0.tgz#5659990467ff34609633a129cef3d7909e532b73"
-  integrity sha512-appsxa/CPw+eElDrZw/l33B5BcWUaYUc10z88LEqMrKA+AUMRUpZg04+Vau9yBWOKvn5hRK/HpU/bvN9NKWI3Q==
+"@chunkd/source-http@^10.0.0", "@chunkd/source-http@^10.0.2":
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-10.0.2.tgz#886a9ba69dcd448e8ff61d06882967d84dbb6bbb"
+  integrity sha512-EEK/H0e1XUDy6MLUoHYqIOxWJOJq9truxrlmAUdwaW1aeMwpz4syYclgRKMzH51y8ie5fjkgdUuE09E3VD2LHA==
   dependencies:
-    "@chunkd/core" "^10.0.0"
-
-"@chunkd/source-http@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-10.0.0.tgz#09d0449ed72c6264de52f9505c453c6a283dfe1f"
-  integrity sha512-lwCn2hotROHV+XnYryZwigC/0fJZ1oBv5C1wTv/i6JTbL+9wf8h8VrduDGC7aB4z4PBd2hJ2fGp+jnu9S5sy2g==
-  dependencies:
-    "@chunkd/core" "^10.0.0"
+    "@chunkd/core" "^10.1.1"
     node-fetch "^3.1.0"
 
 "@esbuild/android-arm64@0.17.6":
