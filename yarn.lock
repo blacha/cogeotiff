@@ -4289,9 +4289,9 @@ pretty-format@29.4.3:
     react-is "^18.0.0"
 
 pretty-json-log@^1.0.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/pretty-json-log/-/pretty-json-log-1.3.0.tgz#ffebffd47d9c9ca21627a82ea0b49bac14da25ed"
-  integrity sha512-YnfMZsrZky1pGgtPvU353WQ5/RpcN2q9Wsd77dn8XsWZBYCL0TJ89KuucIEklQRg3c9BT5aEwsoaNxDRiZdRSw==
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/pretty-json-log/-/pretty-json-log-1.4.0.tgz#9a7a6a0a18d20da896090cc2eacb04e285a327de"
+  integrity sha512-YCaLcTW3djzUggm+4mE095W2ub9uqIxo9xfqATZuh8Fu4WnyvnRExSSWD7oMHm9Xk5PCma0gyKDqO8Cs+ihnUQ==
   dependencies:
     ansi-colors "^4.1.1"
     split2 "^4.1.0"
