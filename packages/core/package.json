@@ -22,7 +22,7 @@
         "ieee754": "^1.1.13"
     },
     "devDependencies": {
-        "@types/node": "^18.0.0",
+        "@types/node": "^20.1.3",
         "@types/ospec": "^4.0.3"
     },
     "publishConfig": {
