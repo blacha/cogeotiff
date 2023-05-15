@@ -9,6 +9,7 @@ const FileExtension: { [key: string]: string } = {
     [TiffMimeType.WEBP]: 'webp',
     [TiffMimeType.LZW]: 'lzw',
     [TiffMimeType.DEFLATE]: 'deflate',
+    [TiffMimeType.NONE]: 'bin',
 };
 
 /**
