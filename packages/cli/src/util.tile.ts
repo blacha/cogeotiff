@@ -3,13 +3,17 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import type pino from 'pino';
 
-const FileExtension: { [key: string]: string } = {
+const FileExtension: Record<string, string> = {
     [TiffMimeType.JPEG]: 'jpeg',
     [TiffMimeType.JP2]: 'jp2',
     [TiffMimeType.WEBP]: 'webp',
     [TiffMimeType.LZW]: 'lzw',
     [TiffMimeType.DEFLATE]: 'deflate',
     [TiffMimeType.NONE]: 'bin',
+    [TiffMimeType.JPEGXL]: 'jpeg',
+    [TiffMimeType.ZSTD]: 'zstd',
+    [TiffMimeType.LZERC]: 'lerc',
+    [TiffMimeType.LZMA]: 'lzma',
 };
 
 /**
@@ -25,12 +29,7 @@ const FileExtension: { [key: string]: string } = {
 export function getTileName(mimeType: string, index: number, x: number, y: number): string {
     const xS = `${x}`.padStart(3, '0');
     const yS = `${y}`.padStart(3, '0');
-
-    const fileExt: string = FileExtension[mimeType];
-    if (fileExt == null) {
-        throw new Error(`Unable to process tile type:${mimeType}`);
-    }
-
+    const fileExt = FileExtension[mimeType] ?? 'unknown';
     return `${xS}_${yS}_${index}.${fileExt}`;
 }
 
