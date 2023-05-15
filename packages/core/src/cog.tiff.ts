@@ -121,7 +121,7 @@ export class CogTiff {
      * @param y tile y index
      * @param index image index
      */
-    async getTile(x: number, y: number, index: number): Promise<{ mimeType: TiffMimeType; bytes: Uint8Array } | null> {
+    async getTile(x: number, y: number, index: number): Promise<{ mimeType: string; bytes: Uint8Array } | null> {
         const image = this.getImage(index);
         if (image == null) throw new Error(`Missing z: ${index}`);
         if (!image.isTiled()) throw new Error('Tif is not tiled');
