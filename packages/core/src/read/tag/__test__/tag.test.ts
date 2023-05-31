@@ -1,6 +1,6 @@
 import { TestFileChunkSource } from '@chunkd/core/build/__test__/chunk.source.fake.js';
-import { describe, beforeEach, it } from "node:test";
-import assert from "node:assert";
+import { describe, beforeEach, it } from 'node:test';
+import assert from 'node:assert';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { CogTiff } from '../../../cog.tiff.js';
