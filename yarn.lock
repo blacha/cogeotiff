@@ -23,45 +23,12 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@chunkd/core@^10.0.0", "@chunkd/core@^10.1.1":
+"@chunkd/core@^10.1.1":
   version "10.1.1"
   resolved "https://registry.yarnpkg.com/@chunkd/core/-/core-10.1.1.tgz#2f7193baba36049507354bbadc2e06717a7cca98"
   integrity sha512-dd6+7KluZWFAa4Zzj/SQsi0WVu+I8oTlDAEYDzyyY7deYwgrHUnmtciKBL9Owc0kAChbrzzrAbZrZzqaneSStg==
 
-"@chunkd/fs@^10.0.0":
-  version "10.0.4"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-10.0.4.tgz#dcf9147d7c8c81eb95c336d021c7b6e580e4a616"
-  integrity sha512-AHVdgZX79G678XTDcytLWJujQgAApwyeGmeyfn0vQbe1f5rYNEHAKHt1L8z2WnsiKFRebZrhkhij+9E/f4a7sA==
-  dependencies:
-    "@chunkd/core" "^10.1.1"
-    "@chunkd/source-file" "^10.0.2"
-    "@chunkd/source-http" "^10.0.2"
-  optionalDependencies:
-    "@chunkd/source-aws" "^10.1.1"
-    "@chunkd/source-google-cloud" "^10.0.2"
-
-"@chunkd/source-aws@^10.1.1":
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-10.1.1.tgz#a094880081740bbd6a505ce7a4b27b7fa3b764df"
-  integrity sha512-WvAENUBL8SBh3voNEIJSIdRZLXZNyW7/JoyALreEoixAs/0TojiN+frslLRaTxzh94BQU+2wL4kl7oG8E3S2nQ==
-  dependencies:
-    "@chunkd/core" "^10.1.1"
-
-"@chunkd/source-file@^10.0.2":
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-10.0.2.tgz#3009860f67fcefd8670ed99401686eefc61c4e76"
-  integrity sha512-QLUiciCE8D3CzWtUmVoRv7BRiwgY6e+ibzkuszGNhjH7QzC8MG0pvWEZSqK7FxpssMirbGSIigjH+Enc6YebzQ==
-  dependencies:
-    "@chunkd/core" "^10.1.1"
-
-"@chunkd/source-google-cloud@^10.0.2":
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-google-cloud/-/source-google-cloud-10.0.2.tgz#99695daf64a8717da40d6c3def116eb5786946eb"
-  integrity sha512-LGBdgFSCX+TEPXf3Fee8HWN10+Tx96NywyyPce8CVg1Nf0IMWCPYMdIjPx+GCNLXusv5QfqJWYDFb1AaPRaXNw==
-  dependencies:
-    "@chunkd/core" "^10.1.1"
-
-"@chunkd/source-http@^10.0.0", "@chunkd/source-http@^10.0.2":
+"@chunkd/source-http@^10.0.0":
   version "10.0.2"
   resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-10.0.2.tgz#886a9ba69dcd448e8ff61d06882967d84dbb6bbb"
   integrity sha512-EEK/H0e1XUDy6MLUoHYqIOxWJOJq9truxrlmAUdwaW1aeMwpz4syYclgRKMzH51y8ie5fjkgdUuE09E3VD2LHA==

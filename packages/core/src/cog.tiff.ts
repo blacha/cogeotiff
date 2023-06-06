@@ -1,90 +1,83 @@
-import { ChunkSource } from '@chunkd/core';
+import { getUint } from './bytes.js';
 import { CogTiffImage } from './cog.tiff.image.js';
 import { TiffEndian } from './const/tiff.endian.js';
 import { TiffTag } from './const/tiff.tag.id.js';
 import { TiffVersion } from './const/tiff.version.js';
-import { CogTiffTagBase } from './read/tag/tiff.tag.base.js';
+import { hasBytes, DataViewOffset } from './read/data.view.offset.js';
 import { CogTifGhostOptions } from './read/tiff.gdal.js';
 import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config.js';
-import { CogTiffTag } from './read/tiff.tag.js';
-import { CogSourceCursor } from './source/cog.source.view.js';
-import { toHexString } from './util/util.hex.js';
+import { CogTiffTag, createTag } from './read/tiff.tag.factory.js';
+import { CogSource } from './source.js';
+import { toHex } from './util/util.hex.js';
 
 export class CogTiff {
-    source: ChunkSource;
+    /** Read 16KB blocks at a time */
+    defaultReadSize = 16 * 1024;
+    source: CogSource;
     version = TiffVersion.Tiff;
     images: CogTiffImage[] = [];
     options = new CogTifGhostOptions();
-
-    private cursor: CogSourceCursor;
     ifdConfig: TiffIfdConfig = TagTiffConfig;
+    isLittleEndian: boolean;
 
-    constructor(source: ChunkSource) {
+    constructor(source: CogSource) {
         this.source = source;
-        this.cursor = new CogSourceCursor(this);
-    }
-
-    /** Create and initialize a CogTiff */
-    static create(source: ChunkSource): Promise<CogTiff> {
-        return new CogTiff(source).init();
     }
 
     /** Has init() been called */
     isInitialized = false;
 
-    _initPromise?: Promise<CogTiff>;
+    private _initPromise?: Promise<CogTiff>;
     /**
      * Initialize the COG loading in the header and all image headers
-     *
-     * @param loadGeoKeys Whether to also initialize the GeoKeyDirectory
      */
-    init(loadGeoKeys = false): Promise<CogTiff> {
+    init(): Promise<CogTiff> {
         if (this._initPromise) return this._initPromise;
-        this._initPromise = this.doInit(loadGeoKeys);
+        this._initPromise = this._readIfd();
         return this._initPromise;
     }
 
-    private async doInit(loadGeoKeys = false): Promise<CogTiff> {
+    private async _readIfd(): Promise<CogTiff> {
         if (this.isInitialized) return this;
-        // Load the first few KB in, more loads will run as more data is required
-        await this.source.loadBytes(0, this.source.chunkSize);
-        await this.fetchIfd();
-        await Promise.all(this.images.map((c) => c.init(loadGeoKeys)));
+        const bytes = new DataView(await this.source.fetchBytes(0, this.defaultReadSize)) as DataViewOffset;
+        bytes.sourceOffset = 0;
 
-        this.isInitialized = true;
-        return this;
-    }
+        let offset = 0;
+        const endian = bytes.getUint16(offset, this.isLittleEndian);
+        offset += 2;
 
-    private async fetchIfd(): Promise<void> {
-        const view = this.cursor.seekTo(0);
-        const endian = view.uint16();
-        this.source.isLittleEndian = endian === TiffEndian.Little;
-        if (!this.source.isLittleEndian) throw new Error('Only little endian is supported');
-        this.version = view.uint16();
+        this.isLittleEndian = endian === TiffEndian.Little;
+        if (!this.isLittleEndian) throw new Error('Only little endian is supported');
+        this.version = bytes.getUint16(offset, this.isLittleEndian);
+        offset += 2;
 
         let nextOffsetIfd: number;
         if (this.version === TiffVersion.BigTiff) {
             this.ifdConfig = TagTiffBigConfig;
-            const pointerSize = view.uint16();
+            const pointerSize = bytes.getUint16(offset, this.isLittleEndian);
+            offset += 2;
             if (pointerSize !== 8) throw new Error('Only 8byte pointers are supported');
-            const zeros = view.uint16();
+            const zeros = bytes.getUint16(offset, this.isLittleEndian);
+            offset += 2;
             if (zeros !== 0) throw new Error('Invalid big tiff header');
-            nextOffsetIfd = view.pointer();
+            nextOffsetIfd = getUint(bytes, offset, this.ifdConfig.pointer, this.isLittleEndian);
+            offset += this.ifdConfig.pointer;
         } else if (this.version === TiffVersion.Tiff) {
-            nextOffsetIfd = view.pointer();
+            nextOffsetIfd = getUint(bytes, offset, this.ifdConfig.pointer, this.isLittleEndian);
+            offset += this.ifdConfig.pointer;
         } else {
             throw new Error(`Only tiff supported version:${this.version}`);
         }
 
-        const ghostSize = nextOffsetIfd - this.cursor.currentOffset;
+        const ghostSize = nextOffsetIfd - offset;
         // GDAL now stores metadata between the IFD inside a ghost storage area
-        if (ghostSize > 0 && ghostSize < 16 * 1024) this.options.process(view.bytes(ghostSize));
+        if (ghostSize > 0 && ghostSize < 16 * 1024) this.options.process(bytes, offset, ghostSize);
 
-        return this.processIfd(nextOffsetIfd);
-    }
-
-    getImage(z: number): CogTiffImage {
-        return this.images[z];
+        // console.time('ReadIfd');
+        await this.readIfd(nextOffsetIfd, bytes);
+        // console.timeEnd('ReadIfd');
+        this.isInitialized = true;
+        return this;
     }
 
     /**
@@ -112,54 +105,36 @@ export class CogTiff {
         return firstImage;
     }
 
-    /**
-     * Get the raw bytes for a tile at a given x,y, index.
-     *
-     * This may return null if the tile does not exist eg Sparse cogs,
-     *
-     * @param x tile x index
-     * @param y tile y index
-     * @param index image index
-     */
-    async getTile(x: number, y: number, index: number): Promise<{ mimeType: string; bytes: Uint8Array } | null> {
-        const image = this.getImage(index);
-        if (image == null) throw new Error(`Missing z: ${index}`);
-        if (!image.isTiled()) throw new Error('Tif is not tiled');
+    private async readIfd(offset: number, lastView: DataViewOffset): Promise<void> {
+        // Often the previous read has enough information for reading this view
+        if (!hasBytes(lastView, offset, 512)) {
+            const bytes = await this.source.fetchBytes(offset, this.defaultReadSize);
+            lastView = new DataView(bytes) as DataViewOffset;
+            lastView.sourceOffset = offset;
+        }
 
-        return image.getTile(x, y);
-    }
+        const viewOffset = offset - lastView.sourceOffset;
+        const tagCount = getUint(lastView, viewOffset, this.ifdConfig.offset, this.isLittleEndian);
+        // const byteStart = this.ifdConfig.offset;
+        const tags: Map<TiffTag, CogTiffTag> = new Map();
 
-    private async processIfd(offset: number): Promise<void> {
-        const { image, nextOffset } = await this.readIfd(offset);
-        this.images.push(image);
+        // We now know how many bytes we need so ensure the ifd bytes are all read
+        const ifdBytes = tagCount * this.ifdConfig.ifd;
+        if (!hasBytes(lastView, offset, ifdBytes)) {
+            const bytes = await this.source.fetchBytes(offset, this.defaultReadSize);
+            lastView = new DataView(bytes) as DataViewOffset;
+            lastView.sourceOffset = offset;
+        }
 
-        if (nextOffset) await this.processIfd(nextOffset);
-    }
-
-    private async readIfd(offset: number): Promise<{ nextOffset: number; image: CogTiffImage }> {
-        if (!this.source.hasBytes(offset, 4096)) await this.source.loadBytes(offset, 4096);
-
-        const view = this.cursor.seekTo(offset);
-        const tagCount = view.offset();
-        const byteStart = offset + this.ifdConfig.offset;
-        const tags: Map<TiffTag, CogTiffTagBase> = new Map();
-
-        let pos = byteStart;
+        let currentOffset = viewOffset + this.ifdConfig.offset;
         for (let i = 0; i < tagCount; i++) {
-            const tag = CogTiffTag.create(this, pos);
-            pos += tag.size;
-
-            if (tag.name == null) throw new Error('Unknown IFD Tag: ' + toHexString(tag.id));
+            const tag = createTag(this, lastView, currentOffset);
+            currentOffset += this.ifdConfig.ifd;
             tags.set(tag.id, tag);
         }
 
-        const image = new CogTiffImage(this, this.images.length, tags);
-        const nextOffset = this.source.getUint(pos, this.ifdConfig.pointer);
-        return { nextOffset, image };
-    }
-
-    /** Close the file source if it needs closing */
-    async close(): Promise<void> {
-        await this.source?.close?.();
+        this.images.push(new CogTiffImage(this, this.images.length, tags));
+        const nextOffset = getUint(lastView, currentOffset, this.ifdConfig.pointer, this.isLittleEndian);
+        if (nextOffset) return this.readIfd(nextOffset, lastView);
     }
 }

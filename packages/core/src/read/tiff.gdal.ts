@@ -1,4 +1,4 @@
-import { ByteSize } from '@chunkd/core';
+import { ByteSize } from '../bytes.js';
 import { CogTiff } from '../cog.tiff.js';
 
 export enum GhostOption {
@@ -46,12 +46,12 @@ export class CogTifGhostOptions {
      * Load the ghost options from a source
      * @param bytes the ghost header bytes
      */
-    process(bytes: Uint8Array): void {
+    process(bytes: DataView, offset: number, ghostSize: number): void {
         let key = '';
         let value = '';
         let setValue = false;
-        for (let i = 0; i < bytes.length; i++) {
-            const charCode = bytes[i];
+        for (let i = 0; i < ghostSize; i++) {
+            const charCode = bytes.getUint8(offset + i);
             if (charCode === 0) break;
 
             const char = String.fromCharCode(charCode);

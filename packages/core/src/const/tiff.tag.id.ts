@@ -104,8 +104,9 @@ export enum TiffTag {
     XMP = 0x02bc,
 
     // GDAL
-    GDAL_METADATA = 0xa480,
-    GDAL_NODATA = 0xa481,
+    GdalMetadata = 0xa480,
+    GdalNoData = 0xa481,
+    LercParams = 0xc5f2,
 
     // Photoshop
     Photoshop = 0x8649,

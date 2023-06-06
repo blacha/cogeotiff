@@ -1,4 +1,4 @@
-import { ByteSize } from '@chunkd/core';
+import { ByteSize } from '../bytes.js';
 import { TiffVersion } from '../const/tiff.version.js';
 
 export const TagTiffConfig: TiffIfdConfig = {
@@ -33,9 +33,13 @@ export const TagTiffBigConfig: TiffIfdConfig = {
 };
 
 export interface TiffIfdConfig {
+    /** Tiff type */
     version: TiffVersion;
-    pointer: ByteSize;
-    offset: ByteSize;
+    /** Number of bytes a pointer uses */
+    pointer: number;
+    /** Number of bytes a offset uses */
+    offset: number;
+    /** Number of bytes the IFD tag contains */
     ifd: number;
 }
 
