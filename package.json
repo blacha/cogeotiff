@@ -1,35 +1,35 @@
 {
-    "name": "@cogeotiff/base",
-    "version": "0.1.0",
-    "scripts": {
-        "clean": "tsc -b --clean && rimraf 'packages/*/build'",
-        "build": "tsc -b --pretty",
-        "build-watch": "tsc -b --pretty --watch",
-        "version": "eslint lerna.json --fix",
-        "lint": "eslint . --quiet --fix --ignore-path .gitignore",
-        "test": "node --test"
-    },
-    "type": "module",
-    "engines": {
-        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
-    },
-    "private": true,
-    "keywords": [],
-    "author": "Blayne Chard",
-    "license": "ISC",
-    "description": "",
-    "devDependencies": {
-        "@linzjs/style": "^4.0.0",
-        "@types/node": "^20.0.0",
-        "lerna": "^6.4.1",
-        "rimraf": "^4.1.2"
-    },
-    "workspaces": {
-        "packages": [
-            "packages/*"
-        ],
-        "nohoist": [
-            "**/@types/**"
-        ]
-    }
+  "name": "@cogeotiff/base",
+  "version": "0.1.0",
+  "scripts": {
+    "clean": "tsc -b --clean && rimraf 'packages/*/build'",
+    "build": "tsc -b --pretty",
+    "build-watch": "tsc -b --pretty --watch",
+    "version": "eslint lerna.json --fix",
+    "lint": "eslint . --quiet --fix --ignore-path .gitignore",
+    "test": "node --test"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "private": true,
+  "keywords": [],
+  "author": "Blayne Chard",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@linzjs/style": "^4.0.0",
+    "@types/node": "^20.0.0",
+    "lerna": "^6.4.1",
+    "rimraf": "^4.1.2"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/@types/**"
+    ]
+  }
 }

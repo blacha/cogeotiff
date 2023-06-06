@@ -8,7 +8,7 @@
  * @returns hex string eg 0x0015
  **/
 export function toHex(num: number, padding = 4, prefix = true): string {
-    const hex = num.toString(16).padStart(padding, '0');
-    if (prefix) return '0x' + hex;
-    return hex;
+  const hex = num.toString(16).padStart(padding, '0');
+  if (prefix) return '0x' + hex;
+  return hex;
 }
