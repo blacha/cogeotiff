@@ -3,12 +3,11 @@ import { CogTiffImage } from './cog.tiff.image.js';
 import { TiffEndian } from './const/tiff.endian.js';
 import { TiffTag } from './const/tiff.tag.id.js';
 import { TiffVersion } from './const/tiff.version.js';
-import { hasBytes, DataViewOffset } from './read/data.view.offset.js';
+import { DataViewOffset, hasBytes } from './read/data.view.offset.js';
 import { CogTifGhostOptions } from './read/tiff.gdal.js';
 import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config.js';
 import { CogTiffTag, createTag } from './read/tiff.tag.factory.js';
 import { CogSource } from './source.js';
-import { toHex } from './util/util.hex.js';
 
 export class CogTiff {
     /** Read 16KB blocks at a time */
@@ -16,18 +15,20 @@ export class CogTiff {
     source: CogSource;
     version = TiffVersion.Tiff;
     images: CogTiffImage[] = [];
-    options = new CogTifGhostOptions();
+    /** Ghost header options */
+    options?: CogTifGhostOptions;
+    /** Configuration for the size of the IFD */
     ifdConfig: TiffIfdConfig = TagTiffConfig;
-    isLittleEndian: boolean;
-
-    constructor(source: CogSource) {
-        this.source = source;
-    }
-
+    /** Is the tiff being read is little Endian */
+    isLittleEndian = false;
     /** Has init() been called */
     isInitialized = false;
 
     private _initPromise?: Promise<CogTiff>;
+    constructor(source: CogSource) {
+        this.source = source;
+    }
+
     /**
      * Initialize the COG loading in the header and all image headers
      */
@@ -39,6 +40,7 @@ export class CogTiff {
 
     private async _readIfd(): Promise<CogTiff> {
         if (this.isInitialized) return this;
+        // console.time('init');
         const bytes = new DataView(await this.source.fetchBytes(0, this.defaultReadSize)) as DataViewOffset;
         bytes.sourceOffset = 0;
 
@@ -71,11 +73,15 @@ export class CogTiff {
 
         const ghostSize = nextOffsetIfd - offset;
         // GDAL now stores metadata between the IFD inside a ghost storage area
-        if (ghostSize > 0 && ghostSize < 16 * 1024) this.options.process(bytes, offset, ghostSize);
+        if (ghostSize > 0 && ghostSize < 16 * 1024) {
+            this.options = new CogTifGhostOptions();
+            this.options.process(bytes, offset, ghostSize);
+        }
 
-        // console.time('ReadIfd');
         await this.readIfd(nextOffsetIfd, bytes);
-        // console.timeEnd('ReadIfd');
+        // console.timeEnd('init');
+
+        // await Promise.all(this.images.map((i) => i.init()));
         this.isInitialized = true;
         return this;
     }
@@ -106,6 +112,9 @@ export class CogTiff {
     }
 
     private async readIfd(offset: number, lastView: DataViewOffset): Promise<void> {
+        // const id = this.images.length + 1;
+        // console.time(`ReadIfd:${id}`);
+
         // Often the previous read has enough information for reading this view
         if (!hasBytes(lastView, offset, 512)) {
             const bytes = await this.source.fetchBytes(offset, this.defaultReadSize);
@@ -135,6 +144,8 @@ export class CogTiff {
 
         this.images.push(new CogTiffImage(this, this.images.length, tags));
         const nextOffset = getUint(lastView, currentOffset, this.ifdConfig.pointer, this.isLittleEndian);
-        if (nextOffset) return this.readIfd(nextOffset, lastView);
+        // console.timeEnd(`ReadIfd:${id}`);
+
+        if (nextOffset) await this.readIfd(nextOffset, lastView);
     }
 }

@@ -1,3 +1,2 @@
 #!/usr/bin/env node
-import 'source-map-support/register.js';
-import '../build/index.js';
+import '../build/bin.js';

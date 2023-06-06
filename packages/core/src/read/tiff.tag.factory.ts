@@ -1,9 +1,7 @@
 import { getUint, getUint64 } from '../bytes.js';
-import { ImportantTags } from '../cog.tiff.image.js';
 import { CogTiff } from '../cog.tiff.js';
 import { TiffTag } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
-import { toHex } from '../util/util.hex.js';
 import { DataViewOffset, hasBytes } from './data.view.offset.js';
 import { getTiffTagSize } from './tiff.value.reader.js';
 
@@ -106,11 +104,11 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
             return tag;
     }
 
-    // If we already have the bytes in the view read them in
-    if (ImportantTags.has(tagId) && hasBytes(view, dataOffset, dataLength)) {
-        const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
-        return new TagInline(tiff, tagId, dataCount, dataType, value);
-    }
+    // // If we already have the bytes in the view read them in
+    // if (ImportantTags.has(tagId) && hasBytes(view, dataOffset, dataLength)) {
+    //     const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
+    //     return new TagInline(tiff, tagId, dataCount, dataType, value);
+    // }
 
     return new TagLazy(tiff, tagId, dataCount, dataType, dataOffset);
 }
@@ -121,7 +119,7 @@ export class TagLazy<T> {
     type = 'lazy' as const;
     id: number;
     name: string;
-    value: T | null;
+    value: T | undefined;
     tiff: CogTiff;
     dataOffset: number;
     count: number;
@@ -158,12 +156,14 @@ export class TagInline<T> {
     name: string;
     count: number;
     tiff: CogTiff;
+    dataType: number;
 
     constructor(tiff: CogTiff, tagId: number, count: number, type: number, value: T) {
         this.id = tagId;
         this.name = TiffTag[tagId];
         this.count = count;
         this.tiff = tiff;
+        this.dataType = type;
         this.value = value;
     }
 }

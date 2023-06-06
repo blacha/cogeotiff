@@ -1,14 +1,13 @@
 import { ByteSize } from '../bytes.js';
-import { CogTiff } from '../cog.tiff.js';
 
 export enum GhostOption {
-    GDAL_STRUCTURAL_METADATA_SIZE = 'GDAL_STRUCTURAL_METADATA_SIZE',
-    LAYOUT = 'LAYOUT',
-    BLOCK_ORDER = 'BLOCK_ORDER',
-    BLOCK_LEADER = 'BLOCK_LEADER',
-    BLOCK_TRAILER = 'BLOCK_TRAILER',
-    KNOWN_INCOMPATIBLE_EDITION = 'KNOWN_INCOMPATIBLE_EDITION',
-    MASK_INTERLEAVED_WITH_IMAGERY = 'MASK_INTERLEAVED_WITH_IMAGERY',
+    GdalStructuralMetadataSize = 'GDAL_STRUCTURAL_METADATA_SIZE',
+    Layout = 'LAYOUT',
+    BlockOrder = 'BLOCK_ORDER',
+    BlockLeader = 'BLOCK_LEADER',
+    BlockTrailer = 'BLOCK_TRAILER',
+    KnownIncompatibleEdition = 'KNOWN_INCOMPATIBLE_EDITION',
+    MaskInterleavedWithImagery = 'MASK_INTERLEAVED_WITH_IMAGERY',
 }
 
 export enum GhostOptionTileOrder {
@@ -25,21 +24,20 @@ export enum GhostOptionTileLeader {
  */
 export class CogTifGhostOptions {
     options: Map<string, string> = new Map();
-    source: CogTiff;
 
     /**
      * Has GDAL optimized this tif
      */
     get isCogOptimized(): boolean {
         if (this.isBroken) return false;
-        return this.options.get(GhostOption.LAYOUT) === 'IFDS_BEFORE_DATA';
+        return this.options.get(GhostOption.Layout) === 'IFDS_BEFORE_DATA';
     }
 
     /**
      * Has GDAL determined this tif is now broken
      */
     get isBroken(): boolean {
-        return this.options.get(GhostOption.KNOWN_INCOMPATIBLE_EDITION) === 'YES';
+        return this.options.get(GhostOption.KnownIncompatibleEdition) === 'YES';
     }
 
     /**
@@ -73,7 +71,7 @@ export class CogTifGhostOptions {
      * If the tile leader is set, how many bytes are allocated to the tile size
      */
     get tileLeaderByteSize(): ByteSize | null {
-        switch (this.options.get(GhostOption.BLOCK_LEADER)) {
+        switch (this.options.get(GhostOption.BlockLeader)) {
             case GhostOptionTileLeader.uint32:
                 return ByteSize.UInt32;
             default:
@@ -82,6 +80,6 @@ export class CogTifGhostOptions {
     }
 
     get isMaskInterleaved(): boolean {
-        return this.options.get(GhostOption.MASK_INTERLEAVED_WITH_IMAGERY) === 'YES';
+        return this.options.get(GhostOption.MaskInterleavedWithImagery) === 'YES';
     }
 }

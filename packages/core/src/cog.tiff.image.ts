@@ -2,10 +2,7 @@ import { getUint } from './bytes.js';
 import { CogTiff } from './cog.tiff.js';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
 import { TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
-import { CogTiffTag, TagInline, TagOffset } from './read/tiff.tag.factory';
-// import { CogTiffTagBase } from './read/tag/tiff.tag.base.js';
-// import { CogTiffTagLazy } from './read/tag/tiff.tag.lazy.js';
-// import { CogTiffTagOffset } from './read/tag/tiff.tag.offset.js';
+import { CogTiffTag, TagInline, TagOffset } from './read/tiff.tag.factory.js';
 import { BoundingBox, Size } from './vector.js';
 
 // /** Invalid EPSG code */
@@ -194,15 +191,15 @@ export class CogTiffImage {
         throw new Error('Image does not have a geo transformation.');
     }
 
-    //     /** Is there enough geo information on this image to figure out where its actually located */
-    //     get isGeoLocated(): boolean {
-    //         const isImageLocated =
-    //             this.value(TiffTag.ModelPixelScale) != null || this.value(TiffTag.ModelTransformation) != null;
-    //         if (isImageLocated) return true;
-    //         // If this is a sub image, use the isGeoLocated from the top level image
-    //         if (this.value(TiffTag.NewSubFileType) === 1 && this.id !== 0) return this.tif.images[0].isGeoLocated;
-    //         return false;
-    //     }
+    /** Is there enough geo information on this image to figure out where its actually located */
+    get isGeoLocated(): boolean {
+        const isImageLocated =
+            this.value(TiffTag.ModelPixelScale) != null || this.value(TiffTag.ModelTransformation) != null;
+        if (isImageLocated) return true;
+        // If this is a sub image, use the isGeoLocated from the top level image
+        if (this.value(TiffTag.NewSubFileType) === 1 && this.id !== 0) return this.tiff.images[0].isGeoLocated;
+        return false;
+    }
 
     /**
      * Get the resolution of the image
@@ -470,7 +467,7 @@ export class CogTiffImage {
     async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
         // GDAL optimizes tiles by storing the size of the tile in
         // the few bytes leading up to the tile
-        const leaderBytes = this.tiff.options.tileLeaderByteSize;
+        const leaderBytes = this.tiff.options?.tileLeaderByteSize;
         if (leaderBytes) {
             const offset = await getOffset(this.tileOffset, index);
             // Sparse COG no data found

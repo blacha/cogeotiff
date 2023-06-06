@@ -11,7 +11,11 @@ async function main(): Promise<void> {
         await tiff.init();
 
         // 6 images
+        // console.time('getTile');
         for (const img of tiff.images) await img.getTile(0, 0);
+        // console.timeEnd('getTile');
+
+        // if (i > 10) break;
     }
 }
 
@@ -20,7 +24,6 @@ main();
 
 export class SourceMemory implements CogSource {
     url: URL;
-    name: string;
     type = 'memory';
     data: ArrayBuffer;
 

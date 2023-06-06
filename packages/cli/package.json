@@ -23,10 +23,10 @@
         "@rushstack/ts-command-line": "^4.3.14",
         "ansi-colors": "^4.1.1",
         "aws-sdk": "^2.781.0",
+        "cmd-ts": "^0.12.1",
         "p-limit": "^4.0.0",
         "pino": "^8.0.0",
-        "pretty-json-log": "^1.0.0",
-        "source-map-support": "^0.5.12"
+        "pretty-json-log": "^1.0.0"
     },
     "devDependencies": {
         "@types/node": "^20.0.0",

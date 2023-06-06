@@ -22,7 +22,7 @@ export const ActionUtil = {
         if (source == null) throw new Error(`File "${file} is not valid`);
 
         const tif = new CogTiff(source);
-        await tif.init(false);
+        await tif.init();
         return { source, tif };
     },
     formatResult(title: string, result: CliResultMap[]): string[] {

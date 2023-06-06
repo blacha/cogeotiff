@@ -1,4 +1,3 @@
 module.exports = {
-    ...require('@linzjs/style/.prettierrc.js'),
-    tabWidth: 4
+    ...require('@linzjs/style/.prettierrc.cjs')
 };

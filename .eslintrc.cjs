@@ -1,3 +1,3 @@
 module.exports = {
-    ...require('@linzjs/style/.eslintrc.js'),
+    ...require('@linzjs/style/.eslintrc.cjs'),
 };

@@ -4,16 +4,16 @@ import * as path from 'path';
 import type pino from 'pino';
 
 const FileExtension: Record<string, string> = {
-    [TiffMimeType.JPEG]: 'jpeg',
-    [TiffMimeType.JP2]: 'jp2',
-    [TiffMimeType.WEBP]: 'webp',
-    [TiffMimeType.LZW]: 'lzw',
-    [TiffMimeType.DEFLATE]: 'deflate',
-    [TiffMimeType.NONE]: 'bin',
-    [TiffMimeType.JPEGXL]: 'jpeg',
-    [TiffMimeType.ZSTD]: 'zstd',
-    [TiffMimeType.LZERC]: 'lerc',
-    [TiffMimeType.LZMA]: 'lzma',
+    [TiffMimeType.Jpeg]: 'jpeg',
+    [TiffMimeType.Jp2]: 'jp2',
+    [TiffMimeType.Webp]: 'webp',
+    [TiffMimeType.Lzw]: 'lzw',
+    [TiffMimeType.Deflate]: 'deflate',
+    [TiffMimeType.None]: 'bin',
+    [TiffMimeType.JpegXl]: 'jpeg',
+    [TiffMimeType.Zstd]: 'zstd',
+    [TiffMimeType.Lerc]: 'lerc',
+    [TiffMimeType.Lzma]: 'lzma',
 };
 
 /**
@@ -41,12 +41,12 @@ export async function writeTile(
     outputPath: string,
     logger: pino.Logger,
 ): Promise<void> {
-    const tile = await tif.getTile(x, y, index);
+    const tile = await tif.images[index].getTile(x, y);
     if (tile == null) {
         logger.debug({ index, x, y }, 'TileEmpty');
         return;
     }
     const fileName = getTileName(tile.mimeType, index, x, y);
-    await fs.writeFile(path.join(outputPath, fileName), tile.bytes);
-    logger.debug({ index, x, y, fileName, bytes: tile.bytes.length }, 'TileWrite');
+    await fs.writeFile(path.join(outputPath, fileName), Buffer.from(tile.bytes));
+    logger.debug({ index, x, y, fileName, bytes: tile.bytes.byteLength }, 'TileWrite');
 }
