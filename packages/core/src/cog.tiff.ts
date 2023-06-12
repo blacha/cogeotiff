@@ -1,8 +1,8 @@
 import { getUint } from './bytes.js';
 import { CogTiffImage } from './cog.tiff.image.js';
 import { TiffEndian } from './const/tiff.endian.js';
-import { TiffTag } from './const/tiff.tag.id.js';
 import { TiffVersion } from './const/tiff.version.js';
+import { TiffTag } from './index.js';
 import { DataViewOffset, hasBytes } from './read/data.view.offset.js';
 import { CogTifGhostOptions } from './read/tiff.gdal.js';
 import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config.js';
@@ -78,9 +78,17 @@ export class CogTiff {
       this.options.process(bytes, offset, ghostSize);
     }
 
-    await this.readIfd(nextOffsetIfd, bytes);
-    // console.timeEnd('init');
+    while (nextOffsetIfd !== 0) {
+      let lastView = bytes;
+      if (!hasBytes(lastView, nextOffsetIfd, 1024)) {
+        const bytes = await this.source.fetchBytes(offset, this.defaultReadSize);
+        lastView = new DataView(bytes) as DataViewOffset;
+        lastView.sourceOffset = offset;
+      }
+      nextOffsetIfd = await this.readIfd(nextOffsetIfd, bytes);
+    }
 
+    // console.log(counts);
     await Promise.all(this.images.map((i) => i.init()));
     this.isInitialized = true;
     return this;
@@ -111,41 +119,24 @@ export class CogTiff {
     return firstImage;
   }
 
-  private async readIfd(offset: number, lastView: DataViewOffset): Promise<void> {
-    // const id = this.images.length + 1;
-    // console.time(`ReadIfd:${id}`);
-
-    // Often the previous read has enough information for reading this view
-    if (!hasBytes(lastView, offset, 512)) {
-      const bytes = await this.source.fetchBytes(offset, this.defaultReadSize);
-      lastView = new DataView(bytes) as DataViewOffset;
-      lastView.sourceOffset = offset;
-    }
-
+  private async readIfd(offset: number, lastView: DataViewOffset): Promise<number> {
     const viewOffset = offset - lastView.sourceOffset;
     const tagCount = getUint(lastView, viewOffset, this.ifdConfig.offset, this.isLittleEndian);
-    // const byteStart = this.ifdConfig.offset;
+
     const tags: Map<TiffTag, CogTiffTag> = new Map();
 
     // We now know how many bytes we need so ensure the ifd bytes are all read
     const ifdBytes = tagCount * this.ifdConfig.ifd;
-    if (!hasBytes(lastView, offset, ifdBytes)) {
-      const bytes = await this.source.fetchBytes(offset, this.defaultReadSize);
-      lastView = new DataView(bytes) as DataViewOffset;
-      lastView.sourceOffset = offset;
-    }
+    if (!hasBytes(lastView, offset, ifdBytes)) throw new Error('ifd out of range');
 
-    let currentOffset = viewOffset + this.ifdConfig.offset;
+    const ifdSize = this.ifdConfig.ifd;
+    const startOffset = viewOffset + this.ifdConfig.offset;
     for (let i = 0; i < tagCount; i++) {
-      const tag = createTag(this, lastView, currentOffset);
-      currentOffset += this.ifdConfig.ifd;
+      const tag = createTag(this, lastView, startOffset + i * ifdSize);
       tags.set(tag.id, tag);
     }
 
     this.images.push(new CogTiffImage(this, this.images.length, tags));
-    const nextOffset = getUint(lastView, currentOffset, this.ifdConfig.pointer, this.isLittleEndian);
-    // console.timeEnd(`ReadIfd:${id}`);
-
-    if (nextOffset) await this.readIfd(nextOffset, lastView);
+    return getUint(lastView, startOffset + tagCount * ifdSize, this.ifdConfig.pointer, this.isLittleEndian);
   }
 }

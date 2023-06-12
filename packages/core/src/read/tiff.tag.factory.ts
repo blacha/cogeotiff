@@ -84,31 +84,31 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
   const dataTypeSize = getTiffTagSize(dataType);
   const dataLength = dataTypeSize * dataCount;
 
-  // Tag value is inline read the value
+  // Tag is not inline but it is within the buffer we have been given
+
+  //   // Tag value is inline read the value
   if (dataLength <= tiff.ifdConfig.pointer) {
     const value = readValue(tiff, view, offset + 4 + tiff.ifdConfig.pointer, dataType, dataCount);
-    return new TagInline(tiff, tagId, dataCount, dataType, value);
+    return { type: 'inline', tiff, id: tagId, count: dataCount, dataType, value };
   }
 
-  // Tag is not inline but it is within the buffer we have been given
   const dataOffset = getUint(view, offset + 4 + tiff.ifdConfig.pointer, tiff.ifdConfig.pointer, tiff.isLittleEndian);
-
   switch (tagId) {
     case TiffTag.TileOffsets:
     case TiffTag.TileByteCounts:
     case TiffTag.StripByteCounts:
     case TiffTag.StripOffsets:
       const tag = new TagOffset(tiff, tagId, dataCount, dataType, dataOffset);
-      // Some offsets are quite long and don't need to read them often, so only read the tags we are interested in
+      // Some offsets are quite long and don't need to read them often, so only read the tags we are interested in when we need to
       if (hasBytes(view, dataOffset, dataLength)) tag.setBytes(view);
       return tag;
   }
 
   // If we already have the bytes in the view read them in
-  if (hasBytes(view, dataOffset, dataLength)) {
-    const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
-    return new TagInline(tiff, tagId, dataCount, dataType, value);
-  }
+  //   if (hasBytes(view, dataOffset, dataLength)) {
+  //     const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
+  //     return { type: 'inline', tiff, id: tagId, count: dataCount, dataType, value };
+  //   }
 
   return new TagLazy(tiff, tagId, dataCount, dataType, dataOffset);
 }
@@ -118,7 +118,7 @@ export type CogTiffTag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;
 export class TagLazy<T> {
   type = 'lazy' as const;
   id: number;
-  name: string;
+  //   name: string;
   value: T | undefined;
   tiff: CogTiff;
   dataOffset: number;
@@ -127,16 +127,16 @@ export class TagLazy<T> {
 
   constructor(tiff: CogTiff, tagId: number, count: number, type: number, offset: number) {
     this.id = tagId;
-    this.name = TiffTag[tagId];
+    // this.name = TiffTag[tagId];
     this.tiff = tiff;
     this.dataOffset = offset;
     this.count = count;
     this.dataType = type;
   }
 
-  fromBytes(view: DataViewOffset): void {
-    this.value = readValue(this.tiff, view, this.dataOffset - view.sourceOffset, this.dataType, this.count) as T;
-  }
+  //   fromBytes(view: DataViewOffset): void {
+  //     this.value = readValue(this.tiff, view, this.dataOffset - view.sourceOffset, this.dataType, this.count) as T;
+  //   }
 
   async fetch(): Promise<T> {
     if (this.value != null) return this.value;
@@ -149,30 +149,21 @@ export class TagLazy<T> {
   }
 }
 
-export class TagInline<T> {
-  type = 'inline' as const;
+export interface TagInline<T> {
+  type: 'inline';
   value: T;
   id: number;
-  name: string;
+  //   name: string;
   count: number;
   tiff: CogTiff;
   dataType: number;
-
-  constructor(tiff: CogTiff, tagId: number, count: number, type: number, value: T) {
-    this.id = tagId;
-    this.name = TiffTag[tagId];
-    this.count = count;
-    this.tiff = tiff;
-    this.dataType = type;
-    this.value = value;
-  }
 }
 
 export class TagOffset {
   type = 'offset' as const;
   value: number[] = [];
   id: number;
-  name: string;
+  //   name: string;
   tiff: CogTiff;
   count: number;
   isLoaded = false;
@@ -182,7 +173,7 @@ export class TagOffset {
 
   constructor(tiff: CogTiff, tagId: number, count: number, type: number, offset: number) {
     this.id = tagId;
-    this.name = TiffTag[tagId];
+    // this.name = TiffTag[tagId];
     this.tiff = tiff;
     this.count = count;
     this.dataType = type;

@@ -487,7 +487,7 @@ export class CogTiffImage {
 }
 
 function getOffset(x: TagOffset | TagInline<number | number[]>, index: number): number | Promise<number> {
-  if (index > x.count || index < 0) throw new Error('TagIndex: out of bounds ' + x.name + ' @ ' + index);
+  if (index > x.count || index < 0) throw new Error('TagIndex: out of bounds ' + x.id + ' @ ' + index);
   if (x.type === 'inline') {
     if (Array.isArray(x.value)) return x.value[index] as number;
     return x.value as number;
