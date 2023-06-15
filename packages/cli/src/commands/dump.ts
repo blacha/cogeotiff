@@ -5,10 +5,10 @@ import { command, number, option, optional, restPositionals } from 'cmd-ts';
 import { promises as fs } from 'node:fs';
 import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import pLimit from 'p-limit';
 import { DefaultArgs, Url } from '../common.js';
 import { setupLogger, sourceCache } from '../log.js';
 import { writeTile } from '../util.tile.js';
+import pLimit from 'p-limit';
 
 // const Rad2Deg = 180 / Math.PI;
 // const A = 6378137.0; // 900913 properties.
@@ -16,7 +16,7 @@ import { writeTile } from '../util.tile.js';
 //   return [(x * Rad2Deg) / A, (Math.PI * 0.5 - 2.0 * Math.atan(Math.exp(-y / A))) * Rad2Deg];
 // }
 
-const TileQueue = pLimit(1);
+const TileQueue = pLimit(5);
 
 export interface GeoJsonPolygon {
   type: 'Feature';

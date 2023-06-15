@@ -1,13 +1,13 @@
-import { S3Client } from '@aws-sdk/client-s3';
-import { fsa, FsHttp } from '@chunkd/fs';
-import { FsAwsS3 } from '@chunkd/fs-aws';
+import { FsHttp, fsa } from '@chunkd/fs';
+// import '@chunkd/fs-aws';
 import { SourceCache, SourceChunk } from '@chunkd/view';
-// import { FsHttp } from '@chunkd/fs-http';
 import { log } from '@linzjs/tracing';
 import { FetchLog } from './fs.js';
+// import { S3Client } from '@aws-sdk/client-s3';
 
 // Cache the last 10MB of chunks for reuse
 export const sourceCache = new SourceCache({ size: 10 * 1024 * 1024 });
+export const sourceChunk = new SourceChunk({ size: 32 * 1024, splitRequests: true });
 
 export function setupLogger(cfg: { verbose?: boolean; extraVerbose?: boolean }): typeof log {
   if (cfg.verbose) {
@@ -18,12 +18,14 @@ export function setupLogger(cfg: { verbose?: boolean; extraVerbose?: boolean }):
     log.level = 'warn';
   }
 
-  fsa.register('s3://', new FsAwsS3(new S3Client({}) as any));
+  // new S3Client({});
+  // FIXME loading AWS SDK adds 300ms to the cli time
+  // fsa.register('s3://', new FsAwsS3(new S3Client({}) as any));
   fsa.register('http://', new FsHttp());
   fsa.register('https://', new FsHttp());
 
   // Chunk all requests into 32KB chunks
-  fsa.sources.use(new SourceChunk({ size: 64 * 1024, splitRequests: true }));
+  fsa.sources.use(sourceChunk);
   // Cache the last 10MB of chunks for reuse
   fsa.sources.use(sourceCache);
 

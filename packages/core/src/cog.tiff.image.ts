@@ -393,6 +393,10 @@ export class CogTiffImage {
     if (byteCount === 0) return null;
 
     const bytes = await this.tiff.source.fetch(offset, byteCount);
+    if (bytes.byteLength < byteCount) {
+      throw new Error(`Failed to fetch bytes from offset:${offset} wanted:${byteCount} got:${bytes.byteLength}`);
+    }
+    console.log(byteCount, bytes.byteLength);
 
     if (this.compression === TiffMimeType.Jpeg) return { mimeType, bytes: this.getJpegHeader(bytes) };
     return { mimeType, bytes };
@@ -427,6 +431,8 @@ export class CogTiffImage {
     if (idx >= totalTiles) throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
 
     const { offset, imageSize } = await this.getTileSize(idx);
+    // console.log({ x, y, offset, imageSize });
+
     return this.getBytes(offset, imageSize);
   }
 

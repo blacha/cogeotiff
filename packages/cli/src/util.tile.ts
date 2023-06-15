@@ -41,7 +41,6 @@ export async function writeTile(
   logger: typeof log,
 ): Promise<void> {
   const tile = await tiff.images[index].getTile(x, y);
-  console.log(tile, x, y);
   if (tile == null) {
     logger.debug('Tile:Empty', { source: tiff.source.url.href, index, x, y });
     return;
