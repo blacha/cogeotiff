@@ -16,7 +16,7 @@
     "author": "Blayne Chard",
     "license": "MIT",
     "scripts": {
-        "test": "ospec --globs 'build/**/*.test.js'",
+        "test": "node --test",
         "bundle": "esbuild src/browser/index.ts --bundle --outfile=dist/index.js"
     },
     "dependencies": {
@@ -25,8 +25,7 @@
         "esbuild": "^0.17.6"
     },
     "devDependencies": {
-        "@types/node": "^18.0.0",
-        "@types/ospec": "^4.0.3"
+        "@types/node": "^20.0.0"
     },
     "publishConfig": {
         "access": "restricted"

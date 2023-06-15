@@ -15,15 +15,14 @@
     "author": "Blayne Chard",
     "license": "MIT",
     "scripts": {
-        "test": "ospec --globs 'build/**/*.test.js'"
+        "test": "node --test"
     },
     "dependencies": {
         "@chunkd/core": "^10.0.0",
         "ieee754": "^1.1.13"
     },
     "devDependencies": {
-        "@types/node": "^18.0.0",
-        "@types/ospec": "^4.0.3"
+        "@types/node": "^20.0.0"
     },
     "publishConfig": {
         "access": "public"

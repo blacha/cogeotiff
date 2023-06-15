@@ -1,4 +1,5 @@
-import o from 'ospec';
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
 import * as path from 'path';
 import 'source-map-support/register.js';
 
@@ -10,7 +11,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = fileURLToPath(import.meta.url);
 
-o.spec('CogRead', () => {
+describe('CogRead', () => {
     // TODO this does not load 100% yet
     // o('should read big endian', async () => {
     //     const source = new TestFileChunkSource(path.join(__dirname, '../../../test/data/be_cog.tif'))
@@ -28,63 +29,67 @@ o.spec('CogRead', () => {
     // })
 
     function validate(tif: CogTiff): void {
-        o(tif.images.length).equals(5);
+        assert.equal(tif.images.length, 5);
 
         const [firstTif] = tif.images;
-        o(firstTif.isTiled()).equals(true);
-        o(firstTif.tileSize).deepEquals({ width: 256, height: 256 });
-        o(firstTif.size).deepEquals({ width: 64, height: 64 });
+        assert.equal(firstTif.isTiled(), true);
+        assert.deepEqual(firstTif.tileSize, { width: 256, height: 256 });
+        assert.deepEqual(firstTif.size, { width: 64, height: 64 });
     }
 
-    o('should read big tiff', async () => {
+    it('should read big tiff', async () => {
         const source = new TestFileChunkSource(path.join(__dirname, '../../../data/big_cog.tif'));
         const tiff = new CogTiff(source);
 
         await tiff.init();
 
-        o(source.isLittleEndian).equals(true);
-        o(tiff.version).equals(TiffVersion.BigTiff);
+        assert.equal(source.isLittleEndian, true);
+        assert.equal(tiff.version, TiffVersion.BigTiff);
         validate(tiff);
     });
 
-    o('should read tiff', async () => {
+    it('should read tiff', async () => {
         const source = new TestFileChunkSource(path.join(__dirname, '../../../data/cog.tif'));
         const tiff = new CogTiff(source);
 
         await tiff.init();
 
-        o(source.isLittleEndian).equals(true);
-        o(tiff.version).equals(TiffVersion.Tiff);
+        assert.equal(source.isLittleEndian, true);
+        assert.equal(tiff.version, TiffVersion.Tiff);
         validate(tiff);
 
         const [firstTif] = tiff.images;
-        o(firstTif.compression).equals(TiffMimeType.JPEG);
+        assert.equal(firstTif.compression, TiffMimeType.JPEG);
     });
 
-    o('should allow multiple init', async () => {
+    it('should allow multiple init', async () => {
         const source = new TestFileChunkSource(path.join(__dirname, '../../../data/cog.tif'));
         const tiff = new CogTiff(source);
 
-        o(tiff.isInitialized).equals(false);
+        assert.equal(tiff.isInitialized, false);
         await tiff.init();
-        o(tiff.isInitialized).equals(true);
-        o(tiff.images.length).equals(5);
+        assert.equal(tiff.isInitialized, true);
+        assert.equal(tiff.images.length, 5);
 
-        o(tiff.isInitialized).equals(true);
+        assert.equal(tiff.isInitialized, true);
         await tiff.init();
-        o(tiff.images.length).equals(5);
+        assert.equal(tiff.images.length, 5);
     });
 
-    o('should close a source', async () => {
+    it('should close a source', async () => {
         const source = new TestFileChunkSource(path.join(__dirname, '../../../data/cog.tif'));
         const tiff = new CogTiff(source);
         // Should not close if there is no close
         source.close = undefined;
         await tiff.close();
 
-        const closeSpy = o.spy(() => Promise.resolve());
+        let callCount = 0;
+        const closeSpy = (): Promise<void> => {
+            callCount++;
+            return Promise.resolve();
+        };
         source.close = closeSpy;
         await tiff.close();
-        o(closeSpy.callCount).equals(1);
+        assert.equal(callCount, 1);
     });
 });

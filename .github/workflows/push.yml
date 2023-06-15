@@ -7,5 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: linz/action-typescript@v1
+      - uses: linz/action-typescript@v3
+        with:
+          package-manager: yarn
       - uses: blacha/hyperfine-action@v1

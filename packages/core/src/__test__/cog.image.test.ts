@@ -1,4 +1,5 @@
-import o from 'ospec';
+import { describe, beforeEach, it } from 'node:test';
+import assert from 'node:assert';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 
@@ -19,146 +20,146 @@ function getResolution(zoom: number): number {
     return InitialResolution / 2 ** zoom;
 }
 
-o.spec('CogTiled', () => {
+describe('CogTiled', () => {
     const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../../data/rgba8_tiled.tiff'));
     const cog = new CogTiff(cogSourceFile);
 
-    o.beforeEach(() => cog.init());
+    beforeEach(() => cog.init());
 
-    o('should match resolutions to web mercator zoom levels', () => {
+    it('should match resolutions to web mercator zoom levels', () => {
         for (let i = 0; i < 14; i++) {
-            o(cog.getImageByResolution(getResolution(i)).id).equals(4);
+            assert.equal(cog.getImageByResolution(getResolution(i)).id, 4);
         }
 
-        o(cog.getImageByResolution(getResolution(14)).id).equals(3);
-        o(cog.getImageByResolution(getResolution(15)).id).equals(2);
-        o(cog.getImageByResolution(getResolution(16)).id).equals(1);
-        o(cog.getImageByResolution(getResolution(17)).id).equals(0);
-        o(cog.getImageByResolution(getResolution(18)).id).equals(0);
+        assert.equal(cog.getImageByResolution(getResolution(14)).id, 3);
+        assert.equal(cog.getImageByResolution(getResolution(15)).id, 2);
+        assert.equal(cog.getImageByResolution(getResolution(16)).id, 1);
+        assert.equal(cog.getImageByResolution(getResolution(17)).id, 0);
+        assert.equal(cog.getImageByResolution(getResolution(18)).id, 0);
 
         for (let i = 19; i < 32; i++) {
-            o(cog.getImageByResolution(getResolution(i)).id).equals(0);
+            assert.equal(cog.getImageByResolution(getResolution(i)).id, 0);
         }
     });
 
-    o('should get origin from all images', () => {
+    it('should get origin from all images', () => {
         const baseOrigin = cog.images[0].origin;
         for (const img of cog.images) {
-            o(img.origin).deepEquals(baseOrigin);
+            assert.deepEqual(img.origin, baseOrigin);
         }
     });
 
-    o('should get bounding box from all images', () => {
+    it('should get bounding box from all images', () => {
         const baseOrigin = cog.images[0].bbox;
         for (const img of cog.images) {
-            o(img.bbox).deepEquals(baseOrigin);
+            assert.deepEqual(img.bbox, baseOrigin);
         }
     });
 
-    o('should be geolocated', () => {
-        for (const img of cog.images) o(img.isGeoLocated).equals(true);
+    it('should be geolocated', () => {
+        for (const img of cog.images) assert.equal(img.isGeoLocated, true);
     });
 
-    o('should scale image resolution for all images', () => {
+    it('should scale image resolution for all images', () => {
         const [resX, resY, resZ] = cog.images[0].resolution;
         for (let i = 0; i < cog.images.length; i++) {
             const img = cog.images[i];
             const scale = 2 ** i; // This tiff is scaled at a factor of two per zoom level
-            o(img.resolution).deepEquals([resX * scale, resY * scale, resZ]);
+            assert.deepEqual(img.resolution, [resX * scale, resY * scale, resZ]);
         }
     });
 
-    o('should have tile information', () => {
+    it('should have tile information', () => {
         const [firstImage] = cog.images;
-        o(firstImage.stripCount).equals(0);
-        o(firstImage.isTiled()).equals(true);
+        assert.equal(firstImage.stripCount, 0);
+        assert.equal(firstImage.isTiled(), true);
     });
 
-    o('should hasTile for every tile', async () => {
+    it('should hasTile for every tile', async () => {
         const [firstImage] = cog.images;
 
         for (let x = 0; x < firstImage.tileCount.x; x++) {
             for (let y = 0; y < firstImage.tileCount.y; y++) {
-                o(await firstImage.hasTile(x, y)).equals(true);
+                assert.equal(await firstImage.hasTile(x, y), true);
             }
         }
     });
 });
 
-o.spec('Cog.Big', () => {
-    o('should support reading from memory', async () => {
+describe('Cog.Big', () => {
+    it('should support reading from memory', async () => {
         const fullSource = new TestFileChunkSource(path.join(__dirname, '../../../data/sparse.tiff'));
         fullSource.chunkSize = 27902;
         await fullSource.loadBytes(0, 27902);
         const cog = new CogTiff(fullSource);
         await cog.init();
 
-        o(fullSource.chunkSize).equals(27902);
-        o(fullSource.chunks.size).equals(1);
+        assert.equal(fullSource.chunkSize, 27902);
+        assert.equal(fullSource.chunks.size, 1);
         const [firstImage] = cog.images;
-        o(firstImage.stripCount).equals(0);
-        o(firstImage.isTiled()).equals(true);
+        assert.equal(firstImage.stripCount, 0);
+        assert.equal(firstImage.isTiled(), true);
 
         const img = cog.getImage(4);
-        o(img.tileCount).deepEquals({ x: 2, y: 2 });
+        assert.deepEqual(img.tileCount, { x: 2, y: 2 });
     });
 
-    o('should read using a memory source', async () => {
+    it('should read using a memory source', async () => {
         const bytes = await fs.readFile(path.join(__dirname, '../../../data/sparse.tiff'));
         const source = new SourceMemory('Sparse.tiff', bytes.buffer);
         const cog = new CogTiff(source);
         await cog.init();
 
-        o(source.chunkSize).equals(27902);
-        o(source.chunks.size).equals(1);
+        assert.equal(source.chunkSize, 27902);
+        assert.equal(source.chunks.size, 1);
         const [firstImage] = cog.images;
-        o(firstImage.stripCount).equals(0);
-        o(firstImage.isTiled()).equals(true);
+        assert.equal(firstImage.stripCount, 0);
+        assert.equal(firstImage.isTiled(), true);
 
         const img = cog.getImage(4);
-        o(img.tileCount).deepEquals({ x: 2, y: 2 });
+        assert.deepEqual(img.tileCount, { x: 2, y: 2 });
     });
 });
 
-o.spec('Cog.Sparse', () => {
+describe('Cog.Sparse', () => {
     const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../../data/sparse.tiff'));
     const cog = new CogTiff(cogSourceFile);
-    o.beforeEach(() => cog.init(true));
+    beforeEach(() => cog.init(true));
 
-    o('should read metadata', () => {
-        o(cog.getImage(0).epsg).equals(2193);
+    it('should read metadata', () => {
+        assert.equal(cog.getImage(0).epsg, 2193);
     });
 
-    o('should be geolocated', () => {
-        for (const img of cog.images) o(img.isGeoLocated).equals(true);
+    it('should be geolocated', () => {
+        for (const img of cog.images) assert.equal(img.isGeoLocated, true);
     });
 
-    o('should support sparse cogs', async () => {
+    it('should support sparse cogs', async () => {
         const z = 4;
         const img = cog.getImage(z);
 
         const { tileCount } = img;
-        o(tileCount).deepEquals({ x: 2, y: 2 });
+        assert.deepEqual(tileCount, { x: 2, y: 2 });
 
         for (let x = 0; x < tileCount.x; x++) {
             for (let y = 0; y < tileCount.y; y++) {
                 const hasTile = await img.hasTile(x, y);
-                o(hasTile).equals(false);
+                assert.equal(hasTile, false);
                 const tileXy = await img.getTile(x, y);
                 const tileXyz = await cog.getTile(x, y, z);
-                o(tileXy).equals(null)(`Tile x:${x} y:${y} should be empty`);
-                o(tileXyz).equals(null)(`Tile x:${x} y:${y} z: ${z} should be empty`);
+                assert.equal(tileXy, null, `Tile x:${x} y:${y} should be empty`);
+                assert.equal(tileXyz, null, `Tile x:${x} y:${y} z: ${z} should be empty`);
             }
         }
     });
 
-    o('should have ghost options', () => {
-        o(cog.options.options.size).equals(6);
-        o(cog.options.tileLeaderByteSize).equals(ByteSize.UInt32);
-        o(cog.options.isCogOptimized).equals(true);
+    it('should have ghost options', () => {
+        assert.equal(cog.options.options.size, 6);
+        assert.equal(cog.options.tileLeaderByteSize, ByteSize.UInt32);
+        assert.equal(cog.options.isCogOptimized, true);
 
         const entries = [...cog.options.options.entries()];
-        o(entries).deepEquals([
+        assert.deepEqual(entries, [
             ['GDAL_STRUCTURAL_METADATA_SIZE', '000140 bytes'],
             ['LAYOUT', 'IFDS_BEFORE_DATA'],
             ['BLOCK_ORDER', 'ROW_MAJOR'],
@@ -169,46 +170,46 @@ o.spec('Cog.Sparse', () => {
     });
 });
 
-o.spec('CogStrip', () => {
+describe('CogStrip', () => {
     const cogSourceFile = new TestFileChunkSource(path.join(__dirname, '../../../data/rgba8_strip.tiff'));
     const cog = new CogTiff(cogSourceFile);
 
-    o.beforeEach(() => cog.init());
+    beforeEach(() => cog.init());
 
-    o('should get origin from all images', () => {
+    it('should get origin from all images', () => {
         const baseOrigin = cog.images[0].origin;
         for (const img of cog.images) {
-            o(img.origin).deepEquals(baseOrigin);
+            assert.deepEqual(img.origin, baseOrigin);
         }
     });
 
-    o('should get bounding box from all images', () => {
+    it('should get bounding box from all images', () => {
         const baseOrigin = cog.images[0].bbox;
         for (const img of cog.images) {
-            o(img.bbox).deepEquals(baseOrigin);
+            assert.deepEqual(img.bbox, baseOrigin);
         }
     });
 
-    o('should scale image resolution for all images', () => {
+    it('should scale image resolution for all images', () => {
         const [resX, resY, resZ] = cog.images[0].resolution;
         for (let i = 0; i < cog.images.length; i++) {
             const img = cog.images[i];
             const scale = 2 ** i; // This tiff is scaled at a factor of two per zoom level
-            o(img.resolution).deepEquals([resX * scale, resY * scale, resZ]);
+            assert.deepEqual(img.resolution, [resX * scale, resY * scale, resZ]);
         }
     });
 
-    o('should have strip information', async () => {
+    it('should have strip information', async () => {
         const [firstImage] = cog.images;
-        o(firstImage.isTiled()).equals(false);
-        o(firstImage.stripCount).equals(2);
+        assert.equal(firstImage.isTiled(), false);
+        assert.equal(firstImage.stripCount, 2);
 
         const stripA = await firstImage.getStrip(0);
-        o(stripA?.mimeType).equals(TiffMimeType.WEBP);
-        o(stripA?.bytes.byteLength).equals(152);
+        assert.equal(stripA?.mimeType, TiffMimeType.WEBP);
+        assert.equal(stripA?.bytes.byteLength, 152);
 
         const stripB = await firstImage.getStrip(1);
-        o(stripB?.mimeType).equals(TiffMimeType.WEBP);
-        o(stripB?.bytes.byteLength).equals(152);
+        assert.equal(stripB?.mimeType, TiffMimeType.WEBP);
+        assert.equal(stripB?.bytes.byteLength, 152);
     });
 });

@@ -861,20 +861,15 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.1.tgz#283f669ff76d7b8260df8ab7a4262cc83d988256"
   integrity sha512-fZQQafSREFyuZcdWFAExYjBiCL7AUCdgsk80iO0q4yihYYdcIiH28CcuPTGFgLOCC8RlW49GSQxdHwZP+I7CNg==
 
-"@types/node@^18.0.0":
-  version "18.13.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.13.0.tgz#0400d1e6ce87e9d3032c19eb6c58205b0d3f7850"
-  integrity sha512-gC3TazRzGoOnoKAhUx+Q0t8S9Tzs74z7m0ipwGpSqQrleP14hKxP4/JUeEQcD3W1/aIpnWl8pHowI7WokuZpXg==
+"@types/node@^20.0.0":
+  version "20.2.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.2.5.tgz#26d295f3570323b2837d322180dfbf1ba156fefb"
+  integrity sha512-JJulVEQXmiY9Px5axXHeYGLSjhkZEnD+MDPDGbCbIAbMslkKwmygtZFy1X6s/075Yo94sf8GuSlFfPzysQrWZQ==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
-
-"@types/ospec@^4.0.3":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@types/ospec/-/ospec-4.0.4.tgz#24c4a7be8cda3cd4ba3178c96674d0f6f31dae54"
-  integrity sha512-MZMMHJ4kbwmXVZjSsCECPAe6J+BQmDx74dm5Wz/6f/Yk7Go1EEk2vuB2QLEmRBVuEGbMKOZlavtZ+NxIkdjiGA==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -3932,13 +3927,6 @@ os-tmpdir@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
   integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
-
-ospec@^4.0.0:
-  version "4.1.6"
-  resolved "https://registry.yarnpkg.com/ospec/-/ospec-4.1.6.tgz#85748e3660bd91745972c7e10ae322f56543382f"
-  integrity sha512-Rq+kpRz/ombmIy+g0fAV7mwehtHyQT/J7IjmwVEBw6nbYPxycWgJS3c8BQ0n36kgWOIP5I2SE124cEdunqSH+g==
-  dependencies:
-    glob "^7.1.3"
 
 p-finally@^1.0.0:
   version "1.0.0"
