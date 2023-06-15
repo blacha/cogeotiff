@@ -2,27 +2,13 @@ import { fsa } from '@chunkd/fs';
 import { CogTiff, CogTiffTag, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
 import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
 import c from 'ansi-colors';
-import { Type, command, flag, option, optional, restPositionals } from 'cmd-ts';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { command, flag, option, optional, restPositionals } from 'cmd-ts';
 import { ActionUtil, CliResultMap } from '../action.util.js';
 import { CliTable } from '../cli.table.js';
-import { DefaultArgs } from '../common.js';
-import { setupLogger } from '../log.js';
+import { DefaultArgs, Url } from '../common.js';
+import { FetchLog } from '../fs.js';
+import { setupLogger, sourceCache } from '../log.js';
 import { toByteSizeString } from '../util.bytes.js';
-
-const Url: Type<string, URL> = {
-  async from(s: string): Promise<URL> {
-    try {
-      return new URL(s);
-    } catch (e) {
-      return pathToFileURL(s);
-    }
-  },
-};
-function urlToString(u: URL): string {
-  if (u.protocol === 'file:') return fileURLToPath(u);
-  return u.href;
-}
 
 function round(num: number): number {
   const opt = 10 ** 4;
@@ -35,6 +21,7 @@ export const commandInfo = command({
     ...DefaultArgs,
     path: option({ short: 'f', long: 'file', type: optional(Url) }),
     tags: flag({ short: 't', long: 'tags', description: 'Dump tiff Tags' }),
+    offsets: flag({ short: 'o', long: 'offsets', description: 'Load byte offsets too' }),
     paths: restPositionals({ type: Url, description: 'Files to process' }),
   },
   async handler(args) {
@@ -43,27 +30,18 @@ export const commandInfo = command({
 
     for (const path of paths) {
       logger.debug('Tiff:load', { path: path?.href });
+      FetchLog.reset();
 
-      const source = fsa.source(urlToString(path));
-      (source as any).url = source.uri;
-
-      let bytesRead = 0;
-      const fetches = [];
-      // const oldFetch = source.fetchBytes;
-      (source as any).fetch = function (offset: number, length?: number): Promise<ArrayBuffer> {
-        fetches.push({ offset, length });
-        bytesRead += length ?? 0;
-        logger.debug('Tiff:fetch', { href: path.href, offset: offset, length: length });
-        return source.fetchBytes(offset, length);
-      };
-      const tiff = new CogTiff(source as any);
-      await tiff.init();
+      const source = fsa.source(path);
+      const tiff = await new CogTiff(source).init();
 
       const header = [
         { key: 'Tiff type', value: `${TiffVersion[tiff.version]} (v${String(tiff.version)})` },
         {
           key: 'Bytes read',
-          value: `${toByteSizeString(bytesRead)} (${fetches.length} Chunk${fetches.length === 1 ? '' : 's'})`,
+          value: `${toByteSizeString(FetchLog.bytesRead)} (${FetchLog.fetches.length} Chunk${
+            FetchLog.fetches.length === 1 ? '' : 's'
+          })`,
         },
       ];
 
@@ -107,6 +85,14 @@ export const commandInfo = command({
       if (args.tags) {
         for (const img of tiff.images) {
           const tiffTags = [...img.tags.values()];
+          // Load the first 25 values of offset arrays
+          if (args.offsets) {
+            for (const tag of tiffTags) {
+              if (tag.type !== 'offset') continue;
+              for (let i = 0; i < Math.min(tag.count, 100); i++) tag.getValueAt(i);
+            }
+          }
+
           result.push({
             title: `Image: ${img.id} - Tiff tags`,
             keys: tiffTags.map(formatTag),
@@ -122,9 +108,13 @@ export const commandInfo = command({
         }
       }
 
-      const msg = ActionUtil.formatResult(`\n${c.bold('COG File Info')} - ${c.bold(tiff.source.url.href)}`, result);
+      const msg = ActionUtil.formatResult(`\n${c.bold('COG File Info')} - ${c.bold(path.href)}`, result);
       console.log(msg.join('\n'));
+
+      if ('close' in source && typeof source.close === 'function') await source.close();
     }
+
+    console.log(sourceCache);
   },
 });
 
@@ -189,7 +179,7 @@ function parseGdalMetadata(img: CogTiffImage): string[] | null {
 function formatTag(tag: CogTiffTag): { key: string; value: string } {
   const tagName = TiffTag[tag.id];
   const tagDebug = `(${TiffTagValueType[tag.dataType]}${tag.count > 1 ? ' x' + tag.count : ''}`;
-  const key = `${toHex(tag.id).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(45, ' ');
+  const key = `${c.dim(toHex(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(50, ' ');
 
   if (Array.isArray(tag.value)) return { key, value: JSON.stringify(tag.value.slice(0, 250)) };
 
@@ -200,7 +190,7 @@ function formatTag(tag: CogTiffTag): { key: string; value: string } {
 
 function formatGeoTag(tagId: TiffTagGeo, value: string | number): { key: string; value: string } {
   const tagName = TiffTagGeo[tagId];
-  const key = `${toHex(tagId).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
+  const key = `${c.dim(toHex(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
 
   if (Array.isArray(value)) return { key, value: JSON.stringify(value.slice(0, 250)) };
 

@@ -1,7 +1,6 @@
 import { CogTiff, TiffMimeType } from '@cogeotiff/core';
-import { promises as fs } from 'fs';
-import * as path from 'path';
-import type pino from 'pino';
+import { log } from '@linzjs/tracing';
+import { promises as fs } from 'node:fs';
 
 const FileExtension: Record<string, string> = {
   [TiffMimeType.Jpeg]: 'jpeg',
@@ -34,19 +33,20 @@ export function getTileName(mimeType: string, index: number, x: number, y: numbe
 }
 
 export async function writeTile(
-  tif: CogTiff,
+  tiff: CogTiff,
   x: number,
   y: number,
   index: number,
-  outputPath: string,
-  logger: pino.Logger,
+  outputPath: URL,
+  logger: typeof log,
 ): Promise<void> {
-  const tile = await tif.images[index].getTile(x, y);
+  const tile = await tiff.images[index].getTile(x, y);
+  console.log(tile, x, y);
   if (tile == null) {
-    logger.debug({ index, x, y }, 'TileEmpty');
+    logger.debug('Tile:Empty', { source: tiff.source.url.href, index, x, y });
     return;
   }
   const fileName = getTileName(tile.mimeType, index, x, y);
-  await fs.writeFile(path.join(outputPath, fileName), Buffer.from(tile.bytes));
-  logger.debug({ index, x, y, fileName, bytes: tile.bytes.byteLength }, 'TileWrite');
+  await fs.writeFile(new URL(fileName, outputPath), Buffer.from(tile.bytes));
+  logger.debug('Tile:Write', { source: tiff.source.url.href, index, x, y, fileName, bytes: tile.bytes.byteLength });
 }

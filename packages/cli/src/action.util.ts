@@ -1,6 +1,3 @@
-import { ChunkSource } from '@chunkd/core';
-import { fsa } from '@chunkd/fs';
-import { CogTiff } from '@cogeotiff/core';
 import c from 'ansi-colors';
 
 export interface CLiResultMapLine {
@@ -15,18 +12,6 @@ export interface CliResultMap {
 }
 
 export const ActionUtil = {
-  async getCogSource(file?: URL): Promise<{ source: ChunkSource; tif: CogTiff }> {
-    if (file == null) {
-      throw new Error(`File "${file} is not valid`);
-    }
-    const source = fsa.source(file.href);
-    if (source == null) throw new Error(`File "${file} is not valid`);
-    (source as any).url = source.uri;
-    (source as any).fetch = source.fetchBytes;
-    const tif = new CogTiff(source as any);
-    await tif.init();
-    return { source, tif };
-  },
   formatResult(title: string, result: CliResultMap[]): string[] {
     const msg: string[] = [title];
     for (const group of result) {
