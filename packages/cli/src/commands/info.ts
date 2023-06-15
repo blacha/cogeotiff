@@ -1,12 +1,14 @@
+import { fsa } from '@chunkd/fs';
+import { CogTiff, CogTiffTag, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
+import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
+import c from 'ansi-colors';
 import { Type, command, flag, option, optional, restPositionals } from 'cmd-ts';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { ActionUtil, CliResultMap } from '../action.util.js';
+import { CliTable } from '../cli.table.js';
 import { DefaultArgs } from '../common.js';
 import { setupLogger } from '../log.js';
-import { fsa } from '@chunkd/fs';
-import { CogTiff, TiffTag, TiffVersion } from '@cogeotiff/core';
 import { toByteSizeString } from '../util.bytes.js';
-import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
-import { CliTable } from '../cli.table.js';
 
 const Url: Type<string, URL> = {
   async from(s: string): Promise<URL> {
@@ -31,30 +33,30 @@ export const commandInfo = command({
   name: 'info',
   args: {
     ...DefaultArgs,
-    json: flag({ long: 'json', description: 'Output result as NDJSON' }),
-    path: option({ short: 'f', long: '--file', type: optional(Url) }),
+    path: option({ short: 'f', long: 'file', type: optional(Url) }),
+    tags: flag({ short: 't', long: 'tags', description: 'Dump tiff Tags' }),
     paths: restPositionals({ type: Url, description: 'Files to process' }),
   },
   async handler(args) {
     const logger = setupLogger(args);
-    console.log(args);
     const paths = [...args.paths, args.path].filter((f) => f != null) as URL[];
 
     for (const path of paths) {
-      logger.debug({ path: path?.href }, 'Tiff:load');
+      logger.debug('Tiff:load', { path: path?.href });
 
       const source = fsa.source(urlToString(path));
+      (source as any).url = source.uri;
 
       let bytesRead = 0;
       const fetches = [];
-      const oldFetch = source.fetchBytes;
-      source.fetchBytes = (offset, length): Promise<ArrayBuffer> => {
+      // const oldFetch = source.fetchBytes;
+      (source as any).fetch = function (offset: number, length?: number): Promise<ArrayBuffer> {
         fetches.push({ offset, length });
         bytesRead += length ?? 0;
-        logger.debug({ href: path.href, offset: offset, length: length }, 'Tiff:fetch');
-        return oldFetch.apply(source, [offset, length]);
+        logger.debug('Tiff:fetch', { href: path.href, offset: offset, length: length });
+        return source.fetchBytes(offset, length);
       };
-      const tiff = new CogTiff(source);
+      const tiff = new CogTiff(source as any);
       await tiff.init();
 
       const header = [
@@ -73,13 +75,55 @@ export const commandInfo = command({
         isGeoLocated ? { key: 'Resolution', value: firstImage.resolution.map(round).join(', ') } : null,
         isGeoLocated ? { key: 'BoundingBox', value: firstImage.bbox.map(round).join(', ') } : null,
         firstImage.epsg ? { key: 'EPSG', value: `EPSG:${firstImage.epsg} (https://epsg.io/${firstImage.epsg})` } : null,
-        { key: 'Info', value: TiffImageInfoTable.print(tiff.images, '\t\t').join('\n') },
+        { key: 'Images', value: '\n' + TiffImageInfoTable.print(tiff.images, '\t').join('\n') },
       ];
 
-      console.log(header, images);
-      // const { tif } = await ActionUtil.getCogSource(path);
+      const ghostOptions = [...(tiff.options?.options.entries() ?? [])];
+      const gdalMetadata = parseGdalMetadata(firstImage);
+      const gdal = [
+        {
+          key: 'COG optimized',
+          value: String(tiff.options?.isCogOptimized),
+          enabled: tiff.options?.isCogOptimized === true,
+        },
+        { key: 'COG broken', value: String(tiff.options?.isBroken), enabled: tiff.options?.isBroken === true },
+        {
+          key: 'Ghost Options',
+          value: '\n' + ghostOptions.map((c) => `\t\t${c[0]} = ${c[1]}`).join('\n'),
+          enabled: ghostOptions.length > 0,
+        },
+        {
+          key: 'Metadata',
+          value: '\n' + gdalMetadata?.map((c) => `\t\t${c}`).join('\n'),
+          enabled: gdalMetadata != null,
+        },
+      ];
 
-      // const [firstImage] = tif.images;
+      const result: CliResultMap[] = [
+        { keys: header },
+        { title: 'Images', keys: images },
+        { title: 'GDAL', keys: gdal, enabled: gdal.filter((g) => g.enabled == null || g.enabled).length > 0 },
+      ];
+      if (args.tags) {
+        for (const img of tiff.images) {
+          const tiffTags = [...img.tags.values()];
+          result.push({
+            title: `Image: ${img.id} - Tiff tags`,
+            keys: tiffTags.map(formatTag),
+          });
+          await img.loadGeoTiffTags();
+          if (img.tagsGeo.size > 0) {
+            const tiffTagsGeo = [...img.tagsGeo.entries()];
+            const keys = tiffTagsGeo.map(([key, value]) => formatGeoTag(key, value));
+            if (keys.length > 0) {
+              result.push({ title: `Image: ${img.id} - Geo Tiff tags`, keys });
+            }
+          }
+        }
+      }
+
+      const msg = ActionUtil.formatResult(`\n${c.bold('COG File Info')} - ${c.bold(tiff.source.url.href)}`, result);
+      console.log(msg.join('\n'));
     }
   },
 });
@@ -90,13 +134,13 @@ TiffImageInfoTable.add({ name: 'Size', width: 20, get: (i) => `${i.size.width}x$
 TiffImageInfoTable.add({
   name: 'Tile Size',
   width: 20,
-  get: (i) => `${i.tileCount.x}x${i.tileCount.y}`,
+  get: (i) => `${i.tileSize.width}x${i.tileSize.height}`,
   enabled: (i) => i.isTiled(),
 });
 TiffImageInfoTable.add({
   name: 'Tile Count',
   width: 20,
-  get: (i) => `${i.tileCount.x * i.tileCount.y}`,
+  get: (i) => `${i.tileCount.x * i.tileCount.y} - ${i.tileCount.x}x${i.tileCount.y} `,
   enabled: (i) => i.isTiled(),
 });
 TiffImageInfoTable.add({
@@ -123,3 +167,44 @@ TiffImageInfoTable.add({
     return formats.size > 1;
   },
 });
+
+/**
+ * Parse out the GDAL Metadata to be more friendly to read
+ *
+ * TODO using a XML Parser will make this even better
+ * @param img
+ */
+function parseGdalMetadata(img: CogTiffImage): string[] | null {
+  const metadata = img.value(TiffTag.GdalMetadata);
+  if (typeof metadata !== 'string') return null;
+  if (!metadata.startsWith('<GDALMetadata>')) return null;
+  return metadata
+    .replace('<GDALMetadata>\n', '')
+    .replace('</GDALMetadata>\n', '')
+    .replace('\n\x00', '')
+    .split('\n')
+    .map((c) => c.trim());
+}
+
+function formatTag(tag: CogTiffTag): { key: string; value: string } {
+  const tagName = TiffTag[tag.id];
+  const tagDebug = `(${TiffTagValueType[tag.dataType]}${tag.count > 1 ? ' x' + tag.count : ''}`;
+  const key = `${toHex(tag.id).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(45, ' ');
+
+  if (Array.isArray(tag.value)) return { key, value: JSON.stringify(tag.value.slice(0, 250)) };
+
+  let tagString = String(tag.value);
+  if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
+  return { key, value: tagString };
+}
+
+function formatGeoTag(tagId: TiffTagGeo, value: string | number): { key: string; value: string } {
+  const tagName = TiffTagGeo[tagId];
+  const key = `${toHex(tagId).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
+
+  if (Array.isArray(value)) return { key, value: JSON.stringify(value.slice(0, 250)) };
+
+  let tagString = String(value);
+  if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
+  return { key, value: tagString };
+}

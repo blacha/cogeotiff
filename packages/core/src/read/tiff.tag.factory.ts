@@ -135,7 +135,7 @@ export class TagLazy<T> {
     if (this.value != null) return this.value;
     const dataTypeSize = getTiffTagSize(this.dataType);
     const dataLength = dataTypeSize * this.count;
-    const bytes = await this.tiff.source.fetchBytes(this.dataOffset, dataLength);
+    const bytes = await this.tiff.source.fetch(this.dataOffset, dataLength);
     const view = new DataView(bytes);
     this.value = readValue(this.tiff, view, 0, this.dataType, this.count);
     return this.value as T;
@@ -170,13 +170,6 @@ export class TagOffset {
     this.dataOffset = offset;
   }
 
-  // fromBytes(view: DataViewOffset): void {
-  //   const value = readValue(this.tiff, view, this.dataOffset - view.sourceOffset, this.dataType, this.count) as
-  //     | number[]
-  //     | number;
-  //   this.value = Array.isArray(value) ? value : [value];
-  // }
-
   setBytes(view: DataViewOffset): void {
     const dataTypeSize = getTiffTagSize(this.dataType);
     const startBytes = view.byteOffset + this.dataOffset - view.sourceOffset;
@@ -191,7 +184,7 @@ export class TagOffset {
     const dataTypeSize = getTiffTagSize(this.dataType);
 
     if (this.view == null) {
-      const bytes = await this.tiff.source.fetchBytes(this.dataOffset + index * dataTypeSize, dataTypeSize);
+      const bytes = await this.tiff.source.fetch(this.dataOffset + index * dataTypeSize, dataTypeSize);
       const view = new DataView(bytes);
       const value = readValue(this.tiff, view, 0, this.dataType, 1) as number;
       this.value[index] = value;

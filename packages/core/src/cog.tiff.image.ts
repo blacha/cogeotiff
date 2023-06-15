@@ -392,7 +392,7 @@ export class CogTiffImage {
     if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
     if (byteCount === 0) return null;
 
-    const bytes = await this.tiff.source.fetchBytes(offset, byteCount);
+    const bytes = await this.tiff.source.fetch(offset, byteCount);
 
     if (this.compression === TiffMimeType.Jpeg) return { mimeType, bytes: this.getJpegHeader(bytes) };
     return { mimeType, bytes };
@@ -465,7 +465,7 @@ export class CogTiffImage {
 
       // This fetch will generally load in the bytes needed for the image too
       // provided the image size is less than the size of a chunk
-      const bytes = await this.tiff.source.fetchBytes(offset - leaderBytes, leaderBytes);
+      const bytes = await this.tiff.source.fetch(offset - leaderBytes, leaderBytes);
       return { offset, imageSize: getUint(new DataView(bytes), 0, leaderBytes, this.tiff.isLittleEndian) };
     }
 

@@ -70,7 +70,7 @@ export class CogTiff {
   /** Read the Starting header and all Image headers from the source */
   private async readHeader(): Promise<CogTiff> {
     if (this.isInitialized) return this;
-    const bytes = new DataView(await this.source.fetchBytes(0, this.defaultReadSize)) as DataViewOffset;
+    const bytes = new DataView(await this.source.fetch(0, this.defaultReadSize)) as DataViewOffset;
     bytes.sourceOffset = 0;
 
     let offset = 0;
@@ -113,7 +113,7 @@ export class CogTiff {
       // Ensure at least 1KB near at the IFD offset is ready for reading
       // TODO is 1KB enough, most IFD entries are in the order of 100-300 bytes
       if (!hasBytes(lastView, nextOffsetIfd, 1024)) {
-        const bytes = await this.source.fetchBytes(nextOffsetIfd, this.defaultReadSize);
+        const bytes = await this.source.fetch(nextOffsetIfd, this.defaultReadSize);
         lastView = new DataView(bytes) as DataViewOffset;
         lastView.sourceOffset = nextOffsetIfd;
       }

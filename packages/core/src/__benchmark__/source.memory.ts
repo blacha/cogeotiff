@@ -1,6 +1,7 @@
 import { Source } from '../source.js';
 
 export class SourceMemory implements Source {
+  url: URL;
   data: ArrayBuffer;
 
   static toArrayBuffer(buf: Buffer | Uint8Array | ArrayBuffer): ArrayBuffer {
@@ -10,10 +11,11 @@ export class SourceMemory implements Source {
   }
 
   constructor(bytes: Buffer | Uint8Array | ArrayBuffer) {
+    this.url = new URL('memory://fake-file');
     this.data = SourceMemory.toArrayBuffer(bytes);
   }
 
-  async fetchBytes(offset: number, length?: number): Promise<ArrayBuffer> {
+  async fetch(offset: number, length?: number): Promise<ArrayBuffer> {
     if (offset < 0) offset = this.data.byteLength + offset;
     return this.data.slice(offset, length == null ? undefined : offset + length);
   }

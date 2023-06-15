@@ -10,7 +10,7 @@ export class TestFileSource implements Source {
     this.data = readFile(this.url);
   }
 
-  async fetchBytes(offset: number, length: number): Promise<ArrayBuffer> {
+  async fetch(offset: number, length: number): Promise<ArrayBuffer> {
     const fileData = await this.data;
     return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + offset + length);
   }

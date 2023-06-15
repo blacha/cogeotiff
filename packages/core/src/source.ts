@@ -1,4 +1,5 @@
 export interface Source {
+  url: URL;
   /** Fetch bytes from a source */
-  fetchBytes(offset: number, length?: number): Promise<ArrayBuffer>;
+  fetch(offset: number, length?: number): Promise<ArrayBuffer>;
 }

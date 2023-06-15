@@ -1,16 +1,15 @@
-import pino from 'pino';
-import { PrettyTransform } from 'pretty-json-log';
+import { log } from '@linzjs/tracing';
 
-export const logger = process.stdout.isTTY ? pino.default(PrettyTransform.stream()) : pino.default();
-
-export function setupLogger(cfg: { verbose?: boolean; extraVerbose?: boolean }): typeof logger {
+export function setupLogger(cfg: { verbose?: boolean; extraVerbose?: boolean }): typeof log {
   if (cfg.verbose) {
-    logger.level = 'debug';
+    log.level = 'debug';
   } else if (cfg.extraVerbose) {
-    logger.level = 'trace';
+    log.level = 'trace';
   } else {
-    logger.level = 'warn';
+    log.level = 'warn';
   }
 
-  return logger;
+  return log;
 }
+
+export const logger = log;
