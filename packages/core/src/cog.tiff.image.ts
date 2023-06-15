@@ -54,7 +54,7 @@ export class CogTiffImage {
   tiff: CogTiff;
 
   /** Has loadGeoTiffTags been called */
-  private tagsGeoLoaded = false;
+  isGeoTagsLoaded = false;
   /** Sub tags stored in TiffTag.GeoKeyDirectory */
   tagsGeo: Map<TiffTagGeo, string | number> = new Map();
 
@@ -106,10 +106,10 @@ export class CogTiffImage {
    */
   async loadGeoTiffTags(): Promise<void> {
     // Already loaded
-    if (this.tagsGeoLoaded) return;
+    if (this.isGeoTagsLoaded) return;
     const sourceTag = this.tags.get(TiffTag.GeoKeyDirectory);
     if (sourceTag == null) {
-      this.tagsGeoLoaded = true;
+      this.isGeoTagsLoaded = true;
       return;
     }
     if (sourceTag.type === 'lazy' && sourceTag.value == null) {
@@ -120,7 +120,7 @@ export class CogTiffImage {
         this.fetch(TiffTag.GeoDoubleParams),
       ]);
     }
-    this.tagsGeoLoaded = true;
+    this.isGeoTagsLoaded = true;
     if (sourceTag.value == null) return;
     const geoTags = sourceTag.value;
     if (!Array.isArray(geoTags)) throw new Error('Invalid geo tags found');
@@ -140,7 +140,7 @@ export class CogTiffImage {
       if (Array.isArray(tag.value)) {
         this.tagsGeo.set(key, tag.value[offset + count - 1]);
       } else if (typeof tag.value === 'string') {
-        this.tagsGeo.set(key, tag.value.substr(offset, offset + count - 1).trim());
+        this.tagsGeo.set(key, tag.value.slice(offset, offset + count - 1).trim());
       }
     }
   }
@@ -149,7 +149,7 @@ export class CogTiffImage {
    * Get the associated GeoTiffTags
    */
   valueGeo(tag: TiffTagGeo): string | number | undefined {
-    if (this.tagsGeoLoaded === false) throw new Error('loadGeoTiffTags() has not been called');
+    if (this.isGeoTagsLoaded === false) throw new Error('loadGeoTiffTags() has not been called');
     return this.tagsGeo.get(tag);
   }
 
@@ -164,7 +164,6 @@ export class CogTiffImage {
     if (sourceTag.type === 'lazy') return sourceTag.fetch() as unknown as T;
     if (sourceTag.isLoaded) return sourceTag.value as unknown as T;
     throw new Error('Cannot fetch:' + tag);
-    // return sourceTag.fetch();
   }
 
   /**
@@ -288,13 +287,6 @@ export class CogTiffImage {
     };
   }
 
-  //     /**
-  //      * Get the list of IFD tags that were read
-  //      */
-  //     get tagList(): string[] {
-  //         return [...this.tags.keys()].map((c) => TiffTag[c]);
-  //     }
-
   /**
    * Determine if this image is tiled
    */
@@ -344,7 +336,6 @@ export class CogTiffImage {
    * @returns number of strips present
    */
   get stripCount(): number {
-    // return 0;
     const tileOffset = this.tags.get(TiffTag.StripByteCounts) as TagOffset;
     if (tileOffset == null) return 0;
     return tileOffset.count;
@@ -360,23 +351,22 @@ export class CogTiffImage {
     return { x: left, y: top, width, height };
   }
 
-  //     /**
-  //      * Read a strip into a uint8 array
-  //      *
-  //      * @param index Strip index to read
-  //      */
-  //     async getStrip(index: number): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
-  //         // if (this.isTiled())
-  //         throw new Error('Cannot read stripes, tiff is tiled: ' + index);
+  /**
+   * Read a strip into a uint8 array
+   *
+   * @param index Strip index to read
+   */
+  async getStrip(index: number): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
+    if (this.isTiled()) throw new Error('Cannot read stripes, tiff is tiled: ' + index);
 
-  //         // const byteCounts = this.tags.get(TiffTag.StripByteCounts) as CogTiffTagOffset;
-  //         // const offsets = this.tags.get(TiffTag.StripOffsets) as CogTiffTagOffset;
-  //         //
-  //         // if (index >= byteCounts.dataCount) throw new Error('Cannot read strip, index out of bounds');
-  //         //
-  //         // const [byteCount, offset] = await Promise.all([offsets.getValueAt(index), byteCounts.getValueAt(index)]);
-  //         // return this.getBytes(byteCount, offset);
-  //     }
+    const byteCounts = this.tags.get(TiffTag.StripByteCounts) as TagOffset;
+    const offsets = this.tags.get(TiffTag.StripOffsets) as TagOffset;
+
+    if (index >= byteCounts.count) throw new Error('Cannot read strip, index out of bounds');
+
+    const [byteCount, offset] = await Promise.all([getOffset(offsets, index), getOffset(byteCounts, index)]);
+    return this.getBytes(byteCount, offset);
+  }
 
   /** The jpeg header is stored in the IFD, read the JPEG header and adjust the byte array to include it */
   private getJpegHeader(bytes: ArrayBuffer): ArrayBuffer {
@@ -440,29 +430,29 @@ export class CogTiffImage {
     return this.getBytes(offset, imageSize);
   }
 
-  //     /**
-  //      * Does this tile exist in the tiff and does it actually have a value
-  //      *
-  //      * Sparse tiffs can have a lot of empty tiles, this checks to see if the tile actually has data.
-  //      *
-  //      * @param x Tile x offset
-  //      * @param y Tile y offset
-  //      * @returns if the tile exists and has data
-  //      */
-  //     async hasTile(x: number, y: number): Promise<boolean> {
-  //         const tiles = this.tileSize;
-  //         const size = this.size;
+  /**
+   * Does this tile exist in the tiff and does it actually have a value
+   *
+   * Sparse tiffs can have a lot of empty tiles, this checks to see if the tile actually has data.
+   *
+   * @param x Tile x offset
+   * @param y Tile y offset
+   * @returns if the tile exists and has data
+   */
+  async hasTile(x: number, y: number): Promise<boolean> {
+    const tiles = this.tileSize;
+    const size = this.size;
 
-  //         if (tiles == null) throw new Error('Tiff is not tiled');
+    if (tiles == null) throw new Error('Tiff is not tiled');
 
-  //         // TODO support GhostOptionTileOrder
-  //         const nyTiles = Math.ceil(size.height / tiles.height);
-  //         const nxTiles = Math.ceil(size.width / tiles.width);
-  //         if (x >= nxTiles || y >= nyTiles) return false;
-  //         const idx = y * nxTiles + x;
-  //         const ret = await this.getTileSize(idx);
-  //         return ret.offset > 0;
-  //     }
+    // TODO support GhostOptionTileOrder
+    const nyTiles = Math.ceil(size.height / tiles.height);
+    const nxTiles = Math.ceil(size.width / tiles.width);
+    if (x >= nxTiles || y >= nyTiles) return false;
+    const idx = y * nxTiles + x;
+    const ret = await this.getTileSize(idx);
+    return ret.offset > 0;
+  }
 
   async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
     // GDAL optimizes tiles by storing the size of the tile in

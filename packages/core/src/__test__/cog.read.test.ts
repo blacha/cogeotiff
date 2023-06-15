@@ -2,27 +2,9 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { CogTiff } from '../cog.tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
+import { TestFileSource } from '../__benchmark__/source.file.js';
 import { TiffVersion } from '../const/tiff.version.js';
-import { CogSource } from '../source.js';
-import { promises as fs } from 'fs';
 
-export class TestFileSource implements CogSource {
-  url: URL;
-
-  constructor(fileName: URL) {
-    this.url = fileName;
-  }
-  async fetchBytes(offset: number, length: number): Promise<ArrayBuffer> {
-    const fileData = await fs.readFile(this.url);
-    return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + offset + length);
-  }
-
-  get size(): Promise<number> {
-    return Promise.resolve()
-      .then(() => fs.stat(this.url))
-      .then((f) => f.size);
-  }
-}
 function validate(tif: CogTiff): void {
   assert.equal(tif.images.length, 5);
 

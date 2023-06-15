@@ -84,9 +84,7 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
   const dataTypeSize = getTiffTagSize(dataType);
   const dataLength = dataTypeSize * dataCount;
 
-  // Tag is not inline but it is within the buffer we have been given
-
-  //   // Tag value is inline read the value
+  // Tag value is inline read the value
   if (dataLength <= tiff.ifdConfig.pointer) {
     const value = readValue(tiff, view, offset + 4 + tiff.ifdConfig.pointer, dataType, dataCount);
     return { type: 'inline', tiff, id: tagId, count: dataCount, dataType, value };
@@ -105,10 +103,10 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
   }
 
   // If we already have the bytes in the view read them in
-  //   if (hasBytes(view, dataOffset, dataLength)) {
-  //     const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
-  //     return { type: 'inline', tiff, id: tagId, count: dataCount, dataType, value };
-  //   }
+  if (hasBytes(view, dataOffset, dataLength)) {
+    const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
+    return { type: 'inline', tiff, id: tagId, count: dataCount, dataType, value };
+  }
 
   return new TagLazy(tiff, tagId, dataCount, dataType, dataOffset);
 }
@@ -118,7 +116,6 @@ export type CogTiffTag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;
 export class TagLazy<T> {
   type = 'lazy' as const;
   id: number;
-  //   name: string;
   value: T | undefined;
   tiff: CogTiff;
   dataOffset: number;
@@ -133,10 +130,6 @@ export class TagLazy<T> {
     this.count = count;
     this.dataType = type;
   }
-
-  //   fromBytes(view: DataViewOffset): void {
-  //     this.value = readValue(this.tiff, view, this.dataOffset - view.sourceOffset, this.dataType, this.count) as T;
-  //   }
 
   async fetch(): Promise<T> {
     if (this.value != null) return this.value;
@@ -153,7 +146,6 @@ export interface TagInline<T> {
   type: 'inline';
   value: T;
   id: number;
-  //   name: string;
   count: number;
   tiff: CogTiff;
   dataType: number;
@@ -163,7 +155,6 @@ export class TagOffset {
   type = 'offset' as const;
   value: number[] = [];
   id: number;
-  //   name: string;
   tiff: CogTiff;
   count: number;
   isLoaded = false;
@@ -173,19 +164,18 @@ export class TagOffset {
 
   constructor(tiff: CogTiff, tagId: number, count: number, type: number, offset: number) {
     this.id = tagId;
-    // this.name = TiffTag[tagId];
     this.tiff = tiff;
     this.count = count;
     this.dataType = type;
     this.dataOffset = offset;
   }
 
-  fromBytes(view: DataViewOffset): void {
-    const value = readValue(this.tiff, view, this.dataOffset - view.sourceOffset, this.dataType, this.count) as
-      | number[]
-      | number;
-    this.value = Array.isArray(value) ? value : [value];
-  }
+  // fromBytes(view: DataViewOffset): void {
+  //   const value = readValue(this.tiff, view, this.dataOffset - view.sourceOffset, this.dataType, this.count) as
+  //     | number[]
+  //     | number;
+  //   this.value = Array.isArray(value) ? value : [value];
+  // }
 
   setBytes(view: DataViewOffset): void {
     const dataTypeSize = getTiffTagSize(this.dataType);
