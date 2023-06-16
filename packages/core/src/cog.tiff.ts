@@ -1,13 +1,13 @@
-import { getUint } from './bytes.js';
 import { CogTiffImage } from './cog.tiff.image.js';
 import { TiffEndian } from './const/tiff.endian.js';
 import { TiffVersion } from './const/tiff.version.js';
-import { TiffTag } from './index.js';
+import { TiffTagId } from '../const/tiff.tag.id.js';
 import { DataViewOffset, hasBytes } from './read/data.view.offset.js';
 import { CogTifGhostOptions } from './read/tiff.gdal.js';
 import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config.js';
-import { CogTiffTag, createTag } from './read/tiff.tag.factory.js';
+import { createTag } from './read/tiff.tag.factory.js';
 import { Source } from './source.js';
+import { getUint } from './util/bytes.js';
 import { toHex } from './util/util.hex.js';
 
 export class CogTiff {
@@ -135,7 +135,7 @@ export class CogTiff {
     const viewOffset = offset - view.sourceOffset;
     const tagCount = getUint(view, viewOffset, this.ifdConfig.offset, this.isLittleEndian);
 
-    const tags: Map<TiffTag, CogTiffTag> = new Map();
+    const tags: Map<TiffTagId, CogTiffTagId> = new Map();
 
     // We now know how many bytes we need so ensure the ifd bytes are all read
     const ifdBytes = tagCount * this.ifdConfig.ifd;

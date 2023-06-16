@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { beforeEach, describe, it } from 'node:test';
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { SourceMemory } from '../__benchmark__/source.memory.js';
-import { ByteSize } from '../bytes.js';
+import { ByteSize } from '../util/bytes.js';
 import { CogTiff } from '../cog.tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
 

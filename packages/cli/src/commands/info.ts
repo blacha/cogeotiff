@@ -89,7 +89,7 @@ export const commandInfo = command({
           if (args.offsets) {
             for (const tag of tiffTags) {
               if (tag.type !== 'offset') continue;
-              for (let i = 0; i < Math.min(tag.count, 100); i++) tag.getValueAt(i);
+              // for (let i = 0; i < Math.min(tag.count, 100); i++) tag.getValueAt(i);
             }
           }
 

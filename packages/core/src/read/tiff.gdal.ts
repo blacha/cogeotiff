@@ -1,4 +1,4 @@
-import { ByteSize } from '../bytes.js';
+import { ByteSize } from '../util/bytes.js';
 
 export enum GhostOption {
   GdalStructuralMetadataSize = 'GDAL_STRUCTURAL_METADATA_SIZE',

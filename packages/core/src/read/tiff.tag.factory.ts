@@ -1,8 +1,9 @@
-import { getUint, getUint64 } from '../bytes.js';
 import { CogTiff } from '../cog.tiff.js';
-import { TiffTag } from '../const/tiff.tag.id.js';
+import { TiffTagId } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
+import { getUint, getUint64 } from '../util/bytes.js';
 import { DataViewOffset, hasBytes } from './data.view.offset.js';
+import { CogTiffTag, TagLazy, TagOffset } from './tiff.tag.js';
 import { getTiffTagSize } from './tiff.value.reader.js';
 
 function readTagValue(
@@ -79,7 +80,7 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: numb
 export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): CogTiffTag<unknown> {
   const tagId = view.getUint16(offset + 0, tiff.isLittleEndian);
 
-  const dataType = view.getUint16(offset + 2, tiff.isLittleEndian);
+  const dataType = view.getUint16(offset + 2, tiff.isLittleEndian) as TiffTagValueType;
   const dataCount = getUint(view, offset + 4, tiff.ifdConfig.pointer, tiff.isLittleEndian);
   const dataTypeSize = getTiffTagSize(dataType);
   const dataLength = dataTypeSize * dataCount;
@@ -87,112 +88,69 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
   // Tag value is inline read the value
   if (dataLength <= tiff.ifdConfig.pointer) {
     const value = readValue(tiff, view, offset + 4 + tiff.ifdConfig.pointer, dataType, dataCount);
-    return { type: 'inline', tiff, id: tagId, count: dataCount, dataType, value };
+    return { type: 'inline', id: tagId, count: dataCount, value, dataType, tagOffset: offset };
   }
 
   const dataOffset = getUint(view, offset + 4 + tiff.ifdConfig.pointer, tiff.ifdConfig.pointer, tiff.isLittleEndian);
   switch (tagId) {
-    case TiffTag.TileOffsets:
-    case TiffTag.TileByteCounts:
-    case TiffTag.StripByteCounts:
-    case TiffTag.StripOffsets:
-      const tag = new TagOffset(tiff, tagId, dataCount, dataType, dataOffset);
+    case TiffTagId.TileOffsets:
+    case TiffTagId.TileByteCounts:
+    case TiffTagId.StripByteCounts:
+    case TiffTagId.StripOffsets:
+      const tag: TagOffset = {
+        type: 'offset',
+        id: tagId,
+        count: dataCount,
+        dataType,
+        dataOffset,
+        value: [],
+        tagOffset: offset,
+      };
       // Some offsets are quite long and don't need to read them often, so only read the tags we are interested in when we need to
-      if (hasBytes(view, dataOffset, dataLength)) tag.setBytes(view);
+      if (tagId === TiffTagId.TileOffsets && hasBytes(view, dataOffset, dataLength)) setBytes(tag, view);
       return tag;
   }
 
   // If we already have the bytes in the view read them in
   if (hasBytes(view, dataOffset, dataLength)) {
     const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
-    return { type: 'inline', tiff, id: tagId, count: dataCount, dataType, value };
+    return { type: 'inline', id: tagId, count: dataCount, value, dataType, tagOffset: offset };
   }
 
-  return new TagLazy(tiff, tagId, dataCount, dataType, dataOffset);
+  return { type: 'lazy', id: tagId, count: dataCount, dataOffset, dataType, tagOffset: offset };
 }
 
-export type CogTiffTag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;
+export async function fetchLazy<T>(tag: TagLazy<T>, tiff: CogTiff): Promise<T> {
+  if (tag.value != null) return tag.value;
+  const dataTypeSize = getTiffTagSize(tag.dataType);
+  const dataLength = dataTypeSize * tag.count;
+  const bytes = await tiff.source.fetch(tag.dataOffset, dataLength);
+  const view = new DataView(bytes);
+  tag.value = readValue(tiff, view, 0, tag.dataType, tag.count);
+  return tag.value as T;
+}
 
-export class TagLazy<T> {
-  type = 'lazy' as const;
-  id: number;
-  value: T | undefined;
-  tiff: CogTiff;
-  dataOffset: number;
-  count: number;
-  dataType: number;
+export function setBytes(tag: TagOffset, view: DataViewOffset): void {
+  const dataTypeSize = getTiffTagSize(tag.dataType);
+  const startBytes = view.byteOffset + tag.dataOffset - view.sourceOffset;
+  tag.view = new DataView(view.buffer.slice(startBytes, startBytes + dataTypeSize * tag.count)) as DataViewOffset;
+  tag.view.sourceOffset = tag.dataOffset;
+}
 
-  constructor(tiff: CogTiff, tagId: number, count: number, type: number, offset: number) {
-    this.id = tagId;
-    // this.name = TiffTag[tagId];
-    this.tiff = tiff;
-    this.dataOffset = offset;
-    this.count = count;
-    this.dataType = type;
-  }
+export async function getValueAt(tiff: CogTiff, tag: TagOffset, index: number): Promise<number> {
+  if (index > tag.count || index < 0) throw new Error('TagOffset: out of bounds :' + index);
+  if (tag.value[index] != null) return tag.value[index];
+  const dataTypeSize = getTiffTagSize(tag.dataType);
 
-  async fetch(): Promise<T> {
-    if (this.value != null) return this.value;
-    const dataTypeSize = getTiffTagSize(this.dataType);
-    const dataLength = dataTypeSize * this.count;
-    const bytes = await this.tiff.source.fetch(this.dataOffset, dataLength);
+  if (tag.view == null) {
+    const bytes = await tiff.source.fetch(tag.dataOffset + index * dataTypeSize, dataTypeSize);
     const view = new DataView(bytes);
-    this.value = readValue(this.tiff, view, 0, this.dataType, this.count);
-    return this.value as T;
-  }
-}
-
-export interface TagInline<T> {
-  type: 'inline';
-  value: T;
-  id: number;
-  count: number;
-  tiff: CogTiff;
-  dataType: number;
-}
-
-export class TagOffset {
-  type = 'offset' as const;
-  value: number[] = [];
-  id: number;
-  tiff: CogTiff;
-  count: number;
-  isLoaded = false;
-  dataType: number;
-  dataOffset: number;
-  view?: DataViewOffset;
-
-  constructor(tiff: CogTiff, tagId: number, count: number, type: number, offset: number) {
-    this.id = tagId;
-    this.tiff = tiff;
-    this.count = count;
-    this.dataType = type;
-    this.dataOffset = offset;
-  }
-
-  setBytes(view: DataViewOffset): void {
-    const dataTypeSize = getTiffTagSize(this.dataType);
-    const startBytes = view.byteOffset + this.dataOffset - view.sourceOffset;
-    this.view = new DataView(view.buffer.slice(startBytes, startBytes + dataTypeSize * this.count)) as DataViewOffset;
-
-    this.view.sourceOffset = this.dataOffset;
-  }
-
-  async getValueAt(index: number): Promise<number> {
-    if (index > this.count || index < 0) throw new Error('TagOffset: out of bounds :' + index);
-    if (this.value[index] != null) return this.value[index];
-    const dataTypeSize = getTiffTagSize(this.dataType);
-
-    if (this.view == null) {
-      const bytes = await this.tiff.source.fetch(this.dataOffset + index * dataTypeSize, dataTypeSize);
-      const view = new DataView(bytes);
-      const value = readValue(this.tiff, view, 0, this.dataType, 1) as number;
-      this.value[index] = value;
-      return value;
-    }
-
-    const value = readValue(this.tiff, this.view, index * dataTypeSize, this.dataType, 1) as number;
-    this.value[index] = value;
+    const value = readValue(tiff, view, 0, tag.dataType, 1) as number;
+    tag.value[index] = value;
     return value;
   }
+
+  const value = readValue(tiff, tag.view, index * dataTypeSize, tag.dataType, 1) as number;
+  tag.value[index] = value;
+  return value;
 }

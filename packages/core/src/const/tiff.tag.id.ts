@@ -1,5 +1,5 @@
 // Stolen from geotiff.js
-export enum TiffTag {
+export enum TiffTagId {
   // TIFF Baseline
   Artist = 0x013b,
   BitsPerSample = 0x0102,
@@ -120,7 +120,7 @@ export enum TiffTag {
   GeoAsciiParams = 0x87b1,
 }
 
-export enum TiffTagGeo {
+export enum TiffTagGeoId {
   GTModelTypeGeoKey = 1024,
   GTRasterTypeGeoKey = 1025,
   GTCitationGeoKey = 1026,

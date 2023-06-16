@@ -1,4 +1,4 @@
-import { ByteSize } from '../bytes.js';
+import { ByteSize } from '../util/bytes.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 
 export function getTiffTagSize(fieldType: TiffTagValueType): ByteSize {

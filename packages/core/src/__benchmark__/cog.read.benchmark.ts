@@ -2,6 +2,7 @@ import { readFile } from 'fs/promises';
 import { CogTiff } from '../cog.tiff.js';
 import { SourceMemory } from './source.memory.js';
 
+console.log = console.trace;
 /** Read a tile from every image inside of a tiff 300 tiles read */
 async function main(): Promise<void> {
   const buf = await readFile(process.argv[process.argv.length - 1]);
