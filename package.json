@@ -21,7 +21,7 @@
   "devDependencies": {
     "@linzjs/style": "^4.2.0",
     "@types/node": "^20.0.0",
-    "lerna": "^6.4.1",
+    "lerna": "^7.1.4",
     "rimraf": "^4.1.2"
   },
   "workspaces": {
