@@ -1,7 +1,5 @@
 # cogeotiff
 
-[![Build Status](https://github.com/blacha/cogeotiff/workflows/Build/badge.svg)](https://github.com/blacha/cogeotiff/actions)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/blacha/cogeotiff.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/blacha/cogeotiff/context:javascript)
 
 Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 
@@ -38,7 +36,7 @@ npm i -g @cogeotiff/cli
 Display basic information about COG
 
 ```shell
-cogeotiff info --file webp.cog.tif
+cogeotiff info  webp.cog.tif
 ```
 
 Output:
@@ -78,16 +76,9 @@ COG File Info - /home/blacha/Downloads/tif-new/bg43.webp.cog.tif
 Dump all tiles for a image (**Warning** if you do this for a large cog this will create millions of files.)
 
 ```
-cogeotiff dump --file webp.cog.tif --image 2 --output output
+cogeotiff dump --image 2 --output output
 ```
 
-### cogeotiff tile
-
-Load and dump a individual tile
-
-```
-cogeotiff tile --file webp.cog.tif --xyz 1,1,1
-```
 
 # Building
 
