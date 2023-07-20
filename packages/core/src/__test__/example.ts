@@ -7,15 +7,19 @@ async function main(): Promise<void> {
 
   /** Load a specific tile from a specific image */
   const tile = await tiff.images[5].getTile(2, 2);
-  tile.bytes; // Raw image buffer or null if tile doesn't exist
+  if (tile != null) {
+    tile.bytes; // Raw image buffer or null if tile doesn't exist
+  }
 
   /** Load the 5th image in the Tiff */
   const img = tiff.images[5];
   if (img.isTiled()) {
     /** Load tile x:10 y:10 */
     const tile = await img.getTile(10, 10);
-    tile.mimeType; // image/jpeg
-    tile.bytes; // Raw image buffer
+    if (tile != null) {
+      tile.mimeType; // image/jpeg
+      tile.bytes; // Raw image buffer
+    }
   }
 
   /** Get the origin point of the tiff */
