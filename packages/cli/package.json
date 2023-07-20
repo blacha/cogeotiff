@@ -19,10 +19,11 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.352.0",
     "@chunkd/source": "^11.0.0",
+    "@chunkd/middleware": "^11.0.0",
     "@chunkd/fs": "^11.0.0",
+    "@chunkd/fs-aws": "^11.0.0",
     "@cogeotiff/core": "^7.2.1",
     "@linzjs/tracing": "^1.1.0",
-    "@rushstack/ts-command-line": "^4.3.14",
     "ansi-colors": "^4.1.1",
     "cmd-ts": "^0.12.1",
     "p-limit": "^4.0.0",

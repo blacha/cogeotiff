@@ -7,14 +7,8 @@ import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import pLimit from 'p-limit';
 import { DefaultArgs, Url } from '../common.js';
-import { setupLogger, sourceCache } from '../log.js';
+import { setupLogger } from '../log.js';
 import { getTileName, writeTile } from '../util.tile.js';
-
-// const Rad2Deg = 180 / Math.PI;
-// const A = 6378137.0; // 900913 properties.
-// function toLatLng(x: number, y: number): [number, number] {
-//   return [(x * Rad2Deg) / A, (Math.PI * 0.5 - 2.0 * Math.atan(Math.exp(-y / A))) * Rad2Deg];
-// }
 
 const TileQueue = pLimit(5);
 
@@ -71,8 +65,6 @@ export const commandDump = command({
       await dumpTiles(tiff, output, args.image, logger);
       await dumpBounds(tiff, output, args.image);
     }
-
-    console.log(sourceCache);
   },
 });
 
