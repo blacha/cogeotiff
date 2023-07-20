@@ -7,7 +7,7 @@ import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import pLimit from 'p-limit';
 import { DefaultArgs, Url } from '../common.js';
-import { setupLogger } from '../log.js';
+import { ensureS3fs, setupLogger } from '../log.js';
 import { getTileName, writeTile } from '../util.tile.js';
 
 const TileQueue = pLimit(5);
@@ -55,6 +55,7 @@ export const commandDump = command({
     const logger = setupLogger(args);
     for (const path of [args.path, ...args.paths]) {
       if (path == null) continue;
+      if (path.protocol === 's3:') await ensureS3fs();
       const source = fsa.source(path);
       const tiff = await new CogTiff(source).init();
       const img = tiff.images[args.image];

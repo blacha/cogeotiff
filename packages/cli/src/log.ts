@@ -16,9 +16,6 @@ export function setupLogger(cfg: { verbose?: boolean; extraVerbose?: boolean }):
     log.level = 'warn';
   }
 
-  // new S3Client({});
-  // FIXME loading AWS SDK adds 300ms to the cli startup time
-  // fsa.register('s3://', new FsAwsS3(new S3Client({}) as any));
   fsa.register('http://', new FsHttp());
   fsa.register('https://', new FsHttp());
 
@@ -34,3 +31,13 @@ export function setupLogger(cfg: { verbose?: boolean; extraVerbose?: boolean }):
 }
 
 export const logger = log;
+
+/** S3 client adds approx 300ms to the cli startup time, so only register it if needed */
+export async function ensureS3fs(): Promise<void> {
+  if (fsa.systems.find((f) => f.prefix.startsWith('s3'))) return;
+
+  const S3Client = await import('@aws-sdk/client-s3');
+  const FsAwsS3 = await import('@chunkd/fs-aws');
+
+  fsa.register('s3://', new FsAwsS3.FsAwsS3(new S3Client.S3Client({})));
+}

@@ -7,7 +7,7 @@ import { ActionUtil, CliResultMap } from '../action.util.js';
 import { CliTable } from '../cli.table.js';
 import { DefaultArgs, Url } from '../common.js';
 import { FetchLog } from '../fs.js';
-import { setupLogger } from '../log.js';
+import { ensureS3fs, setupLogger } from '../log.js';
 import { toByteSizeString } from '../util.bytes.js';
 
 function round(num: number): number {
@@ -29,6 +29,7 @@ export const commandInfo = command({
     const paths = [...args.paths, args.path].filter((f) => f != null) as URL[];
 
     for (const path of paths) {
+      if (path.protocol === 's3:') await ensureS3fs();
       logger.debug('Tiff:load', { path: path?.href });
       FetchLog.reset();
 
