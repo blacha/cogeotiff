@@ -1,9 +1,12 @@
-import 'source-map-support/register.js';
-import { CogInfoCommandLine } from './cli.cog.info.js';
-import { logger } from './cli.log.js';
+import { subcommands } from 'cmd-ts';
+import { commandInfo } from './commands/info.js';
+import { commandDump } from './commands/dump.js';
 
-const cogInfo: CogInfoCommandLine = new CogInfoCommandLine();
-cogInfo.executeWithoutErrorHandling().catch((err) => {
-    logger.fatal({ err }, 'Failed to run');
-    process.exit(1);
+export const cmd = subcommands({
+  name: 'cogeotiff',
+  description: 'COG utilities',
+  cmds: {
+    info: commandInfo,
+    dump: commandDump,
+  },
 });

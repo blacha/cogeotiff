@@ -1,38 +1,39 @@
 {
-    "name": "@cogeotiff/cli",
-    "version": "7.2.1",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/blacha/cogeotiff.git",
-        "directory": "packages/cli"
-    },
-    "author": "Blayne Chard",
-    "license": "MIT",
-    "bin": {
-        "cogeotiff": "bin/cogeotiff.js"
-    },
-    "type": "module",
-    "engines": {
-        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
-    },
-    "scripts": {},
-    "dependencies": {
-        "@chunkd/core": "^10.0.0",
-        "@chunkd/fs": "^10.0.0",
-        "@cogeotiff/core": "^7.2.1",
-        "@rushstack/ts-command-line": "^4.3.14",
-        "ansi-colors": "^4.1.1",
-        "aws-sdk": "^2.781.0",
-        "p-limit": "^4.0.0",
-        "pino": "^8.0.0",
-        "pretty-json-log": "^1.0.0",
-        "source-map-support": "^0.5.12"
-    },
-    "devDependencies": {
-        "@types/node": "^20.0.0",
-        "@types/pino": "^7.0.5"
-    },
-    "publishConfig": {
-        "access": "public"
-    }
+  "name": "@cogeotiff/cli",
+  "version": "7.2.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blacha/cogeotiff.git",
+    "directory": "packages/cli"
+  },
+  "author": "Blayne Chard",
+  "license": "MIT",
+  "bin": {
+    "cogeotiff": "bin/cogeotiff.js"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@chunkd/source": "^11.0.0",
+    "@chunkd/middleware": "^11.0.0",
+    "@chunkd/fs": "^11.0.0",
+    "@chunkd/fs-aws": "^11.0.0",
+    "@cogeotiff/core": "^7.2.1",
+    "@linzjs/tracing": "^1.1.0",
+    "ansi-colors": "^4.1.1",
+    "cmd-ts": "^0.12.1",
+    "p-limit": "^4.0.0",
+    "pino": "^8.0.0",
+    "pretty-json-log": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/pino": "^7.0.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

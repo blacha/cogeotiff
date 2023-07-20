@@ -1,33 +1,33 @@
 {
-    "name": "@cogeotiff/examples",
-    "private": true,
-    "version": "7.2.1",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/blacha/cogeotiff.git",
-        "directory": "packages/examples"
-    },
-    "type": "module",
-    "engines": {
-        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
-    },
-    "main": "./build/index.js",
-    "types": "./build/index.d.ts",
-    "author": "Blayne Chard",
-    "license": "MIT",
-    "scripts": {
-        "test": "node --test",
-        "bundle": "esbuild src/browser/index.ts --bundle --outfile=dist/index.js"
-    },
-    "dependencies": {
-        "@chunkd/source-http": "^10.0.0",
-        "@cogeotiff/core": "^7.2.1",
-        "esbuild": "^0.17.6"
-    },
-    "devDependencies": {
-        "@types/node": "^20.0.0"
-    },
-    "publishConfig": {
-        "access": "restricted"
-    }
+  "name": "@cogeotiff/examples",
+  "private": true,
+  "version": "7.2.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blacha/cogeotiff.git",
+    "directory": "packages/examples"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "author": "Blayne Chard",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test",
+    "bundle": "esbuild src/browser/index.ts --bundle --outfile=dist/index.js"
+  },
+  "dependencies": {
+    "@chunkd/source-http": "^11.0.0",
+    "@cogeotiff/core": "^7.2.1",
+    "esbuild": "^0.17.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

@@ -1,10 +1,9 @@
 {
-    "bootstrap-sha": "9fb54d028178cf770e6cf47599569956cb51374d",
-    "plugins": ["node-workspace"],
-    "packages": {
-        "packages/core": {},
-        "packages/cli": {},
-        "packages/examples": {},
-        "packages/fetchable": {}
-    }
+  "bootstrap-sha": "9fb54d028178cf770e6cf47599569956cb51374d",
+  "plugins": ["node-workspace"],
+  "packages": {
+    "packages/core": {},
+    "packages/cli": {},
+    "packages/examples": {}
+  }
 }

@@ -1,43 +1,42 @@
-import { CogTiff } from '../cog.tiff.js';
-import { TiffTag } from '../const/tiff.tag.id.js';
-import { CogTiffTagBase } from './tag/tiff.tag.base.js';
-import { CogTiffTagLazy } from './tag/tiff.tag.lazy.js';
-import { CogTiffTagOffset } from './tag/tiff.tag.offset.js';
-import { CogTifTagStatic } from './tag/tiff.tag.static.js';
+import { TagId } from '../const/tiff.tag.id.js';
+import { TiffTagValueType } from '../const/tiff.tag.value.js';
+import { DataViewOffset } from './data.view.offset.js';
 
-export const CogTiffTag = {
-    /**
-     * Determine if all the data for the tiff tag is loaded in and use that to create the specific CogTiffTag
-     *
-     * @see CogTiffTagBase
-     *
-     * @param source
-     * @param offset
-     */
-    create(tiff: CogTiff, offset: number): CogTiffTagBase<unknown> {
-        const tagId = tiff.source.getUint16(offset);
-        if (
-            tagId === TiffTag.TileOffsets ||
-            tagId === TiffTag.TileByteCounts ||
-            tagId === TiffTag.StripByteCounts ||
-            tagId === TiffTag.StripOffsets
-        ) {
-            return new CogTiffTagOffset(tagId, tiff, offset);
-        }
+export type Tag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;
 
-        const staticTag = new CogTifTagStatic(tagId, tiff, offset);
-        if (staticTag.hasBytes) return staticTag;
+export interface TagBase {
+  /** Id of the Tag */
+  id: TagId;
+  /** Offset in bytes to where this tag was read from */
+  tagOffset: number;
+  /** Number of values */
+  count: number;
+  /** Tiff Tag Datatype @see {TiffTagValueType} */
+  dataType: TiffTagValueType;
+}
 
-        return new CogTiffTagLazy(tagId, tiff, offset);
-    },
+export interface TagLazy<T> extends TagBase {
+  type: 'lazy';
+  /** Value if loaded undefined otherwise */
+  value?: T;
+  /** Where in the file the value is read from */
+  dataOffset: number;
+}
 
-    isStatic<T>(tiffTag: CogTiffTagBase<T>): tiffTag is CogTifTagStatic<T> {
-        return tiffTag instanceof CogTifTagStatic;
-    },
-    isLazy<T>(tiffTag: CogTiffTagBase<T>): tiffTag is CogTiffTagLazy<T> {
-        return tiffTag instanceof CogTiffTagLazy;
-    },
-    isOffsetArray(tiffTag: CogTiffTagBase): tiffTag is CogTiffTagOffset {
-        return tiffTag instanceof CogTiffTagOffset;
-    },
-};
+/** Tiff tag that's value is inside the IFD and is already read */
+export interface TagInline<T> extends TagBase {
+  type: 'inline';
+  value: T;
+}
+
+export interface TagOffset extends TagBase {
+  type: 'offset';
+  /** Values of the offest's this is a sparse array unless @see {isLoaded} is true */
+  value: number[];
+  /** has all the values been read */
+  isLoaded?: boolean;
+  /** Raw buffer of the values for lazy decoding, Reading 1000s of uint64s can take quite a while */
+  view?: DataViewOffset;
+  /** Where in the file the value is read from */
+  dataOffset: number;
+}

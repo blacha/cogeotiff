@@ -1,9 +1,8 @@
 {
-    "extends": "@linzjs/style/tsconfig.base.json",
-    "compilerOptions": {
-        "lib": ["ES2020", "DOM"],
-        "outDir": "build",
-        "module": "ES2020",
-        "moduleResolution": "Node"
-    }
+  "extends": "@linzjs/style/tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM"],
+    "outDir": "build",
+    "noUncheckedIndexedAccess": false
+  }
 }
