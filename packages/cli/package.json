@@ -22,12 +22,11 @@
     "@chunkd/fs": "^11.0.0",
     "@chunkd/fs-aws": "^11.0.0",
     "@cogeotiff/core": "^7.2.1",
-    "@linzjs/tracing": "^1.1.0",
+    "@linzjs/tracing": "^1.1.1",
     "ansi-colors": "^4.1.1",
-    "cmd-ts": "^0.12.1",
+    "cmd-ts": "^0.13.0",
     "p-limit": "^4.0.0",
-    "pino": "^8.0.0",
-    "pretty-json-log": "^1.0.0"
+    "pretty-json-log": "^1.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
