@@ -1,12 +1,12 @@
-import { TiffTagId } from '../const/tiff.tag.id.js';
+import { TagId } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 import { DataViewOffset } from './data.view.offset.js';
 
-export type CogTiffTag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;
+export type Tag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;
 
 export interface TagBase {
   /** Id of the Tag */
-  id: TiffTagId;
+  id: TagId;
   /** Offset in bytes to where this tag was read from */
   tagOffset: number;
   /** Number of values */

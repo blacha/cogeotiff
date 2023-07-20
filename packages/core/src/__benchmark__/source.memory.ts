@@ -16,6 +16,7 @@ export class SourceMemory implements Source {
   }
 
   async fetch(offset: number, length?: number): Promise<ArrayBuffer> {
+    // console.log('Fetch', offset, length);
     if (offset < 0) offset = this.data.byteLength + offset;
     return this.data.slice(offset, length == null ? undefined : offset + length);
   }

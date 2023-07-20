@@ -1,9 +1,9 @@
 import { CogTiff } from '../cog.tiff.js';
-import { TiffTagId } from '../const/tiff.tag.id.js';
+import { TagId } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 import { getUint, getUint64 } from '../util/bytes.js';
 import { DataViewOffset, hasBytes } from './data.view.offset.js';
-import { CogTiffTag, TagLazy, TagOffset } from './tiff.tag.js';
+import { Tag, TagLazy, TagOffset } from './tiff.tag.js';
 import { getTiffTagSize } from './tiff.value.reader.js';
 
 function readTagValue(
@@ -57,13 +57,20 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: numb
 
   if (count === 1) return readTagValue(type, bytes, offset, tiff.isLittleEndian) as unknown as T;
 
+  switch (type) {
+    case TiffTagValueType.Ascii:
+      return String.fromCharCode.apply(
+        null,
+        new Uint8Array(
+          bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength - 1),
+        ) as unknown as number[],
+      ) as unknown as T;
+  }
+
   const output = [];
   for (let i = 0; i < dataLength; i += typeSize) {
     output.push(readTagValue(type, bytes, offset + i, tiff.isLittleEndian));
   }
-
-  // Convert to a string if ascii
-  if (type === TiffTagValueType.Ascii) return output.join('').trim() as unknown as T;
 
   return output as unknown as T;
 }
@@ -71,13 +78,13 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: numb
 /**
  * Determine if all the data for the tiff tag is loaded in and use that to create the specific CogTiffTag
  *
- * @see {CogTiffTag}
+ * @see {Tag}
  *
  * @param tiff
  * @param view Bytes to read from
  * @param offset Offset in the dataview to read a tag
  */
-export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): CogTiffTag<unknown> {
+export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): Tag<unknown> {
   const tagId = view.getUint16(offset + 0, tiff.isLittleEndian);
 
   const dataType = view.getUint16(offset + 2, tiff.isLittleEndian) as TiffTagValueType;
@@ -93,10 +100,10 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
 
   const dataOffset = getUint(view, offset + 4 + tiff.ifdConfig.pointer, tiff.ifdConfig.pointer, tiff.isLittleEndian);
   switch (tagId) {
-    case TiffTagId.TileOffsets:
-    case TiffTagId.TileByteCounts:
-    case TiffTagId.StripByteCounts:
-    case TiffTagId.StripOffsets:
+    case TagId.TileOffsets:
+    case TagId.TileByteCounts:
+    case TagId.StripByteCounts:
+    case TagId.StripOffsets:
       const tag: TagOffset = {
         type: 'offset',
         id: tagId,
@@ -107,7 +114,7 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
         tagOffset: offset,
       };
       // Some offsets are quite long and don't need to read them often, so only read the tags we are interested in when we need to
-      if (tagId === TiffTagId.TileOffsets && hasBytes(view, dataOffset, dataLength)) setBytes(tag, view);
+      if (tagId === TagId.TileOffsets && hasBytes(view, dataOffset, dataLength)) setBytes(tag, view);
       return tag;
   }
 

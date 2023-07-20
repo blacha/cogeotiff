@@ -39,13 +39,14 @@ export async function writeTile(
   index: number,
   outputPath: URL,
   logger: typeof log,
-): Promise<void> {
+): Promise<string | null> {
   const tile = await tiff.images[index].getTile(x, y);
   if (tile == null) {
     logger.debug('Tile:Empty', { source: tiff.source.url.href, index, x, y });
-    return;
+    return null;
   }
   const fileName = getTileName(tile.mimeType, index, x, y);
   await fs.writeFile(new URL(fileName, outputPath), Buffer.from(tile.bytes));
   logger.debug('Tile:Write', { source: tiff.source.url.href, index, x, y, fileName, bytes: tile.bytes.byteLength });
+  return fileName;
 }

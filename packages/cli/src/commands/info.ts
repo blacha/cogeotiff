@@ -1,5 +1,5 @@
 import { fsa } from '@chunkd/fs';
-import { CogTiff, CogTiffTag, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
+import { CogTiff, TiffTag, TiffTagGeo, TiffTagId, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
 import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
@@ -7,7 +7,7 @@ import { ActionUtil, CliResultMap } from '../action.util.js';
 import { CliTable } from '../cli.table.js';
 import { DefaultArgs, Url } from '../common.js';
 import { FetchLog } from '../fs.js';
-import { setupLogger, sourceCache } from '../log.js';
+import { setupLogger } from '../log.js';
 import { toByteSizeString } from '../util.bytes.js';
 
 function round(num: number): number {
@@ -111,10 +111,8 @@ export const commandInfo = command({
       const msg = ActionUtil.formatResult(`\n${c.bold('COG File Info')} - ${c.bold(path.href)}`, result);
       console.log(msg.join('\n'));
 
-      if ('close' in source && typeof source.close === 'function') await source.close();
+      await source.close?.();
     }
-
-    console.log(sourceCache);
   },
 });
 
@@ -130,13 +128,13 @@ TiffImageInfoTable.add({
 TiffImageInfoTable.add({
   name: 'Tile Count',
   width: 20,
-  get: (i) => `${i.tileCount.x * i.tileCount.y} - ${i.tileCount.x}x${i.tileCount.y} `,
+  get: (i) => `${i.tileCount.x}x${i.tileCount.y} (${i.tileCount.x * i.tileCount.y})`,
   enabled: (i) => i.isTiled(),
 });
 TiffImageInfoTable.add({
   name: 'Strip Count',
   width: 20,
-  get: (i) => `${i.tags.get(TiffTag.StripOffsets)?.count}`,
+  get: (i) => `${i.tags.get(TiffTagId.StripOffsets)?.count}`,
   enabled: (i) => !i.isTiled(),
 });
 TiffImageInfoTable.add({
@@ -165,7 +163,7 @@ TiffImageInfoTable.add({
  * @param img
  */
 function parseGdalMetadata(img: CogTiffImage): string[] | null {
-  const metadata = img.value(TiffTag.GdalMetadata);
+  const metadata = img.value(TiffTagId.GdalMetadata);
   if (typeof metadata !== 'string') return null;
   if (!metadata.startsWith('<GDALMetadata>')) return null;
   return metadata
@@ -176,14 +174,14 @@ function parseGdalMetadata(img: CogTiffImage): string[] | null {
     .map((c) => c.trim());
 }
 
-function formatTag(tag: CogTiffTag): { key: string; value: string } {
-  const tagName = TiffTag[tag.id];
+function formatTag(tag: TiffTag): { key: string; value: string } {
+  const tagName = TiffTagId[tag.id];
   const tagDebug = `(${TiffTagValueType[tag.dataType]}${tag.count > 1 ? ' x' + tag.count : ''}`;
   const key = `${c.dim(toHex(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(50, ' ');
 
   if (Array.isArray(tag.value)) return { key, value: JSON.stringify(tag.value.slice(0, 250)) };
 
-  let tagString = String(tag.value);
+  let tagString = JSON.stringify(tag.value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
   return { key, value: tagString };
 }
@@ -194,7 +192,7 @@ function formatGeoTag(tagId: TiffTagGeo, value: string | number): { key: string;
 
   if (Array.isArray(value)) return { key, value: JSON.stringify(value.slice(0, 250)) };
 
-  let tagString = String(value);
+  let tagString = JSON.stringify(value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
   return { key, value: tagString };
 }

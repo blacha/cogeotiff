@@ -1,8 +1,8 @@
 import { getUint } from './util/bytes.js';
 import { CogTiff } from './cog.tiff.js';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
-import { TiffTagId, TiffTagGeoId } from './const/tiff.tag.id.js';
-import { CogTiffTag, TagInline, TagOffset } from './read/tiff.tag.js';
+import { TagId, TagGeoId } from './const/tiff.tag.id.js';
+import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
 import { BoundingBox, Size } from './vector.js';
 import { fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
 
@@ -21,18 +21,18 @@ export interface CogTiffImageTiledCount {
 
 /** Tags that are commonly accessed for geotiffs */
 export const ImportantTags = new Set([
-  TiffTagId.Compression,
-  TiffTagId.ImageHeight,
-  TiffTagId.ImageWidth,
-  TiffTagId.ModelPixelScale,
-  TiffTagId.ModelTiePoint,
-  TiffTagId.ModelTransformation,
-  TiffTagId.TileHeight,
-  TiffTagId.TileWidth,
-  TiffTagId.GeoKeyDirectory,
-  TiffTagId.GeoAsciiParams,
-  TiffTagId.GeoDoubleParams,
-  TiffTagId.TileOffsets,
+  TagId.Compression,
+  TagId.ImageHeight,
+  TagId.ImageWidth,
+  TagId.ModelPixelScale,
+  TagId.ModelTiePoint,
+  TagId.ModelTransformation,
+  TagId.TileHeight,
+  TagId.TileWidth,
+  TagId.GeoKeyDirectory,
+  TagId.GeoAsciiParams,
+  TagId.GeoDoubleParams,
+  TagId.TileOffsets,
 ]);
 
 /**
@@ -47,7 +47,7 @@ export interface CogTiffImageTileSize {
 
 export class CogTiffImage {
   /** All IFD tags that have been read for the image */
-  tags: Map<TiffTagId, CogTiffTag>;
+  tags: Map<TagId, Tag>;
 
   /** Id of the tif image, generally the image index inside the tif */
   id: number;
@@ -57,9 +57,9 @@ export class CogTiffImage {
   /** Has loadGeoTiffTags been called */
   isGeoTagsLoaded = false;
   /** Sub tags stored in TiffTag.GeoKeyDirectory */
-  tagsGeo: Map<TiffTagGeoId, string | number> = new Map();
+  tagsGeo: Map<TagGeoId, string | number> = new Map();
 
-  constructor(tiff: CogTiff, id: number, tags: Map<TiffTagId, CogTiffTag>) {
+  constructor(tiff: CogTiff, id: number, tags: Map<TagId, Tag>) {
     this.tiff = tiff;
     this.id = id;
     this.tags = tags;
@@ -72,20 +72,20 @@ export class CogTiffImage {
    */
   async init(loadGeoTags = true): Promise<void> {
     const requiredTags = [
-      this.fetch(TiffTagId.Compression),
-      this.fetch(TiffTagId.ImageHeight),
-      this.fetch(TiffTagId.ImageWidth),
-      this.fetch(TiffTagId.ModelPixelScale),
-      this.fetch(TiffTagId.ModelTiePoint),
-      this.fetch(TiffTagId.ModelTransformation),
-      this.fetch(TiffTagId.TileHeight),
-      this.fetch(TiffTagId.TileWidth),
+      this.fetch(TagId.Compression),
+      this.fetch(TagId.ImageHeight),
+      this.fetch(TagId.ImageWidth),
+      this.fetch(TagId.ModelPixelScale),
+      this.fetch(TagId.ModelTiePoint),
+      this.fetch(TagId.ModelTransformation),
+      this.fetch(TagId.TileHeight),
+      this.fetch(TagId.TileWidth),
     ];
 
     if (loadGeoTags) {
-      requiredTags.push(this.fetch(TiffTagId.GeoKeyDirectory));
-      requiredTags.push(this.fetch(TiffTagId.GeoAsciiParams));
-      requiredTags.push(this.fetch(TiffTagId.GeoDoubleParams));
+      requiredTags.push(this.fetch(TagId.GeoKeyDirectory));
+      requiredTags.push(this.fetch(TagId.GeoAsciiParams));
+      requiredTags.push(this.fetch(TagId.GeoDoubleParams));
     }
 
     await Promise.all(requiredTags);
@@ -95,7 +95,7 @@ export class CogTiffImage {
   /**
    * Get the value of a TiffTag if it exists null otherwise
    */
-  value<T>(tag: TiffTagId): T | null {
+  value<T>(tag: TagId): T | null {
     const sourceTag = this.tags.get(tag);
     if (sourceTag == null) return null;
     if (sourceTag.type === 'offset' && sourceTag.isLoaded === false) return null;
@@ -108,7 +108,7 @@ export class CogTiffImage {
   async loadGeoTiffTags(): Promise<void> {
     // Already loaded
     if (this.isGeoTagsLoaded) return;
-    const sourceTag = this.tags.get(TiffTagId.GeoKeyDirectory);
+    const sourceTag = this.tags.get(TagId.GeoKeyDirectory);
     if (sourceTag == null) {
       this.isGeoTagsLoaded = true;
       return;
@@ -116,17 +116,17 @@ export class CogTiffImage {
     if (sourceTag.type === 'lazy' && sourceTag.value == null) {
       // Load all the required keys
       await Promise.all([
-        this.fetch(TiffTagId.GeoKeyDirectory),
-        this.fetch(TiffTagId.GeoAsciiParams),
-        this.fetch(TiffTagId.GeoDoubleParams),
+        this.fetch(TagId.GeoKeyDirectory),
+        this.fetch(TagId.GeoAsciiParams),
+        this.fetch(TagId.GeoDoubleParams),
       ]);
     }
     this.isGeoTagsLoaded = true;
     if (sourceTag.value == null) return;
-    const geoTags = sourceTag.value;
-    if (!Array.isArray(geoTags)) throw new Error('Invalid geo tags found');
+    const geoTags = sourceTag.value as Uint16Array;
+    if (typeof geoTags === 'number') throw new Error('Invalid geo tags found');
     for (let i = 4; i <= geoTags[3] * 4; i += 4) {
-      const key = geoTags[i] as TiffTagGeoId;
+      const key = geoTags[i] as TagGeoId;
       const location = geoTags[i + 1];
 
       const offset = geoTags[i + 3];
@@ -149,7 +149,7 @@ export class CogTiffImage {
   /**
    * Get the associated GeoTiffTags
    */
-  valueGeo(tag: TiffTagGeoId): string | number | undefined {
+  valueGeo(tag: TagGeoId): string | number | undefined {
     if (this.isGeoTagsLoaded === false) throw new Error('loadGeoTiffTags() has not been called');
     return this.tagsGeo.get(tag);
   }
@@ -158,7 +158,7 @@ export class CogTiffImage {
    * Load a tag, if it is not currently loaded, fetch the required data for the tag.
    * @param tag tag to fetch
    */
-  public async fetch<T>(tag: TiffTagId): Promise<T | null> {
+  public async fetch<T>(tag: TagId): Promise<T | null> {
     const sourceTag = this.tags.get(tag);
     if (sourceTag == null) return null;
     if (sourceTag.type === 'inline') return sourceTag.value as unknown as T;
@@ -173,18 +173,18 @@ export class CogTiffImage {
    * @returns origin point of the image
    */
   get origin(): [number, number, number] {
-    const tiePoints: number[] | null = this.value<number[]>(TiffTagId.ModelTiePoint);
+    const tiePoints: number[] | null = this.value<number[]>(TagId.ModelTiePoint);
     if (tiePoints != null && tiePoints.length === 6) {
       return [tiePoints[3], tiePoints[4], tiePoints[5]];
     }
 
-    const modelTransformation = this.value<number[]>(TiffTagId.ModelTransformation);
+    const modelTransformation = this.value<number[]>(TagId.ModelTransformation);
     if (modelTransformation != null) {
       return [modelTransformation[3], modelTransformation[7], modelTransformation[11]];
     }
 
     // If this is a sub image, use the origin from the top level image
-    if (this.value(TiffTagId.NewSubFileType) === 1 && this.id !== 0) {
+    if (this.value(TagId.NewSubFileType) === 1 && this.id !== 0) {
       return this.tiff.images[0].origin;
     }
 
@@ -193,11 +193,10 @@ export class CogTiffImage {
 
   /** Is there enough geo information on this image to figure out where its actually located */
   get isGeoLocated(): boolean {
-    const isImageLocated =
-      this.value(TiffTagId.ModelPixelScale) != null || this.value(TiffTagId.ModelTransformation) != null;
+    const isImageLocated = this.value(TagId.ModelPixelScale) != null || this.value(TagId.ModelTransformation) != null;
     if (isImageLocated) return true;
     // If this is a sub image, use the isGeoLocated from the top level image
-    if (this.value(TiffTagId.NewSubFileType) === 1 && this.id !== 0) return this.tiff.images[0].isGeoLocated;
+    if (this.value(TagId.NewSubFileType) === 1 && this.id !== 0) return this.tiff.images[0].isGeoLocated;
     return false;
   }
 
@@ -207,17 +206,17 @@ export class CogTiffImage {
    * @returns [x,y,z] pixel scale
    */
   get resolution(): [number, number, number] {
-    const modelPixelScale: number[] | null = this.value(TiffTagId.ModelPixelScale);
+    const modelPixelScale: number[] | null = this.value(TagId.ModelPixelScale);
     if (modelPixelScale != null) {
       return [modelPixelScale[0], -modelPixelScale[1], modelPixelScale[2]];
     }
-    const modelTransformation: number[] | null = this.value(TiffTagId.ModelTransformation);
+    const modelTransformation: number[] | null = this.value(TagId.ModelTransformation);
     if (modelTransformation != null) {
       return [modelTransformation[0], modelTransformation[5], modelTransformation[10]];
     }
 
     // If this is a sub image, use the resolution from the top level image
-    if (this.value(TiffTagId.NewSubFileType) === 1 && this.id !== 0) {
+    if (this.value(TagId.NewSubFileType) === 1 && this.id !== 0) {
       const firstImg = this.tiff.images[0];
       const [resX, resY, resZ] = firstImg.resolution;
       const firstImgSize = firstImg.size;
@@ -260,7 +259,7 @@ export class CogTiffImage {
    * @returns Compression type eg webp
    */
   get compression(): TiffMimeType | null {
-    const compression = this.value(TiffTagId.Compression);
+    const compression = this.value(TagId.Compression);
     if (compression == null || typeof compression !== 'number') return null;
     return TiffCompression[compression];
   }
@@ -271,7 +270,7 @@ export class CogTiffImage {
    * @returns EPSG Code if it exists
    */
   get epsg(): number | null {
-    const projection = this.valueGeo(TiffTagGeoId.ProjectedCSTypeGeoKey) as number;
+    const projection = this.valueGeo(TagGeoId.ProjectedCSTypeGeoKey) as number;
     if (projection === InvalidProjectionCode) return null;
     return projection;
   }
@@ -283,8 +282,8 @@ export class CogTiffImage {
    */
   get size(): Size {
     return {
-      width: this.value<number>(TiffTagId.ImageWidth) as number,
-      height: this.value<number>(TiffTagId.ImageHeight) as number,
+      width: this.value<number>(TagId.ImageWidth) as number,
+      height: this.value<number>(TagId.ImageHeight) as number,
     };
   }
 
@@ -292,7 +291,7 @@ export class CogTiffImage {
    * Determine if this image is tiled
    */
   public isTiled(): boolean {
-    return this.value(TiffTagId.TileWidth) !== null;
+    return this.value(TagId.TileWidth) !== null;
   }
 
   /**
@@ -300,8 +299,8 @@ export class CogTiffImage {
    */
   get tileSize(): CogTiffImageTileSize {
     return {
-      width: this.value<number>(TiffTagId.TileWidth) as number,
-      height: this.value<number>(TiffTagId.TileHeight) as number,
+      width: this.value<number>(TagId.TileWidth) as number,
+      height: this.value<number>(TagId.TileHeight) as number,
     };
   }
 
@@ -324,7 +323,7 @@ export class CogTiffImage {
    * @returns file offset to where the tiffs are stored
    */
   get tileOffset(): TagOffset {
-    const tileOffset = this.tags.get(TiffTagId.TileOffsets) as TagOffset;
+    const tileOffset = this.tags.get(TagId.TileOffsets) as TagOffset;
     if (tileOffset == null) throw new Error('No tile offsets found');
     return tileOffset;
   }
@@ -337,7 +336,7 @@ export class CogTiffImage {
    * @returns number of strips present
    */
   get stripCount(): number {
-    const tileOffset = this.tags.get(TiffTagId.StripByteCounts) as TagOffset;
+    const tileOffset = this.tags.get(TagId.StripByteCounts) as TagOffset;
     if (tileOffset == null) return 0;
     return tileOffset.count;
   }
@@ -360,8 +359,8 @@ export class CogTiffImage {
   async getStrip(index: number): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
     if (this.isTiled()) throw new Error('Cannot read stripes, tiff is tiled: ' + index);
 
-    const byteCounts = this.tags.get(TiffTagId.StripByteCounts) as TagOffset;
-    const offsets = this.tags.get(TiffTagId.StripOffsets) as TagOffset;
+    const byteCounts = this.tags.get(TagId.StripByteCounts) as TagOffset;
+    const offsets = this.tags.get(TagId.StripOffsets) as TagOffset;
 
     if (index >= byteCounts.count) throw new Error('Cannot read strip, index out of bounds');
 
@@ -376,7 +375,7 @@ export class CogTiffImage {
   private getJpegHeader(bytes: ArrayBuffer): ArrayBuffer {
     // Both the JPEGTable and the Bytes with have the start of image and end of image markers
     // StartOfImage 0xffd8 EndOfImage 0xffd9
-    const tables = this.value<number[]>(TiffTagId.JPEGTables);
+    const tables = this.value<number[]>(TagId.JPEGTables);
     if (tables == null) throw new Error('Unable to find Jpeg header');
 
     // Remove EndOfImage marker
@@ -393,7 +392,7 @@ export class CogTiffImage {
     byteCount: number,
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
     const mimeType = this.compression;
-    if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTagId.Compression));
+    if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TagId.Compression));
     if (byteCount === 0) return null;
 
     const bytes = await this.tiff.source.fetch(offset, byteCount);
@@ -418,7 +417,7 @@ export class CogTiffImage {
     const tiles = this.tileSize;
 
     if (tiles == null) throw new Error('Tiff is not tiled');
-    if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTagId.Compression));
+    if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TagId.Compression));
 
     // TODO support GhostOptionTileOrder
     const nyTiles = Math.ceil(size.height / tiles.height);
@@ -477,7 +476,7 @@ export class CogTiffImage {
       return { offset, imageSize: getUint(new DataView(bytes), 0, leaderBytes, this.tiff.isLittleEndian) };
     }
 
-    const byteCounts = this.tags.get(TiffTagId.TileByteCounts) as TagOffset;
+    const byteCounts = this.tags.get(TagId.TileByteCounts) as TagOffset;
     if (byteCounts == null) throw new Error('No tile byte counts found');
     const [offset, imageSize] = await Promise.all([
       getOffset(this.tiff, this.tileOffset, index),

@@ -1,9 +1,7 @@
 import { FsHttp, fsa } from '@chunkd/fs';
-// import '@chunkd/fs-aws';
-import { SourceCache, SourceChunk } from '@chunkd/view';
+import { SourceCache, SourceChunk } from '@chunkd/middleware';
 import { log } from '@linzjs/tracing';
 import { FetchLog } from './fs.js';
-// import { S3Client } from '@aws-sdk/client-s3';
 
 // Cache the last 10MB of chunks for reuse
 export const sourceCache = new SourceCache({ size: 10 * 1024 * 1024 });
@@ -26,11 +24,11 @@ export function setupLogger(cfg: { verbose?: boolean; extraVerbose?: boolean }):
 
   // Order of these are really important
   // Chunk all requests into 32KB chunks
-  fsa.sources.use(sourceChunk);
+  fsa.middleware.push(sourceChunk);
   // Cache the last 10MB of chunks for reuse
-  fsa.sources.use(sourceCache);
+  fsa.middleware.push(sourceCache);
 
-  fsa.sources.use(FetchLog);
+  fsa.middleware.push(FetchLog);
 
   return log;
 }

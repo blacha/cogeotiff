@@ -1,4 +1,4 @@
-import { SourceCallback, SourceMiddleware, SourceRequest } from '@chunkd/view';
+import { SourceCallback, SourceMiddleware, SourceRequest } from '@chunkd/source';
 import { logger } from './log.js';
 
 export const FetchLog: SourceMiddleware & { reset(): void; fetches: SourceRequest[]; bytesRead: number } = {
