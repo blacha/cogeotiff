@@ -20,7 +20,7 @@
     "bundle": "esbuild src/browser/index.ts --bundle --outfile=dist/index.js"
   },
   "dependencies": {
-    "@chunkd/source-http": "^10.0.0",
+    "@chunkd/source-http": "^11.0.0",
     "@cogeotiff/core": "^7.2.1",
     "esbuild": "^0.17.6"
   },
