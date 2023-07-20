@@ -1,29 +1,40 @@
 # @cogeotiff/core
 
-Reading logic for GeoTiffs
+Working with [Cloud optimized GEOTiff](https://www.cogeo.org/)
+
+-  Completely javascript based, works in the browser and nodejs
+-  Lazy load COG images and metadata
+-  Supports huge 100GB+ COGs
+-  Uses GDAL COG optimizations, generally only one or two reads per tile!
+-  Loads COGs from URL, File, Google Cloud or AWS S3
+-  Used in production for [LINZ's Basemaps](https://github.com/linz/basemaps) with billions of tiles fetched from COGs!
 
 ## Usage
 
-```typescript
-import { CogSourceUrl } from '@chunkd/source-url';
+Load a COG from a remote http source
 
-const source = new  CogSourceUrl('https://example.com/cog.tif');
-const tiff = await CogTiff.create(source)
+```typescript
+import { SourceHttp } from '@chunkd/source-url';
+import { CogTiff } from '@cogeotiff/core'
+
+const source = new SourceHttp('https://example.com/cog.tif');
+const tiff = await CogTiff.create(source);
 
 /** Load a specific tile from a specific image */
-const tile = await cog.getTile(2, 2, 5);
+const tile = await tiff.images[5].getTile(2, 2);
 
-/** Load the 5th image in the Tif */
-const img = cog.getImage(5);
+/** Load the 5th image in the Tiff */
+const img = tiff.images[5];
 if (img.isTiled()) {
     /** Load tile x:10 y:10 */
     const tile = await img.getTile(10, 10);
-
-    const tileInfo = img.tileInfo
+    tile.mimeType; // image/jpeg
+    tile.bytes; // Raw image buffer
 }
 
-/** Get the origin point of the tif */
+/** Get the origin point of the tiff */
 const origin = img.origin;
+/** Bounding box of the tiff */
 const bbox = img.bbox;
 ```
 
@@ -32,3 +43,4 @@ More examples can bee seen
 
 - [@cogeotiff/example](https://github.com/blacha/cogeotiff/tree/master/packages/examples)
 - [CogViewer](https://github.com/blacha/cogeotiff-web)
+- [@chunkd](https://github.com/blacha/chunkd) Additional sources eg file:// and s3://

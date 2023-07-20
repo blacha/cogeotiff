@@ -34,6 +34,11 @@ export class CogTiff {
     this.source = source;
   }
 
+  /** Create a COG and initialize it by reading the COG headers */
+  static create(source: Source): Promise<CogTiff> {
+    return new CogTiff(source).init();
+  }
+
   /**
    * Initialize the COG loading in the header and all image headers
    */

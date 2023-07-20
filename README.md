@@ -17,12 +17,12 @@ Tools to work with [Cloud optimized GEOTiff](https://www.cogeo.org/)
 Load a COG from a URL using `fetch`
 
 ```typescript
-import { CogSourceUrl } from '@chunkd/source-url';
+import { SourceHttp } from '@chunkd/source-http';
 
-const source = new CogSourceUrl('https://example.com/cog.tif');
+const source = new SourceHttp('https://example.com/cog.tif');
 const cog = await CogTiff.create(source);
 
-const img = cog.getImage(0);
+const img = cog.images[0];
 if (img.isTiled()) throw new Error('Tiff is not tiled');
 const tile = await img.getTile(2, 2); // Fetch a tile from a tiff x:2, y:2
 ```

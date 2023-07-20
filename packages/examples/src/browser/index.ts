@@ -13,10 +13,10 @@ SourceHttp.fetch = async (input, init): Promise<Response> => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   const tiffSource = new SourceHttp('https://blayne.chard.com/world.webp.google.cog.tiff');
-  const tiff = await CogTiff(tiffSource);
+  const tiff = await new CogTiff(tiffSource);
 
   const mainEl = document.createElement('div');
-  console.log('Loaded: ', tiff.source.uri, '\nImages:', tiff.images.length);
+  console.log('Loaded: ', tiff.source.url, '\nImages:', tiff.images.length);
   document.body.appendChild(mainEl);
 
   const nodes = await Promise.all([loadSingleTile(tiff)]);
