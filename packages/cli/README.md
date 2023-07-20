@@ -19,39 +19,39 @@ npm i -g @cogeotiff/cli
 Display basic information about COG
 
 ```shell
-cogeotiff info --file webp.cog.tif
+cogeotiff info webp.cog.tif
 ```
 
 Output:
 
 ```
-COG File Info - /home/blacha/Downloads/tif-new/bg43.webp.cog.tif
+COG File Info - s3://linz-imagery/otago/otago_sn9457_1995-1997_0.75m/2193/rgb/    Tiff type       BigTiff (v43)
+    Bytes read      32 KB (1 Chunk)
 
-    Tiff type       BigTiff (v43)
-    Chunk size      64 KB
-    Bytes read      64 KB (1 Chunk)
-
-  Images
+Images
     Compression     image/webp
-    Origin          18550349.52047286,-5596413.462927464,0
-    Resolution      19.10925707129406,-19.10925707129415,0
-    BoundingBox     18550349.52047286,-5713820.738373496,19098250.139221005,-5596413.462927464
-    Info
-                Id      Size                    Tile Size               Tile Count
-                0       28672x6144              56x12                   672
-                1       14336x3072              28x6                    168
-                2       7168x1536               14x3                    42
-                3       3584x768                7x2                     14
-                4       1792x384                4x1                     4
-                5       896x192                 2x1                     2
-                6       448x96                  1x1                     1
+    Origin          1352800, 4851600, 0
+    Resolution      0.75, -0.75, 0
+    BoundingBox     1352800, 4844400, 1357600, 4851600
+    EPSG            EPSG:2193 (https://epsg.io/2193)
+    Images          
+        Id      Size                    Tile Size               Tile Count              Resolution          
+        0       6400x9600               512x512                 13x19 (247)             0.75                
+        1       3200x4800               512x512                 7x10 (70)               1.5                 
+        2       1600x2400               512x512                 4x5 (20)                3                   
+        3       800x1200                512x512                 2x3 (6)                 6                   
+        4       400x600                 512x512                 1x2 (2)                 12                  
+        5       200x300                 512x512                 1x1 (1)                 24                  
 
-  GDAL
+GDAL
     COG optimized   true
-    COG broken      false
-    Tile order      RowMajor
-    Tile leader     uint32 - 4 Bytes
-    Mask interleaved  false
+    Ghost Options   
+                GDAL_STRUCTURAL_METADATA_SIZE = 000140 bytes
+                LAYOUT = IFDS_BEFORE_DATA
+                BLOCK_ORDER = ROW_MAJOR
+                BLOCK_LEADER = SIZE_AS_UINT4
+                BLOCK_TRAILER = LAST_4_BYTES_REPEATED
+                KNOWN_INCOMPATIBLE_EDITION = NO
 ```
 
 ### cogeotiff dump
@@ -59,13 +59,5 @@ COG File Info - /home/blacha/Downloads/tif-new/bg43.webp.cog.tif
 Dump all tiles for a image (**Warning** if you do this for a large cog this will create millions of files.)
 
 ```
-cogeotiff dump --file webp.cog.tif --image 2 --output output
-```
-
-### cogeotiff tile
-
-Load and dump a individual tile
-
-```
-cogeotiff tile --file webp.cog.tif --xyz 1,1,1
+cogeotiff dump webp.cog.tif --image 2 --output output
 ```
