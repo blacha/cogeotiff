@@ -705,24 +705,24 @@
     js-tokens "^4.0.0"
 
 "@chunkd/fs-aws@^11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs-aws/-/fs-aws-11.0.0.tgz#ec909f79aef3da4231ff55eb92766c83a08d472b"
-  integrity sha512-HV/SUT+RGkSkQEghHkftXNdXOGr4Yro3tN9z0uPMNB48HpTVWdJG6XZg2LZBYTVvPrhq33ODTdSyCUFI1+W3bA==
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs-aws/-/fs-aws-11.0.1.tgz#0ea145c3a250f1a5755f63f08223c6d658d1f3a5"
+  integrity sha512-nV6J3CVL0hIVCbKWrnnztjEa7d+PP6cpbjJxi6M6XqEvyovGAzr+CRTpDfJenPX5X9B2nBQanl/N6GpJ76JgsQ==
   dependencies:
     "@aws-sdk/client-s3" "*"
     "@aws-sdk/credential-providers" "*"
     "@aws-sdk/lib-storage" "*"
-    "@chunkd/fs" "11.0.0"
-    "@chunkd/source-aws" "11.0.0"
+    "@chunkd/fs" "11.0.1"
+    "@chunkd/source-aws" "11.0.1"
 
-"@chunkd/fs@11.0.0", "@chunkd/fs@^11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-11.0.0.tgz#f37d1b7274e169135303cebf81a06f9ebb28ac0f"
-  integrity sha512-yIx20xJd3NFheOqDSnx/nLFSHGvsSoTaVRASsnCoMofZ6fSxCBoOAiltjzVKHmdUscsu8vIdlD5p6C7H/tmAyw==
+"@chunkd/fs@11.0.1", "@chunkd/fs@^11.0.0":
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-11.0.1.tgz#76186f0639b2b0c2b1ac8be756bb68b115f84db4"
+  integrity sha512-hACdgc63MVW99/PzHj06UpzCytd49VdXmnmFze96ZoO2QLAIKppFGFWANI2MwFN99N+3lc0zCH4UZD/KS02LIg==
   dependencies:
     "@chunkd/source" "^11.0.0"
     "@chunkd/source-file" "^11.0.0"
-    "@chunkd/source-http" "^11.0.0"
+    "@chunkd/source-http" "^11.0.1"
 
 "@chunkd/middleware@^11.0.0":
   version "11.0.0"
@@ -731,10 +731,10 @@
   dependencies:
     "@chunkd/source" "^11.0.0"
 
-"@chunkd/source-aws@11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-11.0.0.tgz#e4fe1f1a34421762d2963a41ce5b08b2b59a28cb"
-  integrity sha512-xq0xp2uBSGh2fHh1Cw6QFob7LiCpUs0rwCkIfnWEoAzOuUlcI40PVsJR6WQD48wtDuxVeyifpHMSI5QjH86UBg==
+"@chunkd/source-aws@11.0.1":
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-11.0.1.tgz#5df08e7987a68af14430250ea0647fbe9db9f6c6"
+  integrity sha512-C0n78Arn2+GlkOWgDC9UJmMlhCoBzO1gfgGuihZbanh1fiHCpEhdetUbI8r1DRRHqDLTpUm5WUyKP/hvwhN2NQ==
   dependencies:
     "@aws-sdk/client-s3" "*"
     "@chunkd/source" "^11.0.0"
@@ -750,6 +750,13 @@
   version "11.0.0"
   resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-11.0.0.tgz#7db6dac12a15c7e7d3140b9ad792d3c8c764b70d"
   integrity sha512-peBgZoCKHxnOh0DYgnh6HWadiNxExQtWv9IjGyAWhuvdr/YKHix7a4vTP+hx82f0Fr4Znajv5Sc9C5N+EJxavw==
+  dependencies:
+    "@chunkd/source" "^11.0.0"
+
+"@chunkd/source-http@^11.0.1":
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-11.0.1.tgz#30285e0e1558c2f5eaa9f097c5587297b88f8d4b"
+  integrity sha512-DUDOKmnCubN+mAMxWIqUxdnyVg8FNM4O6+CnlblyT8KOln85A52/hxpFvp41zzkzsTGJTyyMd3pYvpQglthRYg==
   dependencies:
     "@chunkd/source" "^11.0.0"
 
