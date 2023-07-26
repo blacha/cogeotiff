@@ -747,9 +747,9 @@
     "@chunkd/source" "^11.0.0"
 
 "@chunkd/source-http@^11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-11.0.0.tgz#7db6dac12a15c7e7d3140b9ad792d3c8c764b70d"
-  integrity sha512-peBgZoCKHxnOh0DYgnh6HWadiNxExQtWv9IjGyAWhuvdr/YKHix7a4vTP+hx82f0Fr4Znajv5Sc9C5N+EJxavw==
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-11.0.1.tgz#30285e0e1558c2f5eaa9f097c5587297b88f8d4b"
+  integrity sha512-DUDOKmnCubN+mAMxWIqUxdnyVg8FNM4O6+CnlblyT8KOln85A52/hxpFvp41zzkzsTGJTyyMd3pYvpQglthRYg==
   dependencies:
     "@chunkd/source" "^11.0.0"
 
