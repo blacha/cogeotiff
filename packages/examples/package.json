@@ -22,7 +22,7 @@
   "dependencies": {
     "@chunkd/source-http": "^11.0.1",
     "@cogeotiff/core": "^7.2.1",
-    "esbuild": "^0.17.6"
+    "esbuild": "^0.18.17"
   },
   "devDependencies": {
     "@types/node": "^20.0.0"
