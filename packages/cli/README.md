@@ -19,7 +19,7 @@ npm i -g @cogeotiff/cli
 Display basic information about COG
 
 ```shell
-cogeotiff info webp.cog.tif
+cogeotiff info webp.cog.tiff
 ```
 
 Output:
@@ -59,5 +59,5 @@ GDAL
 Dump all tiles for a image (**Warning** if you do this for a large cog this will create millions of files.)
 
 ```
-cogeotiff dump webp.cog.tif --image 2 --output output
+cogeotiff dump webp.cog.tiff --image 2 --output output
 ```
