@@ -54,6 +54,22 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+## [8.0.0](https://github.com/blacha/cogeotiff/compare/core-v7.2.1...core-v8.0.0) (2023-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* simplify sources ([#1131](https://github.com/blacha/cogeotiff/issues/1131))
+
+### Features
+
+* simplify sources ([#1131](https://github.com/blacha/cogeotiff/issues/1131)) ([cd36b53](https://github.com/blacha/cogeotiff/commit/cd36b53fbf728b99b0705b6d39c2a142afe60ce0))
+
+
+### Bug Fixes
+
+* **cli:** dump tiles even if compression type is unknown ([cc7ac9c](https://github.com/blacha/cogeotiff/commit/cc7ac9c2c931c3729f75b5fc617798f952d54987))
+
 ## [7.2.1](https://github.com/blacha/cogeotiff/compare/core-v7.2.0...core-v7.2.1) (2022-11-16)
 
 

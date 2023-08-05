@@ -48,6 +48,31 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
   * dependencies
     * @cogeotiff/core bumped from ^7.2.0 to ^7.2.1
 
+## [8.0.0](https://github.com/blacha/cogeotiff/compare/cli-v7.2.1...cli-v8.0.0) (2023-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* simplify sources ([#1131](https://github.com/blacha/cogeotiff/issues/1131))
+
+### Features
+
+* **cli:** support dumping tiles of tiffs with no compression ([c726a4c](https://github.com/blacha/cogeotiff/commit/c726a4c2bd7124ec583c1a97f3783c4927b236be))
+* simplify sources ([#1131](https://github.com/blacha/cogeotiff/issues/1131)) ([cd36b53](https://github.com/blacha/cogeotiff/commit/cd36b53fbf728b99b0705b6d39c2a142afe60ce0))
+
+
+### Bug Fixes
+
+* **cli:** dump tiles even if compression type is unknown ([cc7ac9c](https://github.com/blacha/cogeotiff/commit/cc7ac9c2c931c3729f75b5fc617798f952d54987))
+* **cli:** log the error when exiting ([30a6ba5](https://github.com/blacha/cogeotiff/commit/30a6ba5c0b64baffdacf2b324bae548a318c7fdd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^7.2.1 to ^8.0.0
+
 ## [6.1.1](https://github.com/blacha/cogeotiff/compare/v6.1.0...v6.1.1) (2022-01-26)
 
 **Note:** Version bump only for package @cogeotiff/cli
