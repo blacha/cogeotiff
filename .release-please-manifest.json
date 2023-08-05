@@ -1,6 +1,6 @@
 {
-  "packages/cli": "8.0.0",
-  "packages/core": "8.0.0",
-  "packages/examples": "8.0.0",
+  "packages/cli": "8.0.1",
+  "packages/core": "8.0.1",
+  "packages/examples": "8.0.1",
   "packages/fetchable": "7.0.0"
 }
