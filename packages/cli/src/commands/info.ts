@@ -1,5 +1,5 @@
 import { fsa } from '@chunkd/fs';
-import { CogTiff, TiffTag, TiffTagGeo, TiffTagId, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
+import { CogTiff, Tag, TiffTagGeo, TiffTag, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
 import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
@@ -135,7 +135,7 @@ TiffImageInfoTable.add({
 TiffImageInfoTable.add({
   name: 'Strip Count',
   width: 20,
-  get: (i) => `${i.tags.get(TiffTagId.StripOffsets)?.count}`,
+  get: (i) => `${i.tags.get(TiffTag.StripOffsets)?.count}`,
   enabled: (i) => !i.isTiled(),
 });
 TiffImageInfoTable.add({
@@ -164,7 +164,7 @@ TiffImageInfoTable.add({
  * @param img
  */
 function parseGdalMetadata(img: CogTiffImage): string[] | null {
-  const metadata = img.value(TiffTagId.GdalMetadata);
+  const metadata = img.value(TiffTag.GdalMetadata);
   if (typeof metadata !== 'string') return null;
   if (!metadata.startsWith('<GDALMetadata>')) return null;
   return metadata
@@ -175,8 +175,8 @@ function parseGdalMetadata(img: CogTiffImage): string[] | null {
     .map((c) => c.trim());
 }
 
-function formatTag(tag: TiffTag): { key: string; value: string } {
-  const tagName = TiffTagId[tag.id];
+function formatTag(tag: Tag): { key: string; value: string } {
+  const tagName = TiffTag[tag.id];
   const tagDebug = `(${TiffTagValueType[tag.dataType]}${tag.count > 1 ? ' x' + tag.count : ''}`;
   const key = `${c.dim(toHex(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(50, ' ');
 

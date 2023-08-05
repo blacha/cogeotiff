@@ -1,5 +1,5 @@
 import { CogTiff } from '../cog.tiff.js';
-import { TagId } from '../const/tiff.tag.id.js';
+import { TiffTag } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 import { getUint, getUint64 } from '../util/bytes.js';
 import { DataViewOffset, hasBytes } from './data.view.offset.js';
@@ -100,10 +100,10 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
 
   const dataOffset = getUint(view, offset + 4 + tiff.ifdConfig.pointer, tiff.ifdConfig.pointer, tiff.isLittleEndian);
   switch (tagId) {
-    case TagId.TileOffsets:
-    case TagId.TileByteCounts:
-    case TagId.StripByteCounts:
-    case TagId.StripOffsets:
+    case TiffTag.TileOffsets:
+    case TiffTag.TileByteCounts:
+    case TiffTag.StripByteCounts:
+    case TiffTag.StripOffsets:
       const tag: TagOffset = {
         type: 'offset',
         id: tagId,
@@ -114,7 +114,7 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
         tagOffset: offset,
       };
       // Some offsets are quite long and don't need to read them often, so only read the tags we are interested in when we need to
-      if (tagId === TagId.TileOffsets && hasBytes(view, dataOffset, dataLength)) setBytes(tag, view);
+      if (tagId === TiffTag.TileOffsets && hasBytes(view, dataOffset, dataLength)) setBytes(tag, view);
       return tag;
   }
 

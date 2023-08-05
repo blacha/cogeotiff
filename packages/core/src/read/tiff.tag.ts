@@ -1,12 +1,13 @@
-import { TagId } from '../const/tiff.tag.id.js';
+import { TiffTag } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 import { DataViewOffset } from './data.view.offset.js';
 
+/** Tiff tag interfaces */
 export type Tag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;
 
 export interface TagBase {
   /** Id of the Tag */
-  id: TagId;
+  id: TiffTag;
   /** Offset in bytes to where this tag was read from */
   tagOffset: number;
   /** Number of values */
@@ -15,6 +16,7 @@ export interface TagBase {
   dataType: TiffTagValueType;
 }
 
+/** Tiff tag value is not inline and will be loaded later when requested */
 export interface TagLazy<T> extends TagBase {
   type: 'lazy';
   /** Value if loaded undefined otherwise */
@@ -29,6 +31,7 @@ export interface TagInline<T> extends TagBase {
   value: T;
 }
 
+/** Tiff tag that is a list of offsets this can be partially read */
 export interface TagOffset extends TagBase {
   type: 'offset';
   /** Values of the offest's this is a sparse array unless @see {isLoaded} is true */
