@@ -4,7 +4,7 @@ import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
 import { TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
 import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
 import { BoundingBox, Size } from './vector.js';
-import { fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
+import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
 
 // /** Invalid EPSG code */
 export const InvalidProjectionCode = 32767;
@@ -94,6 +94,8 @@ export class CogTiffImage {
 
   /**
    * Get the value of a TiffTag if it exists null otherwise
+   *
+   * if the value is not loaded @see {CogTiffImage.fetch}
    */
   value<T>(tag: TiffTag): T | null {
     const sourceTag = this.tags.get(tag);
@@ -162,8 +164,9 @@ export class CogTiffImage {
     const sourceTag = this.tags.get(tag);
     if (sourceTag == null) return null;
     if (sourceTag.type === 'inline') return sourceTag.value as unknown as T;
-    if (sourceTag.type === 'lazy') return fetchLazy(sourceTag, this.tiff) as unknown as T;
+    if (sourceTag.type === 'lazy') return fetchLazy(sourceTag, this.tiff) as T;
     if (sourceTag.isLoaded) return sourceTag.value as unknown as T;
+    if (sourceTag.type === 'offset') return fetchAllOffsets(this.tiff, sourceTag) as T;
     throw new Error('Cannot fetch:' + tag);
   }
 

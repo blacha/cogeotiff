@@ -65,6 +65,14 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: numb
           bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength - 1),
         ) as unknown as number[],
       ) as unknown as T;
+    case TiffTagValueType.Uint32:
+      return new Uint32Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
+      ) as unknown as T;
+    case TiffTagValueType.Uint16:
+      return new Uint16Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
+      ) as unknown as T;
   }
 
   const output = [];
@@ -135,6 +143,19 @@ export async function fetchLazy<T>(tag: TagLazy<T>, tiff: CogTiff): Promise<T> {
   const view = new DataView(bytes);
   tag.value = readValue(tiff, view, 0, tag.dataType, tag.count);
   return tag.value as T;
+}
+
+export async function fetchAllOffsets(tiff: CogTiff, tag: TagOffset): Promise<number[]> {
+  const dataTypeSize = getTiffTagSize(tag.dataType);
+
+  if (tag.view == null) {
+    const bytes = await tiff.source.fetch(tag.dataOffset, dataTypeSize * tag.count);
+    tag.view = new DataView(bytes) as DataViewOffset;
+    tag.view.sourceOffset = tag.dataOffset;
+  }
+
+  tag.value = readValue(tiff, tag.view, 0, tag.dataType, tag.count) as number[];
+  return tag.value;
 }
 
 export function setBytes(tag: TagOffset, view: DataViewOffset): void {

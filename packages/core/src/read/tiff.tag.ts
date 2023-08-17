@@ -35,7 +35,7 @@ export interface TagInline<T> extends TagBase {
 export interface TagOffset extends TagBase {
   type: 'offset';
   /** Values of the offest's this is a sparse array unless @see {isLoaded} is true */
-  value: number[];
+  value: number[] | Uint32Array | Uint16Array;
   /** has all the values been read */
   isLoaded?: boolean;
   /** Raw buffer of the values for lazy decoding, Reading 1000s of uint64s can take quite a while */
