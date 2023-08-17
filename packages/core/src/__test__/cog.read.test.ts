@@ -1,9 +1,10 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
+import { TestFileSource } from '../__benchmark__/source.file.js';
 import { CogTiff } from '../cog.tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
-import { TestFileSource } from '../__benchmark__/source.file.js';
 import { TiffVersion } from '../const/tiff.version.js';
+import { TiffTag } from '../index.js';
 
 function validate(tif: CogTiff): void {
   assert.equal(tif.images.length, 5);
@@ -64,5 +65,22 @@ describe('CogRead', () => {
     assert.equal(tiff.isInitialized, true);
     await tiff.init();
     assert.equal(tiff.images.length, 5);
+  });
+
+  it('should read ifds from anywhere in the file', async () => {
+    const source = new TestFileSource(new URL('../../data/DEM_BS28_2016_1000_1141.tif', import.meta.url));
+    const tiff = await CogTiff.create(source);
+
+    assert.equal(tiff.images.length, 1);
+    const im = tiff.images[0];
+
+    assert.equal(im.isGeoTagsLoaded, true);
+    assert.equal(im.epsg, 2193);
+    assert.equal(im.compression, TiffMimeType.None);
+    assert.equal(im.isTiled(), false);
+    assert.deepEqual(
+      await im.fetch(TiffTag.StripByteCounts),
+      new Uint16Array([8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]),
+    );
   });
 });
