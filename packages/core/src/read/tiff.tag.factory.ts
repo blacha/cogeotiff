@@ -73,6 +73,14 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: numb
       return new Uint16Array(
         bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
       ) as unknown as T;
+    case TiffTagValueType.Float32:
+      return new Float32Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
+      ) as unknown as T;
+    case TiffTagValueType.Float64:
+      return new Float64Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
+      ) as unknown as T;
   }
 
   const output = [];
@@ -118,6 +126,7 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
         count: dataCount,
         dataType,
         dataOffset,
+        isLoaded: false,
         value: [],
         tagOffset: offset,
       };

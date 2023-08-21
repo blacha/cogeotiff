@@ -6,7 +6,7 @@ import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
 import { BoundingBox, Size } from './vector.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
 
-// /** Invalid EPSG code */
+/** Invalid EPSG code */
 export const InvalidProjectionCode = 32767;
 
 /**
@@ -48,12 +48,15 @@ export interface CogTiffImageTileSize {
 export class CogTiffImage {
   /** All IFD tags that have been read for the image */
   tags: Map<TiffTag, Tag>;
-
-  /** Id of the tif image, generally the image index inside the tif */
+  /**
+   * Id of the tif image, generally the image index inside the tif
+   * where 0 is the root image, and every sub image is +1
+   *
+   * @example 0, 1, 2
+   */
   id: number;
-
+  /** Reference to the TIFF that owns this image */
   tiff: CogTiff;
-
   /** Has loadGeoTiffTags been called */
   isGeoTagsLoaded = false;
   /** Sub tags stored in TiffTag.GeoKeyDirectory */
@@ -93,9 +96,10 @@ export class CogTiffImage {
   }
 
   /**
-   * Get the value of a TiffTag if it exists null otherwise
+   * Get the value of a TiffTag if it has been loaded, null otherwise
    *
    * if the value is not loaded @see {CogTiffImage.fetch}
+   * @returns value if loaded, null otherwise
    */
   value<T>(tag: TiffTag): T | null {
     const sourceTag = this.tags.get(tag);
@@ -106,6 +110,8 @@ export class CogTiffImage {
 
   /**
    * Load and unpack the GeoKeyDirectory
+   *
+   * @see {TiffTag.GeoKeyDirectory}
    */
   async loadGeoTiffTags(): Promise<void> {
     // Already loaded
@@ -129,21 +135,22 @@ export class CogTiffImage {
     if (typeof geoTags === 'number') throw new Error('Invalid geo tags found');
     for (let i = 4; i <= geoTags[3] * 4; i += 4) {
       const key = geoTags[i] as TiffTagGeo;
-      const location = geoTags[i + 1];
+      const locationTagId = geoTags[i + 1];
 
       const offset = geoTags[i + 3];
 
-      if (location === 0) {
+      if (locationTagId === 0) {
         this.tagsGeo.set(key, offset);
         continue;
       }
-      const tag = this.tags.get(location);
+
+      const tag = this.tags.get(locationTagId);
       if (tag == null || tag.value == null) continue;
       const count = geoTags[i + 2];
-      if (Array.isArray(tag.value)) {
-        this.tagsGeo.set(key, tag.value[offset + count - 1]);
-      } else if (typeof tag.value === 'string') {
+      if (typeof tag.value === 'string') {
         this.tagsGeo.set(key, tag.value.slice(offset, offset + count - 1).trim());
+      } else {
+        throw new Error('Failed to extract GeoTiffTags');
       }
     }
   }
@@ -497,7 +504,7 @@ function getOffset(
 ): number | Promise<number> {
   if (index > x.count || index < 0) throw new Error('TagIndex: out of bounds ' + x.id + ' @ ' + index);
   if (x.type === 'inline') {
-    if (Array.isArray(x.value)) return x.value[index] as number;
+    if (x.count > 1) return (x.value as number[])[index] as number;
     return x.value as number;
   }
   return getValueAt(tiff, x, index);

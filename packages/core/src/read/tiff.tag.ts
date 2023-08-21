@@ -34,11 +34,11 @@ export interface TagInline<T> extends TagBase {
 /** Tiff tag that is a list of offsets this can be partially read */
 export interface TagOffset extends TagBase {
   type: 'offset';
-  /** Values of the offest's this is a sparse array unless @see {isLoaded} is true */
-  value: number[] | Uint32Array | Uint16Array;
+  /** Values of the offsets this is a sparse array unless @see {TagOffset.isLoaded} is true */
+  value: number[] | Uint32Array | Uint16Array | Int32Array | Int16Array;
   /** has all the values been read */
-  isLoaded?: boolean;
-  /** Raw buffer of the values for lazy decoding, Reading 1000s of uint64s can take quite a while */
+  isLoaded: boolean;
+  /** Raw buffer of the values for lazy decoding, as reading 100,000s of uint64s can take quite a long time */
   view?: DataViewOffset;
   /** Where in the file the value is read from */
   dataOffset: number;
