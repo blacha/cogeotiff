@@ -119,7 +119,10 @@ export class CogTiff {
       // Ensure at least 1KB near at the IFD offset is ready for reading
       // TODO is 1KB enough, most IFD entries are in the order of 100-300 bytes
       if (!hasBytes(lastView, nextOffsetIfd, 1024)) {
-        const bytes = await this.source.fetch(nextOffsetIfd, this.defaultReadSize);
+        const bytes = await this.source.fetch(
+          nextOffsetIfd,
+          getMaxLength(this.source, nextOffsetIfd, this.defaultReadSize),
+        );
         lastView = new DataView(bytes) as DataViewOffset;
         lastView.sourceOffset = nextOffsetIfd;
       }
@@ -159,4 +162,14 @@ export class CogTiff {
     this.images.push(new CogTiffImage(this, this.images.length, tags));
     return getUint(view, startOffset + tagCount * ifdSize, this.ifdConfig.pointer, this.isLittleEndian);
   }
+}
+
+function getMaxLength(source: Source, offset: number, length: number): number {
+  // max length is unknown, roll the dice and hope the chunk exists
+  if (source.metadata?.size == null) return length;
+  const size = source.metadata.size;
+
+  // Read was going to happen past the end of the file limit it to the end of the file
+  if (offset + length > size) return size - offset;
+  return length;
 }

@@ -8,4 +8,4 @@ export { TagInline, TagLazy, TagOffset, Tag } from './read/tiff.tag.js';
 export { getTiffTagSize } from './read/tiff.value.reader.js';
 export { Source } from './source.js';
 export { toHex } from './util/util.hex.js';
-export { BoundingBox, Point, Size, Vector } from './vector.js';
+export type { BoundingBox, Point, Size, Vector } from './vector.js';
