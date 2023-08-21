@@ -44,14 +44,31 @@ function readTagValue(
     case TiffTagValueType.Float64:
       return bytes.getFloat64(offset, isLittleEndian);
 
+    case TiffTagValueType.Float32:
+      return bytes.getFloat32(offset, isLittleEndian);
+
     case TiffTagValueType.Uint64:
       return getUint64(bytes, offset, isLittleEndian);
     default:
       throw new Error(`Unknown read type "${fieldType}" "${TiffTagValueType[fieldType]}"`);
   }
 }
+interface ArrayLikeNumberConstructor {
+  new (x: ArrayBuffer): ArrayLike<number>;
+}
 
-function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: number, count: number): T {
+export const TiffTagValueReaders: Record<number, ArrayLikeNumberConstructor> = {
+  [TiffTagValueType.Uint8]: Uint8Array,
+  [TiffTagValueType.Undefined]: Uint8Array,
+  [TiffTagValueType.Float64]: Float64Array,
+  [TiffTagValueType.Float32]: Float32Array,
+  [TiffTagValueType.Int32]: Int32Array,
+  [TiffTagValueType.Int16]: Int16Array,
+  [TiffTagValueType.Uint32]: Uint32Array,
+  [TiffTagValueType.Uint16]: Uint16Array,
+};
+
+function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: TiffTagValueType, count: number): T {
   const typeSize = getTiffTagSize(type);
   const dataLength = count * typeSize;
 
@@ -64,22 +81,6 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: numb
         new Uint8Array(
           bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength - 1),
         ) as unknown as number[],
-      ) as unknown as T;
-    case TiffTagValueType.Uint32:
-      return new Uint32Array(
-        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
-      ) as unknown as T;
-    case TiffTagValueType.Uint16:
-      return new Uint16Array(
-        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
-      ) as unknown as T;
-    case TiffTagValueType.Float32:
-      return new Float32Array(
-        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
-      ) as unknown as T;
-    case TiffTagValueType.Float64:
-      return new Float64Array(
-        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
       ) as unknown as T;
   }
 
