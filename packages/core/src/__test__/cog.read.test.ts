@@ -78,9 +78,6 @@ describe('CogRead', () => {
     assert.equal(im.epsg, 2193);
     assert.equal(im.compression, TiffMimeType.None);
     assert.equal(im.isTiled(), false);
-    assert.deepEqual(
-      await im.fetch(TiffTag.StripByteCounts),
-      new Uint16Array([8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]),
-    );
+    assert.deepEqual(await im.fetch(TiffTag.StripByteCounts), [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
   });
 });
