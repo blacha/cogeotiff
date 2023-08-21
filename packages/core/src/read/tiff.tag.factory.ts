@@ -150,6 +150,7 @@ export async function fetchAllOffsets(tiff: CogTiff, tag: TagOffset): Promise<nu
   }
 
   tag.value = readValue(tiff, tag.view, 0, tag.dataType, tag.count) as number[];
+  tag.isLoaded = true;
   return tag.value;
 }
 

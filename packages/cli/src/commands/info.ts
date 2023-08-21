@@ -178,10 +178,8 @@ function formatTag(tag: Tag): { key: string; value: string } {
   // Array of values that is not a string!
   if (tag.count > 1 && tag.dataType !== TiffTagValueType.Ascii) {
     if (tag.value == null || (tag as TagOffset).isLoaded === false) {
-      console.log(tag);
       return { key, value: c.dim('Tag not Loaded, use --fetch-tags to force load') };
     }
-    console.log(tag);
     const val = [...(tag.value as number[])]; // Ensure the value is not a TypedArray
     return { key, value: val.length > 25 ? val.slice(0, 25).join(', ') + '...' : val.join(', ') };
   }
