@@ -60,13 +60,12 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: Tiff
 
   if (count === 1) return readTagValue(type, bytes, offset, tiff.isLittleEndian) as unknown as T;
 
-  if (type === TiffTagValueType.Ascii) {
-    return String.fromCharCode.apply(
-      null,
-      new Uint8Array(
-        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength - 1),
-      ) as unknown as number[],
-    ) as unknown as T;
+  switch (type) {
+    case TiffTagValueType.Ascii:
+      return String.fromCharCode.apply(
+        null,
+        new Uint8Array(bytes.buffer, offset, dataLength - 1) as unknown as number[],
+      ) as unknown as T;
   }
 
   const output = [];
