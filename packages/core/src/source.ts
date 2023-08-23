@@ -1,4 +1,5 @@
 export interface Source {
+  /** Where the source is located */
   url: URL;
   /** Optional metadata about the source including the size which */
   metadata?: {

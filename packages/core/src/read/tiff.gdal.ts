@@ -19,14 +19,14 @@ export enum GhostOptionTileLeader {
 }
 
 /**
- * GDAL has made a ghost set of options for Tif files
- * this class represents the optimizations that can be used
+ * GDAL has made a ghost set of options for Tiff files
+ * this class represents the optimizations that GDAL has applied
  */
 export class CogTifGhostOptions {
   options: Map<string, string> = new Map();
 
   /**
-   * Has GDAL optimized this tif
+   * Has GDAL optimized this tiff
    */
   get isCogOptimized(): boolean {
     if (this.isBroken) return false;
@@ -34,7 +34,7 @@ export class CogTifGhostOptions {
   }
 
   /**
-   * Has GDAL determined this tif is now broken
+   * Has GDAL determined this tiff is now broken
    */
   get isBroken(): boolean {
     return this.options.get(GhostOption.KnownIncompatibleEdition) === 'YES';

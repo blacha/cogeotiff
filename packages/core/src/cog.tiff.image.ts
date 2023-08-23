@@ -156,7 +156,13 @@ export class CogTiffImage {
   }
 
   /**
-   * Get the associated GeoTiffTags
+   * Get the associated TiffTagGeo
+   *
+   * @example
+   * ```typescript
+   * image.valueGeo(TiffTagGeo.GTRasterTypeGeoKey)
+   * ```
+   * @throws if {@link loadGeoTiffTags} has not been called
    */
   valueGeo(tag: TiffTagGeo): string | number | undefined {
     if (this.isGeoTagsLoaded === false) throw new Error('loadGeoTiffTags() has not been called');
@@ -165,6 +171,7 @@ export class CogTiffImage {
 
   /**
    * Load a tag, if it is not currently loaded, fetch the required data for the tag.
+   *
    * @param tag tag to fetch
    */
   public async fetch<T>(tag: TiffTag): Promise<T | null> {
@@ -265,7 +272,7 @@ export class CogTiffImage {
   /**
    * Get the compression used by the tile
    *
-   * @see TiffCompression
+   * @see {@link TiffCompression}
    *
    * @returns Compression type eg webp
    */
@@ -363,7 +370,9 @@ export class CogTiffImage {
   }
 
   /**
-   * Read a strip into a uint8 array
+   * Read a strip into a ArrayBuffer
+   *
+   * Image has to be striped see {@link stripCount}
    *
    * @param index Strip index to read
    */
@@ -415,9 +424,9 @@ export class CogTiffImage {
   }
 
   /**
-   * Load the tile buffer, this works best with webp
+   * Load a tile into a ArrayBuffer
    *
-   * This will also apply the JPEG compression tables
+   * if the tile compression is JPEG, This will also apply the JPEG compression tables to the resulting ArrayBuffer see {@link getJpegHeader}
    *
    * @param x Tile x offset
    * @param y Tile y offset
@@ -443,7 +452,6 @@ export class CogTiffImage {
     if (idx >= totalTiles) throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
 
     const { offset, imageSize } = await this.getTileSize(idx);
-    // console.log({ x, y, offset, imageSize });
 
     return this.getBytes(offset, imageSize);
   }
@@ -451,10 +459,12 @@ export class CogTiffImage {
   /**
    * Does this tile exist in the tiff and does it actually have a value
    *
-   * Sparse tiffs can have a lot of empty tiles, this checks to see if the tile actually has data.
+   * Sparse tiffs can have a lot of empty tiles, they set the tile size to `0 bytes` when the tile is empty
+   * this checks the tile byte size to validate if it actually has any data.
    *
    * @param x Tile x offset
    * @param y Tile y offset
+   *
    * @returns if the tile exists and has data
    */
   async hasTile(x: number, y: number): Promise<boolean> {
@@ -472,6 +482,11 @@ export class CogTiffImage {
     return ret.offset > 0;
   }
 
+  /**
+   * Load the offset and byteCount of a tile
+   * @param index index in the tile array
+   * @returns Offset and byteCount for the tile
+   */
   async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
     // GDAL optimizes tiles by storing the size of the tile in
     // the few bytes leading up to the tile
