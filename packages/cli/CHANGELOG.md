@@ -1,5 +1,19 @@
 # Changelog
 
+## [8.1.0](https://github.com/blacha/cogeotiff/compare/cli-v8.0.2...cli-v8.1.0) (2023-08-23)
+
+
+### Features
+
+* **cli:** fetch all tiff tags with --fetch-tags ([#1155](https://github.com/blacha/cogeotiff/issues/1155)) ([4067751](https://github.com/blacha/cogeotiff/commit/406775184eed18ab10ae2816ecbedea9706b20f5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^8.0.2 to ^8.1.0
+
 ## [8.0.2](https://github.com/blacha/cogeotiff/compare/cli-v8.0.1...cli-v8.0.2) (2023-08-05)
 
 

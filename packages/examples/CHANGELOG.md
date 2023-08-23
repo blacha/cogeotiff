@@ -6,6 +6,12 @@
   * dependencies
     * @cogeotiff/core bumped from ^8.0.1 to ^8.0.2
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^8.0.2 to ^8.1.0
+
 ## [8.0.1](https://github.com/blacha/cogeotiff/compare/examples-v8.0.0...examples-v8.0.1) (2023-08-05)
 
 
