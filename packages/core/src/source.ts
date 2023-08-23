@@ -1,3 +1,7 @@
+/**
+ * This is a partial re-implementation of @chunkd/source
+ * this is defined here so that @cogeotiff/core does not have any external dependencies
+ */
 export interface Source {
   /** Where the source is located */
   url: URL;

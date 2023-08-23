@@ -25,7 +25,7 @@ if (img.isTiled()) throw new Error('Tiff is not tiled');
 const tile = await img.getTile(2, 2); // Fetch a tile from a tiff x:2, y:2
 ```
 
-## Scripts
+## Command Line Interface
 
 ```bash
 npm i -g @cogeotiff/cli
@@ -36,7 +36,7 @@ npm i -g @cogeotiff/cli
 Display basic information about COG
 
 ```shell
-cogeotiff info  webp.cog.tif
+cogeotiff info webp.cog.tif
 ```
 
 Output:
@@ -82,7 +82,7 @@ cogeotiff dump --image 2 --output output
 
 # Building
 
-This requires [NodeJs](https://nodejs.org/en/) > 12 & [Yarn](https://yarnpkg.com/en/)
+This requires [NodeJs](https://nodejs.org/en/) >= 18 & [Yarn](https://yarnpkg.com/en/)
 
 Use [n](https://github.com/tj/n) to manage nodeJs versions
 
