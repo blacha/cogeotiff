@@ -1,5 +1,5 @@
 import { fsa } from '@chunkd/fs';
-import { CogTiff, Tag, TiffTagGeo, TiffTag, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
+import { CogTiff, Tag, TiffTagGeo, TiffTag, TiffTagValueType, TiffVersion, toHex, TagOffset } from '@cogeotiff/core';
 import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
@@ -20,8 +20,8 @@ export const commandInfo = command({
   args: {
     ...DefaultArgs,
     path: option({ short: 'f', long: 'file', type: optional(Url) }),
-    tags: flag({ short: 't', long: 'tags', description: 'Dump tiff Tags' }),
-    offsets: flag({ short: 'o', long: 'offsets', description: 'Load byte offsets too' }),
+    tags: flag({ short: 't', long: 'tags', description: 'Dump tiff tags' }),
+    fetchTags: flag({ long: 'fetch-tags', description: 'Fetch extra tiff tag information' }),
     paths: restPositionals({ type: Url, description: 'Files to process' }),
   },
   async handler(args) {
@@ -86,13 +86,8 @@ export const commandInfo = command({
       if (args.tags) {
         for (const img of tiff.images) {
           const tiffTags = [...img.tags.values()];
-          // Load the first 25 values of offset arrays
-          if (args.offsets) {
-            for (const tag of tiffTags) {
-              if (tag.type !== 'offset') continue;
-              // for (let i = 0; i < Math.min(tag.count, 100); i++) tag.getValueAt(i);
-            }
-          }
+
+          if (args.fetchTags) await Promise.all(tiffTags.map((t) => img.fetch(t.id)));
 
           result.push({
             title: `Image: ${img.id} - Tiff tags`,
@@ -180,7 +175,14 @@ function formatTag(tag: Tag): { key: string; value: string } {
   const tagDebug = `(${TiffTagValueType[tag.dataType]}${tag.count > 1 ? ' x' + tag.count : ''}`;
   const key = `${c.dim(toHex(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(50, ' ');
 
-  if (Array.isArray(tag.value)) return { key, value: JSON.stringify(tag.value.slice(0, 250)) };
+  // Array of values that is not a string!
+  if (tag.count > 1 && tag.dataType !== TiffTagValueType.Ascii) {
+    if (tag.value == null || (tag as TagOffset).isLoaded === false) {
+      return { key, value: c.dim('Tag not Loaded, use --fetch-tags to force load') };
+    }
+    const val = [...(tag.value as number[])]; // Ensure the value is not a TypedArray
+    return { key, value: val.length > 25 ? val.slice(0, 25).join(', ') + '...' : val.join(', ') };
+  }
 
   let tagString = JSON.stringify(tag.value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
@@ -190,8 +192,6 @@ function formatTag(tag: Tag): { key: string; value: string } {
 function formatGeoTag(tagId: TiffTagGeo, value: string | number): { key: string; value: string } {
   const tagName = TiffTagGeo[tagId];
   const key = `${c.dim(toHex(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
-
-  if (Array.isArray(value)) return { key, value: JSON.stringify(value.slice(0, 250)) };
 
   let tagString = JSON.stringify(value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';

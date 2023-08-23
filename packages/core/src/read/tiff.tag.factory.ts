@@ -44,6 +44,9 @@ function readTagValue(
     case TiffTagValueType.Float64:
       return bytes.getFloat64(offset, isLittleEndian);
 
+    case TiffTagValueType.Float32:
+      return bytes.getFloat32(offset, isLittleEndian);
+
     case TiffTagValueType.Uint64:
       return getUint64(bytes, offset, isLittleEndian);
     default:
@@ -51,7 +54,7 @@ function readTagValue(
   }
 }
 
-function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: number, count: number): T {
+function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: TiffTagValueType, count: number): T {
   const typeSize = getTiffTagSize(type);
   const dataLength = count * typeSize;
 
@@ -61,17 +64,7 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: numb
     case TiffTagValueType.Ascii:
       return String.fromCharCode.apply(
         null,
-        new Uint8Array(
-          bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength - 1),
-        ) as unknown as number[],
-      ) as unknown as T;
-    case TiffTagValueType.Uint32:
-      return new Uint32Array(
-        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
-      ) as unknown as T;
-    case TiffTagValueType.Uint16:
-      return new Uint16Array(
-        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + dataLength),
+        new Uint8Array(bytes.buffer, offset, dataLength - 1) as unknown as number[],
       ) as unknown as T;
   }
 
@@ -118,6 +111,7 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
         count: dataCount,
         dataType,
         dataOffset,
+        isLoaded: false,
         value: [],
         tagOffset: offset,
       };
@@ -155,6 +149,7 @@ export async function fetchAllOffsets(tiff: CogTiff, tag: TagOffset): Promise<nu
   }
 
   tag.value = readValue(tiff, tag.view, 0, tag.dataType, tag.count) as number[];
+  tag.isLoaded = true;
   return tag.value;
 }
 

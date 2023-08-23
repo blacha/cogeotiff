@@ -4,7 +4,7 @@ import { TestFileSource } from '../__benchmark__/source.file.js';
 import { CogTiff } from '../cog.tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
 import { TiffVersion } from '../const/tiff.version.js';
-import { TiffTag } from '../index.js';
+import { TiffTag, TiffTagGeo } from '../index.js';
 
 function validate(tif: CogTiff): void {
   assert.equal(tif.images.length, 5);
@@ -78,9 +78,8 @@ describe('CogRead', () => {
     assert.equal(im.epsg, 2193);
     assert.equal(im.compression, TiffMimeType.None);
     assert.equal(im.isTiled(), false);
-    assert.deepEqual(
-      await im.fetch(TiffTag.StripByteCounts),
-      new Uint16Array([8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]),
-    );
+    assert.equal(im.tagsGeo.get(TiffTagGeo.GTCitationGeoKey), 'NZGD2000 / New Zealand Transverse Mercator 2000');
+    assert.equal(im.tagsGeo.get(TiffTagGeo.GeogCitationGeoKey), 'NZGD2000');
+    assert.deepEqual(await im.fetch(TiffTag.StripByteCounts), [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
   });
 });

@@ -1,6 +1,7 @@
 import { readFile } from 'fs/promises';
 import { CogTiff } from '../cog.tiff.js';
 import { SourceMemory } from './source.memory.js';
+import { TiffTag } from '../index.js';
 
 // console.log = console.trace;
 /** Read a tile from every image inside of a tiff 300 tiles read */
@@ -15,6 +16,10 @@ async function main(): Promise<void> {
 
     // 6 images
     for (const img of tiff.images) await img.getTile(0, 0);
+
+    // Force loading all the byte arrays in which benchmarks the bulk array loading
+    await tiff.images[0].fetch(TiffTag.TileByteCounts);
+    await tiff.images[0].fetch(TiffTag.TileOffsets);
   }
 }
 
