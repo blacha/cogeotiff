@@ -705,25 +705,25 @@
     js-tokens "^4.0.0"
 
 "@chunkd/fs-aws@^11.0.2":
-  version "11.0.2"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs-aws/-/fs-aws-11.0.2.tgz#3a4bb5dcc90e5abe8d40c546586800ffb02a26a6"
-  integrity sha512-v85xmC6QsUIuhQLmXILegvrm3dm4YNJasZ65D96HBwqx/IP/ObV7+82WEDhZBcuQsP1FGiNKyqTLzhEeAX2y3g==
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs-aws/-/fs-aws-11.1.0.tgz#96518b7453030c561a021a2f5856bfb8c548a16a"
+  integrity sha512-7gVpiwkrQWCz7smbMGPxA7D/DbV90zhULenqmUqfIMRnsXo3h1GDYNh13sEbPgGdDi8UELoNtYCHGmbQQLbXgg==
   dependencies:
     "@aws-sdk/client-s3" "*"
     "@aws-sdk/credential-providers" "*"
     "@aws-sdk/lib-storage" "*"
-    "@chunkd/fs" "11.0.2"
-    "@chunkd/source-aws" "11.0.1"
+    "@chunkd/fs" "11.1.0"
+    "@chunkd/source-aws" "11.0.2"
 
-"@chunkd/fs@11.0.2", "@chunkd/fs@^11.0.2":
-  version "11.0.2"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-11.0.2.tgz#fd55ec83c83dc22344db6a2957c12b65883f21c8"
-  integrity sha512-cLby9YyG2k8Qu9xTEdXREwA+bVxChSNhXEHGzkFh0rev1H5C/dQB5Z6dn/AtLMr2H0D5pgqqlCveH0KruS4pyQ==
+"@chunkd/fs@11.1.0", "@chunkd/fs@^11.0.2":
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-11.1.0.tgz#8dc3ecd61b273a10c5ec825509c35c64cee93b0f"
+  integrity sha512-eXV7PQDMghqDckqNBGSQ34oOpIuZ4bod171+E1LlBwI/HWEOSquNv5Dho5Ivs2RRIWxrtPG3Cm8uhyZ9F59c+w==
   dependencies:
-    "@chunkd/source" "^11.0.0"
-    "@chunkd/source-file" "^11.0.0"
-    "@chunkd/source-http" "^11.0.1"
-    "@chunkd/source-memory" "^11.0.1"
+    "@chunkd/source" "^11.1.0"
+    "@chunkd/source-file" "^11.0.1"
+    "@chunkd/source-http" "^11.0.2"
+    "@chunkd/source-memory" "^11.0.2"
 
 "@chunkd/middleware@^11.0.0":
   version "11.0.0"
@@ -732,20 +732,20 @@
   dependencies:
     "@chunkd/source" "^11.0.0"
 
-"@chunkd/source-aws@11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-11.0.1.tgz#5df08e7987a68af14430250ea0647fbe9db9f6c6"
-  integrity sha512-C0n78Arn2+GlkOWgDC9UJmMlhCoBzO1gfgGuihZbanh1fiHCpEhdetUbI8r1DRRHqDLTpUm5WUyKP/hvwhN2NQ==
+"@chunkd/source-aws@11.0.2":
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-11.0.2.tgz#47235e02e96bb155364e6239af2b72fa23b7b302"
+  integrity sha512-Z+yJbJg7GISTD/vHsfyvDa0rAdfCd2xbV7RNm9hrgR0drmNgBoFxl1WBobtdOKFh4/Du3w0veJBgVRmSrR5tMA==
   dependencies:
     "@aws-sdk/client-s3" "*"
-    "@chunkd/source" "^11.0.0"
+    "@chunkd/source" "^11.1.0"
 
-"@chunkd/source-file@^11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-11.0.0.tgz#e2ce35320c82d93460642e5c96c2d6863b7176cf"
-  integrity sha512-i1yzhLsOXRJRVpuISpdgfKwuHSlKV67dbSm8hO8xQ4kOUJujT1D2vmiZo570QoeA4E1K9q/XdubGRU38HaVcKg==
+"@chunkd/source-file@^11.0.1":
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-file/-/source-file-11.0.1.tgz#40110263b18c5b687978b6a565699d7318f86237"
+  integrity sha512-9DoA1djozuDpUklg0CRj/GBEJzvZeqwr1EIOTcEr3igDAf+UZ3y3lOgUaIWuNeATbwQ7Pdml2S6SLLAdAe45wQ==
   dependencies:
-    "@chunkd/source" "^11.0.0"
+    "@chunkd/source" "^11.1.0"
 
 "@chunkd/source-http@^11.0.1":
   version "11.0.1"
@@ -754,17 +754,29 @@
   dependencies:
     "@chunkd/source" "^11.0.0"
 
-"@chunkd/source-memory@^11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-memory/-/source-memory-11.0.1.tgz#f9de81d881c97475ea9afa8690de94d93daa17fa"
-  integrity sha512-GbLG3OkTmzk2XKmjZM7tRh2K6OhPC0rzQUJaJdzdXaqZ/0SmN4itER8NTFw0ZxAQYQjilk/3ucKof6Q+gpAtkw==
+"@chunkd/source-http@^11.0.2":
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-11.0.2.tgz#e4c578e1997ea8d22dd2c5cc7a9e3ad22fa103b6"
+  integrity sha512-e3Iyu2qLTV4OHrfoXulveN8h+kQh0p2Jsjl8BXWedVcF9xgtVSPVsAgSUAzvCR35kkQwkxvIme/I9SoZYysbKg==
   dependencies:
-    "@chunkd/source" "^11.0.0"
+    "@chunkd/source" "^11.1.0"
+
+"@chunkd/source-memory@^11.0.2":
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-memory/-/source-memory-11.0.2.tgz#04ad90ea288cab04436fa2133c4c44ba83a350df"
+  integrity sha512-K2yJTvLv+Z49YKGz43Gb2Q1/6ARtnUUh9EgVgqKZS/Ce9ND9IXkgmfyrYShY2/d9iJ4B7Nq1LZIJubDBhoYtww==
+  dependencies:
+    "@chunkd/source" "^11.1.0"
 
 "@chunkd/source@^11.0.0":
   version "11.0.0"
   resolved "https://registry.yarnpkg.com/@chunkd/source/-/source-11.0.0.tgz#8407b1356df5bc2e0b07e0f7be10b60acda3c96f"
   integrity sha512-cDdANEMB6J4JEbN5+qDoiiy0CxGtiS3Td+X+A/7R8TW0b2XoKHoqX1/LwTrcdtVRNTOU5QHd83mhau/SbpJb2Q==
+
+"@chunkd/source@^11.1.0":
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source/-/source-11.1.0.tgz#8c163e4f0e87821c175b2aa5447100ee9091e0e2"
+  integrity sha512-3BcrHK4XDm3t4vDx1OisgcOZ05+EarEqwaGVIL7IMHUmkXwN/Aprlnr7aVP3BYcltgcCcfMd1pXQicbSrP563g==
 
 "@esbuild/android-arm64@0.19.2":
   version "0.19.2"
