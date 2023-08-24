@@ -762,9 +762,9 @@
     "@chunkd/source" "^11.0.0"
 
 "@chunkd/source@^11.0.0":
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source/-/source-11.0.0.tgz#8407b1356df5bc2e0b07e0f7be10b60acda3c96f"
-  integrity sha512-cDdANEMB6J4JEbN5+qDoiiy0CxGtiS3Td+X+A/7R8TW0b2XoKHoqX1/LwTrcdtVRNTOU5QHd83mhau/SbpJb2Q==
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/source/-/source-11.1.0.tgz#8c163e4f0e87821c175b2aa5447100ee9091e0e2"
+  integrity sha512-3BcrHK4XDm3t4vDx1OisgcOZ05+EarEqwaGVIL7IMHUmkXwN/Aprlnr7aVP3BYcltgcCcfMd1pXQicbSrP563g==
 
 "@esbuild/android-arm64@0.19.2":
   version "0.19.2"
