@@ -121,9 +121,14 @@ async function dumpTiles(tiff: CogTiff, target: URL, index: number, logger: type
   logger.info('Tiff:Info', { source: tiff.source.url, ...img.tileSize, ...img.tileCount });
   const { tileCount, tileSize } = img;
 
-  const html = ['<html>'];
-  const styles = `<style>.c { min-width: ${tileSize.width}px; min-height: ${tileSize.height}px; outline: 1px #ff00fff0 }</style>`;
-  html.push(styles);
+  const html = [
+    '<html>',
+    '<head>',
+    `\t<style>.c { min-width: ${tileSize.width}px; min-height: ${tileSize.height}px; outline: 1px #ff00fff0 }</style>`,
+    '</head>',
+    '<body>',
+  ];
+
   for (let y = 0; y < tileCount.y; y++) {
     for (let x = 0; x < tileCount.x; x++) {
       const promise = TileQueue(() => writeTile(tiff, x, y, index, target, logger));
@@ -138,17 +143,18 @@ async function dumpTiles(tiff: CogTiff, target: URL, index: number, logger: type
 
     for (let x = 0; x < tileCount.x; x++) {
       const fileName = result[i];
+      i++;
+
       if (fileName == null) {
         html.push(`\t\t<div class="c"></div>`);
         continue;
       }
       html.push(`\t\t<img class="c" src="./${fileName}" >`);
-
-      i++;
     }
     html.push('\t</div>');
   }
 
+  html.push('</body>');
   html.push('</html>');
   await fs.writeFile(new URL('index.html', target), html.join('\n'));
 
