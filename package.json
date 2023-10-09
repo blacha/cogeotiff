@@ -19,7 +19,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@linzjs/style": "^4.2.0",
+    "@linzjs/style": "^5.0.0",
     "@types/node": "^20.0.0",
     "lerna": "^7.1.4",
     "rimraf": "^4.1.2"
