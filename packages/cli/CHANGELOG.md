@@ -1,5 +1,19 @@
 # Changelog
 
+## [8.1.1](https://github.com/blacha/cogeotiff/compare/cli-v8.1.0...cli-v8.1.1) (2023-11-14)
+
+
+### Bug Fixes
+
+* **cli:** correct html creation ([7156d63](https://github.com/blacha/cogeotiff/commit/7156d63626c56f868b694e8124fdd96fd83f09be))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^8.1.0 to ^8.1.1
+
 ## [8.1.0](https://github.com/blacha/cogeotiff/compare/cli-v8.0.2...cli-v8.1.0) (2023-08-23)
 
 
