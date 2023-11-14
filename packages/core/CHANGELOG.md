@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.1.1](https://github.com/blacha/cogeotiff/compare/core-v8.1.0...core-v8.1.1) (2023-11-14)
+
+
+### Bug Fixes
+
+* **core:** correct loading of sub array geotags ([#1214](https://github.com/blacha/cogeotiff/issues/1214)) ([a67ec0a](https://github.com/blacha/cogeotiff/commit/a67ec0a0ca77313fdfb298ea72c532f496562d68))
+* **core:** expose CogTiffImage ([aca2c58](https://github.com/blacha/cogeotiff/commit/aca2c58f2c6ad0ccf95310eedd7402d50b9e77bd))
+
 ## [8.1.0](https://github.com/blacha/cogeotiff/compare/core-v8.0.2...core-v8.1.0) (2023-08-23)
 
 
