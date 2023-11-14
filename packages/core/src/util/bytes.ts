@@ -1,11 +1,11 @@
-export enum ByteSize {
-  Double = 8,
-  Float32 = 4,
-  UInt64 = 8,
-  UInt32 = 4,
-  UInt16 = 2,
-  UInt8 = 1,
-}
+export const ByteSize = {
+  Double: 8,
+  Float32: 4,
+  UInt64: 8,
+  UInt32: 4,
+  UInt16: 2,
+  UInt8: 1,
+} as const;
 /** Shifting `<< 32` does not work in javascript */
 const POW_32 = 2 ** 32;
 /**
@@ -30,7 +30,16 @@ export function getUint64(view: DataView, offset: number, isLittleEndian: boolea
   return combined;
 }
 
-export function getUint(view: DataView, offset: number, bs: ByteSize, isLittleEndian: boolean): number {
+/**
+ * Read a dynamic length uint from a dataview
+ *
+ * @param view Data to read
+ * @param offset Offset at which to read
+ * @param bs Size of the uint to read {@link ByteSize}
+ * @param isLittleEndian Is the UInt in little endian
+ * @returns
+ */
+export function getUint(view: DataView, offset: number, bs: number, isLittleEndian: boolean): number {
   switch (bs) {
     case ByteSize.UInt8:
       return view.getUint8(offset);
@@ -40,5 +49,7 @@ export function getUint(view: DataView, offset: number, bs: ByteSize, isLittleEn
       return view.getUint32(offset, isLittleEndian);
     case ByteSize.UInt64:
       return getUint64(view, offset, isLittleEndian);
+    default:
+      throw new Error(`ByteSize: ${bs} is not a UInt size`);
   }
 }

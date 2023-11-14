@@ -1,8 +1,9 @@
 import { fsa } from '@chunkd/fs';
-import { CogTiff, Tag, TiffTagGeo, TiffTag, TiffTagValueType, TiffVersion, toHex, TagOffset } from '@cogeotiff/core';
+import { CogTiff, Tag, TagOffset, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
 import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
+
 import { ActionUtil, CliResultMap } from '../action.util.js';
 import { CliTable } from '../cli.table.js';
 import { DefaultArgs, Url } from '../common.js';

@@ -1,11 +1,13 @@
-import { promises as fs } from 'fs';
 import assert from 'node:assert';
 import { beforeEach, describe, it } from 'node:test';
+
+import { promises as fs } from 'fs';
+
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { SourceMemory } from '../__benchmark__/source.memory.js';
-import { ByteSize } from '../util/bytes.js';
 import { CogTiff } from '../cog.tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
+import { ByteSize } from '../util/bytes.js';
 
 // 900913 properties.
 const A = 6378137.0;

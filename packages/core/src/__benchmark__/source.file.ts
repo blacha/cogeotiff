@@ -1,4 +1,5 @@
 import { readFile, stat } from 'fs/promises';
+
 import { Source } from '../source.js';
 
 export class TestFileSource implements Source {

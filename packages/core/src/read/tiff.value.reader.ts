@@ -1,7 +1,6 @@
-import { ByteSize } from '../util/bytes.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 
-export function getTiffTagSize(fieldType: TiffTagValueType): ByteSize {
+export function getTiffTagSize(fieldType: TiffTagValueType): number {
   switch (fieldType) {
     case TiffTagValueType.Uint8:
     case TiffTagValueType.Ascii:

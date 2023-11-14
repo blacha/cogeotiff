@@ -70,7 +70,7 @@ export class CogTifGhostOptions {
   /**
    * If the tile leader is set, how many bytes are allocated to the tile size
    */
-  get tileLeaderByteSize(): ByteSize | null {
+  get tileLeaderByteSize(): number | null {
     switch (this.options.get(GhostOption.BlockLeader)) {
       case GhostOptionTileLeader.uint32:
         return ByteSize.UInt32;
