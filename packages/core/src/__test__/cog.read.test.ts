@@ -82,4 +82,37 @@ describe('CogRead', () => {
     assert.equal(im.tagsGeo.get(TiffTagGeo.GeogCitationGeoKey), 'NZGD2000');
     assert.deepEqual(await im.fetch(TiffTag.StripByteCounts), [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
   });
+
+  it('should read sub array ifds', async () => {
+    const source = new TestFileSource(
+      new URL('../../data/east_coast_phase3_2023_AY31_1000_3335.tif.gz', import.meta.url),
+    );
+    const tiff = await CogTiff.create(source);
+
+    assert.equal(tiff.images.length, 5);
+    const im = tiff.images[0];
+
+    assert.equal(im.isGeoTagsLoaded, true);
+    assert.equal(im.epsg, 2193);
+    assert.equal(im.compression, TiffMimeType.Lzw);
+
+    const geoTags = [...im.tagsGeo.keys()].map((key) => TiffTagGeo[key]);
+    assert.deepEqual(geoTags, [
+      'GTModelTypeGeoKey',
+      'GTRasterTypeGeoKey',
+      'GTCitationGeoKey',
+      'GeographicTypeGeoKey',
+      'GeogAngularUnitsGeoKey',
+      'GeogEllipsoidGeoKey',
+      'GeogSemiMajorAxisGeoKey',
+      'GeogSemiMinorAxisGeoKey',
+      'GeogInvFlatteningGeoKey',
+      'GeogTOWGS84GeoKey',
+      'ProjectedCSTypeGeoKey',
+      'PCSCitationGeoKey',
+      'ProjLinearUnitsGeoKey',
+    ]);
+
+    assert.deepEqual(im.tagsGeo.get(TiffTagGeo.GeogTOWGS84GeoKey), [0, 0, 0, 0, 0, 0, 0]);
+  });
 });
