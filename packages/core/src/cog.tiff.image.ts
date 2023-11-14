@@ -133,6 +133,7 @@ export class CogTiffImage {
     if (sourceTag.value == null) return;
     const geoTags = sourceTag.value as Uint16Array;
     if (typeof geoTags === 'number') throw new Error('Invalid geo tags found');
+
     for (let i = 4; i <= geoTags[3] * 4; i += 4) {
       const key = geoTags[i] as TiffTagGeo;
       const locationTagId = geoTags[i + 1];
@@ -149,6 +150,9 @@ export class CogTiffImage {
       const count = geoTags[i + 2];
       if (typeof tag.value === 'string') {
         this.tagsGeo.set(key, tag.value.slice(offset, offset + count - 1).trim());
+      } else if (Array.isArray(tag.value)) {
+        if (count === 1) this.tagsGeo.set(key, tag.value[offset]);
+        else this.tagsGeo.set(key, tag.value.slice(offset, offset + count) as any);
       } else {
         throw new Error('Failed to extract GeoTiffTags');
       }

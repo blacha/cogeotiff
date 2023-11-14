@@ -1,6 +1,10 @@
-import { readFile, stat } from 'fs/promises';
+import { readFile, stat } from 'node:fs/promises';
+import { gunzip } from 'node:zlib';
+import { promisify } from 'node:util';
 
 import { Source } from '../source.js';
+
+const gunzipP = promisify(gunzip);
 
 export class TestFileSource implements Source {
   url: URL;
@@ -8,7 +12,10 @@ export class TestFileSource implements Source {
 
   constructor(fileName: URL) {
     this.url = fileName;
-    this.data = readFile(this.url);
+    this.data = readFile(this.url).then((buf) => {
+      if (this.url.pathname.endsWith('gz')) return gunzipP(buf);
+      return buf;
+    });
   }
 
   async fetch(offset: number, length: number): Promise<ArrayBuffer> {
