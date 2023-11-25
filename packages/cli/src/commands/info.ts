@@ -190,7 +190,7 @@ function formatTag(tag: Tag): { key: string; value: string } {
   return { key, value: tagString };
 }
 
-function formatGeoTag(tagId: TiffTagGeo, value: string | number): { key: string; value: string } {
+function formatGeoTag(tagId: TiffTagGeo, value: string | number | number[]): { key: string; value: string } {
   const tagName = TiffTagGeo[tagId];
   const key = `${c.dim(toHex(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
 

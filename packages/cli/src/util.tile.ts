@@ -5,7 +5,7 @@ import { log } from '@linzjs/tracing';
 
 const FileExtension: Record<string, string> = {
   [TiffMimeType.Jpeg]: 'jpeg',
-  [TiffMimeType.Jp2]: 'jp2',
+  [TiffMimeType.Jp2000]: 'jp2',
   [TiffMimeType.Webp]: 'webp',
   [TiffMimeType.Lzw]: 'lzw',
   [TiffMimeType.Deflate]: 'deflate',

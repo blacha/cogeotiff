@@ -1,10 +1,12 @@
+import { Compression } from './tiff.tag.id.js';
+
 /**
  * MimeType conversion for common tif image types
  */
 export enum TiffMimeType {
   None = 'application/octet-stream',
   Jpeg = 'image/jpeg',
-  Jp2 = 'image/jp2',
+  Jp2000 = 'image/jp2',
   JpegXl = 'image/jpegxl',
   Webp = 'image/webp',
   Zstd = 'application/zstd',
@@ -14,16 +16,17 @@ export enum TiffMimeType {
   Lzma = 'application/x-lzma',
 }
 
-export const TiffCompression: { [key: number]: TiffMimeType } = {
-  1: TiffMimeType.None,
-  5: TiffMimeType.Lzw,
-  6: TiffMimeType.Jpeg,
-  7: TiffMimeType.Jpeg,
-  8: TiffMimeType.Deflate,
-  34887: TiffMimeType.Lerc,
-  34925: TiffMimeType.Lzma,
-  34712: TiffMimeType.Jp2,
-  50000: TiffMimeType.Zstd,
-  50001: TiffMimeType.Webp,
-  50002: TiffMimeType.JpegXl,
+export const TiffCompression: Record<Compression, TiffMimeType> = {
+  [Compression.None]: TiffMimeType.None,
+  [Compression.Lzw]: TiffMimeType.Lzw,
+  [Compression.Jpeg6]: TiffMimeType.Jpeg,
+  [Compression.Jpeg]: TiffMimeType.Jpeg,
+  [Compression.DeflateOther]: TiffMimeType.Deflate,
+  [Compression.Deflate]: TiffMimeType.Deflate,
+  [Compression.Lerc]: TiffMimeType.Lerc,
+  [Compression.Lzma]: TiffMimeType.Lzma,
+  [Compression.Jp2000]: TiffMimeType.Jp2000,
+  [Compression.Zstd]: TiffMimeType.Zstd,
+  [Compression.Webp]: TiffMimeType.Webp,
+  [Compression.JpegXl]: TiffMimeType.JpegXl,
 };
