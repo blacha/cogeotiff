@@ -1,3 +1,5 @@
+import { TiffTagValueType } from './tiff.tag.value';
+
 /** Sub file type for tag 254 {@link TiffTag.SubFileType} */
 export enum SubFileType {
   /** Reduced resolution version */
@@ -416,12 +418,12 @@ export interface TiffTagType {
   // [TiffTag.Photoshop]: unknown;
 
   // GeoTiff
-  [TiffTag.ModelPixelScale]: number[];
-  [TiffTag.ModelTiePoint]: number[];
-  [TiffTag.ModelTransformation]: number[];
-  [TiffTag.GeoKeyDirectory]: number[];
-  [TiffTag.GeoDoubleParams]: number[];
-  [TiffTag.GeoAsciiParams]: string;
+  ModelPixelScale: number[];
+  ModelTiePoint: number[];
+  ModelTransformation: number[];
+  GeoKeyDirectory: number[];
+  GeoDoubleParams: number[];
+  GeoAsciiParams: string;
 }
 
 /**
@@ -510,87 +512,72 @@ export enum TiffTagGeo {
 export interface TiffTagGeoType {
   // GeoTIFF Configuration Keys
   GTModelTypeGeoKey: number;
-  [TiffTagGeo.GTRasterTypeGeoKey]: number;
-  [TiffTagGeo.GTCitationGeoKey]: string;
+  GTRasterTypeGeoKey: number;
+  GTCitationGeoKey: string;
 
   // Geodetic CRS Parameter Keys
-  [TiffTagGeo.GeodeticCRSGeoKey]: number;
-  [TiffTagGeo.GeodeticCitationGeoKey]: string;
-  [TiffTagGeo.GeodeticDatumGeoKey]: number;
-  [TiffTagGeo.PrimeMeridianGeoKey]: number;
-  [TiffTagGeo.GeogLinearUnitsGeoKey]: number;
-  [TiffTagGeo.GeogLinearUnitSizeGeoKey]: number;
-  [TiffTagGeo.GeogAngularUnitsGeoKey]: number;
-  [TiffTagGeo.GeogAngularUnitSizeGeoKey]: number;
-  [TiffTagGeo.EllipsoidGeoKey]: number;
-  [TiffTagGeo.EllipsoidSemiMajorAxisGeoKey]: number;
-  [TiffTagGeo.EllipsoidSemiMinorAxisGeoKey]: number;
-  [TiffTagGeo.EllipsoidInvFlatteningGeoKey]: number;
-  [TiffTagGeo.GeogAzimuthUnitsGeoKey]: number;
-  [TiffTagGeo.PrimeMeridianLongitudeGeoKey]: number;
-  [TiffTagGeo.GeogTOWGS84GeoKey]: number;
+  GeodeticCRSGeoKey: number;
+  GeodeticCitationGeoKey: string;
+  GeodeticDatumGeoKey: number;
+  PrimeMeridianGeoKey: number;
+  GeogLinearUnitsGeoKey: number;
+  GeogLinearUnitSizeGeoKey: number;
+  GeogAngularUnitsGeoKey: number;
+  GeogAngularUnitSizeGeoKey: number;
+  EllipsoidGeoKey: number;
+  EllipsoidSemiMajorAxisGeoKey: number;
+  EllipsoidSemiMinorAxisGeoKey: number;
+  EllipsoidInvFlatteningGeoKey: number;
+  GeogAzimuthUnitsGeoKey: number;
+  PrimeMeridianLongitudeGeoKey: number;
+  GeogTOWGS84GeoKey: number;
 
   // Projected CRS Parameter Keys
-  [TiffTagGeo.ProjectedCRSGeoKey]: number;
-  [TiffTagGeo.ProjectedCitationGeoKey]: string;
-  [TiffTagGeo.ProjectionGeoKey]: number;
-  [TiffTagGeo.ProjMethodGeoKey]: number;
-  [TiffTagGeo.ProjLinearUnitsGeoKey]: number;
-  [TiffTagGeo.ProjLinearUnitSizeGeoKey]: number;
-  [TiffTagGeo.ProjStdParallel1GeoKey]: number;
-  [TiffTagGeo.ProjStdParallel2GeoKey]: number;
-  [TiffTagGeo.ProjNatOriginLongGeoKey]: number;
-  [TiffTagGeo.ProjNatOriginLatGeoKey]: number;
-  [TiffTagGeo.ProjFalseEastingGeoKey]: number;
-  [TiffTagGeo.ProjFalseNorthingGeoKey]: number;
-  [TiffTagGeo.ProjFalseOriginLongGeoKey]: number;
-  [TiffTagGeo.ProjFalseOriginLatGeoKey]: number;
-  [TiffTagGeo.ProjFalseOriginEastingGeoKey]: number;
-  [TiffTagGeo.ProjFalseOriginNorthingGeoKey]: number;
-  [TiffTagGeo.ProjCenterLongGeoKey]: number;
-  [TiffTagGeo.ProjCenterLatGeoKey]: number;
-  [TiffTagGeo.ProjCenterEastingGeoKey]: number;
-  [TiffTagGeo.ProjCenterNorthingGeoKey]: number;
-  [TiffTagGeo.ProjScaleAtNatOriginGeoKey]: number;
-  [TiffTagGeo.ProjScaleAtCenterGeoKey]: number;
-  [TiffTagGeo.ProjAzimuthAngleGeoKey]: number;
-  [TiffTagGeo.ProjStraightVertPoleLongGeoKey]: number;
-  [TiffTagGeo.ProjRectifiedGridAngleGeoKey]: number;
+  ProjectedCRSGeoKey: number;
+  ProjectedCitationGeoKey: string;
+  ProjectionGeoKey: number;
+  ProjMethodGeoKey: number;
+  ProjLinearUnitsGeoKey: number;
+  ProjLinearUnitSizeGeoKey: number;
+  ProjStdParallel1GeoKey: number;
+  ProjStdParallel2GeoKey: number;
+  ProjNatOriginLongGeoKey: number;
+  ProjNatOriginLatGeoKey: number;
+  ProjFalseEastingGeoKey: number;
+  ProjFalseNorthingGeoKey: number;
+  ProjFalseOriginLongGeoKey: number;
+  ProjFalseOriginLatGeoKey: number;
+  ProjFalseOriginEastingGeoKey: number;
+  ProjFalseOriginNorthingGeoKey: number;
+  ProjCenterLongGeoKey: number;
+  ProjCenterLatGeoKey: number;
+  ProjCenterEastingGeoKey: number;
+  ProjCenterNorthingGeoKey: number;
+  ProjScaleAtNatOriginGeoKey: number;
+  ProjScaleAtCenterGeoKey: number;
+  ProjAzimuthAngleGeoKey: number;
+  ProjStraightVertPoleLongGeoKey: number;
+  ProjRectifiedGridAngleGeoKey: number;
 
   // Vertical CRS Parameter Keys
-  [TiffTagGeo.VerticalGeoKey]: number;
-  [TiffTagGeo.VerticalCitationGeoKey]: string;
-  [TiffTagGeo.VerticalDatumGeoKey]: number;
-  [TiffTagGeo.VerticalUnitsGeoKey]: number;
+  VerticalGeoKey: number;
+  VerticalCitationGeoKey: string;
+  VerticalDatumGeoKey: number;
+  VerticalUnitsGeoKey: number;
 }
 
-// const get
+export type InferTag<K extends keyof TiffTagType> = TiffTagType[K];
 
-// export type GeoMap = Record<K n TiffTagGeo, TiffTagGeoType[K]>;
-
-// interface Gk<K extends keyof typeof TiffTagGeo = keyof typeof TiffTagGeo> {
-//   [k: K in TiffTagGeo]: TiffTagGeoType[TiffTagGeo[K]];
-// }
-
-export enum Foo {
-  str = 1,
-  int = 2,
-}
-
-export interface FooType {
-  str: string;
-  int: number;
-}
-
-type TagsGeo = {
-  [K in keyof TiffTagGeoType]: TiffTagGeoType[K];
+export type Tags = {
+  [K in keyof typeof TiffTag]: InferTag<K>;
 };
 
-type Tags = {
-  [K in keyof typeof TiffTag]: TiffTagType[K];
+export type InferTagGeo<K extends keyof TiffTagGeoType> = TiffTagGeoType[K];
+
+export type TagsGeo = {
+  [K in keyof typeof TiffTagGeo]: InferTagGeo<K>;
 };
 
 const img: { tags: Tags; geo: TagsGeo };
 
-img.geo.GTModelTypeGeoKey;
-img.tags.BitsPerSample;
+img.tags.GeoKeyDirectory;
