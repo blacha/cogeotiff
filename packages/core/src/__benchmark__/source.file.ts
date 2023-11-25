@@ -1,6 +1,7 @@
 import { readFile, stat } from 'node:fs/promises';
-import { gunzip } from 'node:zlib';
 import { promisify } from 'node:util';
+import { gunzip } from 'node:zlib';
+
 import { Source } from '../source.js';
 
 const gunzipP = promisify(gunzip);

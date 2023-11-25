@@ -1,11 +1,11 @@
-export { CogTiff } from './cog.tiff.js';
 export { CogTiffImage } from './cog.tiff.image.js';
+export { CogTiff } from './cog.tiff.js';
 export { TiffEndian } from './const/tiff.endian.js';
 export { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
-export { TiffTagGeo, TiffTag } from './const/tiff.tag.id.js';
+export { TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
 export { TiffTagValueType } from './const/tiff.tag.value.js';
 export { TiffVersion } from './const/tiff.version.js';
-export { TagInline, TagLazy, TagOffset, Tag } from './read/tiff.tag.js';
+export { Tag, TagInline, TagLazy, TagOffset } from './read/tiff.tag.js';
 export { getTiffTagSize } from './read/tiff.value.reader.js';
 export { Source } from './source.js';
 export { toHex } from './util/util.hex.js';

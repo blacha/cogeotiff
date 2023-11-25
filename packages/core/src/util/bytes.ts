@@ -1,11 +1,15 @@
-export enum ByteSize {
+export enum ByteSizeFloat {
   Double = 8,
   Float32 = 4,
+}
+
+export enum ByteSize {
   UInt64 = 8,
   UInt32 = 4,
   UInt16 = 2,
   UInt8 = 1,
 }
+
 /** Shifting `<< 32` does not work in javascript */
 const POW_32 = 2 ** 32;
 /**

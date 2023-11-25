@@ -1,10 +1,10 @@
-import { getUint } from './util/bytes.js';
 import { CogTiff } from './cog.tiff.js';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
 import { TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
-import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
-import { BoundingBox, Size } from './vector.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
+import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
+import { getUint } from './util/bytes.js';
+import { BoundingBox, Size } from './vector.js';
 
 /** Invalid EPSG code */
 export const InvalidProjectionCode = 32767;
@@ -152,7 +152,7 @@ export class CogTiffImage {
         this.tagsGeo.set(key, tag.value.slice(offset, offset + count - 1).trim());
       } else if (Array.isArray(tag.value)) {
         if (count === 1) this.tagsGeo.set(key, tag.value[offset]);
-        else this.tagsGeo.set(key, tag.value.slice(offset, offset + count) as any);
+        else this.tagsGeo.set(key, tag.value.slice(offset, offset + count) as unknown as number);
       } else {
         throw new Error('Failed to extract GeoTiffTags');
       }
