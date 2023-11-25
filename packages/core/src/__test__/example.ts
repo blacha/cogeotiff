@@ -1,4 +1,5 @@
 import { SourceHttp } from '@chunkd/source-http';
+
 import { CogTiff } from '../index.js';
 
 async function main(): Promise<void> {

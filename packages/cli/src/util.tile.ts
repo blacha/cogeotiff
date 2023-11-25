@@ -1,6 +1,7 @@
+import { promises as fs } from 'node:fs';
+
 import { CogTiff, TiffMimeType } from '@cogeotiff/core';
 import { log } from '@linzjs/tracing';
-import { promises as fs } from 'node:fs';
 
 const FileExtension: Record<string, string> = {
   [TiffMimeType.Jpeg]: 'jpeg',

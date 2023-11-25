@@ -1,7 +1,8 @@
-import { SourceHttp } from '@chunkd/source-http';
-import { SourceRequest, SourceMiddleware, SourceCallback, SourceView } from '@chunkd/source';
 import { SourceCache, SourceChunk } from '@chunkd/middleware';
+import { SourceCallback, SourceMiddleware, SourceRequest, SourceView } from '@chunkd/source';
+import { SourceHttp } from '@chunkd/source-http';
 import { CogTiff } from '@cogeotiff/core';
+
 import { loadSingleTile } from './example.single.tile';
 
 // Cache all requests to cogs
