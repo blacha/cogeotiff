@@ -21,6 +21,9 @@ jobs:
     needs: release-please
     runs-on: ubuntu-latest
     if: ${{ needs.release-please.outputs.releases_created }}
+    environment:
+      name: prod
+
     steps:
       - name: Build and test
         uses: linz/action-typescript@v3
