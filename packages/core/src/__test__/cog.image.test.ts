@@ -6,6 +6,7 @@ import { promises as fs } from 'fs';
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { SourceMemory } from '../__benchmark__/source.memory.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
+import { Photometric, TiffTag } from '../const/tiff.tag.id.js';
 import { Tiff } from '../tiff.js';
 import { ByteSize } from '../util/bytes.js';
 
@@ -132,6 +133,11 @@ describe('Cog.Sparse', () => {
 
     const { tileCount } = img;
     assert.deepEqual(tileCount, { x: 2, y: 2 });
+
+    assert.equal(img.value(TiffTag.SamplesPerPixel), 4); // 4 bands
+    assert.deepEqual(img.value(TiffTag.BitsPerSample), [8, 8, 8, 8]);
+    assert.equal(img.value(TiffTag.Photometric), Photometric.Rgb);
+    assert.equal(img.value(TiffTag.GdalNoData), null);
 
     for (let x = 0; x < tileCount.x; x++) {
       for (let y = 0; y < tileCount.y; y++) {

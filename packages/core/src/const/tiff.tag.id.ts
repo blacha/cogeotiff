@@ -156,12 +156,10 @@ export enum TiffTag {
   /**
    * Number of bits per channel
    *
-   * if only one band is present it is a number not a number[]
-   *
    * @example
    * ```typescript
    * [8,8,8] // 8 bit RGB
-   * 16 // 16bit
+   * [16] // 16bit
    * ```
    */
   BitsPerSample = 258,
@@ -371,24 +369,19 @@ export interface TiffTagType {
   [TiffTag.ImageHeight]: number;
   [TiffTag.ImageWidth]: number;
   [TiffTag.SubFileType]: SubFileType;
-  /** Number if only one band present */
-  [TiffTag.BitsPerSample]: number[] | number;
+  [TiffTag.BitsPerSample]: number[];
   [TiffTag.Compression]: Compression;
   [TiffTag.OldSubFileType]: OldSubFileType;
   [TiffTag.Photometric]: Photometric;
 
   [TiffTag.TileWidth]: number;
   [TiffTag.TileHeight]: number;
-  /** Will be number if only one tile is present  */
-  [TiffTag.TileOffsets]: number[] | number;
-  /** Will be number if only one tile is present  */
-  [TiffTag.TileByteCounts]: number[] | number;
+  [TiffTag.TileOffsets]: number[];
+  [TiffTag.TileByteCounts]: number[];
   [TiffTag.JpegTables]: number[];
 
-  /** Will be number if only one strip is present  */
-  [TiffTag.StripByteCounts]: number[] | number;
-  /** Will be number if only one strip is present  */
-  [TiffTag.StripOffsets]: number[] | number;
+  [TiffTag.StripByteCounts]: number[];
+  [TiffTag.StripOffsets]: number[];
 
   [TiffTag.SampleFormat]: SampleFormat;
   [TiffTag.GdalMetadata]: string;
@@ -396,8 +389,8 @@ export interface TiffTagType {
   [TiffTag.ModelPixelScale]: number[];
   [TiffTag.ModelTiePoint]: number[];
   [TiffTag.ModelTransformation]: number[];
-  [TiffTag.GeoKeyDirectory]: number[] | number;
-  [TiffTag.GeoDoubleParams]: number[] | number;
+  [TiffTag.GeoKeyDirectory]: number[];
+  [TiffTag.GeoDoubleParams]: number[];
   [TiffTag.GeoAsciiParams]: string;
 
   [TiffTag.PlanarConfiguration]: PlanarConfiguration;
@@ -767,4 +760,17 @@ export const TiffTagGeoValueLookup: Partial<Record<number, Record<number, string
   [TiffTagGeo.GeogAngularUnitsGeoKey]: GeoAngularUnits,
   [TiffTagGeo.ProjLinearUnitsGeoKey]: GeoLinearUnits,
   [TiffTagGeo.VerticalUnitsGeoKey]: GeoLinearUnits,
+};
+
+/**
+ * Convert tiff tag values when being read.
+ */
+export const TiffTagConvertArray: Partial<Record<TiffTag, boolean>> = {
+  [TiffTag.TileByteCounts]: true,
+  [TiffTag.TileOffsets]: true,
+  [TiffTag.StripOffsets]: true,
+  [TiffTag.StripByteCounts]: true,
+  [TiffTag.BitsPerSample]: true,
+  [TiffTag.GeoKeyDirectory]: true,
+  [TiffTag.GeoDoubleParams]: true,
 };

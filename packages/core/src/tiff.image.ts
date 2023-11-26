@@ -381,7 +381,7 @@ export class TiffImage {
    *
    * @returns file offset to where the tiffs are stored
    */
-  get tileOffset(): TagOffset | TagInline<number | number[]> {
+  get tileOffset(): TagOffset | TagInline<number[]> {
     const tileOffset = this.tags.get(TiffTag.TileOffsets) as TagOffset;
     if (tileOffset == null) throw new Error('No tile offsets found');
     return tileOffset;
@@ -551,11 +551,8 @@ export class TiffImage {
   }
 }
 
-function getOffset(tiff: Tiff, x: TagOffset | TagInline<number | number[]>, index: number): number | Promise<number> {
+function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | Promise<number> {
   if (index > x.count || index < 0) throw new Error('TagIndex: out of bounds ' + x.id + ' @ ' + index);
-  if (x.type === 'inline') {
-    if (x.count > 1) return (x.value as number[])[index] as number;
-    return x.value as number;
-  }
+  if (x.type === 'inline') return x.value[index] as number;
   return getValueAt(tiff, x, index);
 }

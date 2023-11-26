@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
+import { Photometric, SampleFormat } from '../const/tiff.tag.id.js';
 import { TiffVersion } from '../const/tiff.version.js';
 import { TiffTag, TiffTagGeo } from '../index.js';
 import { Tiff } from '../tiff.js';
@@ -79,6 +80,12 @@ describe('CogRead', () => {
     assert.equal(im.epsg, 2193);
     assert.equal(im.compression, TiffMimeType.None);
     assert.equal(im.isTiled(), false);
+
+    // 32 bit float DEM
+    assert.deepEqual(im.value(TiffTag.BitsPerSample), [32]);
+    assert.equal(im.value(TiffTag.SampleFormat), SampleFormat.Float);
+    assert.equal(im.value(TiffTag.Photometric), Photometric.MinIsBlack);
+
     assert.equal(im.tagsGeo.get(TiffTagGeo.GTCitationGeoKey), 'NZGD2000 / New Zealand Transverse Mercator 2000');
     assert.equal(im.tagsGeo.get(TiffTagGeo.GeodeticCitationGeoKey), 'NZGD2000');
     assert.deepEqual(await im.fetch(TiffTag.StripByteCounts), [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
@@ -96,6 +103,7 @@ describe('CogRead', () => {
     assert.equal(im.isGeoTagsLoaded, true);
     assert.equal(im.epsg, 2193);
     assert.equal(im.compression, TiffMimeType.Lzw);
+    assert.deepEqual(im.value(TiffTag.BitsPerSample), [8, 8, 8, 8]);
 
     const geoTags = [...im.tagsGeo.keys()].map((key) => TiffTagGeo[key]);
     assert.deepEqual(geoTags, [

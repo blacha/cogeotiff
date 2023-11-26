@@ -1,4 +1,4 @@
-import { TiffTag } from '../const/tiff.tag.id.js';
+import { TiffTag, TiffTagConvertArray } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 import { Tiff } from '../tiff.js';
 import { getUint, getUint64 } from '../util/bytes.js';
@@ -54,11 +54,24 @@ function readTagValue(
   }
 }
 
-function readValue<T>(tiff: Tiff, bytes: DataView, offset: number, type: TiffTagValueType, count: number): T {
+function readValue<T>(
+  tiff: Tiff,
+  tagId: TiffTag | undefined,
+  bytes: DataView,
+  offset: number,
+  type: TiffTagValueType,
+  count: number,
+): T {
   const typeSize = getTiffTagSize(type);
   const dataLength = count * typeSize;
 
-  if (count === 1) return readTagValue(type, bytes, offset, tiff.isLittleEndian) as unknown as T;
+  if (count === 1) {
+    const val = readTagValue(type, bytes, offset, tiff.isLittleEndian) as unknown as T;
+    // Force some single values to be arrays eg BitsPerSample
+    // makes it easier to not check for number | number[]
+    if (tagId && TiffTagConvertArray[tagId]) return [val] as T;
+    return val;
+  }
 
   switch (type) {
     case TiffTagValueType.Ascii:
@@ -77,7 +90,7 @@ function readValue<T>(tiff: Tiff, bytes: DataView, offset: number, type: TiffTag
 }
 
 /**
- * Determine if all the data for the tiff tag is loaded in and use that to create the specific TiffTag
+ * Determine if all the data for the tiff tag is loaded in and use that to create the specific CogTiffTag
  *
  * @see {@link Tag}
  *
@@ -95,7 +108,7 @@ export function createTag(tiff: Tiff, view: DataViewOffset, offset: number): Tag
 
   // Tag value is inline read the value
   if (dataLength <= tiff.ifdConfig.pointer) {
-    const value = readValue(tiff, view, offset + 4 + tiff.ifdConfig.pointer, dataType, dataCount);
+    const value = readValue(tiff, tagId, view, offset + 4 + tiff.ifdConfig.pointer, dataType, dataCount);
     return { type: 'inline', id: tagId, name: TiffTag[tagId], count: dataCount, value, dataType, tagOffset: offset };
   }
 
@@ -123,7 +136,7 @@ export function createTag(tiff: Tiff, view: DataViewOffset, offset: number): Tag
 
   // If we already have the bytes in the view read them in
   if (hasBytes(view, dataOffset, dataLength)) {
-    const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
+    const value = readValue(tiff, tagId, view, dataOffset - view.sourceOffset, dataType, dataCount);
     return { type: 'inline', id: tagId, name: TiffTag[tagId], count: dataCount, value, dataType, tagOffset: offset };
   }
 
@@ -137,7 +150,7 @@ export async function fetchLazy<T>(tag: TagLazy<T>, tiff: Tiff): Promise<T> {
   const dataLength = dataTypeSize * tag.count;
   const bytes = await tiff.source.fetch(tag.dataOffset, dataLength);
   const view = new DataView(bytes);
-  tag.value = readValue(tiff, view, 0, tag.dataType, tag.count);
+  tag.value = readValue(tiff, tag.id, view, 0, tag.dataType, tag.count);
   return tag.value as T;
 }
 
@@ -153,7 +166,7 @@ export async function fetchAllOffsets(tiff: Tiff, tag: TagOffset): Promise<numbe
     tag.view.sourceOffset = tag.dataOffset;
   }
 
-  tag.value = readValue(tiff, tag.view, 0, tag.dataType, tag.count) as number[];
+  tag.value = readValue(tiff, tag.id, tag.view, 0, tag.dataType, tag.count) as number[];
   tag.isLoaded = true;
   return tag.value;
 }
@@ -174,12 +187,14 @@ export async function getValueAt(tiff: Tiff, tag: TagOffset, index: number): Pro
   if (tag.view == null) {
     const bytes = await tiff.source.fetch(tag.dataOffset + index * dataTypeSize, dataTypeSize);
     const view = new DataView(bytes);
-    const value = readValue(tiff, view, 0, tag.dataType, 1) as number;
+    // Skip type conversion to array by using undefined tiff tag id
+    const value = readValue(tiff, undefined, view, 0, tag.dataType, 1) as number;
     tag.value[index] = value;
     return value;
   }
 
-  const value = readValue(tiff, tag.view, index * dataTypeSize, tag.dataType, 1) as number;
+  // Skip type conversion to array by using undefined tiff tag id
+  const value = readValue(tiff, undefined, tag.view, index * dataTypeSize, tag.dataType, 1) as number;
   tag.value[index] = value;
   return value;
 }
