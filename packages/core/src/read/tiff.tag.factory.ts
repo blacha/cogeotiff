@@ -1,6 +1,6 @@
-import { CogTiff } from '../cog.tiff.js';
 import { TiffTag } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
+import { Tiff } from '../tiff.js';
 import { getUint, getUint64 } from '../util/bytes.js';
 import { DataViewOffset, hasBytes } from './data.view.offset.js';
 import { Tag, TagLazy, TagOffset } from './tiff.tag.js';
@@ -54,7 +54,7 @@ function readTagValue(
   }
 }
 
-function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: TiffTagValueType, count: number): T {
+function readValue<T>(tiff: Tiff, bytes: DataView, offset: number, type: TiffTagValueType, count: number): T {
   const typeSize = getTiffTagSize(type);
   const dataLength = count * typeSize;
 
@@ -77,7 +77,7 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: Tiff
 }
 
 /**
- * Determine if all the data for the tiff tag is loaded in and use that to create the specific CogTiffTag
+ * Determine if all the data for the tiff tag is loaded in and use that to create the specific TiffTag
  *
  * @see {@link Tag}
  *
@@ -85,7 +85,7 @@ function readValue<T>(tiff: CogTiff, bytes: DataView, offset: number, type: Tiff
  * @param view Bytes to read from
  * @param offset Offset in the dataview to read a tag
  */
-export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): Tag<unknown> {
+export function createTag(tiff: Tiff, view: DataViewOffset, offset: number): Tag<unknown> {
   const tagId = view.getUint16(offset + 0, tiff.isLittleEndian);
 
   const dataType = view.getUint16(offset + 2, tiff.isLittleEndian) as TiffTagValueType;
@@ -131,7 +131,7 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
 }
 
 /** Fetch the value from a {@link TagLazy} tag */
-export async function fetchLazy<T>(tag: TagLazy<T>, tiff: CogTiff): Promise<T> {
+export async function fetchLazy<T>(tag: TagLazy<T>, tiff: Tiff): Promise<T> {
   if (tag.value != null) return tag.value;
   const dataTypeSize = getTiffTagSize(tag.dataType);
   const dataLength = dataTypeSize * tag.count;
@@ -144,7 +144,7 @@ export async function fetchLazy<T>(tag: TagLazy<T>, tiff: CogTiff): Promise<T> {
 /**
  * Fetch all the values from a {@link TagOffset}
  */
-export async function fetchAllOffsets(tiff: CogTiff, tag: TagOffset): Promise<number[]> {
+export async function fetchAllOffsets(tiff: Tiff, tag: TagOffset): Promise<number[]> {
   const dataTypeSize = getTiffTagSize(tag.dataType);
 
   if (tag.view == null) {
@@ -166,7 +166,7 @@ export function setBytes(tag: TagOffset, view: DataViewOffset): void {
 }
 
 /** Partially fetch the values of a {@link TagOffset} and return the value for the offset */
-export async function getValueAt(tiff: CogTiff, tag: TagOffset, index: number): Promise<number> {
+export async function getValueAt(tiff: Tiff, tag: TagOffset, index: number): Promise<number> {
   if (index > tag.count || index < 0) throw new Error('TagOffset: out of bounds :' + index);
   if (tag.value[index] != null) return tag.value[index];
   const dataTypeSize = getTiffTagSize(tag.dataType);

@@ -3,7 +3,7 @@ import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { fsa } from '@chunkd/fs';
-import { CogTiff, TiffMimeType } from '@cogeotiff/core';
+import { Tiff, TiffMimeType } from '@cogeotiff/core';
 import { log } from '@linzjs/tracing';
 import { command, number, option, optional, restPositionals } from 'cmd-ts';
 import pLimit from 'p-limit';
@@ -59,7 +59,7 @@ export const commandDump = command({
       if (path == null) continue;
       if (path.protocol === 's3:') await ensureS3fs();
       const source = fsa.source(path);
-      const tiff = await new CogTiff(source).init();
+      const tiff = await new Tiff(source).init();
       const img = tiff.images[args.image];
       if (!img.isTiled()) throw Error(`Tiff: ${path.href} file is not tiled.`);
       const output = new URL(`${basename(path.href)}-i${args.image}/`, args.output ?? cwd);
@@ -71,7 +71,7 @@ export const commandDump = command({
   },
 });
 
-async function dumpBounds(tiff: CogTiff, target: URL, index: number): Promise<void> {
+async function dumpBounds(tiff: Tiff, target: URL, index: number): Promise<void> {
   const img = tiff.images[index];
   if (!img.isTiled() || !img.isGeoLocated) return;
 
@@ -115,7 +115,7 @@ async function dumpBounds(tiff: CogTiff, target: URL, index: number): Promise<vo
   await fs.writeFile(new URL(`i${index}.bounds.geojson`, target), JSON.stringify(featureCollection, null, 2));
 }
 
-async function dumpTiles(tiff: CogTiff, target: URL, index: number, logger: typeof log): Promise<number> {
+async function dumpTiles(tiff: Tiff, target: URL, index: number, logger: typeof log): Promise<number> {
   const promises: Promise<string | null>[] = [];
   const img = tiff.images[index];
   if (!img.isTiled()) return 0;
