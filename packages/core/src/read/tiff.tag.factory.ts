@@ -1,4 +1,4 @@
-import { CogTiff } from '../cog.tiff.js';
+import { CogTiff } from '../tiff.js';
 import { TiffTag } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 import { getUint, getUint64 } from '../util/bytes.js';

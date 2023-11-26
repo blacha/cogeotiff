@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises';
 
-import { CogTiff } from '../cog.tiff.js';
+import { CogTiff } from '../tiff.js';
 import { TiffTag } from '../index.js';
 import { SourceMemory } from './source.memory.js';
 

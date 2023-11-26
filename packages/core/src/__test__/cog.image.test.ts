@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { SourceMemory } from '../__benchmark__/source.memory.js';
-import { CogTiff } from '../cog.tiff.js';
+import { CogTiff } from '../tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
 import { ByteSize } from '../util/bytes.js';
 

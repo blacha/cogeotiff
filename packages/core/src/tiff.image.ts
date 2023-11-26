@@ -1,4 +1,4 @@
-import { CogTiff } from './cog.tiff.js';
+import { CogTiff } from './tiff.js';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
 import { SubFileType, TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';

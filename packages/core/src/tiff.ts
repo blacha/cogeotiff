@@ -1,4 +1,4 @@
-import { CogTiffImage } from './cog.tiff.image.js';
+import { CogTiffImage } from './tiff.image.js';
 import { TiffEndian } from './const/tiff.endian.js';
 import { TiffTag } from './const/tiff.tag.id.js';
 import { TiffVersion } from './const/tiff.version.js';
