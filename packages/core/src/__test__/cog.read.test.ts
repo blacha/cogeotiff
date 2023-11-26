@@ -82,7 +82,7 @@ describe('CogRead', () => {
     assert.equal(im.isTiled(), false);
 
     // 32 bit float DEM
-    assert.deepEqual(im.value(TiffTag.BitsPerSample), 32);
+    assert.deepEqual(im.value(TiffTag.BitsPerSample), [32]);
     assert.equal(im.value(TiffTag.SampleFormat), SampleFormat.Float);
     assert.equal(im.value(TiffTag.Photometric), Photometric.MinIsBlack);
 

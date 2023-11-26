@@ -369,8 +369,7 @@ export interface TiffTagType {
   [TiffTag.ImageHeight]: number;
   [TiffTag.ImageWidth]: number;
   [TiffTag.SubFileType]: SubFileType;
-  /** Number if only one band present */
-  [TiffTag.BitsPerSample]: number[] | number;
+  [TiffTag.BitsPerSample]: number[];
   [TiffTag.Compression]: Compression;
   [TiffTag.OldSubFileType]: OldSubFileType;
   [TiffTag.Photometric]: Photometric;
