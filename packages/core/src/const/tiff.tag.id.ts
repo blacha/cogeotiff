@@ -156,6 +156,8 @@ export enum TiffTag {
   /**
    * Number of bits per channel
    *
+   * if only one band is present it is a number not a number[]
+   *
    * @example
    * ```typescript
    * [8,8,8] // 8 bit RGB
@@ -363,19 +365,24 @@ export interface TiffTagType {
   [TiffTag.ImageHeight]: number;
   [TiffTag.ImageWidth]: number;
   [TiffTag.SubFileType]: SubFileType;
-  [TiffTag.BitsPerSample]: number[];
+  /** Number if only one band present */
+  [TiffTag.BitsPerSample]: number[] | number;
   [TiffTag.Compression]: Compression;
   [TiffTag.OldSubFileType]: OldSubFileType;
   [TiffTag.Photometric]: Photometric;
 
   [TiffTag.TileWidth]: number;
   [TiffTag.TileHeight]: number;
-  [TiffTag.TileOffsets]: number[];
-  [TiffTag.TileByteCounts]: number[];
+  /** Will be number if only one tile is present  */
+  [TiffTag.TileOffsets]: number[] | number;
+  /** Will be number if only one tile is present  */
+  [TiffTag.TileByteCounts]: number[] | number;
   [TiffTag.JpegTables]: number[];
 
-  [TiffTag.StripByteCounts]: number[];
-  [TiffTag.StripOffsets]: number[];
+  /** Will be number if only one strip is present  */
+  [TiffTag.StripByteCounts]: number[] | number;
+  /** Will be number if only one strip is present  */
+  [TiffTag.StripOffsets]: number[] | number;
 
   [TiffTag.SampleFormat]: SampleFormat;
   [TiffTag.GdalMetadata]: string;
@@ -383,8 +390,8 @@ export interface TiffTagType {
   [TiffTag.ModelPixelScale]: number[];
   [TiffTag.ModelTiePoint]: number[];
   [TiffTag.ModelTransformation]: number[];
-  [TiffTag.GeoKeyDirectory]: number[];
-  [TiffTag.GeoDoubleParams]: number[];
+  [TiffTag.GeoKeyDirectory]: number[] | number;
+  [TiffTag.GeoDoubleParams]: number[] | number;
   [TiffTag.GeoAsciiParams]: string;
 
   [TiffTag.PlanarConfiguration]: PlanarConfiguration;
