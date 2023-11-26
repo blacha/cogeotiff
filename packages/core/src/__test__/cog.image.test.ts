@@ -134,10 +134,10 @@ describe('Cog.Sparse', () => {
     const { tileCount } = img;
     assert.deepEqual(tileCount, { x: 2, y: 2 });
 
-    assert.equal(img.tag(TiffTag.SamplesPerPixel), 4); // 4 bands
-    assert.deepEqual(img.tag(TiffTag.BitsPerSample), [8, 8, 8, 8]);
-    assert.equal(img.tag(TiffTag.Photometric), Photometric.Rgb);
-    assert.equal(img.tag(TiffTag.GdalNoData), null);
+    assert.equal(img.value(TiffTag.SamplesPerPixel), 4); // 4 bands
+    assert.deepEqual(img.value(TiffTag.BitsPerSample), [8, 8, 8, 8]);
+    assert.equal(img.value(TiffTag.Photometric), Photometric.Rgb);
+    assert.equal(img.value(TiffTag.GdalNoData), null);
 
     for (let x = 0; x < tileCount.x; x++) {
       for (let y = 0; y < tileCount.y; y++) {

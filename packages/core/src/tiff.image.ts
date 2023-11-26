@@ -104,14 +104,13 @@ export class TiffImage {
    *
    * @returns value if loaded, null otherwise
    */
-  tag<T extends keyof TiffTagType>(tag: T): TiffTagType[T] | null {
+  value<T extends keyof TiffTagType>(tag: T): TiffTagType[T] | null {
     const sourceTag = this.tags.get(tag);
     if (sourceTag == null) return null;
     if (sourceTag.type === 'offset' && sourceTag.isLoaded === false) return null;
     // TODO would be good to type check this
     return sourceTag.value as TiffTagType[T];
   }
-  value = this.tag;
 
   /**
    * Does the tag exist
@@ -158,11 +157,10 @@ export class TiffImage {
    * ```
    * @throws if {@link loadGeoTiffTags} has not been called
    */
-  tagGeo<T extends keyof TiffTagGeoType>(tag: T): TiffTagGeoType[T] | null {
+  valueGeo<T extends keyof TiffTagGeoType>(tag: T): TiffTagGeoType[T] | null {
     if (this.isGeoTagsLoaded === false) throw new Error('loadGeoTiffTags() has not been called');
     return this.tagsGeo.get(tag) as TiffTagGeoType[T];
   }
-  valueGeo = this.tagGeo;
 
   /**
    * Load and parse the GDAL_NODATA Tifftag
@@ -234,18 +232,18 @@ export class TiffImage {
    * @returns origin point of the image
    */
   get origin(): [number, number, number] {
-    const tiePoints = this.tag(TiffTag.ModelTiePoint);
+    const tiePoints = this.value(TiffTag.ModelTiePoint);
     if (tiePoints != null && tiePoints.length === 6) {
       return [tiePoints[3], tiePoints[4], tiePoints[5]];
     }
 
-    const modelTransformation = this.tag(TiffTag.ModelTransformation);
+    const modelTransformation = this.value(TiffTag.ModelTransformation);
     if (modelTransformation != null) {
       return [modelTransformation[3], modelTransformation[7], modelTransformation[11]];
     }
 
     // If this is a sub image, use the origin from the top level image
-    if (this.tag(TiffTag.SubFileType) === SubFileType.ReducedImage && this.id !== 0) {
+    if (this.value(TiffTag.SubFileType) === SubFileType.ReducedImage && this.id !== 0) {
       return this.tiff.images[0].origin;
     }
 
@@ -254,7 +252,8 @@ export class TiffImage {
 
   /** Is there enough geo information on this image to figure out where its actually located */
   get isGeoLocated(): boolean {
-    const isImageLocated = this.tag(TiffTag.ModelPixelScale) != null || this.tag(TiffTag.ModelTransformation) != null;
+    const isImageLocated =
+      this.value(TiffTag.ModelPixelScale) != null || this.value(TiffTag.ModelTransformation) != null;
     if (isImageLocated) return true;
     // If this is a sub image, use the isGeoLocated from the top level image
     if (this.isSubImage && this.id !== 0) return this.tiff.images[0].isGeoLocated;
@@ -267,11 +266,11 @@ export class TiffImage {
    * @returns [x,y,z] pixel scale
    */
   get resolution(): [number, number, number] {
-    const modelPixelScale: number[] | null = this.tag(TiffTag.ModelPixelScale);
+    const modelPixelScale: number[] | null = this.value(TiffTag.ModelPixelScale);
     if (modelPixelScale != null) {
       return [modelPixelScale[0], -modelPixelScale[1], modelPixelScale[2]];
     }
-    const modelTransformation: number[] | null = this.tag(TiffTag.ModelTransformation);
+    const modelTransformation: number[] | null = this.value(TiffTag.ModelTransformation);
     if (modelTransformation != null) {
       return [modelTransformation[0], modelTransformation[5], modelTransformation[10]];
     }
@@ -295,7 +294,7 @@ export class TiffImage {
    * @returns true if SubFileType is Reduces image, false otherwise
    */
   get isSubImage(): boolean {
-    return this.tag(TiffTag.SubFileType) === SubFileType.ReducedImage;
+    return this.value(TiffTag.SubFileType) === SubFileType.ReducedImage;
   }
 
   /**
@@ -329,7 +328,7 @@ export class TiffImage {
    * @returns Compression type eg webp
    */
   get compression(): TiffMimeType | null {
-    const compression = this.tag(TiffTag.Compression);
+    const compression = this.value(TiffTag.Compression);
     if (compression == null) return null;
     return TiffCompression[compression];
   }
@@ -342,7 +341,7 @@ export class TiffImage {
    * @returns EPSG Code if it exists
    */
   get epsg(): number | null {
-    const projection = this.tagGeo(TiffTagGeo.ProjectionGeoKey) ?? this.tagGeo(TiffTagGeo.ProjectedCRSGeoKey);
+    const projection = this.valueGeo(TiffTagGeo.ProjectionGeoKey) ?? this.valueGeo(TiffTagGeo.ProjectedCRSGeoKey);
     if (projection === InvalidProjectionCode) return null;
     return projection;
   }
@@ -353,8 +352,8 @@ export class TiffImage {
    * @returns Size in pixels
    */
   get size(): Size {
-    const width = this.tag(TiffTag.ImageWidth);
-    const height = this.tag(TiffTag.ImageWidth);
+    const width = this.value(TiffTag.ImageWidth);
+    const height = this.value(TiffTag.ImageWidth);
     if (width == null || height == null) throw new Error('Tiff has no height or width');
 
     return { width, height };
@@ -364,15 +363,15 @@ export class TiffImage {
    * Determine if this image is tiled
    */
   public isTiled(): boolean {
-    return this.tag(TiffTag.TileWidth) !== null;
+    return this.value(TiffTag.TileWidth) !== null;
   }
 
   /**
    * Get size of individual tiles
    */
   get tileSize(): TiffImageTileSize {
-    const width = this.tag(TiffTag.TileWidth);
-    const height = this.tag(TiffTag.TileHeight);
+    const width = this.value(TiffTag.TileWidth);
+    const height = this.value(TiffTag.TileHeight);
     if (width == null || height == null) throw new Error('Tiff is not tiled');
     return { width, height };
   }
@@ -448,7 +447,7 @@ export class TiffImage {
   private getJpegHeader(bytes: ArrayBuffer): ArrayBuffer {
     // Both the JPEGTable and the Bytes with have the start of image and end of image markers
     // StartOfImage 0xffd8 EndOfImage 0xffd9
-    const tables = this.tag(TiffTag.JpegTables);
+    const tables = this.value(TiffTag.JpegTables);
     if (tables == null) throw new Error('Unable to find Jpeg header');
 
     // Remove EndOfImage marker
@@ -465,7 +464,7 @@ export class TiffImage {
     byteCount: number,
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
     const mimeType = this.compression;
-    if (mimeType == null) throw new Error('Unsupported compression: ' + this.tag(TiffTag.Compression));
+    if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
     if (byteCount === 0) return null;
 
     const bytes = await this.tiff.source.fetch(offset, byteCount);
@@ -490,7 +489,7 @@ export class TiffImage {
     const tiles = this.tileSize;
 
     if (tiles == null) throw new Error('Tiff is not tiled');
-    if (mimeType == null) throw new Error('Unsupported compression: ' + this.tag(TiffTag.Compression));
+    if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
 
     // TODO support GhostOptionTileOrder
     const nyTiles = Math.ceil(size.height / tiles.height);
