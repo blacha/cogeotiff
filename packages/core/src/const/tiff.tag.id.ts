@@ -720,7 +720,7 @@ export const TiffTagValueLookup: Partial<Record<number, Record<number, string>>>
  *
  * Taken from libegotiff
  */
-export enum GeoAngularUnits {
+export enum AngularUnit {
   Radian = 9101,
   Degree = 9102,
   ArcMinute = 9103,
@@ -735,7 +735,7 @@ export enum GeoAngularUnits {
  *
  * Taken from libegotiff
  */
-export enum GeoLinearUnits {
+export enum LinearUnit {
   Metre = 9001,
   Foot = 9002,
   FootUsSurvey = 9003,
@@ -757,9 +757,9 @@ export enum GeoLinearUnits {
 export const TiffTagGeoValueLookup: Partial<Record<number, Record<number, string>>> = {
   [TiffTagGeo.GTRasterTypeGeoKey]: RasterTypeKey,
   [TiffTagGeo.GTModelTypeGeoKey]: ModelTypeCode,
-  [TiffTagGeo.GeogAngularUnitsGeoKey]: GeoAngularUnits,
-  [TiffTagGeo.ProjLinearUnitsGeoKey]: GeoLinearUnits,
-  [TiffTagGeo.VerticalUnitsGeoKey]: GeoLinearUnits,
+  [TiffTagGeo.GeogAngularUnitsGeoKey]: AngularUnit,
+  [TiffTagGeo.ProjLinearUnitsGeoKey]: LinearUnit,
+  [TiffTagGeo.VerticalUnitsGeoKey]: LinearUnit,
 };
 
 /**
