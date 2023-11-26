@@ -172,7 +172,8 @@ export enum TiffTag {
    *
    * @example
    * ```typescript
-   * 1 // SampleFormat.Uint
+   * [1] // SampleFormat.Uint
+   * [1,1,1,1] // 4 band Uint
    * ```
    */
   SampleFormat = 339,
@@ -798,6 +799,7 @@ export const TiffTagConvertArray: Partial<Record<TiffTag, boolean>> = {
   [TiffTag.StripOffsets]: true,
   [TiffTag.StripByteCounts]: true,
   [TiffTag.BitsPerSample]: true,
+  [TiffTag.SampleFormat]: true,
   [TiffTag.GeoKeyDirectory]: true,
   [TiffTag.GeoDoubleParams]: true,
 };
