@@ -82,15 +82,15 @@ describe('CogRead', () => {
     assert.equal(im.isTiled(), false);
 
     // 32 bit float DEM
-    assert.deepEqual(im.value(TiffTag.BitsPerSample), [32]);
-    assert.equal(im.value(TiffTag.SampleFormat), SampleFormat.Float);
-    assert.equal(im.value(TiffTag.Photometric), Photometric.MinIsBlack);
+    assert.deepEqual(im.tag(TiffTag.BitsPerSample), [32]);
+    assert.equal(im.tag(TiffTag.SampleFormat), SampleFormat.Float);
+    assert.equal(im.tag(TiffTag.Photometric), Photometric.MinIsBlack);
 
-    assert.equal(im.value(TiffTag.GdalNoData), '-9999');
+    assert.equal(im.tag(TiffTag.GdalNoData), '-9999');
     assert.equal(im.noData, -9999);
 
-    assert.equal(im.tagsGeo.get(TiffTagGeo.GTCitationGeoKey), 'NZGD2000 / New Zealand Transverse Mercator 2000');
-    assert.equal(im.tagsGeo.get(TiffTagGeo.GeodeticCitationGeoKey), 'NZGD2000');
+    assert.equal(im.tagGeo(TiffTagGeo.GTCitationGeoKey), 'NZGD2000 / New Zealand Transverse Mercator 2000');
+    assert.equal(im.tagGeo(TiffTagGeo.GeodeticCitationGeoKey), 'NZGD2000');
     assert.deepEqual(await im.fetch(TiffTag.StripByteCounts), [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
   });
 
@@ -106,7 +106,7 @@ describe('CogRead', () => {
     assert.equal(im.isGeoTagsLoaded, true);
     assert.equal(im.epsg, 2193);
     assert.equal(im.compression, TiffMimeType.Lzw);
-    assert.deepEqual(im.value(TiffTag.BitsPerSample), [8, 8, 8, 8]);
+    assert.deepEqual(im.tag(TiffTag.BitsPerSample), [8, 8, 8, 8]);
 
     const geoTags = [...im.tagsGeo.keys()].map((key) => TiffTagGeo[key]);
     assert.deepEqual(geoTags, [
@@ -125,6 +125,6 @@ describe('CogRead', () => {
       'ProjLinearUnitsGeoKey',
     ]);
 
-    assert.deepEqual(im.tagsGeo.get(TiffTagGeo.GeogTOWGS84GeoKey), [0, 0, 0, 0, 0, 0, 0]);
+    assert.deepEqual(im.tagGeo(TiffTagGeo.GeogTOWGS84GeoKey), [0, 0, 0, 0, 0, 0, 0]);
   });
 });

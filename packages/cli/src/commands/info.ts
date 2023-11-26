@@ -170,7 +170,7 @@ TiffImageInfoTable.add({
  * @param img
  */
 function parseGdalMetadata(img: TiffImage): string[] | null {
-  const metadata = img.value(TiffTag.GdalMetadata);
+  const metadata = img.tag(TiffTag.GdalMetadata);
   if (typeof metadata !== 'string') return null;
   if (!metadata.startsWith('<GDALMetadata>')) return null;
   return metadata
