@@ -1,3 +1,6 @@
+import * as assert from 'node:assert';
+import { describe, it } from 'node:test';
+
 import {
   AngularUnit,
   Compression,
@@ -10,16 +13,11 @@ import {
   SampleFormat,
   SubFileType,
 } from '@cogeotiff/core';
-import * as assert from 'node:assert';
-import { describe, it } from 'node:test';
+
 // Ensure the tag constants are exported
-
-Photometric.Rgb;
-
 describe('Exports', () => {
   it('should export constants', () => {
     assert.equal(Photometric.Rgb, 2);
-
     assert.equal(SampleFormat.Float, 3);
     assert.equal(RasterTypeKey.PixelIsArea, 1);
     assert.equal(SubFileType.ReducedImage, 1);

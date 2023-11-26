@@ -13,14 +13,14 @@ export type { BoundingBox, Point, Size, Vector } from './vector.js';
 
 // Tag value constants
 export {
-  PlanarConfiguration,
-  Photometric,
-  SampleFormat,
-  Orientation,
-  SubFileType,
-  OldSubFileType,
-  RasterTypeKey,
+  AngularUnit,
   Compression,
   LinearUnit,
-  AngularUnit,
+  OldSubFileType,
+  Orientation,
+  Photometric,
+  PlanarConfiguration,
+  RasterTypeKey,
+  SampleFormat,
+  SubFileType,
 } from './const/tiff.tag.id.js';
