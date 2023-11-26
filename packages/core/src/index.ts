@@ -10,3 +10,17 @@ export { TiffImage } from './tiff.image.js';
 export { Tiff } from './tiff.js';
 export { toHex } from './util/util.hex.js';
 export type { BoundingBox, Point, Size, Vector } from './vector.js';
+
+// Tag value constants
+export {
+  PlanarConfiguration,
+  Photometric,
+  SampleFormat,
+  Orientation,
+  SubFileType,
+  OldSubFileType,
+  RasterTypeKey,
+  Compression,
+  LinearUnit,
+  AngularUnit,
+} from './const/tiff.tag.id.js';
