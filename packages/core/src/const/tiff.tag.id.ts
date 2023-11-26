@@ -156,12 +156,10 @@ export enum TiffTag {
   /**
    * Number of bits per channel
    *
-   * if only one band is present it is a number not a number[]
-   *
    * @example
    * ```typescript
    * [8,8,8] // 8 bit RGB
-   * 16 // 16bit
+   * [16] // 16bit
    * ```
    */
   BitsPerSample = 258,
