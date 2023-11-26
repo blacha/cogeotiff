@@ -336,14 +336,16 @@ export class TiffImage {
   /**
    * Attempt to read the EPSG Code from TiffGeoTags
    *
-   * looks at both TiffTagGeo.ProjectionGeoKey and TiffTagGeo.ProjectedCRSGeoKey
+   * Looks at both TiffTagGeo.ProjectionGeoKey and TiffTagGeo.ProjectedCRSGeoKey
    *
-   * @returns EPSG Code if it exists
+   * @returns EPSG Code if it exists, null if it is invalid or non existent
    */
   get epsg(): number | null {
-    const projection = this.valueGeo(TiffTagGeo.ProjectionGeoKey) ?? this.valueGeo(TiffTagGeo.ProjectedCRSGeoKey);
-    if (projection === InvalidProjectionCode) return null;
-    return projection;
+    let projection = this.valueGeo(TiffTagGeo.ProjectionGeoKey);
+    if (projection != null && projection !== InvalidProjectionCode) return projection;
+    projection = this.valueGeo(TiffTagGeo.ProjectedCRSGeoKey);
+    if (projection != null && projection !== InvalidProjectionCode) return projection;
+    return null;
   }
 
   /**
