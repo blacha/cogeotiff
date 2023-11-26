@@ -163,6 +163,19 @@ export class TiffImage {
   }
 
   /**
+   * Load and parse the GDAL_NODATA Tifftag
+   *
+   * @throws if the tag is not loaded
+   * @returns null if the tag does not exist
+   */
+  get noData(): number | null {
+    const tag = this.tags.get(TiffTag.GdalNoData);
+    if (tag == null) return null;
+    if (tag.value) return Number(tag.value);
+    throw new Error('GdalNoData tag is not loaded');
+  }
+
+  /**
    * Load and unpack the GeoKeyDirectory
    *
    * @see {TiffTag.GeoKeyDirectory}

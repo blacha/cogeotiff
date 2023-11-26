@@ -86,6 +86,9 @@ describe('CogRead', () => {
     assert.equal(im.value(TiffTag.SampleFormat), SampleFormat.Float);
     assert.equal(im.value(TiffTag.Photometric), Photometric.MinIsBlack);
 
+    assert.equal(im.value(TiffTag.GdalNoData), '-9999');
+    assert.equal(im.noData, -9999);
+
     assert.equal(im.tagsGeo.get(TiffTagGeo.GTCitationGeoKey), 'NZGD2000 / New Zealand Transverse Mercator 2000');
     assert.equal(im.tagsGeo.get(TiffTagGeo.GeodeticCitationGeoKey), 'NZGD2000');
     assert.deepEqual(await im.fetch(TiffTag.StripByteCounts), [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
