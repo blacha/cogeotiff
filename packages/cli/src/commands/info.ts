@@ -1,6 +1,16 @@
 import { fsa } from '@chunkd/fs';
-import { CogTiff, Tag, TagOffset, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
-import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
+import {
+  Tag,
+  TagOffset,
+  Tiff,
+  TiffImage,
+  TiffTag,
+  TiffTagGeo,
+  TiffTagGeoValueLookup,
+  TiffTagValueLookup,
+  TiffTagValueType,
+  TiffVersion,
+} from '@cogeotiff/core';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
 
@@ -35,7 +45,7 @@ export const commandInfo = command({
       FetchLog.reset();
 
       const source = fsa.source(path);
-      const tiff = await new CogTiff(source).init();
+      const tiff = await new Tiff(source).init();
 
       const header = [
         { key: 'Tiff type', value: `${TiffVersion[tiff.version]} (v${String(tiff.version)})` },
@@ -113,7 +123,7 @@ export const commandInfo = command({
   },
 });
 
-const TiffImageInfoTable = new CliTable<CogTiffImage>();
+const TiffImageInfoTable = new CliTable<TiffImage>();
 TiffImageInfoTable.add({ name: 'Id', width: 4, get: (_i, index) => String(index) });
 TiffImageInfoTable.add({ name: 'Size', width: 20, get: (i) => `${i.size.width}x${i.size.height}` });
 TiffImageInfoTable.add({
@@ -159,7 +169,7 @@ TiffImageInfoTable.add({
  * TODO using a XML Parser will make this even better
  * @param img
  */
-function parseGdalMetadata(img: CogTiffImage): string[] | null {
+function parseGdalMetadata(img: TiffImage): string[] | null {
   const metadata = img.value(TiffTag.GdalMetadata);
   if (typeof metadata !== 'string') return null;
   if (!metadata.startsWith('<GDALMetadata>')) return null;
@@ -174,27 +184,39 @@ function parseGdalMetadata(img: CogTiffImage): string[] | null {
 function formatTag(tag: Tag): { key: string; value: string } {
   const tagName = TiffTag[tag.id];
   const tagDebug = `(${TiffTagValueType[tag.dataType]}${tag.count > 1 ? ' x' + tag.count : ''}`;
-  const key = `${c.dim(toHex(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(50, ' ');
+  const key = `${c.dim(String(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(52, ' ');
 
+  let complexType = '';
   // Array of values that is not a string!
   if (tag.count > 1 && tag.dataType !== TiffTagValueType.Ascii) {
     if (tag.value == null || (tag as TagOffset).isLoaded === false) {
       return { key, value: c.dim('Tag not Loaded, use --fetch-tags to force load') };
     }
     const val = [...(tag.value as number[])]; // Ensure the value is not a TypedArray
-    return { key, value: val.length > 25 ? val.slice(0, 25).join(', ') + '...' : val.join(', ') };
+    if (TiffTagValueLookup[tag.id]) {
+      complexType = ` - ${val.map((m) => c.magenta(TiffTagValueLookup[tag.id]?.[m] ?? '?'))}`;
+    }
+    return { key, value: (val.length > 25 ? val.slice(0, 25).join(', ') + '...' : val.join(', ')) + complexType };
   }
 
   let tagString = JSON.stringify(tag.value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
-  return { key, value: tagString };
+  if (TiffTagValueLookup[tag.id]) {
+    complexType = ` - ${c.magenta(TiffTagValueLookup[tag.id]?.[tag.value as unknown as number] ?? '?')}`;
+  }
+  return { key, value: tagString + complexType };
 }
 
-function formatGeoTag(tagId: TiffTagGeo, value: string | number): { key: string; value: string } {
+function formatGeoTag(tagId: TiffTagGeo, value: string | number | number[]): { key: string; value: string } {
   const tagName = TiffTagGeo[tagId];
-  const key = `${c.dim(toHex(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
+  const key = `${c.dim(String(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
+
+  let complexType = '';
+  if (TiffTagGeoValueLookup[tagId]) {
+    complexType = ` - ${c.magenta(TiffTagGeoValueLookup[tagId]?.[value as unknown as number] ?? '?')}`;
+  }
 
   let tagString = JSON.stringify(value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
-  return { key, value: tagString };
+  return { key, value: tagString + complexType };
 }

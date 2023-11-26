@@ -1,7 +1,7 @@
-import { CogTiff } from '@cogeotiff/core';
+import { Tiff } from '@cogeotiff/core';
 
 /** Loads a single tile from a COG and renders it as a <img /> element */
-export async function loadSingleTile(tiff: CogTiff): Promise<HTMLElement> {
+export async function loadSingleTile(tiff: Tiff): Promise<HTMLElement> {
   const startTime = performance.now();
   const img = tiff.images[tiff.images.length - 1];
   const tile = await img.getTile(0, 0);

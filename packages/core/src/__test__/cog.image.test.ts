@@ -5,8 +5,9 @@ import { promises as fs } from 'fs';
 
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { SourceMemory } from '../__benchmark__/source.memory.js';
-import { CogTiff } from '../cog.tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
+import { Photometric, TiffTag } from '../const/tiff.tag.id.js';
+import { Tiff } from '../tiff.js';
 import { ByteSize } from '../util/bytes.js';
 
 // 900913 properties.
@@ -17,9 +18,9 @@ function getResolution(zoom: number): number {
   return InitialResolution / 2 ** zoom;
 }
 
-describe('CogTiled', () => {
+describe('TiffTiled', () => {
   const cogSourceFile = new TestFileSource(new URL('../../data/rgba8_tiled.tiff', import.meta.url));
-  const cog = new CogTiff(cogSourceFile);
+  const cog = new Tiff(cogSourceFile);
 
   beforeEach(() => cog.init());
 
@@ -87,7 +88,7 @@ describe('Cog.Big', () => {
   it('should support reading from memory', async () => {
     const fullSource = new TestFileSource(new URL('../../data/sparse.tiff', import.meta.url));
 
-    const cog = new CogTiff(fullSource);
+    const cog = new Tiff(fullSource);
     await cog.init();
 
     const [firstImage] = cog.images;
@@ -101,7 +102,7 @@ describe('Cog.Big', () => {
   it('should read using a memory source', async () => {
     const bytes = await fs.readFile(new URL('../../data/sparse.tiff', import.meta.url));
     const source = new SourceMemory(bytes.buffer);
-    const cog = new CogTiff(source);
+    const cog = new Tiff(source);
     await cog.init();
 
     const [firstImage] = cog.images;
@@ -115,7 +116,7 @@ describe('Cog.Big', () => {
 
 describe('Cog.Sparse', () => {
   const cogSourceFile = new TestFileSource(new URL('../../data/sparse.tiff', import.meta.url));
-  const cog = new CogTiff(cogSourceFile);
+  const cog = new Tiff(cogSourceFile);
 
   it('should read metadata', async () => {
     await cog.init();
@@ -132,6 +133,11 @@ describe('Cog.Sparse', () => {
 
     const { tileCount } = img;
     assert.deepEqual(tileCount, { x: 2, y: 2 });
+
+    assert.equal(img.value(TiffTag.SamplesPerPixel), 4); // 4 bands
+    assert.deepEqual(img.value(TiffTag.BitsPerSample), [8, 8, 8, 8]);
+    assert.equal(img.value(TiffTag.Photometric), Photometric.Rgb);
+    assert.equal(img.value(TiffTag.GdalNoData), null);
 
     for (let x = 0; x < tileCount.x; x++) {
       for (let y = 0; y < tileCount.y; y++) {
@@ -164,7 +170,7 @@ describe('Cog.Sparse', () => {
 
 describe('CogStrip', () => {
   const cogSourceFile = new TestFileSource(new URL('../../data/rgba8_strip.tiff', import.meta.url));
-  const cog = new CogTiff(cogSourceFile);
+  const cog = new Tiff(cogSourceFile);
 
   beforeEach(() => cog.init());
 

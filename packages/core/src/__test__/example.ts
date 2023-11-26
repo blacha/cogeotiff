@@ -1,10 +1,10 @@
 import { SourceHttp } from '@chunkd/source-http';
 
-import { CogTiff } from '../index.js';
+import { Tiff } from '../index.js';
 
 async function main(): Promise<void> {
   const source = new SourceHttp('https://example.com/cog.tif');
-  const tiff = await CogTiff.create(source);
+  const tiff = await Tiff.create(source);
 
   /** Load a specific tile from a specific image */
   const tile = await tiff.images[5].getTile(2, 2);

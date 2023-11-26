@@ -1,11 +1,11 @@
 import { promises as fs } from 'node:fs';
 
-import { CogTiff, TiffMimeType } from '@cogeotiff/core';
+import { Tiff, TiffMimeType } from '@cogeotiff/core';
 import { log } from '@linzjs/tracing';
 
 const FileExtension: Record<string, string> = {
   [TiffMimeType.Jpeg]: 'jpeg',
-  [TiffMimeType.Jp2]: 'jp2',
+  [TiffMimeType.Jp2000]: 'jp2',
   [TiffMimeType.Webp]: 'webp',
   [TiffMimeType.Lzw]: 'lzw',
   [TiffMimeType.Deflate]: 'deflate',
@@ -34,7 +34,7 @@ export function getTileName(mimeType: string, index: number, x: number, y: numbe
 }
 
 export async function writeTile(
-  tiff: CogTiff,
+  tiff: Tiff,
   x: number,
   y: number,
   index: number,

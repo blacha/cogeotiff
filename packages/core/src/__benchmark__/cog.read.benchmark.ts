@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 
-import { CogTiff } from '../cog.tiff.js';
 import { TiffTag } from '../index.js';
+import { Tiff } from '../tiff.js';
 import { SourceMemory } from './source.memory.js';
 
 // console.log = console.trace;
@@ -10,10 +10,10 @@ async function main(): Promise<void> {
   const buf = await readFile(process.argv[process.argv.length - 1]);
   const source = new SourceMemory(buf);
   for (let i = 0; i < 5_000; i++) {
-    performance.mark('cog:init');
-    const tiff = new CogTiff(source);
+    performance.mark('tiff:init');
+    const tiff = new Tiff(source);
     await tiff.init();
-    performance.mark('cog:init:done');
+    performance.mark('tiff:init:done');
 
     // 6 images
     for (const img of tiff.images) await img.getTile(0, 0);
