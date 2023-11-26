@@ -1,8 +1,6 @@
 import { CogTiff } from './cog.tiff.js';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
-// import { TiffTagGeo, TiffTagGeoType } from './const/tiff.tag.id.geo.js';
 import { SubFileType, TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
-// import { TiffTagValueType } from './const/tiff.tag.value.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
 import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
 import { getUint } from './util/bytes.js';
@@ -37,9 +35,6 @@ export const ImportantTags = new Set([
   TiffTag.TileOffsets,
 ]);
 
-// const tags:  = {} as any;
-
-// tags;
 /**
  * Size of a individual tile
  */
@@ -117,6 +112,17 @@ export class CogTiffImage {
     return sourceTag.value as TiffTagType[T];
   }
 
+  /**
+   * Does the tag exist
+   *
+   * @example
+   * ```typescript
+   * img.has(TiffTag.ImageWidth) // true
+   * ```
+   *
+   * @param tag Tag to check
+   * @returns true if the tag exists, false otherwise
+   */
   has<T extends keyof TiffTagType>(tag: T): boolean {
     return this.tags.has(tag);
   }
@@ -125,6 +131,11 @@ export class CogTiffImage {
    * Load a tag.
    *
    * If it is not currently loaded, fetch the required data for the tag.
+   *
+   * @example
+   * ```typescript
+   * img.fetch(TiffTag.ImageWidth) // 512 (px)
+   * ```
    *
    * @param tag tag to fetch
    */

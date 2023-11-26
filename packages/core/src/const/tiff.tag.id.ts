@@ -42,11 +42,11 @@ export enum RasterTypeKey {
 }
 
 export enum ModelTypeCode {
-  /* Projection Coordinate System         */
+  /** Projection Coordinate System */
   Projected = 1,
-  /* Geographic latitude-longitude System */
+  /** Geographic latitude-longitude System */
   Geographic = 2,
-  /* Geocentric (X,Y,Z) Coordinate System */
+  /** Geocentric (X,Y,Z) Coordinate System */
   Geocentric = 3,
 }
 
@@ -77,9 +77,9 @@ export enum Compression {
 }
 
 export enum PlanarConfiguration {
-  /* single image plane */
+  /** single image plane */
   Contig = 1,
-  /* separate planes of data */
+  /** separate planes of data */
   Separate = 2,
 }
 
@@ -161,15 +161,21 @@ export enum TiffTag {
    * @example
    * ```typescript
    * [8,8,8] // 8 bit RGB
-   * 16 // 16bit uint
+   * 16 // 16bit
    * ```
    */
   BitsPerSample = 258,
 
   /**
-   *  Data type of the image
    *
-   * {@link SampleFormat}
+   * Data type of the image
+   *
+   * See {@link SampleFormat}
+   *
+   * @example
+   * ```typescript
+   * 1 // uint
+   * ```
    */
   SampleFormat = 339,
 
@@ -578,7 +584,6 @@ export enum TiffTagGeo {
    */
   ProjectedCRSGeoKey = 3072,
   /**
-   *
    * ASCII reference to published documentation on the Projected  Coordinate System
    *
    * Renamed from "PCSCitationGeoKey" in OGC GeoTiff
@@ -671,7 +676,7 @@ export interface TiffTagGeoType {
   [TiffTagGeo.EllipsoidInvFlatteningGeoKey]: number;
   [TiffTagGeo.GeogAzimuthUnitsGeoKey]: number;
   [TiffTagGeo.PrimeMeridianLongitudeGeoKey]: number;
-  [TiffTagGeo.GeogTOWGS84GeoKey]: number;
+  [TiffTagGeo.GeogTOWGS84GeoKey]: number | number[];
 
   // Projected CRS Parameter Keys
   [TiffTagGeo.ProjectedCRSGeoKey]: number;

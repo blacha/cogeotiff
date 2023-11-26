@@ -1,7 +1,7 @@
 import { Compression } from './tiff.tag.id.js';
 
 /**
- * MimeType conversion for common tif image types
+ * MimeType conversion for common tif image compresson types
  */
 export enum TiffMimeType {
   None = 'application/octet-stream',
