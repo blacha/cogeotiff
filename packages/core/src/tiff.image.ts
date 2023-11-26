@@ -1,5 +1,5 @@
-import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
-import { SubFileType, TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
+import { getCompressionMimeType, TiffCompressionMimeType, TiffMimeType } from './const/tiff.mime.js';
+import { Compression, SubFileType, TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
 import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
 import { Tiff } from './tiff.js';
@@ -323,14 +323,14 @@ export class TiffImage {
   /**
    * Get the compression used by the tile
    *
-   * @see {@link TiffCompression}
+   * @see {@link TiffCompressionMimeType}
    *
    * @returns Compression type eg webp
    */
   get compression(): TiffMimeType | null {
     const compression = this.value(TiffTag.Compression);
     if (compression == null) return null;
-    return TiffCompression[compression];
+    return TiffCompressionMimeType[compression];
   }
 
   /**
@@ -444,7 +444,7 @@ export class TiffImage {
   }
 
   /** The jpeg header is stored in the IFD, read the JPEG header and adjust the byte array to include it */
-  private getJpegHeader(bytes: ArrayBuffer): ArrayBuffer {
+  getJpegHeader(bytes: ArrayBuffer): ArrayBuffer {
     // Both the JPEGTable and the Bytes with have the start of image and end of image markers
     // StartOfImage 0xffd8 EndOfImage 0xffd9
     const tables = this.value(TiffTag.JpegTables);
@@ -459,20 +459,23 @@ export class TiffImage {
   }
 
   /** Read image bytes at the given offset */
-  private async getBytes(
+  async getBytes(
     offset: number,
     byteCount: number,
-  ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
-    const mimeType = this.compression;
-    if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
+  ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     if (byteCount === 0) return null;
 
     const bytes = await this.tiff.source.fetch(offset, byteCount);
     if (bytes.byteLength < byteCount) {
       throw new Error(`Failed to fetch bytes from offset:${offset} wanted:${byteCount} got:${bytes.byteLength}`);
     }
-    if (this.compression === TiffMimeType.Jpeg) return { mimeType, bytes: this.getJpegHeader(bytes) };
-    return { mimeType, bytes };
+
+    let compression = this.value(TiffTag.Compression);
+    if (compression == null) compression = Compression.None; // No compression found default ??
+    const mimeType = getCompressionMimeType(compression) ?? TiffMimeType.None;
+
+    if (compression === Compression.Jpeg) return { mimeType, bytes: this.getJpegHeader(bytes), compression };
+    return { mimeType, bytes, compression };
   }
 
   /**
@@ -483,13 +486,14 @@ export class TiffImage {
    * @param x Tile x offset
    * @param y Tile y offset
    */
-  async getTile(x: number, y: number): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
-    const mimeType = this.compression;
+  async getTile(
+    x: number,
+    y: number,
+  ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     const size = this.size;
     const tiles = this.tileSize;
 
     if (tiles == null) throw new Error('Tiff is not tiled');
-    if (mimeType == null) throw new Error('Unsupported compression: ' + this.value(TiffTag.Compression));
 
     // TODO support GhostOptionTileOrder
     const nyTiles = Math.ceil(size.height / tiles.height);

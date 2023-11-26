@@ -16,7 +16,7 @@ export enum TiffMimeType {
   Lzma = 'application/x-lzma',
 }
 
-export const TiffCompression: Record<Compression, TiffMimeType> = {
+export const TiffCompressionMimeType: Record<Compression, TiffMimeType> = {
   [Compression.None]: TiffMimeType.None,
   [Compression.Lzw]: TiffMimeType.Lzw,
   [Compression.Jpeg6]: TiffMimeType.Jpeg,
@@ -30,3 +30,14 @@ export const TiffCompression: Record<Compression, TiffMimeType> = {
   [Compression.Webp]: TiffMimeType.Webp,
   [Compression.JpegXl]: TiffMimeType.JpegXl,
 };
+
+/**
+ * Lookup the related mimetype for a compression id
+ *
+ * @param c Compression id
+ * @returns mime type for compression
+ */
+export function getCompressionMimeType(c: Compression | null): TiffMimeType | null {
+  if (c == null) return null;
+  return TiffCompressionMimeType[c];
+}

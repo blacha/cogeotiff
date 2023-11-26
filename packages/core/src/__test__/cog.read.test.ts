@@ -127,4 +127,15 @@ describe('CogRead', () => {
 
     assert.deepEqual(im.valueGeo(TiffTagGeo.GeogTOWGS84GeoKey), [0, 0, 0, 0, 0, 0, 0]);
   });
+
+  it('should allow invalid compression', async () => {
+    const source = new TestFileSource(new URL('../../data/cog.tiff', import.meta.url));
+    const tiff = await Tiff.create(source);
+
+    // Overwrite the loaded compression type to a invalid value
+    tiff.images[0].tags.get(TiffTag.Compression)!.value = -1;
+
+    const tile = await tiff.images[0].getTile(0, 0);
+    assert.deepEqual(tile?.mimeType, 'application/octet-stream');
+  });
 });
