@@ -23,6 +23,9 @@ const cog = await Tiff.create(source);
 const img = cog.images[0];
 if (img.isTiled()) throw new Error('Tiff is not tiled');
 const tile = await img.getTile(2, 2); // Fetch a tile from a tiff x:2, y:2
+
+// All tags can be access too
+img.tag(TiffTag.GdalNoData) // "-9999"
 ```
 
 ## Command Line Interface

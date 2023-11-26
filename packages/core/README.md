@@ -36,6 +36,11 @@ if (img.isTiled()) {
 const origin = img.origin;
 /** Bounding box of the tiff */
 const bbox = img.bbox;
+
+// Tiff tags can be accessed via some helpers
+const noData = img.noData; // -9999
+const noDataTag = img.tags.get(TiffTag.GdalNoData) // Tag information
+const noDataValue = img.value(TiffTag.GdalNoData) // "-9999" (tag is stored as a string)
 ```
 
 
