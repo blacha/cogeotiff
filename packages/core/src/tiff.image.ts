@@ -134,7 +134,7 @@ export class TiffImage {
    *
    * @example
    * ```typescript
-   * img.fetch(TiffTag.ImageWidth) // 512 (px)
+   * await img.fetch(TiffTag.ImageWidth) // 512 (px)
    * ```
    *
    * @param tag tag to fetch
