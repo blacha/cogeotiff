@@ -27,6 +27,29 @@ export enum Orientation {
   LeftBottom = 8,
 }
 
+export enum RasterTypeKey {
+  /**
+   * PixelIsArea (default) a pixel is treated as an area,
+   * the raster coordinate (0,0) is the top left corner of the top left pixel.
+   */
+  PixelIsArea = 1,
+
+  /**
+   * PixelIsPoint treats pixels as point samples with empty space between the "pixel" samples.
+   * the raster coordinate (0,0) is the location of the top left raster pixel.
+   */
+  PixelIsPoint = 2,
+}
+
+export enum ModelTypeCode {
+  /* Projection Coordinate System         */
+  Projected = 1,
+  /* Geographic latitude-longitude System */
+  Geographic = 2,
+  /* Geocentric (X,Y,Z) Coordinate System */
+  Geocentric = 3,
+}
+
 /** Sub file type for tag 255 {@link TiffTag.OldSubFileType} */
 export enum OldSubFileType {
   /** Full resolution image data */
@@ -36,6 +59,7 @@ export enum OldSubFileType {
   /** One page of many */
   Page = 3,
 }
+
 /** Tiff compression types */
 export enum Compression {
   None = 1,
@@ -179,6 +203,7 @@ export enum TiffTag {
   // GDAL
   /**
    * GDAL metadata
+   * Generally a xml document with lots of information about the tiff and how it was created
    */
   GdalMetadata = 42112,
 
@@ -456,13 +481,16 @@ export enum TiffTagGeo {
    * This GeoKey defines the type of Model coordinate reference system used, to which the transformation from the raster space is made:
    *
    * {@link https://docs.ogc.org/is/19-008r4/19-008r4.html#_requirements_class_gtmodeltypegeokey}
+   *
+   * {@link ModelTypeCode}
    */
   GTModelTypeGeoKey = 1024,
   /**
-   * This requirements class establishes the Raster Space used.
-   * There are currently only two options: RasterPixelIsPoint and RasterPixelIsArea
+   * There are currently only two options: `RasterPixelIsPoint` and `RasterPixelIsArea`
    *
    * {@link https://docs.ogc.org/is/19-008r4/19-008r4.html#_requirements_class_gtrastertypegeokey}
+   *
+   * {@link RasterTypeKey}
    */
   GTRasterTypeGeoKey = 1025,
   /**
@@ -492,12 +520,13 @@ export enum TiffTagGeo {
    */
   PrimeMeridianGeoKey = 2051,
   /**
-   *
+   * Linear unit of measure
    * @example 9001 // Metre
    */
   GeogLinearUnitsGeoKey = 2052,
   GeogLinearUnitSizeGeoKey = 2053,
   /**
+   * Angular unit of measure
    *
    * @example 9102 // Degree
    */
@@ -552,7 +581,10 @@ export enum TiffTagGeo {
   ProjectedCitationGeoKey = 3073,
 
   /**
-   * projection used
+   * Specifies a map projection from the GeoTIFF CRS register or to indicate that the map projection is user-defined.
+   *
+   * {@link https://docs.ogc.org/is/19-008r4/19-008r4.html#_map_projection_geokeys}
+   *
    * @example 2193
    */
   ProjectionGeoKey = 3074,
@@ -585,13 +617,24 @@ export enum TiffTagGeo {
    * This key is provided to specify the vertical coordinate reference system from the GeoTIFF CRS register or to indicate that the CRS is a user-defined vertical coordinate reference system. The value for VerticalGeoKey should follow the
    *
    * {@link https://docs.ogc.org/is/19-008r4/19-008r4.html#_requirements_class_verticalgeokey}
+   *
+   * @example 4979
    */
   VerticalGeoKey = 4096,
+  /**
+   *
+   * @example "Geographic 3D WGS 84, Ellipsoidal height"
+   */
   VerticalCitationGeoKey = 4097,
   /**
    * vertical datum for a user-defined vertical coordinate reference system.
    */
   VerticalDatumGeoKey = 4098,
+  /**
+   * Linear Unit for vertical CRS
+   *
+   * @example 9001
+   */
   VerticalUnitsGeoKey = 4099,
 }
 
@@ -602,8 +645,8 @@ export enum TiffTagGeo {
  */
 export interface TiffTagGeoType {
   // GeoTIFF Configuration Keys
-  [TiffTagGeo.GTModelTypeGeoKey]: number;
-  [TiffTagGeo.GTRasterTypeGeoKey]: number;
+  [TiffTagGeo.GTModelTypeGeoKey]: ModelTypeCode;
+  [TiffTagGeo.GTRasterTypeGeoKey]: RasterTypeKey;
   [TiffTagGeo.GTCitationGeoKey]: string;
 
   // Geodetic CRS Parameter Keys
@@ -665,4 +708,51 @@ export const TiffTagValueLookup: Partial<Record<number, Record<number, string>>>
   [TiffTag.SampleFormat]: SampleFormat,
   [TiffTag.Photometric]: Photometric,
   [TiffTag.PlanarConfiguration]: PlanarConfiguration,
+};
+
+/**
+ * EPSG Angular Units. exist between [9100,  9199]
+ *
+ * Taken from libegotiff
+ */
+export enum GeoAngularUnits {
+  Radian = 9101,
+  Degree = 9102,
+  ArcMinute = 9103,
+  ArcDegree = 9104,
+  Grad = 9105,
+  Gon = 9106,
+  Dms = 9107,
+}
+
+/**
+ * ESPG Liner units exist between [9000,  9099]
+ *
+ * Taken from libegotiff
+ */
+export enum GeoLinearUnits {
+  Metre = 9001,
+  Foot = 9002,
+  FootUsSurvey = 9003,
+  FootModifiedAmerican = 9004,
+  FootClarke = 9005,
+  FootIndian = 9006,
+  Link = 9007,
+  LinkBenoit = 9008,
+  LinkSears = 9009,
+  ChainBenoit = 9010,
+  ChainSears = 9011,
+  YardSears = 9012,
+  YardIndian = 9013,
+  Fathom = 9014,
+  MileInternationalNautical = 9015,
+}
+
+/** Convert enum values back to strings */
+export const TiffTagGeoValueLookup: Partial<Record<number, Record<number, string>>> = {
+  [TiffTagGeo.GTRasterTypeGeoKey]: RasterTypeKey,
+  [TiffTagGeo.GTModelTypeGeoKey]: ModelTypeCode,
+  [TiffTagGeo.GeogAngularUnitsGeoKey]: GeoAngularUnits,
+  [TiffTagGeo.ProjLinearUnitsGeoKey]: GeoLinearUnits,
+  [TiffTagGeo.VerticalUnitsGeoKey]: GeoLinearUnits,
 };

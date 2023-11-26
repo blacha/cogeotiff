@@ -5,6 +5,7 @@ import {
   TagOffset,
   TiffTag,
   TiffTagGeo,
+  TiffTagGeoValueLookup,
   TiffTagValueLookup,
   TiffTagValueType,
   TiffVersion,
@@ -95,7 +96,6 @@ export const commandInfo = command({
       ];
       if (args.tags) {
         for (const img of tiff.images) {
-          console.log(img.tags);
           const tiffTags = [...img.tags.values()];
 
           if (args.fetchTags) await Promise.all(tiffTags.map((t) => img.fetch(t.id)));
@@ -194,7 +194,7 @@ function formatTag(tag: Tag): { key: string; value: string } {
     }
     const val = [...(tag.value as number[])]; // Ensure the value is not a TypedArray
     if (TiffTagValueLookup[tag.id]) {
-      complexType = ` (${val.map((m) => c.blue(TiffTagValueLookup[tag.id]?.[m] ?? ''))})`;
+      complexType = ` - ${val.map((m) => c.magenta(TiffTagValueLookup[tag.id]?.[m] ?? '?'))}`;
     }
     return { key, value: (val.length > 25 ? val.slice(0, 25).join(', ') + '...' : val.join(', ')) + complexType };
   }
@@ -202,7 +202,7 @@ function formatTag(tag: Tag): { key: string; value: string } {
   let tagString = JSON.stringify(tag.value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
   if (TiffTagValueLookup[tag.id]) {
-    complexType = ` (${c.blue(TiffTagValueLookup[tag.id]?.[tag.value as unknown as number] ?? '')})`;
+    complexType = ` - ${c.magenta(TiffTagValueLookup[tag.id]?.[tag.value as unknown as number] ?? '?')}`;
   }
   return { key, value: tagString + complexType };
 }
@@ -211,7 +211,12 @@ function formatGeoTag(tagId: TiffTagGeo, value: string | number | number[]): { k
   const tagName = TiffTagGeo[tagId];
   const key = `${c.dim(String(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
 
+  let complexType = '';
+  if (TiffTagGeoValueLookup[tagId]) {
+    complexType = ` - ${c.magenta(TiffTagGeoValueLookup[tagId]?.[value as unknown as number] ?? '?')}`;
+  }
+
   let tagString = JSON.stringify(value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
-  return { key, value: tagString };
+  return { key, value: tagString + complexType };
 }
