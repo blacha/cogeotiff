@@ -1,7 +1,7 @@
 import { SourceCache, SourceChunk } from '@chunkd/middleware';
 import { SourceCallback, SourceMiddleware, SourceRequest, SourceView } from '@chunkd/source';
 import { SourceHttp } from '@chunkd/source-http';
-import { CogTiff } from '@cogeotiff/core';
+import { Tiff } from '@cogeotiff/core';
 
 import { loadSingleTile } from './example.single.tile';
 
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     cache,
     fetchLog,
   ]);
-  const tiff = await CogTiff.create(tiffSource);
+  const tiff = await Tiff.create(tiffSource);
 
   const mainEl = document.createElement('div');
   console.log('Loaded: ', tiff.source.url, '\nImages:', tiff.images.length);

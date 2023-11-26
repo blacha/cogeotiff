@@ -77,7 +77,7 @@ function readValue<T>(tiff: Tiff, bytes: DataView, offset: number, type: TiffTag
 }
 
 /**
- * Determine if all the data for the tiff tag is loaded in and use that to create the specific CogTiffTag
+ * Determine if all the data for the tiff tag is loaded in and use that to create the specific TiffTag
  *
  * @see {@link Tag}
  *

@@ -17,7 +17,7 @@ function getResolution(zoom: number): number {
   return InitialResolution / 2 ** zoom;
 }
 
-describe('CogTiled', () => {
+describe('TiffTiled', () => {
   const cogSourceFile = new TestFileSource(new URL('../../data/rgba8_tiled.tiff', import.meta.url));
   const cog = new Tiff(cogSourceFile);
 

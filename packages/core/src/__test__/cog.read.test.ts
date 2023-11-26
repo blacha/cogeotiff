@@ -20,7 +20,7 @@ describe('CogRead', () => {
   // TODO this does not load 100% yet
   // it('should read big endian', async () => {
   //     const source = new TestFileSource(new URL('../../data/big_cog.tiff', import.meta.url));
-  //     const tiff = new CogTiff(source);
+  //     const tiff = new Tiff(source);
 
   //     await tiff.init();
 

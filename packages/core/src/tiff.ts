@@ -34,13 +34,13 @@ export class Tiff {
     this.source = source;
   }
 
-  /** Create a COG and initialize it by reading the COG headers */
+  /** Create a tiff and initialize it by reading the tiff headers */
   static create(source: Source): Promise<Tiff> {
     return new Tiff(source).init();
   }
 
   /**
-   * Initialize the COG loading in the header and all image headers
+   * Initialize the tiff loading in the header and all image headers
    */
   init(): Promise<Tiff> {
     if (this._initPromise) return this._initPromise;

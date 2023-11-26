@@ -45,7 +45,7 @@ export const commandInfo = command({
       FetchLog.reset();
 
       const source = fsa.source(path);
-      const tiff = await new CogTiff(source).init();
+      const tiff = await new Tiff(source).init();
 
       const header = [
         { key: 'Tiff type', value: `${TiffVersion[tiff.version]} (v${String(tiff.version)})` },
@@ -123,7 +123,7 @@ export const commandInfo = command({
   },
 });
 
-const TiffImageInfoTable = new CliTable<CogTiffImage>();
+const TiffImageInfoTable = new CliTable<TiffImage>();
 TiffImageInfoTable.add({ name: 'Id', width: 4, get: (_i, index) => String(index) });
 TiffImageInfoTable.add({ name: 'Size', width: 20, get: (i) => `${i.size.width}x${i.size.height}` });
 TiffImageInfoTable.add({
@@ -169,7 +169,7 @@ TiffImageInfoTable.add({
  * TODO using a XML Parser will make this even better
  * @param img
  */
-function parseGdalMetadata(img: CogTiffImage): string[] | null {
+function parseGdalMetadata(img: TiffImage): string[] | null {
   const metadata = img.value(TiffTag.GdalMetadata);
   if (typeof metadata !== 'string') return null;
   if (!metadata.startsWith('<GDALMetadata>')) return null;

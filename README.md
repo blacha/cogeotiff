@@ -18,7 +18,7 @@ Load a COG from a URL using `fetch`
 import { SourceHttp } from '@chunkd/source-http';
 
 const source = new SourceHttp('https://example.com/cog.tif');
-const cog = await CogTiff.create(source);
+const cog = await Tiff.create(source);
 
 const img = cog.images[0];
 if (img.isTiled()) throw new Error('Tiff is not tiled');

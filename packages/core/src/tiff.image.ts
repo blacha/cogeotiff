@@ -532,7 +532,7 @@ export class TiffImage {
     const leaderBytes = this.tiff.options?.tileLeaderByteSize;
     if (leaderBytes) {
       const offset = await getOffset(this.tiff, this.tileOffset, index);
-      // Sparse COG no data found
+      // Sparse tiff no data found
       if (offset === 0) return { offset: 0, imageSize: 0 };
 
       // This fetch will generally load in the bytes needed for the image too
