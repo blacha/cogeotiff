@@ -8,6 +8,7 @@ export type Tag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;
 export interface TagBase {
   /** Id of the Tag */
   id: TiffTag;
+  name: string;
   /** Offset in bytes to where this tag was read from */
   tagOffset: number;
   /** Number of values */

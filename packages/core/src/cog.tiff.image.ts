@@ -1,7 +1,7 @@
 import { CogTiff } from './cog.tiff.js';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
 // import { TiffTagGeo, TiffTagGeoType } from './const/tiff.tag.id.geo.js';
-import { SubFileType, TiffTag, TiffTagType, TiffTagGeo, TiffTagGeoType } from './const/tiff.tag.id.js';
+import { SubFileType, TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 // import { TiffTagValueType } from './const/tiff.tag.value.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
 import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
@@ -79,7 +79,7 @@ export class CogTiffImage {
    * @param loadGeoTags Whether to load the GeoKeyDirectory and unpack it
    */
   async init(loadGeoTags = true): Promise<void> {
-    const requiredTags = [
+    const requiredTags: Promise<unknown>[] = [
       this.fetch(TiffTag.Compression),
       this.fetch(TiffTag.ImageHeight),
       this.fetch(TiffTag.ImageWidth),
@@ -101,9 +101,12 @@ export class CogTiffImage {
   }
 
   /**
-   * Get the value of a TiffTag if it has been loaded, null otherwise
+   * Get the value of a TiffTag if it has been loaded, null otherwise.
    *
-   * if the value is not loaded @see {CogTiffImage.fetch}
+   * If the value is not loaded use {@link CogTiffImage.fetch} to load the value
+   * Or use {@link CogTiffImage.has} to check if the tag exists
+   *
+   *
    * @returns value if loaded, null otherwise
    */
   value<T extends keyof TiffTagType>(tag: T): TiffTagType[T] | null {
@@ -112,6 +115,10 @@ export class CogTiffImage {
     if (sourceTag.type === 'offset' && sourceTag.isLoaded === false) return null;
     // TODO would be good to type check this
     return sourceTag.value as TiffTagType[T];
+  }
+
+  has<T extends keyof TiffTagType>(tag: T): boolean {
+    return this.tags.has(tag);
   }
 
   /**
@@ -225,8 +232,7 @@ export class CogTiffImage {
       this.value(TiffTag.ModelPixelScale) != null || this.value(TiffTag.ModelTransformation) != null;
     if (isImageLocated) return true;
     // If this is a sub image, use the isGeoLocated from the top level image
-    if (this.value(TiffTag.SubFileType) === SubFileType.ReducedImage && this.id !== 0)
-      return this.tiff.images[0].isGeoLocated;
+    if (this.isSubImage && this.id !== 0) return this.tiff.images[0].isGeoLocated;
     return false;
   }
 
@@ -246,7 +252,7 @@ export class CogTiffImage {
     }
 
     // If this is a sub image, use the resolution from the top level image
-    if (this.value(TiffTag.NewSubFileType) === 1 && this.id !== 0) {
+    if (this.isSubImage && this.id !== 0) {
       const firstImg = this.tiff.images[0];
       const [resX, resY, resZ] = firstImg.resolution;
       const firstImgSize = firstImg.size;
@@ -256,6 +262,15 @@ export class CogTiffImage {
     }
 
     throw new Error('Image does not have a geo transformation.');
+  }
+
+  /**
+   * Is this image a reduced size image
+   * @see {@link TiffTag.SubFileType}
+   * @returns true if SubFileType is Reduces image, false otherwise
+   */
+  get isSubImage(): boolean {
+    return this.value(TiffTag.SubFileType) === SubFileType.ReducedImage;
   }
 
   /**
@@ -290,17 +305,19 @@ export class CogTiffImage {
    */
   get compression(): TiffMimeType | null {
     const compression = this.value(TiffTag.Compression);
-    if (compression == null || typeof compression !== 'number') return null;
+    if (compression == null) return null;
     return TiffCompression[compression];
   }
 
   /**
    * Attempt to read the EPSG Code from TiffGeoTags
    *
+   * looks at both TiffTagGeo.ProjectionGeoKey and TiffTagGeo.ProjectedCRSGeoKey
+   *
    * @returns EPSG Code if it exists
    */
   get epsg(): number | null {
-    const projection = this.valueGeo(TiffTagGeo.ProjectedCSTypeGeoKey);
+    const projection = this.valueGeo(TiffTagGeo.ProjectionGeoKey) ?? this.valueGeo(TiffTagGeo.ProjectedCRSGeoKey);
     if (projection === InvalidProjectionCode) return null;
     return projection;
   }
@@ -311,10 +328,11 @@ export class CogTiffImage {
    * @returns Size in pixels
    */
   get size(): Size {
-    return {
-      width: this.value(TiffTag.ImageWidth) as number,
-      height: this.value(TiffTag.ImageHeight) as number,
-    };
+    const width = this.value(TiffTag.ImageWidth);
+    const height = this.value(TiffTag.ImageWidth);
+    if (width == null || height == null) throw new Error('Tiff has no height or width');
+
+    return { width, height };
   }
 
   /**
@@ -328,10 +346,10 @@ export class CogTiffImage {
    * Get size of individual tiles
    */
   get tileSize(): CogTiffImageTileSize {
-    return {
-      width: this.value(TiffTag.TileWidth) as number,
-      height: this.value(TiffTag.TileHeight) as number,
-    };
+    const width = this.value(TiffTag.TileWidth);
+    const height = this.value(TiffTag.TileHeight);
+    if (width == null || height == null) throw new Error('Tiff is not tiled');
+    return { width, height };
   }
 
   /**
@@ -352,7 +370,7 @@ export class CogTiffImage {
    *
    * @returns file offset to where the tiffs are stored
    */
-  get tileOffset(): TagOffset {
+  get tileOffset(): TagOffset | TagInline<number | number[]> {
     const tileOffset = this.tags.get(TiffTag.TileOffsets) as TagOffset;
     if (tileOffset == null) throw new Error('No tile offsets found');
     return tileOffset;
@@ -366,9 +384,7 @@ export class CogTiffImage {
    * @returns number of strips present
    */
   get stripCount(): number {
-    const tileOffset = this.tags.get(TiffTag.StripByteCounts) as TagOffset;
-    if (tileOffset == null) return 0;
-    return tileOffset.count;
+    return this.tags.get(TiffTag.StripByteCounts)?.count ?? 0;
   }
 
   // Clamp the bounds of the output image to the size of the image, as sometimes the edge tiles are not full tiles
@@ -407,7 +423,7 @@ export class CogTiffImage {
   private getJpegHeader(bytes: ArrayBuffer): ArrayBuffer {
     // Both the JPEGTable and the Bytes with have the start of image and end of image markers
     // StartOfImage 0xffd8 EndOfImage 0xffd9
-    const tables = this.value(TiffTag.JPEGTables);
+    const tables = this.value(TiffTag.JpegTables);
     if (tables == null) throw new Error('Unable to find Jpeg header');
 
     // Remove EndOfImage marker

@@ -1,5 +1,3 @@
-import { TiffTagValueType } from './tiff.tag.value';
-
 /** Sub file type for tag 254 {@link TiffTag.SubFileType} */
 export enum SubFileType {
   /** Reduced resolution version */
@@ -8,6 +6,25 @@ export enum SubFileType {
   Page = 2,
   /** Transparency mask */
   Mask = 4,
+}
+
+export enum Orientation {
+  /* row 0 top, col 0 lhs */
+  TopLeft = 1,
+  /* row 0 top, col 0 rhs */
+  TopRight = 2,
+  /* row 0 bottom, col 0 rhs */
+  BottomRight = 3,
+  /* row 0 Bottom, col 0 lhs */
+  BottomLeft = 4,
+  /* row 0 lhs, col 0 Top */
+  LeftTop = 5,
+  /* row 0 rhs, col 0 Top */
+  RightTOP = 6,
+  /* row 0 rhs, col 0 Bottom */
+  RightBottom = 7,
+  /* row 0 lhs, col 0 Bottom */
+  LeftBottom = 8,
 }
 
 /** Sub file type for tag 255 {@link TiffTag.OldSubFileType} */
@@ -33,6 +50,28 @@ export enum Compression {
   Zstd = 50000,
   Webp = 50001,
   JpegXl = 50002,
+}
+
+export enum PlanarConfiguration {
+  /* single image plane */
+  Contig = 1,
+  /* separate planes of data */
+  Separate = 2,
+}
+
+export enum SampleFormat {
+  /** Unsigned integer data */
+  Uint = 1,
+  /** Signed integer data */
+  Int = 2,
+  /** IEEE floating point data */
+  Float = 3,
+  /** Untyped data */
+  Void = 4,
+  /** Complex signed int */
+  ComplexInt = 5,
+  /** Complex ieee floating */
+  ComplexFloat = 6,
 }
 
 export enum Photometric {
@@ -90,8 +129,23 @@ export enum TiffTag {
   /** Height of image in pixels */
   ImageHeight = 257,
 
-  /** Number of bits per channel */
+  /**
+   * Number of bits per channel
+   *
+   * @example
+   * ```typescript
+   * [8,8,8] // 8 bit RGB
+   * 16 // 16bit uint
+   * ```
+   */
   BitsPerSample = 258,
+
+  /**
+   *  Data type of the image
+   *
+   * {@link SampleFormat}
+   */
+  SampleFormat = 339,
 
   /**
    * Compression Type
@@ -107,138 +161,35 @@ export enum TiffTag {
    */
   Photometric = 262,
 
-  // Artist = 0x013b,
-  // BitsPerSample = 0x0102,
-  // CellLength = 0x0109,
-  // CellWidth = 0x0108,
-  // ColorMap = 0x0140,
-  // /**
-  //  * Compression type
-  //  * {@link Compression}
-  //  */
-  // Compression = 0x0103,
-  // Copyright = 0x8298,
-  // DateTime = 0x0132,
-  // ExtraSamples = 0x0152,
-  // FillOrder = 0x010a,
-  // FreeByteCounts = 0x0121,
-  // FreeOffsets = 0x0120,
-  // GrayResponseCurve = 0x0123,
-  // GrayResponseUnit = 0x0122,
-  // HostComputer = 0x013c,
-  // ImageDescription = 0x010e,
-  // /**
-  //  * Height of the image in pixels
-  //  */
-  // ImageHeight = 0x0101,
-  // /**
-  //  * Width of the image in pixels
-  //  */
-  // ImageWidth = 0x0100,
-  // Make = 0x010f,
-  // MaxSampleValue = 0x0119,
-  // MinSampleValue = 0x0118,
-  // Model = 0x0110,
-  // /**
-  //  * Subfile data descriptor
-  //  */
-  // NewSubFileType = 254,
-  // Orientation = 0x0112,
-  // PhotometricInterpretation = 0x0106,
-  // PlanarConfiguration = 0x011c,
-  // ResolutionUnit = 0x0128,
-  // RowsPerStrip = 0x0116,
-  // SamplesPerPixel = 0x0115,
-  // Software = 0x0131,
-  // StripByteCounts = 0x0117,
-  // StripOffsets = 0x0111,
-  // OldSubFileType = 0x00ff,
-  // Threshholding = 0x0107,
-  // XResolution = 0x011a,
-  // YResolution = 0x011b,
+  /** Tile width in pixels */
+  TileWidth = 322,
+  /** Tile height in pixels */
+  TileHeight = 323,
+  /** Offsets to data tiles */
+  TileOffsets = 324,
+  /** Byte counts for tiles */
+  TileByteCounts = 325,
 
-  // // TIFF Extended
-  // BadFaxLines = 0x0146,
-  // CleanFaxData = 0x0147,
-  // ClipPath = 0x0157,
-  // ConsecutiveBadFaxLines = 0x0148,
-  // Decode = 0x01b1,
-  // DefaultImageColor = 0x01b2,
-  // DocumentName = 0x010d,
-  // DotRange = 0x0150,
-  // HalftoneHints = 0x0141,
-  // Indexed = 0x015a,
-  // /**
-  //  * JPEG quantization and/or Huffman tables.
-  //  *
-  //  * This field is only set when {@link TiffTag.Compression} is JPEG
-  //  *
-  //  * @type {number[]}
-  //  * @default null
-  //  */
-  // JPEGTables = 0x015b,
-  // PageName = 0x011d,
-  // PageNumber = 0x0129,
-  // Predictor = 0x013d,
-  // PrimaryChromaticities = 0x013f,
-  // ReferenceBlackWhite = 0x0214,
-  // SampleFormat = 0x0153,
-  // SMinSampleValue = 0x0154,
-  // SMaxSampleValue = 0x0155,
-  // StripRowCounts = 0x022f,
-  // SubIFDs = 0x014a,
-  // T4Options = 0x0124,
-  // T6Options = 0x0125,
-  // TileByteCounts = 0x0145,
-  // TileHeight = 0x0143,
-  // TileOffsets = 0x0144,
-  // TileWidth = 0x0142,
-  // TransferFunction = 0x012d,
-  // WhitePoint = 0x013e,
-  // XClipPathUnits = 0x0158,
-  // XPosition = 0x011e,
-  // YCbCrCoefficients = 0x0211,
-  // YCbCrPositioning = 0x0213,
-  // YCbCrSubSampling = 0x0212,
-  // YClipPathUnits = 0x0159,
-  // YPosition = 0x011f,
+  /** %JPEG table stream */
+  JpegTables = 347,
 
-  // // EXIF
-  // ApertureValue = 0x9202,
-  // ColorSpace = 0xa001,
-  // DateTimeDigitized = 0x9004,
-  // DateTimeOriginal = 0x9003,
-  // ExifIFD = 0x8769,
-  // ExifVersion = 0x9000,
-  // ExposureTime = 0x829a,
-  // FileSource = 0xa300,
-  // Flash = 0x9209,
-  // FlashpixVersion = 0xa000,
-  // FNumber = 0x829d,
-  // ImageUniqueID = 0xa420,
-  // LightSource = 0x9208,
-  // MakerNote = 0x927c,
-  // ShutterSpeedValue = 0x9201,
-  // UserComment = 0x9286,
+  StripOffsets = 273,
+  StripByteCounts = 279,
 
-  // // IPTC
-  // IPTC = 0x83bb,
+  // GDAL
+  /**
+   * GDAL metadata
+   */
+  GdalMetadata = 42112,
 
-  // // ICC
-  // ICCProfile = 0x8773,
+  /**
+   * No data value encoded as a string
+   *
+   * @example "-9999"
+   */
+  GdalNoData = 42113,
 
-  // // XMP
-  // XMP = 0x02bc,
-
-  // // GDAL
-  // GdalMetadata = 0xa480,
-  // GdalNoData = 0xa481,
-  // LercParams = 0xc5f2,
-
-  // // Photoshop
-  // Photoshop = 0x8649,
-
-  // GeoTiff Tags
+  /**  GeoTiff Tags */
 
   /**
    * Pixel scale in meters
@@ -287,143 +238,210 @@ export enum TiffTag {
    *
    * {@link https://docs.ogc.org/is/19-008r4/19-008r4.html#_requirements_class_geokeydirectorytag}
    */
-  GeoKeyDirectory = 34745,
+  GeoKeyDirectory = 34735,
   /**
    * Double Parameters for GeoTiff Tags
    *
    * {@link TiffTagGeo}
    */
-  GeoDoubleParams = 34746,
+  GeoDoubleParams = 34736,
   /**
    * Ascii Parameters for GeoTiff Tags
    *
    * {@link TiffTagGeo}
    */
-  GeoAsciiParams = 34747,
+  GeoAsciiParams = 34737,
+
+  PlanarConfiguration = 284,
+
+  /** Untyped values */
+  CellLength = 265,
+  CellWidth = 264,
+  ColorMap = 320,
+  Copyright = 33432,
+  DateTime = 306,
+  ExtraSamples = 338,
+  FillOrder = 266,
+  FreeByteCounts = 289,
+  FreeOffsets = 288,
+  GrayResponseCurve = 291,
+  GrayResponseUnit = 290,
+  HostComputer = 316,
+  ImageDescription = 270,
+  Make = 271,
+  MaxSampleValue = 281,
+  MinSampleValue = 280,
+  Model = 272,
+  Orientation = 274,
+  ResolutionUnit = 296,
+  RowsPerStrip = 278,
+  SamplesPerPixel = 277,
+  Software = 305,
+
+  Threshholding = 263,
+  XResolution = 282,
+  YResolution = 283,
+  BadFaxLines = 326,
+  CleanFaxData = 327,
+  ClipPath = 343,
+  ConsecutiveBadFaxLines = 328,
+  Decode = 433,
+  DefaultImageColor = 434,
+  DocumentName = 269,
+  DotRange = 336,
+  HalftoneHints = 321,
+  Indexed = 346,
+  PageName = 285,
+  PageNumber = 297,
+  Predictor = 317,
+  PrimaryChromaticities = 319,
+  ReferenceBlackWhite = 532,
+  SMinSampleValue = 340,
+  SMaxSampleValue = 341,
+  StripRowCounts = 559,
+  SubIFDs = 330,
+  T4Options = 292,
+  T6Options = 293,
+
+  TransferFunction = 301,
+  WhitePoint = 318,
+  XClipPathUnits = 344,
+  XPosition = 286,
+  YCbCrCoefficients = 529,
+  YCbCrPositioning = 531,
+  YCbCrSubSampling = 530,
+  YClipPathUnits = 345,
+  YPosition = 287,
+  ApertureValue = 37378,
+  ColorSpace = 40961,
+  DateTimeDigitized = 36868,
+  DateTimeOriginal = 36867,
+  ExifIFD = 34665,
+  ExifVersion = 36864,
+  ExposureTime = 33434,
+  FileSource = 41728,
+  Flash = 37385,
+  FlashpixVersion = 40960,
+  FNumber = 33437,
+  ImageUniqueID = 42016,
+  LightSource = 37384,
+  MakerNote = 37500,
+  ShutterSpeedValue = 37377,
+  UserComment = 37510,
+  IPTC = 33723,
+  ICCProfile = 34675,
+  XMP = 700,
 }
 
 /** Define the expected types for all the tiff tags */
 export interface TiffTagType {
-  ImageHeight: number;
-  ImageWidth: number;
-  SubFileType: SubFileType;
-  BitsPerSample: number[];
-  Compression: Compression | number;
-  OldSubFileType: OldSubFileType;
-  Photometric: Photometric;
+  [TiffTag.ImageHeight]: number;
+  [TiffTag.ImageWidth]: number;
+  [TiffTag.SubFileType]: SubFileType;
+  [TiffTag.BitsPerSample]: number[];
+  [TiffTag.Compression]: Compression;
+  [TiffTag.OldSubFileType]: OldSubFileType;
+  [TiffTag.Photometric]: Photometric;
 
-  // [TiffTag.Artist]: unknown;
-  // [TiffTag.CellLength]: unknown;
-  // [TiffTag.CellWidth]: unknown;
-  // [TiffTag.ColorMap]: unknown;
-  // [TiffTag.Copyright]: unknown;
-  // [TiffTag.DateTime]: unknown;
-  // [TiffTag.ExtraSamples]: unknown;
-  // [TiffTag.FillOrder]: unknown;
-  // [TiffTag.FreeByteCounts]: unknown;
-  // [TiffTag.FreeOffsets]: unknown;
-  // [TiffTag.GrayResponseCurve]: unknown;
-  // [TiffTag.GrayResponseUnit]: unknown;
-  // [TiffTag.HostComputer]: unknown;
-  // [TiffTag.ImageDescription]: unknown;
+  [TiffTag.TileWidth]: number;
+  [TiffTag.TileHeight]: number;
+  [TiffTag.TileOffsets]: number[];
+  [TiffTag.TileByteCounts]: number[];
+  [TiffTag.JpegTables]: number[];
 
-  // [TiffTag.Make]: unknown;
-  // [TiffTag.MaxSampleValue]: unknown;
-  // [TiffTag.MinSampleValue]: unknown;
-  // [TiffTag.Model]: unknown;
-  // [TiffTag.Orientation]: unknown;
-  // [TiffTag.PhotometricInterpretation]: unknown;
-  // [TiffTag.PlanarConfiguration]: unknown;
-  // [TiffTag.ResolutionUnit]: unknown;
-  // [TiffTag.RowsPerStrip]: unknown;
-  // [TiffTag.SamplesPerPixel]: unknown;
-  // [TiffTag.Software]: unknown;
-  // [TiffTag.StripByteCounts]: unknown;
-  // [TiffTag.StripOffsets]: unknown;
-  // [TiffTag.Threshholding]: unknown;
-  // [TiffTag.XResolution]: unknown;
-  // [TiffTag.YResolution]: unknown;
+  [TiffTag.StripByteCounts]: number[];
+  [TiffTag.StripOffsets]: number[];
 
-  // // TIFF Extended
-  // [TiffTag.BadFaxLines]: unknown;
-  // [TiffTag.CleanFaxData]: unknown;
-  // [TiffTag.ClipPath]: unknown;
-  // [TiffTag.ConsecutiveBadFaxLines]: unknown;
-  // [TiffTag.Decode]: unknown;
-  // [TiffTag.DefaultImageColor]: unknown;
-  // [TiffTag.DocumentName]: unknown;
-  // [TiffTag.DotRange]: unknown;
-  // [TiffTag.HalftoneHints]: unknown;
-  // [TiffTag.Indexed]: unknown;
-  // [TiffTag.JPEGTables]: number[];
-  // [TiffTag.PageName]: unknown;
-  // [TiffTag.PageNumber]: unknown;
-  // [TiffTag.Predictor]: unknown;
-  // [TiffTag.PrimaryChromaticities]: unknown;
-  // [TiffTag.ReferenceBlackWhite]: unknown;
-  // [TiffTag.SampleFormat]: unknown;
-  // [TiffTag.SMinSampleValue]: unknown;
-  // [TiffTag.SMaxSampleValue]: unknown;
-  // [TiffTag.StripRowCounts]: unknown;
-  // [TiffTag.SubIFDs]: unknown;
-  // [TiffTag.T4Options]: unknown;
-  // [TiffTag.T6Options]: unknown;
-  // [TiffTag.TileByteCounts]: unknown;
-  // [TiffTag.TileHeight]: unknown;
-  // [TiffTag.TileOffsets]: unknown;
-  // [TiffTag.TileWidth]: unknown;
-  // [TiffTag.TransferFunction]: unknown;
-  // [TiffTag.WhitePoint]: unknown;
-  // [TiffTag.XClipPathUnits]: unknown;
-  // [TiffTag.XPosition]: unknown;
-  // [TiffTag.YCbCrCoefficients]: unknown;
-  // [TiffTag.YCbCrPositioning]: unknown;
-  // [TiffTag.YCbCrSubSampling]: unknown;
-  // [TiffTag.YClipPathUnits]: unknown;
-  // [TiffTag.YPosition]: unknown;
+  [TiffTag.SampleFormat]: SampleFormat;
+  [TiffTag.GdalMetadata]: string;
+  [TiffTag.GdalNoData]: string;
+  [TiffTag.ModelPixelScale]: number[];
+  [TiffTag.ModelTiePoint]: number[];
+  [TiffTag.ModelTransformation]: number[];
+  [TiffTag.GeoKeyDirectory]: number[];
+  [TiffTag.GeoDoubleParams]: number[];
+  [TiffTag.GeoAsciiParams]: string;
 
-  // // EXIF
-  // [TiffTag.ApertureValue]: unknown;
-  // [TiffTag.ColorSpace]: unknown;
-  // [TiffTag.DateTimeDigitized]: unknown;
-  // [TiffTag.DateTimeOriginal]: unknown;
-  // [TiffTag.ExifIFD]: unknown;
-  // [TiffTag.ExifVersion]: unknown;
-  // [TiffTag.ExposureTime]: unknown;
-  // [TiffTag.FileSource]: unknown;
-  // [TiffTag.Flash]: unknown;
-  // [TiffTag.FlashpixVersion]: unknown;
-  // [TiffTag.FNumber]: unknown;
-  // [TiffTag.ImageUniqueID]: unknown;
-  // [TiffTag.LightSource]: unknown;
-  // [TiffTag.MakerNote]: unknown;
-  // [TiffTag.ShutterSpeedValue]: unknown;
-  // [TiffTag.UserComment]: unknown;
+  [TiffTag.PlanarConfiguration]: PlanarConfiguration;
+  [TiffTag.Orientation]: Orientation;
 
-  // // IPTC
-  // [TiffTag.IPTC]: unknown;
+  // Untyped values
 
-  // // ICC
-  // [TiffTag.ICCProfile]: unknown;
+  [TiffTag.CellLength]: unknown;
+  [TiffTag.CellWidth]: unknown;
+  [TiffTag.ColorMap]: unknown;
+  [TiffTag.Copyright]: unknown;
+  [TiffTag.DateTime]: unknown;
+  [TiffTag.ExtraSamples]: unknown;
+  [TiffTag.FillOrder]: unknown;
+  [TiffTag.FreeByteCounts]: unknown;
+  [TiffTag.FreeOffsets]: unknown;
+  [TiffTag.GrayResponseCurve]: unknown;
+  [TiffTag.GrayResponseUnit]: unknown;
+  [TiffTag.HostComputer]: unknown;
+  [TiffTag.ImageDescription]: unknown;
+  [TiffTag.Make]: unknown;
+  [TiffTag.MaxSampleValue]: unknown;
+  [TiffTag.MinSampleValue]: unknown;
+  [TiffTag.Model]: unknown;
+  [TiffTag.ResolutionUnit]: unknown;
+  [TiffTag.RowsPerStrip]: unknown;
+  [TiffTag.SamplesPerPixel]: unknown;
+  [TiffTag.Software]: unknown;
 
-  // // XMP
-  // [TiffTag.XMP]: unknown;
+  [TiffTag.Threshholding]: unknown;
+  [TiffTag.XResolution]: unknown;
+  [TiffTag.YResolution]: unknown;
+  [TiffTag.BadFaxLines]: unknown;
+  [TiffTag.CleanFaxData]: unknown;
+  [TiffTag.ClipPath]: unknown;
+  [TiffTag.ConsecutiveBadFaxLines]: unknown;
+  [TiffTag.Decode]: unknown;
+  [TiffTag.DefaultImageColor]: unknown;
+  [TiffTag.DocumentName]: unknown;
+  [TiffTag.DotRange]: unknown;
+  [TiffTag.HalftoneHints]: unknown;
+  [TiffTag.Indexed]: unknown;
+  [TiffTag.PageName]: unknown;
+  [TiffTag.PageNumber]: unknown;
+  [TiffTag.Predictor]: unknown;
+  [TiffTag.PrimaryChromaticities]: unknown;
+  [TiffTag.ReferenceBlackWhite]: unknown;
+  [TiffTag.SMinSampleValue]: unknown;
+  [TiffTag.SMaxSampleValue]: unknown;
+  [TiffTag.StripRowCounts]: unknown;
+  [TiffTag.SubIFDs]: unknown;
+  [TiffTag.T4Options]: unknown;
+  [TiffTag.T6Options]: unknown;
 
-  // // GDAL
-  // [TiffTag.GdalMetadata]: unknown;
-  // [TiffTag.GdalNoData]: unknown;
-  // [TiffTag.LercParams]: unknown;
-
-  // // Photoshop
-  // [TiffTag.Photoshop]: unknown;
-
-  // GeoTiff
-  ModelPixelScale: number[];
-  ModelTiePoint: number[];
-  ModelTransformation: number[];
-  GeoKeyDirectory: number[];
-  GeoDoubleParams: number[];
-  GeoAsciiParams: string;
+  [TiffTag.TransferFunction]: unknown;
+  [TiffTag.WhitePoint]: unknown;
+  [TiffTag.XClipPathUnits]: unknown;
+  [TiffTag.XPosition]: unknown;
+  [TiffTag.YCbCrCoefficients]: unknown;
+  [TiffTag.YCbCrPositioning]: unknown;
+  [TiffTag.YCbCrSubSampling]: unknown;
+  [TiffTag.YClipPathUnits]: unknown;
+  [TiffTag.YPosition]: unknown;
+  [TiffTag.ApertureValue]: unknown;
+  [TiffTag.ColorSpace]: unknown;
+  [TiffTag.DateTimeDigitized]: unknown;
+  [TiffTag.DateTimeOriginal]: unknown;
+  [TiffTag.ExifIFD]: unknown;
+  [TiffTag.ExifVersion]: unknown;
+  [TiffTag.ExposureTime]: unknown;
+  [TiffTag.FileSource]: unknown;
+  [TiffTag.Flash]: unknown;
+  [TiffTag.FlashpixVersion]: unknown;
+  [TiffTag.FNumber]: unknown;
+  [TiffTag.ImageUniqueID]: unknown;
+  [TiffTag.LightSource]: unknown;
+  [TiffTag.MakerNote]: unknown;
+  [TiffTag.ShutterSpeedValue]: unknown;
+  [TiffTag.UserComment]: unknown;
+  [TiffTag.IPTC]: unknown;
+  [TiffTag.ICCProfile]: unknown;
+  [TiffTag.XMP]: unknown;
 }
 
 /**
@@ -433,23 +451,77 @@ export interface TiffTagType {
  */
 export enum TiffTagGeo {
   // GeoTIFF Configuration Keys
+
+  /**
+   * This GeoKey defines the type of Model coordinate reference system used, to which the transformation from the raster space is made:
+   *
+   * {@link https://docs.ogc.org/is/19-008r4/19-008r4.html#_requirements_class_gtmodeltypegeokey}
+   */
   GTModelTypeGeoKey = 1024,
+  /**
+   * This requirements class establishes the Raster Space used.
+   * There are currently only two options: RasterPixelIsPoint and RasterPixelIsArea
+   *
+   * {@link https://docs.ogc.org/is/19-008r4/19-008r4.html#_requirements_class_gtrastertypegeokey}
+   */
   GTRasterTypeGeoKey = 1025,
+  /**
+   * ASCII reference to published documentation on the overall configuration of the GeoTIFF file.
+   *
+   * @example "NZGD2000 / New Zealand Transverse Mercator 2000"
+   */
   GTCitationGeoKey = 1026,
 
   // Geodetic CRS Parameter Keys
+  /**
+   * Renamed from GeographicTypeGeoKey in OGC GeoTiff
+   */
   GeodeticCRSGeoKey = 2048,
+  /**
+   * Renamed from GeogCitationGeoKey in OGC GeoTiff
+   *
+   * @example "NZTM"
+   */
   GeodeticCitationGeoKey = 2049,
+  /**
+   * Renamed from GeogGeodeticDatumGeoKey in OGC GeoTiff
+   */
   GeodeticDatumGeoKey = 2050,
+  /**
+   * Renamed from "GeogPrimeMeridianGeoKey" in OGC GeoTiff
+   */
   PrimeMeridianGeoKey = 2051,
+  /**
+   *
+   * @example 9001 // Metre
+   */
   GeogLinearUnitsGeoKey = 2052,
   GeogLinearUnitSizeGeoKey = 2053,
+  /**
+   *
+   * @example 9102 // Degree
+   */
   GeogAngularUnitsGeoKey = 2054,
   GeogAngularUnitSizeGeoKey = 2055,
+  /**
+   * Renamed from "GeogEllipsoidGeoKey" in OGC GeoTiff
+   */
   EllipsoidGeoKey = 2056,
+  /**
+   * Renamed from "GeogSemiMajorAxisGeoKey" in OGC GeoTiff
+   */
   EllipsoidSemiMajorAxisGeoKey = 2057,
+  /**
+   * Renamed from "GeogSemiMinorAxisGeoKey" in OGC GeoTiff
+   */
   EllipsoidSemiMinorAxisGeoKey = 2058,
+  /**
+   * Renamed from "GeogInvFlatteningGeoKey" in OGC GeoTiff
+   */
   EllipsoidInvFlatteningGeoKey = 2059,
+  /**
+   *  Renamed from "GeogPrimeMeridianLongGeoKey" in OGC GeoTiff
+   */
   PrimeMeridianLongitudeGeoKey = 2061,
 
   GeogTOWGS84GeoKey = 2062,
@@ -459,14 +531,30 @@ export enum TiffTagGeo {
 
   /**
    * EPSG code of the tiff
+   *
+   * Renamed from "ProjectedCSTypeGeoKey" in OGC GeoTiff
+   *
+   * @example
+   * ```typescript
+   * 2193 // NZTM
+   * 3857 // WebMercatorQuad
+   * ```
    */
   ProjectedCRSGeoKey = 3072,
   /**
+   *
+   * ASCII reference to published documentation on the Projected  Coordinate System
+   *
+   * Renamed from "PCSCitationGeoKey" in OGC GeoTiff
    *
    * @example "UTM Zone 60 N with WGS 84"
    */
   ProjectedCitationGeoKey = 3073,
 
+  /**
+   * projection used
+   * @example 2193
+   */
   ProjectionGeoKey = 3074,
   ProjMethodGeoKey = 3075,
   ProjLinearUnitsGeoKey = 3076,
@@ -493,12 +581,15 @@ export enum TiffTagGeo {
 
   // Vertical CRS Parameter Keys (4096-5119)
 
+  /**
+   * This key is provided to specify the vertical coordinate reference system from the GeoTIFF CRS register or to indicate that the CRS is a user-defined vertical coordinate reference system. The value for VerticalGeoKey should follow the
+   *
+   * {@link https://docs.ogc.org/is/19-008r4/19-008r4.html#_requirements_class_verticalgeokey}
+   */
   VerticalGeoKey = 4096,
   VerticalCitationGeoKey = 4097,
   /**
    * vertical datum for a user-defined vertical coordinate reference system.
-   *
-   * {@link }
    */
   VerticalDatumGeoKey = 4098,
   VerticalUnitsGeoKey = 4099,
@@ -511,73 +602,67 @@ export enum TiffTagGeo {
  */
 export interface TiffTagGeoType {
   // GeoTIFF Configuration Keys
-  GTModelTypeGeoKey: number;
-  GTRasterTypeGeoKey: number;
-  GTCitationGeoKey: string;
+  [TiffTagGeo.GTModelTypeGeoKey]: number;
+  [TiffTagGeo.GTRasterTypeGeoKey]: number;
+  [TiffTagGeo.GTCitationGeoKey]: string;
 
   // Geodetic CRS Parameter Keys
-  GeodeticCRSGeoKey: number;
-  GeodeticCitationGeoKey: string;
-  GeodeticDatumGeoKey: number;
-  PrimeMeridianGeoKey: number;
-  GeogLinearUnitsGeoKey: number;
-  GeogLinearUnitSizeGeoKey: number;
-  GeogAngularUnitsGeoKey: number;
-  GeogAngularUnitSizeGeoKey: number;
-  EllipsoidGeoKey: number;
-  EllipsoidSemiMajorAxisGeoKey: number;
-  EllipsoidSemiMinorAxisGeoKey: number;
-  EllipsoidInvFlatteningGeoKey: number;
-  GeogAzimuthUnitsGeoKey: number;
-  PrimeMeridianLongitudeGeoKey: number;
-  GeogTOWGS84GeoKey: number;
+  [TiffTagGeo.GeodeticCRSGeoKey]: number;
+  [TiffTagGeo.GeodeticCitationGeoKey]: string;
+  [TiffTagGeo.GeodeticDatumGeoKey]: number;
+  [TiffTagGeo.PrimeMeridianGeoKey]: number;
+  [TiffTagGeo.GeogLinearUnitsGeoKey]: number;
+  [TiffTagGeo.GeogLinearUnitSizeGeoKey]: number;
+  [TiffTagGeo.GeogAngularUnitsGeoKey]: number;
+  [TiffTagGeo.GeogAngularUnitSizeGeoKey]: number;
+  [TiffTagGeo.EllipsoidGeoKey]: number;
+  [TiffTagGeo.EllipsoidSemiMajorAxisGeoKey]: number;
+  [TiffTagGeo.EllipsoidSemiMinorAxisGeoKey]: number;
+  [TiffTagGeo.EllipsoidInvFlatteningGeoKey]: number;
+  [TiffTagGeo.GeogAzimuthUnitsGeoKey]: number;
+  [TiffTagGeo.PrimeMeridianLongitudeGeoKey]: number;
+  [TiffTagGeo.GeogTOWGS84GeoKey]: number;
 
   // Projected CRS Parameter Keys
-  ProjectedCRSGeoKey: number;
-  ProjectedCitationGeoKey: string;
-  ProjectionGeoKey: number;
-  ProjMethodGeoKey: number;
-  ProjLinearUnitsGeoKey: number;
-  ProjLinearUnitSizeGeoKey: number;
-  ProjStdParallel1GeoKey: number;
-  ProjStdParallel2GeoKey: number;
-  ProjNatOriginLongGeoKey: number;
-  ProjNatOriginLatGeoKey: number;
-  ProjFalseEastingGeoKey: number;
-  ProjFalseNorthingGeoKey: number;
-  ProjFalseOriginLongGeoKey: number;
-  ProjFalseOriginLatGeoKey: number;
-  ProjFalseOriginEastingGeoKey: number;
-  ProjFalseOriginNorthingGeoKey: number;
-  ProjCenterLongGeoKey: number;
-  ProjCenterLatGeoKey: number;
-  ProjCenterEastingGeoKey: number;
-  ProjCenterNorthingGeoKey: number;
-  ProjScaleAtNatOriginGeoKey: number;
-  ProjScaleAtCenterGeoKey: number;
-  ProjAzimuthAngleGeoKey: number;
-  ProjStraightVertPoleLongGeoKey: number;
-  ProjRectifiedGridAngleGeoKey: number;
+  [TiffTagGeo.ProjectedCRSGeoKey]: number;
+  [TiffTagGeo.ProjectedCitationGeoKey]: string;
+  [TiffTagGeo.ProjectionGeoKey]: number;
+  [TiffTagGeo.ProjMethodGeoKey]: number;
+  [TiffTagGeo.ProjLinearUnitsGeoKey]: number;
+  [TiffTagGeo.ProjLinearUnitSizeGeoKey]: number;
+  [TiffTagGeo.ProjStdParallel1GeoKey]: number;
+  [TiffTagGeo.ProjStdParallel2GeoKey]: number;
+  [TiffTagGeo.ProjNatOriginLongGeoKey]: number;
+  [TiffTagGeo.ProjNatOriginLatGeoKey]: number;
+  [TiffTagGeo.ProjFalseEastingGeoKey]: number;
+  [TiffTagGeo.ProjFalseNorthingGeoKey]: number;
+  [TiffTagGeo.ProjFalseOriginLongGeoKey]: number;
+  [TiffTagGeo.ProjFalseOriginLatGeoKey]: number;
+  [TiffTagGeo.ProjFalseOriginEastingGeoKey]: number;
+  [TiffTagGeo.ProjFalseOriginNorthingGeoKey]: number;
+  [TiffTagGeo.ProjCenterLongGeoKey]: number;
+  [TiffTagGeo.ProjCenterLatGeoKey]: number;
+  [TiffTagGeo.ProjCenterEastingGeoKey]: number;
+  [TiffTagGeo.ProjCenterNorthingGeoKey]: number;
+  [TiffTagGeo.ProjScaleAtNatOriginGeoKey]: number;
+  [TiffTagGeo.ProjScaleAtCenterGeoKey]: number;
+  [TiffTagGeo.ProjAzimuthAngleGeoKey]: number;
+  [TiffTagGeo.ProjStraightVertPoleLongGeoKey]: number;
+  [TiffTagGeo.ProjRectifiedGridAngleGeoKey]: number;
 
   // Vertical CRS Parameter Keys
-  VerticalGeoKey: number;
-  VerticalCitationGeoKey: string;
-  VerticalDatumGeoKey: number;
-  VerticalUnitsGeoKey: number;
+  [TiffTagGeo.VerticalGeoKey]: number;
+  [TiffTagGeo.VerticalCitationGeoKey]: string;
+  [TiffTagGeo.VerticalDatumGeoKey]: number;
+  [TiffTagGeo.VerticalUnitsGeoKey]: number;
 }
 
-export type InferTag<K extends keyof TiffTagType> = TiffTagType[K];
-
-export type Tags = {
-  [K in keyof typeof TiffTag]: InferTag<K>;
+/** Convert enum values back to strings */
+export const TiffTagValueLookup: Partial<Record<number, Record<number, string>>> = {
+  [TiffTag.SubFileType]: SubFileType,
+  [TiffTag.Compression]: Compression,
+  [TiffTag.Orientation]: Orientation,
+  [TiffTag.SampleFormat]: SampleFormat,
+  [TiffTag.Photometric]: Photometric,
+  [TiffTag.PlanarConfiguration]: PlanarConfiguration,
 };
-
-export type InferTagGeo<K extends keyof TiffTagGeoType> = TiffTagGeoType[K];
-
-export type TagsGeo = {
-  [K in keyof typeof TiffTagGeo]: InferTagGeo<K>;
-};
-
-const img: { tags: Tags; geo: TagsGeo };
-
-img.tags.GeoKeyDirectory;

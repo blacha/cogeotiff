@@ -1,5 +1,14 @@
 import { fsa } from '@chunkd/fs';
-import { CogTiff, Tag, TagOffset, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion, toHex } from '@cogeotiff/core';
+import {
+  CogTiff,
+  Tag,
+  TagOffset,
+  TiffTag,
+  TiffTagGeo,
+  TiffTagValueLookup,
+  TiffTagValueType,
+  TiffVersion,
+} from '@cogeotiff/core';
 import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
@@ -86,6 +95,7 @@ export const commandInfo = command({
       ];
       if (args.tags) {
         for (const img of tiff.images) {
+          console.log(img.tags);
           const tiffTags = [...img.tags.values()];
 
           if (args.fetchTags) await Promise.all(tiffTags.map((t) => img.fetch(t.id)));
@@ -174,25 +184,32 @@ function parseGdalMetadata(img: CogTiffImage): string[] | null {
 function formatTag(tag: Tag): { key: string; value: string } {
   const tagName = TiffTag[tag.id];
   const tagDebug = `(${TiffTagValueType[tag.dataType]}${tag.count > 1 ? ' x' + tag.count : ''}`;
-  const key = `${c.dim(toHex(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(50, ' ');
+  const key = `${c.dim(String(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(52, ' ');
 
+  let complexType = '';
   // Array of values that is not a string!
   if (tag.count > 1 && tag.dataType !== TiffTagValueType.Ascii) {
     if (tag.value == null || (tag as TagOffset).isLoaded === false) {
       return { key, value: c.dim('Tag not Loaded, use --fetch-tags to force load') };
     }
     const val = [...(tag.value as number[])]; // Ensure the value is not a TypedArray
-    return { key, value: val.length > 25 ? val.slice(0, 25).join(', ') + '...' : val.join(', ') };
+    if (TiffTagValueLookup[tag.id]) {
+      complexType = ` (${val.map((m) => c.blue(TiffTagValueLookup[tag.id]?.[m] ?? ''))})`;
+    }
+    return { key, value: (val.length > 25 ? val.slice(0, 25).join(', ') + '...' : val.join(', ')) + complexType };
   }
 
   let tagString = JSON.stringify(tag.value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
-  return { key, value: tagString };
+  if (TiffTagValueLookup[tag.id]) {
+    complexType = ` (${c.blue(TiffTagValueLookup[tag.id]?.[tag.value as unknown as number] ?? '')})`;
+  }
+  return { key, value: tagString + complexType };
 }
 
 function formatGeoTag(tagId: TiffTagGeo, value: string | number | number[]): { key: string; value: string } {
   const tagName = TiffTagGeo[tagId];
-  const key = `${c.dim(toHex(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
+  const key = `${c.dim(String(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
 
   let tagString = JSON.stringify(value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
