@@ -36,7 +36,26 @@ if (img.isTiled()) {
 const origin = img.origin;
 /** Bounding box of the tiff */
 const bbox = img.bbox;
+
+// Tiff tags can be accessed via some helpers
+const noData = img.noData; // -9999
+const noDataTag = img.tags.get(TiffTag.GdalNoData) // Tag information
+const noDataValue = img.value(TiffTag.GdalNoData) // "-9999" (tag is stored as a string)
 ```
+
+### Tags
+
+Some tags have exported constants to make them easier to work with
+
+```typescript
+const photometric = img.value(TiffTag.Photometric)
+
+if( photometric == Photometric.Rgb) { 
+  // Tiff is a RGB photometric tiff
+}
+```
+
+For a full list see [./src/index.ts](./src/index.ts)
 
 
 More examples can bee seen

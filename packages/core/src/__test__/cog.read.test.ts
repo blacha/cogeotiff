@@ -89,8 +89,8 @@ describe('CogRead', () => {
     assert.equal(im.value(TiffTag.GdalNoData), '-9999');
     assert.equal(im.noData, -9999);
 
-    assert.equal(im.tagsGeo.get(TiffTagGeo.GTCitationGeoKey), 'NZGD2000 / New Zealand Transverse Mercator 2000');
-    assert.equal(im.tagsGeo.get(TiffTagGeo.GeodeticCitationGeoKey), 'NZGD2000');
+    assert.equal(im.valueGeo(TiffTagGeo.GTCitationGeoKey), 'NZGD2000 / New Zealand Transverse Mercator 2000');
+    assert.equal(im.valueGeo(TiffTagGeo.GeodeticCitationGeoKey), 'NZGD2000');
     assert.deepEqual(await im.fetch(TiffTag.StripByteCounts), [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
   });
 
@@ -125,6 +125,6 @@ describe('CogRead', () => {
       'ProjLinearUnitsGeoKey',
     ]);
 
-    assert.deepEqual(im.tagsGeo.get(TiffTagGeo.GeogTOWGS84GeoKey), [0, 0, 0, 0, 0, 0, 0]);
+    assert.deepEqual(im.valueGeo(TiffTagGeo.GeogTOWGS84GeoKey), [0, 0, 0, 0, 0, 0, 0]);
   });
 });
