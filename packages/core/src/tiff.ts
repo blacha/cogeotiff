@@ -1,17 +1,17 @@
-import { CogTiffImage } from './tiff.image.js';
+import { TiffImage } from './tiff.image.js';
 import { TiffEndian } from './const/tiff.endian.js';
 import { TiffTag } from './const/tiff.tag.id.js';
 import { TiffVersion } from './const/tiff.version.js';
 import { Tag } from './index.js';
 import { DataViewOffset, hasBytes } from './read/data.view.offset.js';
-import { CogTifGhostOptions } from './read/tiff.gdal.js';
+import { TiffGhostOptions } from './read/tiff.gdal.js';
 import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config.js';
 import { createTag } from './read/tiff.tag.factory.js';
 import { Source } from './source.js';
 import { getUint } from './util/bytes.js';
 import { toHex } from './util/util.hex.js';
 
-export class CogTiff {
+export class Tiff {
   /** Read 16KB blocks at a time */
   defaultReadSize = 16 * 1024;
   /** Where this cog is fetching its data from */
@@ -19,9 +19,9 @@ export class CogTiff {
   /** Big or small Tiff */
   version = TiffVersion.Tiff;
   /** List of images, o is the base image */
-  images: CogTiffImage[] = [];
+  images: TiffImage[] = [];
   /** Ghost header options */
-  options?: CogTifGhostOptions;
+  options?: TiffGhostOptions;
   /** Configuration for the size of the IFD */
   ifdConfig: TiffIfdConfig = TagTiffConfig;
   /** Is the tiff being read is little Endian */
@@ -29,20 +29,20 @@ export class CogTiff {
   /** Has init() been called */
   isInitialized = false;
 
-  private _initPromise?: Promise<CogTiff>;
+  private _initPromise?: Promise<Tiff>;
   constructor(source: Source) {
     this.source = source;
   }
 
   /** Create a COG and initialize it by reading the COG headers */
-  static create(source: Source): Promise<CogTiff> {
-    return new CogTiff(source).init();
+  static create(source: Source): Promise<Tiff> {
+    return new Tiff(source).init();
   }
 
   /**
    * Initialize the COG loading in the header and all image headers
    */
-  init(): Promise<CogTiff> {
+  init(): Promise<Tiff> {
     if (this._initPromise) return this._initPromise;
     this._initPromise = this.readHeader();
     return this._initPromise;
@@ -53,7 +53,7 @@ export class CogTiff {
    *
    * @param resolution resolution to find
    */
-  getImageByResolution(resolution: number): CogTiffImage {
+  getImageByResolution(resolution: number): TiffImage {
     const firstImage = this.images[0];
     const firstImageSize = firstImage.size;
     const [refX] = firstImage.resolution;
@@ -74,7 +74,7 @@ export class CogTiff {
   }
 
   /** Read the Starting header and all Image headers from the source */
-  private async readHeader(): Promise<CogTiff> {
+  private async readHeader(): Promise<Tiff> {
     if (this.isInitialized) return this;
     const bytes = new DataView(await this.source.fetch(0, this.defaultReadSize)) as DataViewOffset;
     bytes.sourceOffset = 0;
@@ -109,7 +109,7 @@ export class CogTiff {
     const ghostSize = nextOffsetIfd - offset;
     // GDAL now stores metadata between the IFD inside a ghost storage area
     if (ghostSize > 0 && ghostSize < 16 * 1024) {
-      this.options = new CogTifGhostOptions();
+      this.options = new TiffGhostOptions();
       this.options.process(bytes, offset, ghostSize);
     }
 
@@ -159,7 +159,7 @@ export class CogTiff {
       tags.set(tag.id, tag);
     }
 
-    this.images.push(new CogTiffImage(this, this.images.length, tags));
+    this.images.push(new TiffImage(this, this.images.length, tags));
     return getUint(view, startOffset + tagCount * ifdSize, this.ifdConfig.pointer, this.isLittleEndian);
   }
 }

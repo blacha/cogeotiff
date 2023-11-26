@@ -1,5 +1,5 @@
-export { CogTiffImage } from './tiff.image.js';
-export { CogTiff } from './tiff.js';
+export { TiffImage } from './tiff.image.js';
+export { Tiff } from './tiff.js';
 export { TiffEndian } from './const/tiff.endian.js';
 export { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
 export { TiffTag, TiffTagGeo, TiffTagGeoValueLookup, TiffTagValueLookup } from './const/tiff.tag.id.js';

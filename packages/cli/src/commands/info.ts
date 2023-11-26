@@ -1,6 +1,7 @@
 import { fsa } from '@chunkd/fs';
 import {
-  CogTiff,
+  Tiff,
+  TiffImage,
   Tag,
   TagOffset,
   TiffTag,
@@ -10,7 +11,6 @@ import {
   TiffTagValueType,
   TiffVersion,
 } from '@cogeotiff/core';
-import { CogTiffImage } from '@cogeotiff/core/src/cog.tiff.image.js';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
 

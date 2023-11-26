@@ -1,4 +1,4 @@
-import { CogTiff } from './tiff.js';
+import { Tiff } from './tiff.js';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
 import { SubFileType, TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
@@ -12,7 +12,7 @@ export const InvalidProjectionCode = 32767;
 /**
  * Number of tiles used inside this image
  */
-export interface CogTiffImageTiledCount {
+export interface TiffImageTileCount {
   /** Number of tiles on the x axis */
   x: number;
   /** Number of tiles on the y axis */
@@ -38,14 +38,14 @@ export const ImportantTags = new Set([
 /**
  * Size of a individual tile
  */
-export interface CogTiffImageTileSize {
+export interface TiffImageTileSize {
   /** Tile width (pixels) */
   width: number;
   /** Tile height (pixels) */
   height: number;
 }
 
-export class CogTiffImage {
+export class TiffImage {
   /**
    * Id of the tif image, generally the image index inside the tif
    * where 0 is the root image, and every sub image is +1
@@ -54,7 +54,7 @@ export class CogTiffImage {
    */
   id: number;
   /** Reference to the TIFF that owns this image */
-  tiff: CogTiff;
+  tiff: Tiff;
   /** Has loadGeoTiffTags been called */
   isGeoTagsLoaded = false;
   /** Sub tags stored in TiffTag.GeoKeyDirectory */
@@ -62,7 +62,7 @@ export class CogTiffImage {
   /** All IFD tags that have been read for the image */
   tags: Map<TiffTag, Tag>;
 
-  constructor(tiff: CogTiff, id: number, tags: Map<TiffTag, Tag>) {
+  constructor(tiff: Tiff, id: number, tags: Map<TiffTag, Tag>) {
     this.tiff = tiff;
     this.id = id;
     this.tags = tags;
@@ -98,8 +98,8 @@ export class CogTiffImage {
   /**
    * Get the value of a TiffTag if it has been loaded, null otherwise.
    *
-   * If the value is not loaded use {@link CogTiffImage.fetch} to load the value
-   * Or use {@link CogTiffImage.has} to check if the tag exists
+   * If the value is not loaded use {@link TiffImage.fetch} to load the value
+   * Or use {@link TiffImage.has} to check if the tag exists
    *
    *
    * @returns value if loaded, null otherwise
@@ -356,7 +356,7 @@ export class CogTiffImage {
   /**
    * Get size of individual tiles
    */
-  get tileSize(): CogTiffImageTileSize {
+  get tileSize(): TiffImageTileSize {
     const width = this.value(TiffTag.TileWidth);
     const height = this.value(TiffTag.TileHeight);
     if (width == null || height == null) throw new Error('Tiff is not tiled');
@@ -366,7 +366,7 @@ export class CogTiffImage {
   /**
    * Number of tiles used to create this image
    */
-  get tileCount(): CogTiffImageTiledCount {
+  get tileCount(): TiffImageTileCount {
     const size = this.size;
     const tileSize = this.tileSize;
     const x = Math.ceil(size.width / tileSize.width);
@@ -551,11 +551,7 @@ export class CogTiffImage {
   }
 }
 
-function getOffset(
-  tiff: CogTiff,
-  x: TagOffset | TagInline<number | number[]>,
-  index: number,
-): number | Promise<number> {
+function getOffset(tiff: Tiff, x: TagOffset | TagInline<number | number[]>, index: number): number | Promise<number> {
   if (index > x.count || index < 0) throw new Error('TagIndex: out of bounds ' + x.id + ' @ ' + index);
   if (x.type === 'inline') {
     if (x.count > 1) return (x.value as number[])[index] as number;

@@ -22,7 +22,7 @@ export enum GhostOptionTileLeader {
  * GDAL has made a ghost set of options for Tiff files
  * this class represents the optimizations that GDAL has applied
  */
-export class CogTifGhostOptions {
+export class TiffGhostOptions {
   options: Map<string, string> = new Map();
 
   /**

@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { SourceMemory } from '../__benchmark__/source.memory.js';
-import { CogTiff } from '../tiff.js';
+import { Tiff } from '../tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
 import { ByteSize } from '../util/bytes.js';
 
@@ -19,7 +19,7 @@ function getResolution(zoom: number): number {
 
 describe('CogTiled', () => {
   const cogSourceFile = new TestFileSource(new URL('../../data/rgba8_tiled.tiff', import.meta.url));
-  const cog = new CogTiff(cogSourceFile);
+  const cog = new Tiff(cogSourceFile);
 
   beforeEach(() => cog.init());
 
@@ -87,7 +87,7 @@ describe('Cog.Big', () => {
   it('should support reading from memory', async () => {
     const fullSource = new TestFileSource(new URL('../../data/sparse.tiff', import.meta.url));
 
-    const cog = new CogTiff(fullSource);
+    const cog = new Tiff(fullSource);
     await cog.init();
 
     const [firstImage] = cog.images;
@@ -101,7 +101,7 @@ describe('Cog.Big', () => {
   it('should read using a memory source', async () => {
     const bytes = await fs.readFile(new URL('../../data/sparse.tiff', import.meta.url));
     const source = new SourceMemory(bytes.buffer);
-    const cog = new CogTiff(source);
+    const cog = new Tiff(source);
     await cog.init();
 
     const [firstImage] = cog.images;
@@ -115,7 +115,7 @@ describe('Cog.Big', () => {
 
 describe('Cog.Sparse', () => {
   const cogSourceFile = new TestFileSource(new URL('../../data/sparse.tiff', import.meta.url));
-  const cog = new CogTiff(cogSourceFile);
+  const cog = new Tiff(cogSourceFile);
 
   it('should read metadata', async () => {
     await cog.init();
@@ -164,7 +164,7 @@ describe('Cog.Sparse', () => {
 
 describe('CogStrip', () => {
   const cogSourceFile = new TestFileSource(new URL('../../data/rgba8_strip.tiff', import.meta.url));
-  const cog = new CogTiff(cogSourceFile);
+  const cog = new Tiff(cogSourceFile);
 
   beforeEach(() => cog.init());
 
