@@ -172,7 +172,7 @@ export enum TiffTag {
    *
    * @example
    * ```typescript
-   * 1 // uint
+   * 1 // SampleFormat.Uint
    * ```
    */
   SampleFormat = 339,
@@ -181,6 +181,11 @@ export enum TiffTag {
    * Compression Type
    *
    * @see {@link Compression}
+   *
+   * @example
+   * ```typescript
+   * 5 // Compression.Lzw
+   * ```
    */
   Compression = 259,
 
@@ -188,6 +193,11 @@ export enum TiffTag {
    * Photometric interpretation
    *
    * @see {@link Photometric}
+   *
+   * @example
+   * ```typescript
+   * 2 // Photometric.Rgb
+   * ```
    */
   Photometric = 262,
 
@@ -195,12 +205,29 @@ export enum TiffTag {
   TileWidth = 322,
   /** Tile height in pixels */
   TileHeight = 323,
-  /** Offsets to data tiles */
+
+  /**
+   * Offsets to data tiles
+   * `0` means the tile has no data (sparse tiff)
+   *
+   * @example
+   * ```typescript
+   * [0, 3200, 1406] // three tiles, first tile does not exist
+   * ```
+   */
   TileOffsets = 324,
-  /** Byte counts for tiles */
+  /**
+   *  Byte counts for tiles
+   *  `0 means the tile does not exist (sparse tiff)
+   *
+   * @example
+   * ```typescript
+   * [0, 3200, 1406] // three tiles, first tile does not exist
+   * ```
+   **/
   TileByteCounts = 325,
 
-  /** %JPEG table stream */
+  /** JPEG table stream */
   JpegTables = 347,
 
   StripOffsets = 273,
