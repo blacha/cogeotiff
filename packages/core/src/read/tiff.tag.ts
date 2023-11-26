@@ -30,6 +30,7 @@ export interface TagLazy<T> extends TagBase {
 /** Tiff tag that's value is inside the IFD and is already read */
 export interface TagInline<T> extends TagBase {
   type: 'inline';
+  /** Value of the tag */
   value: T;
 }
 

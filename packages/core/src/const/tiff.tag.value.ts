@@ -10,8 +10,8 @@ export enum TiffTagValueType {
   Int32 = 9,
   SignedRational = 10,
   Float32 = 11,
-  // BigTiff
   Float64 = 12,
+  // BigTiff
   Uint64 = 16,
   Int64 = 17,
   Ifd8 = 18,
