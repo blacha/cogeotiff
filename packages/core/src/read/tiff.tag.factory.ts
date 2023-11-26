@@ -1,6 +1,6 @@
-import { Tiff } from '../tiff.js';
 import { TiffTag } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
+import { Tiff } from '../tiff.js';
 import { getUint, getUint64 } from '../util/bytes.js';
 import { DataViewOffset, hasBytes } from './data.view.offset.js';
 import { Tag, TagLazy, TagOffset } from './tiff.tag.js';

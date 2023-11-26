@@ -1,8 +1,8 @@
-import { Tiff } from './tiff.js';
 import { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
 import { SubFileType, TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
 import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
+import { Tiff } from './tiff.js';
 import { getUint } from './util/bytes.js';
 import { BoundingBox, Size } from './vector.js';
 

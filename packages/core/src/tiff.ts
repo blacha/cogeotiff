@@ -1,4 +1,3 @@
-import { TiffImage } from './tiff.image.js';
 import { TiffEndian } from './const/tiff.endian.js';
 import { TiffTag } from './const/tiff.tag.id.js';
 import { TiffVersion } from './const/tiff.version.js';
@@ -8,6 +7,7 @@ import { TiffGhostOptions } from './read/tiff.gdal.js';
 import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config.js';
 import { createTag } from './read/tiff.tag.factory.js';
 import { Source } from './source.js';
+import { TiffImage } from './tiff.image.js';
 import { getUint } from './util/bytes.js';
 import { toHex } from './util/util.hex.js';
 

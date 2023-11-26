@@ -2,10 +2,10 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 
 import { TestFileSource } from '../__benchmark__/source.file.js';
-import { Tiff } from '../tiff.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
 import { TiffVersion } from '../const/tiff.version.js';
 import { TiffTag, TiffTagGeo } from '../index.js';
+import { Tiff } from '../tiff.js';
 
 function validate(tif: Tiff): void {
   assert.equal(tif.images.length, 5);

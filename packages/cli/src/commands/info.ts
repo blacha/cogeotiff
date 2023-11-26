@@ -1,9 +1,9 @@
 import { fsa } from '@chunkd/fs';
 import {
-  Tiff,
-  TiffImage,
   Tag,
   TagOffset,
+  Tiff,
+  TiffImage,
   TiffTag,
   TiffTagGeo,
   TiffTagGeoValueLookup,

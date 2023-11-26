@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 
-import { Tiff } from '../tiff.js';
 import { TiffTag } from '../index.js';
+import { Tiff } from '../tiff.js';
 import { SourceMemory } from './source.memory.js';
 
 // console.log = console.trace;
