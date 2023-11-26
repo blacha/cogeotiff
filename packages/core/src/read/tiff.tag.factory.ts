@@ -96,7 +96,7 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
   // Tag value is inline read the value
   if (dataLength <= tiff.ifdConfig.pointer) {
     const value = readValue(tiff, view, offset + 4 + tiff.ifdConfig.pointer, dataType, dataCount);
-    return { type: 'inline', id: tagId, count: dataCount, value, dataType, tagOffset: offset };
+    return { type: 'inline', id: tagId, name: TiffTag[tagId], count: dataCount, value, dataType, tagOffset: offset };
   }
 
   const dataOffset = getUint(view, offset + 4 + tiff.ifdConfig.pointer, tiff.ifdConfig.pointer, tiff.isLittleEndian);
@@ -108,6 +108,7 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
       const tag: TagOffset = {
         type: 'offset',
         id: tagId,
+        name: TiffTag[tagId],
         count: dataCount,
         dataType,
         dataOffset,
@@ -123,10 +124,10 @@ export function createTag(tiff: CogTiff, view: DataViewOffset, offset: number): 
   // If we already have the bytes in the view read them in
   if (hasBytes(view, dataOffset, dataLength)) {
     const value = readValue(tiff, view, dataOffset - view.sourceOffset, dataType, dataCount);
-    return { type: 'inline', id: tagId, count: dataCount, value, dataType, tagOffset: offset };
+    return { type: 'inline', id: tagId, name: TiffTag[tagId], count: dataCount, value, dataType, tagOffset: offset };
   }
 
-  return { type: 'lazy', id: tagId, count: dataCount, dataOffset, dataType, tagOffset: offset };
+  return { type: 'lazy', id: tagId, name: TiffTag[tagId], count: dataCount, dataOffset, dataType, tagOffset: offset };
 }
 
 /** Fetch the value from a {@link TagLazy} tag */
