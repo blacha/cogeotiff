@@ -3,10 +3,10 @@ import { describe, it } from 'node:test';
 
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
+import { Photometric, SampleFormat } from '../const/tiff.tag.id.js';
 import { TiffVersion } from '../const/tiff.version.js';
 import { TiffTag, TiffTagGeo } from '../index.js';
 import { Tiff } from '../tiff.js';
-import { Photometric, SampleFormat } from '../const/tiff.tag.id.js';
 
 function validate(tif: Tiff): void {
   assert.equal(tif.images.length, 5);

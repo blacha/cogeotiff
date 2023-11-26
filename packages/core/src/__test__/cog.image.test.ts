@@ -6,9 +6,9 @@ import { promises as fs } from 'fs';
 import { TestFileSource } from '../__benchmark__/source.file.js';
 import { SourceMemory } from '../__benchmark__/source.memory.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
+import { Photometric, TiffTag } from '../const/tiff.tag.id.js';
 import { Tiff } from '../tiff.js';
 import { ByteSize } from '../util/bytes.js';
-import { Photometric, TiffTag } from '../const/tiff.tag.id.js';
 
 // 900913 properties.
 const A = 6378137.0;
