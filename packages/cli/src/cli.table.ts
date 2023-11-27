@@ -1,3 +1,5 @@
+import c from 'ansi-colors';
+
 interface CliTableInfo<T> {
   /** Header for the table */
   name: string;
@@ -28,7 +30,7 @@ export class CliTable<T> {
       return rowPadding + row.join('\t');
     });
 
-    rows.unshift(rowPadding + fields.map((f) => f.name.padEnd(f.width)).join('\t'));
+    rows.unshift(rowPadding + fields.map((f) => c.blue(f.name.padEnd(f.width))).join('\t'));
     return rows;
   }
 }

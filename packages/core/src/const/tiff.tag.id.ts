@@ -311,6 +311,16 @@ export enum TiffTag {
    */
   GeoAsciiParams = 34737,
 
+  /**
+   * Stores the LERC version and additional compression
+   *
+   * @example
+   * ```typescript
+   * [4, 0] // version 4, no extra compression
+   * ```
+   */
+  LercParameters = 50674,
+
   PlanarConfiguration = 284,
 
   /** Untyped values */
@@ -411,7 +421,7 @@ export interface TiffTagType {
   [TiffTag.StripByteCounts]: number[];
   [TiffTag.StripOffsets]: number[];
 
-  [TiffTag.SampleFormat]: SampleFormat;
+  [TiffTag.SampleFormat]: SampleFormat[];
   [TiffTag.GdalMetadata]: string;
   [TiffTag.GdalNoData]: string;
   [TiffTag.ModelPixelScale]: number[];
@@ -423,6 +433,8 @@ export interface TiffTagType {
 
   [TiffTag.PlanarConfiguration]: PlanarConfiguration;
   [TiffTag.Orientation]: Orientation;
+
+  [TiffTag.LercParameters]: number[];
 
   // Untyped values
 
@@ -733,16 +745,6 @@ export interface TiffTagGeoType {
   [TiffTagGeo.VerticalUnitsGeoKey]: number;
 }
 
-/** Convert enum values back to strings */
-export const TiffTagValueLookup: Partial<Record<number, Record<number, string>>> = {
-  [TiffTag.SubFileType]: SubFileType,
-  [TiffTag.Compression]: Compression,
-  [TiffTag.Orientation]: Orientation,
-  [TiffTag.SampleFormat]: SampleFormat,
-  [TiffTag.Photometric]: Photometric,
-  [TiffTag.PlanarConfiguration]: PlanarConfiguration,
-};
-
 /**
  * EPSG Angular Units. exist between [9100,  9199]
  *
@@ -780,15 +782,6 @@ export enum LinearUnit {
   Fathom = 9014,
   MileInternationalNautical = 9015,
 }
-
-/** Convert enum values back to strings */
-export const TiffTagGeoValueLookup: Partial<Record<number, Record<number, string>>> = {
-  [TiffTagGeo.GTRasterTypeGeoKey]: RasterTypeKey,
-  [TiffTagGeo.GTModelTypeGeoKey]: ModelTypeCode,
-  [TiffTagGeo.GeogAngularUnitsGeoKey]: AngularUnit,
-  [TiffTagGeo.ProjLinearUnitsGeoKey]: LinearUnit,
-  [TiffTagGeo.VerticalUnitsGeoKey]: LinearUnit,
-};
 
 /**
  * Convert tiff tag values when being read.

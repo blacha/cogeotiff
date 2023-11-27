@@ -1,16 +1,5 @@
 import { fsa } from '@chunkd/fs';
-import {
-  Tag,
-  TagOffset,
-  Tiff,
-  TiffImage,
-  TiffTag,
-  TiffTagGeo,
-  TiffTagGeoValueLookup,
-  TiffTagValueLookup,
-  TiffTagValueType,
-  TiffVersion,
-} from '@cogeotiff/core';
+import { Tag, TagOffset, Tiff, TiffImage, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion } from '@cogeotiff/core';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
 
@@ -19,6 +8,7 @@ import { CliTable } from '../cli.table.js';
 import { DefaultArgs, Url } from '../common.js';
 import { FetchLog } from '../fs.js';
 import { ensureS3fs, setupLogger } from '../log.js';
+import { TagFormatters, TagGeoFormatters } from '../tags.js';
 import { toByteSizeString } from '../util.bytes.js';
 
 function round(num: number): number {
@@ -59,12 +49,15 @@ export const commandInfo = command({
 
       const firstImage = tiff.images[0];
       const isGeoLocated = firstImage.isGeoLocated;
+      const compression = firstImage.value(TiffTag.Compression);
       const images = [
-        { key: 'Compression', value: firstImage.compression },
+        { key: 'Compression', value: `${compression} - ${c.magenta(firstImage.compression ?? '??')}` },
         isGeoLocated ? { key: 'Origin', value: firstImage.origin.map(round).join(', ') } : null,
         isGeoLocated ? { key: 'Resolution', value: firstImage.resolution.map(round).join(', ') } : null,
         isGeoLocated ? { key: 'BoundingBox', value: firstImage.bbox.map(round).join(', ') } : null,
-        firstImage.epsg ? { key: 'EPSG', value: `EPSG:${firstImage.epsg} (https://epsg.io/${firstImage.epsg})` } : null,
+        firstImage.epsg
+          ? { key: 'EPSG', value: `EPSG:${firstImage.epsg} ${c.underline('https://epsg.io/' + firstImage.epsg)}` }
+          : null,
         { key: 'Images', value: '\n' + TiffImageInfoTable.print(tiff.images, '\t').join('\n') },
       ];
 
@@ -193,16 +186,16 @@ function formatTag(tag: Tag): { key: string; value: string } {
       return { key, value: c.dim('Tag not Loaded, use --fetch-tags to force load') };
     }
     const val = [...(tag.value as number[])]; // Ensure the value is not a TypedArray
-    if (TiffTagValueLookup[tag.id]) {
-      complexType = ` - ${val.map((m) => c.magenta(TiffTagValueLookup[tag.id]?.[m] ?? '?'))}`;
+    if (TagFormatters[tag.id]) {
+      complexType = ` - ${c.magenta(TagFormatters[tag.id](val) ?? '??')}`;
     }
     return { key, value: (val.length > 25 ? val.slice(0, 25).join(', ') + '...' : val.join(', ')) + complexType };
   }
 
   let tagString = JSON.stringify(tag.value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
-  if (TiffTagValueLookup[tag.id]) {
-    complexType = ` - ${c.magenta(TiffTagValueLookup[tag.id]?.[tag.value as unknown as number] ?? '?')}`;
+  if (TagFormatters[tag.id]) {
+    complexType = ` - ${c.magenta(TagFormatters[tag.id]([tag.value as unknown as number]) ?? '??')}`;
   }
   return { key, value: tagString + complexType };
 }
@@ -212,8 +205,8 @@ function formatGeoTag(tagId: TiffTagGeo, value: string | number | number[]): { k
   const key = `${c.dim(String(tagId)).padEnd(7, ' ')} ${String(tagName).padEnd(30)}`;
 
   let complexType = '';
-  if (TiffTagGeoValueLookup[tagId]) {
-    complexType = ` - ${c.magenta(TiffTagGeoValueLookup[tagId]?.[value as unknown as number] ?? '?')}`;
+  if (TagGeoFormatters[tagId]) {
+    complexType = ` - ${c.magenta(TagGeoFormatters[tagId]([value as unknown as number]) ?? '??')}`;
   }
 
   let tagString = JSON.stringify(value) ?? c.dim('null');
