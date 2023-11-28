@@ -24,10 +24,8 @@ export class CliTable<T> {
     const fields = this.fields.filter((f) => data.every((d) => f.enabled?.(d) ?? true));
     const values = fields.map((f) => data.map((d, i) => f.get(d, i)));
     const sizes = values.map((val) => val.reduce((v, c) => Math.max(v, c?.length ?? 0), 0));
-    console.log(fields.map((m) => m.name));
 
     const rows: string[] = [rowPadding + fields.map((f, i) => c.bold(f.name.padEnd(sizes[i] + 2))).join('\t')];
-    console.log(rows);
     for (let i = 0; i < data.length; i++) {
       const row: string[] = [];
       for (let f = 0; f < fields.length; f++) {
