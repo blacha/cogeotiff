@@ -4,7 +4,7 @@ import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
 
 import { ActionUtil, CliResultMap } from '../action.util.js';
-import { CliTable } from '../cli.table.js';
+import { CliTable, CliTableInfo } from '../cli.table.js';
 import { DefaultArgs, Url } from '../common.js';
 import { FetchLog } from '../fs.js';
 import { ensureS3fs, setupLogger } from '../log.js';
@@ -23,6 +23,10 @@ export const commandInfo = command({
     path: option({ short: 'f', long: 'file', type: optional(Url) }),
     tags: flag({ short: 't', long: 'tags', description: 'Dump tiff tags' }),
     fetchTags: flag({ long: 'fetch-tags', description: 'Fetch extra tiff tag information' }),
+    tileStats: flag({
+      long: 'tile-stats',
+      description: 'Fetch tile information, like size [this can fetch a lot of data]',
+    }),
     paths: restPositionals({ type: Url, description: 'Files to process' }),
   },
   async handler(args) {
@@ -36,6 +40,11 @@ export const commandInfo = command({
 
       const source = fsa.source(path);
       const tiff = await new Tiff(source).init();
+
+      if (args.tileStats) {
+        await Promise.all(tiff.images.map((img) => img.fetch(TiffTag.TileByteCounts)));
+        TiffImageInfoTable.add(tiffTileStats);
+      }
 
       const header = [
         { key: 'Tiff type', value: `${TiffVersion[tiff.version]} (v${String(tiff.version)})` },
@@ -128,7 +137,13 @@ TiffImageInfoTable.add({
 TiffImageInfoTable.add({
   name: 'Tile Count',
   width: 20,
-  get: (i) => `${i.tileCount.x}x${i.tileCount.y} (${i.tileCount.x * i.tileCount.y})`,
+  get: (i) => {
+    let tileCount = i.tileCount.x * i.tileCount.y;
+    const offsets = i.value(TiffTag.TileByteCounts) ?? i.value(TiffTag.TileOffsets);
+    if (offsets) tileCount = offsets.length;
+
+    return `${i.tileCount.x}x${i.tileCount.y} (${tileCount})`;
+  },
   enabled: (i) => i.isTiled(),
 });
 TiffImageInfoTable.add({
@@ -155,6 +170,29 @@ TiffImageInfoTable.add({
     return formats.size > 1;
   },
 });
+
+export const tiffTileStats: CliTableInfo<TiffImage> = {
+  name: 'Tile Stats',
+  width: 20,
+  get: (i) => {
+    const sizes = i.value(TiffTag.TileByteCounts);
+    if (sizes == null) return 'N/A';
+
+    const stats = {
+      size: 0,
+      empty: 0,
+    };
+    for (const st of sizes) {
+      if (st === 0) stats.empty++;
+      stats.size += st;
+    }
+    const empty = stats.empty > 0 ? ` (${c.blue('empty')}: ${stats.empty})` : '';
+
+    const avg = stats.size / (sizes.length - stats.empty);
+    return toByteSizeString(stats.size) + ` (${c.blue('avg:')} ${toByteSizeString(avg)})` + empty;
+  },
+  enabled: () => true,
+};
 
 /**
  * Parse out the GDAL Metadata to be more friendly to read
