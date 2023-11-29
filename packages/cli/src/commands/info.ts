@@ -54,6 +54,12 @@ export const commandInfo = command({
             FetchLog.fetches.length === 1 ? '' : 's'
           })`,
         },
+        tiff.source.metadata?.size
+          ? {
+              key: 'Size',
+              value: toByteSizeString(tiff.source.metadata.size),
+            }
+          : null,
       ];
 
       const firstImage = tiff.images[0];
