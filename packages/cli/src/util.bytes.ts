@@ -8,6 +8,7 @@ const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
  * @param bytes  byte count to convert
  */
 export function toByteSizeString(bytes: number): string {
+  if (bytes === 0) return '0';
   if (bytes === 1) return '1 Byte';
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   const output = bytes / Math.pow(1024, i);

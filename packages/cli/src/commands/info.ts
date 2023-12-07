@@ -190,11 +190,14 @@ export const tiffTileStats: CliTableInfo<TiffImage> = {
     };
     for (const st of sizes) {
       if (st === 0) stats.empty++;
+      console.log(st, stats);
       stats.size += st;
     }
-    const empty = stats.empty > 0 ? ` (${c.blue('empty')}: ${stats.empty})` : '';
+    if (stats.size === 0) return `${c.red('empty')} x${stats.empty}`;
 
-    const avg = stats.size / (sizes.length - stats.empty);
+    const empty = stats.empty > 0 ? ` (${c.red('empty')} x${stats.empty})` : '';
+
+    const avg = stats.size === 0 ? 0 : stats.size / (sizes.length - stats.empty);
     return toByteSizeString(stats.size) + ` (${c.blue('avg:')} ${toByteSizeString(avg)})` + empty;
   },
   enabled: () => true,
