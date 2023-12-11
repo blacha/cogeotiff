@@ -172,7 +172,8 @@ export enum TiffTag {
    *
    * @example
    * ```typescript
-   * 1 // uint
+   * [1] // SampleFormat.Uint
+   * [1,1,1,1] // 4 band Uint
    * ```
    */
   SampleFormat = 339,
@@ -181,6 +182,11 @@ export enum TiffTag {
    * Compression Type
    *
    * @see {@link Compression}
+   *
+   * @example
+   * ```typescript
+   * 5 // Compression.Lzw
+   * ```
    */
   Compression = 259,
 
@@ -188,6 +194,11 @@ export enum TiffTag {
    * Photometric interpretation
    *
    * @see {@link Photometric}
+   *
+   * @example
+   * ```typescript
+   * 2 // Photometric.Rgb
+   * ```
    */
   Photometric = 262,
 
@@ -195,12 +206,29 @@ export enum TiffTag {
   TileWidth = 322,
   /** Tile height in pixels */
   TileHeight = 323,
-  /** Offsets to data tiles */
+
+  /**
+   * Offsets to data tiles
+   * `0` means the tile has no data (sparse tiff)
+   *
+   * @example
+   * ```typescript
+   * [0, 3200, 1406] // three tiles, first tile does not exist
+   * ```
+   */
   TileOffsets = 324,
-  /** Byte counts for tiles */
+  /**
+   *  Byte counts for tiles
+   *  `0 means the tile does not exist (sparse tiff)
+   *
+   * @example
+   * ```typescript
+   * [0, 3200, 1406] // three tiles, first tile does not exist
+   * ```
+   **/
   TileByteCounts = 325,
 
-  /** %JPEG table stream */
+  /** JPEG table stream */
   JpegTables = 347,
 
   StripOffsets = 273,
@@ -282,6 +310,16 @@ export enum TiffTag {
    * {@link TiffTagGeo}
    */
   GeoAsciiParams = 34737,
+
+  /**
+   * Stores the LERC version and additional compression
+   *
+   * @example
+   * ```typescript
+   * [4, 0] // version 4, no extra compression
+   * ```
+   */
+  LercParameters = 50674,
 
   PlanarConfiguration = 284,
 
@@ -383,7 +421,7 @@ export interface TiffTagType {
   [TiffTag.StripByteCounts]: number[];
   [TiffTag.StripOffsets]: number[];
 
-  [TiffTag.SampleFormat]: SampleFormat;
+  [TiffTag.SampleFormat]: SampleFormat[];
   [TiffTag.GdalMetadata]: string;
   [TiffTag.GdalNoData]: string;
   [TiffTag.ModelPixelScale]: number[];
@@ -395,6 +433,8 @@ export interface TiffTagType {
 
   [TiffTag.PlanarConfiguration]: PlanarConfiguration;
   [TiffTag.Orientation]: Orientation;
+
+  [TiffTag.LercParameters]: number[];
 
   // Untyped values
 
@@ -705,16 +745,6 @@ export interface TiffTagGeoType {
   [TiffTagGeo.VerticalUnitsGeoKey]: number;
 }
 
-/** Convert enum values back to strings */
-export const TiffTagValueLookup: Partial<Record<number, Record<number, string>>> = {
-  [TiffTag.SubFileType]: SubFileType,
-  [TiffTag.Compression]: Compression,
-  [TiffTag.Orientation]: Orientation,
-  [TiffTag.SampleFormat]: SampleFormat,
-  [TiffTag.Photometric]: Photometric,
-  [TiffTag.PlanarConfiguration]: PlanarConfiguration,
-};
-
 /**
  * EPSG Angular Units. exist between [9100,  9199]
  *
@@ -753,15 +783,6 @@ export enum LinearUnit {
   MileInternationalNautical = 9015,
 }
 
-/** Convert enum values back to strings */
-export const TiffTagGeoValueLookup: Partial<Record<number, Record<number, string>>> = {
-  [TiffTagGeo.GTRasterTypeGeoKey]: RasterTypeKey,
-  [TiffTagGeo.GTModelTypeGeoKey]: ModelTypeCode,
-  [TiffTagGeo.GeogAngularUnitsGeoKey]: AngularUnit,
-  [TiffTagGeo.ProjLinearUnitsGeoKey]: LinearUnit,
-  [TiffTagGeo.VerticalUnitsGeoKey]: LinearUnit,
-};
-
 /**
  * Convert tiff tag values when being read.
  */
@@ -771,6 +792,7 @@ export const TiffTagConvertArray: Partial<Record<TiffTag, boolean>> = {
   [TiffTag.StripOffsets]: true,
   [TiffTag.StripByteCounts]: true,
   [TiffTag.BitsPerSample]: true,
+  [TiffTag.SampleFormat]: true,
   [TiffTag.GeoKeyDirectory]: true,
   [TiffTag.GeoDoubleParams]: true,
 };

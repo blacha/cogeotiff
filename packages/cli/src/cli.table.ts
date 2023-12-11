@@ -1,4 +1,6 @@
-interface CliTableInfo<T> {
+import c from 'ansi-colors';
+
+export interface CliTableInfo<T> {
   /** Header for the table */
   name: string;
   /** Pad the field out to this width */
@@ -20,15 +22,20 @@ export class CliTable<T> {
 
   print(data: T[], rowPadding = ''): string[] {
     const fields = this.fields.filter((f) => data.every((d) => f.enabled?.(d) ?? true));
-    const rows = data.map((d, index) => {
-      const row = fields.map((f) => {
-        const str = f.get(d, index);
-        return (str ?? '').padEnd(f.width);
-      });
-      return rowPadding + row.join('\t');
-    });
+    const values = fields.map((f) => data.map((d, i) => f.get(d, i)));
+    const sizes = values.map((val) => val.reduce((v, c) => Math.max(v, c?.length ?? 0), 0));
 
-    rows.unshift(rowPadding + fields.map((f) => f.name.padEnd(f.width)).join('\t'));
+    const rows: string[] = [rowPadding + fields.map((f, i) => c.bold(f.name.padEnd(sizes[i] + 2))).join('\t')];
+    for (let i = 0; i < data.length; i++) {
+      const row: string[] = [];
+      for (let f = 0; f < fields.length; f++) {
+        const fValue = values[f][i];
+        const fSize = sizes[f];
+        row.push((fValue ?? '').padEnd(fSize + 2));
+      }
+      rows.push(rowPadding + row.join('\t'));
+    }
+
     return rows;
   }
 }

@@ -1,6 +1,6 @@
 export { TiffEndian } from './const/tiff.endian.js';
-export { TiffCompression, TiffMimeType } from './const/tiff.mime.js';
-export { TiffTag, TiffTagGeo, TiffTagGeoValueLookup, TiffTagValueLookup } from './const/tiff.tag.id.js';
+export { TiffCompressionMimeType as TiffCompression, TiffMimeType } from './const/tiff.mime.js';
+export { TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 export { TiffTagValueType } from './const/tiff.tag.value.js';
 export { TiffVersion } from './const/tiff.version.js';
 export { Tag, TagInline, TagLazy, TagOffset } from './read/tiff.tag.js';
@@ -16,6 +16,7 @@ export {
   AngularUnit,
   Compression,
   LinearUnit,
+  ModelTypeCode,
   OldSubFileType,
   Orientation,
   Photometric,

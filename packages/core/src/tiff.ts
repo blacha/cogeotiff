@@ -13,7 +13,9 @@ import { toHex } from './util/util.hex.js';
 
 export class Tiff {
   /** Read 16KB blocks at a time */
-  defaultReadSize = 16 * 1024;
+  static DefaultReadSize = 16 * 1024;
+  /** Read 16KB blocks at a time */
+  defaultReadSize = Tiff.DefaultReadSize;
   /** Where this cog is fetching its data from */
   source: Source;
   /** Big or small Tiff */
