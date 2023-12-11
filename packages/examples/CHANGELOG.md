@@ -18,6 +18,24 @@
   * dependencies
     * @cogeotiff/core bumped from ^8.1.0 to ^8.1.1
 
+## [9.0.0](https://github.com/blacha/cogeotiff/compare/examples-v8.0.4...examples-v9.0.0) (2023-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename all type from CogTiff to just Tiff ([#1227](https://github.com/blacha/cogeotiff/issues/1227))
+
+### Features
+
+* rename all type from CogTiff to just Tiff ([#1227](https://github.com/blacha/cogeotiff/issues/1227)) ([872263b](https://github.com/blacha/cogeotiff/commit/872263b11f1ab06853cb872de54a9d9dd745b647))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^8.1.1 to ^9.0.0
+
 ## [8.0.1](https://github.com/blacha/cogeotiff/compare/examples-v8.0.0...examples-v8.0.1) (2023-08-05)
 
 

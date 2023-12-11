@@ -1,5 +1,29 @@
 # Changelog
 
+## [9.0.0](https://github.com/blacha/cogeotiff/compare/core-v8.1.1...core-v9.0.0) (2023-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename all type from CogTiff to just Tiff ([#1227](https://github.com/blacha/cogeotiff/issues/1227))
+* modify structure of tiff tags ([#1225](https://github.com/blacha/cogeotiff/issues/1225))
+
+### Features
+
+* color more output and add more tags ([fe4088b](https://github.com/blacha/cogeotiff/commit/fe4088b3f1f88a1248d803c29a563872aab4205c))
+* export all tag value constants ([#1229](https://github.com/blacha/cogeotiff/issues/1229)) ([44757e5](https://github.com/blacha/cogeotiff/commit/44757e5ba5c98e992bb9fd72eb9993c727648b74))
+* expose default read size so it can be easily overridden ([5786246](https://github.com/blacha/cogeotiff/commit/57862469229503c95ee274b555fc75d828b58529))
+* expose gdal's NO_DATA as a getter on the image ([#1230](https://github.com/blacha/cogeotiff/issues/1230)) ([fc21a30](https://github.com/blacha/cogeotiff/commit/fc21a30d6754f37923b92ee4fe26c557ff6d9378))
+* force some tags to always be arrays ([#1228](https://github.com/blacha/cogeotiff/issues/1228)) ([acc8f93](https://github.com/blacha/cogeotiff/commit/acc8f93eac6f311bdb9d0a6e97e28e2457867c91))
+* modify structure of tiff tags ([#1225](https://github.com/blacha/cogeotiff/issues/1225)) ([049e0bc](https://github.com/blacha/cogeotiff/commit/049e0bc3c4e15f8c095a3da4442ef144d372cf60))
+* rename all type from CogTiff to just Tiff ([#1227](https://github.com/blacha/cogeotiff/issues/1227)) ([872263b](https://github.com/blacha/cogeotiff/commit/872263b11f1ab06853cb872de54a9d9dd745b647))
+* Tag SampleFormat should also be a array ([4216ddd](https://github.com/blacha/cogeotiff/commit/4216dddc1601bf44a1e604ff78e515f90ccdbdfa))
+
+
+### Bug Fixes
+
+* allow unknown compression types to be read ([9247a70](https://github.com/blacha/cogeotiff/commit/9247a709d6f049785614fa41b79bbadf2061a07e))
+
 ## [8.1.1](https://github.com/blacha/cogeotiff/compare/core-v8.1.0...core-v8.1.1) (2023-11-14)
 
 

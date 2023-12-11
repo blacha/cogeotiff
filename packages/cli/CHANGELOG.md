@@ -1,5 +1,35 @@
 # Changelog
 
+## [9.0.0](https://github.com/blacha/cogeotiff/compare/cli-v8.1.1...cli-v9.0.0) (2023-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename all type from CogTiff to just Tiff ([#1227](https://github.com/blacha/cogeotiff/issues/1227))
+* modify structure of tiff tags ([#1225](https://github.com/blacha/cogeotiff/issues/1225))
+
+### Features
+
+* **cli:** expose stats on tiles, empty, avg and overview size ([62bc6a7](https://github.com/blacha/cogeotiff/commit/62bc6a727615907c318fc8b4b06375b81bc17a00))
+* **cli:** include file size if known ([5e90764](https://github.com/blacha/cogeotiff/commit/5e907640022953d396a14d4023633dfe8e14289e))
+* color more output and add more tags ([fe4088b](https://github.com/blacha/cogeotiff/commit/fe4088b3f1f88a1248d803c29a563872aab4205c))
+* export all tag value constants ([#1229](https://github.com/blacha/cogeotiff/issues/1229)) ([44757e5](https://github.com/blacha/cogeotiff/commit/44757e5ba5c98e992bb9fd72eb9993c727648b74))
+* modify structure of tiff tags ([#1225](https://github.com/blacha/cogeotiff/issues/1225)) ([049e0bc](https://github.com/blacha/cogeotiff/commit/049e0bc3c4e15f8c095a3da4442ef144d372cf60))
+* rename all type from CogTiff to just Tiff ([#1227](https://github.com/blacha/cogeotiff/issues/1227)) ([872263b](https://github.com/blacha/cogeotiff/commit/872263b11f1ab06853cb872de54a9d9dd745b647))
+
+
+### Bug Fixes
+
+* **cli:** if the tiff is fully sparse dont print NaN ([368aad2](https://github.com/blacha/cogeotiff/commit/368aad2d9ed80508195fd3700934e026d1106ed3))
+* **cli:** remove console.log ([b4f22cb](https://github.com/blacha/cogeotiff/commit/b4f22cb47c3e64f523ad4955bc5389f341ada207))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^8.1.1 to ^9.0.0
+
 ## [8.1.1](https://github.com/blacha/cogeotiff/compare/cli-v8.1.0...cli-v8.1.1) (2023-11-14)
 
 
