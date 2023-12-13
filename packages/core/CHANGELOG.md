@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.1](https://github.com/blacha/cogeotiff/compare/core-v9.0.0...core-v9.0.1) (2023-12-13)
+
+
+### Bug Fixes
+
+* **core:** do not read past the end of a buffer ([c810ada](https://github.com/blacha/cogeotiff/commit/c810adacd9a508858a28d85f75afa620ec94b355))
+
 ## [9.0.0](https://github.com/blacha/cogeotiff/compare/core-v8.1.1...core-v9.0.0) (2023-12-11)
 
 
