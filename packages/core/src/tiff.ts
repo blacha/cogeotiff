@@ -78,7 +78,10 @@ export class Tiff {
   /** Read the Starting header and all Image headers from the source */
   private async readHeader(): Promise<Tiff> {
     if (this.isInitialized) return this;
-    const bytes = new DataView(await this.source.fetch(0, this.defaultReadSize)) as DataViewOffset;
+    // limit the read to the size of the file if it is known, for small tiffs
+    const bytes = new DataView(
+      await this.source.fetch(0, getMaxLength(this.source, 0, this.defaultReadSize)),
+    ) as DataViewOffset;
     bytes.sourceOffset = 0;
 
     let offset = 0;

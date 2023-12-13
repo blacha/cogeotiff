@@ -1,7 +1,9 @@
 import assert from 'node:assert';
+import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 
 import { TestFileSource } from '../__benchmark__/source.file.js';
+import { SourceMemory } from '../__benchmark__/source.memory.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
 import { Photometric, SampleFormat } from '../const/tiff.tag.id.js';
 import { TiffVersion } from '../const/tiff.version.js';
@@ -137,5 +139,15 @@ describe('CogRead', () => {
 
     const tile = await tiff.images[0].getTile(0, 0);
     assert.deepEqual(tile?.mimeType, 'application/octet-stream');
+  });
+
+  it('should load small tiffs', async () => {
+    const cogSourceFile = new URL('../../data/rgba8_tiled.tiff', import.meta.url);
+
+    const buf = await readFile(cogSourceFile);
+    const source = new SourceMemory(buf);
+
+    const tiff = await Tiff.create(source);
+    assert.equal(tiff.images.length, 5);
   });
 });
