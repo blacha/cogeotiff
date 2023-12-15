@@ -190,7 +190,6 @@ export const tiffTileStats: CliTableInfo<TiffImage> = {
     };
     for (const st of sizes) {
       if (st === 0) stats.empty++;
-      console.log(st, stats);
       stats.size += st;
     }
     if (stats.size === 0) return `${c.red('empty')} x${stats.empty}`;
