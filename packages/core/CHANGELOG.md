@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.0.2](https://github.com/blacha/cogeotiff/compare/core-v9.0.1...core-v9.0.2) (2023-12-15)
+
+
+### Bug Fixes
+
+* **core:** do not read past the end of the offset arrays ([8699bc3](https://github.com/blacha/cogeotiff/commit/8699bc332360895cbc26f4a124d3de22eaea48f2))
+
 ## [9.0.1](https://github.com/blacha/cogeotiff/compare/core-v9.0.0...core-v9.0.1) (2023-12-13)
 
 
