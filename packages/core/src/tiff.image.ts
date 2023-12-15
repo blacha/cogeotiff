@@ -569,7 +569,11 @@ export class TiffImage {
 }
 
 function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | Promise<number> {
-  if (index > x.count || index < 0) throw new Error('TagIndex: out of bounds ' + x.id + ' @ ' + index);
+  if (index < 0) {
+    throw new Error(`Tiff: ${tiff.source.url.href} out of bounds ${TiffTag[x.id]} index:${index} total:${x.count}`);
+  }
+  // Sparse tiffs may not have the full tileWidth * tileHeight in their offset arrays
+  if (index >= x.count) return 0;
   if (x.type === 'inline') return x.value[index] as number;
   return getValueAt(tiff, x, index);
 }
