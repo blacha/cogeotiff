@@ -6,6 +6,20 @@
   * dependencies
     * @cogeotiff/core bumped from ^9.0.0 to ^9.0.1
 
+## [9.0.2](https://github.com/blacha/cogeotiff/compare/cli-v9.0.1...cli-v9.0.2) (2023-12-15)
+
+
+### Bug Fixes
+
+* **cli:** remove excess console.log ([60e9d47](https://github.com/blacha/cogeotiff/commit/60e9d47b1d9846e9ba2cfd9b3135661ed16418c1))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^9.0.1 to ^9.0.2
+
 ## [9.0.0](https://github.com/blacha/cogeotiff/compare/cli-v8.1.1...cli-v9.0.0) (2023-12-11)
 
 
