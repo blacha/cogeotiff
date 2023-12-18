@@ -1,5 +1,13 @@
 import { getCompressionMimeType, TiffCompressionMimeType, TiffMimeType } from './const/tiff.mime.js';
-import { Compression, SubFileType, TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
+import {
+  Compression,
+  ModelTypeCode,
+  SubFileType,
+  TiffTag,
+  TiffTagGeo,
+  TiffTagGeoType,
+  TiffTagType,
+} from './const/tiff.tag.id.js';
 import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
 import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
 import { Tiff } from './tiff.js';
@@ -336,12 +344,30 @@ export class TiffImage {
   /**
    * Attempt to read the EPSG Code from TiffGeoTags
    *
-   * looks at both TiffTagGeo.ProjectionGeoKey and TiffTagGeo.ProjectedCRSGeoKey
+   * looks at TiffTagGeo.ProjectionGeoKey, TiffTagGeo.ProjectedCRSGeoKey and TiffTagGeo.GeodeticCRSGeoKey
    *
-   * @returns EPSG Code if it exists
+   * @returns EPSG Code if it exists and is not user defined.
    */
   get epsg(): number | null {
-    const projection = this.valueGeo(TiffTagGeo.ProjectionGeoKey) ?? this.valueGeo(TiffTagGeo.ProjectedCRSGeoKey);
+    const proj = this.valueGeo(TiffTagGeo.ProjectionGeoKey);
+    if (proj != null && proj !== InvalidProjectionCode) return proj;
+
+    let projection: number | null = null;
+    switch (this.valueGeo(TiffTagGeo.GTModelTypeGeoKey)) {
+      case ModelTypeCode.Unknown:
+        return null;
+      case ModelTypeCode.Projected:
+        projection = this.valueGeo(TiffTagGeo.ProjectedCRSGeoKey);
+        break;
+      case ModelTypeCode.Geographic:
+        projection = this.valueGeo(TiffTagGeo.GeodeticCRSGeoKey);
+        break;
+      case ModelTypeCode.Geocentric:
+        projection = this.valueGeo(TiffTagGeo.GeodeticCRSGeoKey);
+        break;
+      case ModelTypeCode.UserDefined:
+        return null;
+    }
     if (projection === InvalidProjectionCode) return null;
     return projection;
   }
