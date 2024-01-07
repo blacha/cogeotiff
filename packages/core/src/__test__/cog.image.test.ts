@@ -94,8 +94,10 @@ describe('Cog.Big', () => {
     const [firstImage] = cog.images;
     assert.equal(firstImage.stripCount, 0);
     assert.equal(firstImage.isTiled(), true);
+    assert.equal(firstImage.epsg, 2193);
 
     const img = cog.images[4];
+
     assert.deepEqual(img.tileCount, { x: 2, y: 2 });
   });
 
@@ -199,6 +201,7 @@ describe('CogStrip', () => {
 
   it('should have strip information', async () => {
     const [firstImage] = cog.images;
+    assert.equal(firstImage.epsg, 3857);
     assert.equal(firstImage.isTiled(), false);
     assert.equal(firstImage.stripCount, 2);
 

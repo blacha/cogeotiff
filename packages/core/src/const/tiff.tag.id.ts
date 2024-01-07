@@ -42,12 +42,15 @@ export enum RasterTypeKey {
 }
 
 export enum ModelTypeCode {
+  Unknown = 0,
   /** Projection Coordinate System */
   Projected = 1,
   /** Geographic latitude-longitude System */
   Geographic = 2,
   /** Geocentric (X,Y,Z) Coordinate System */
   Geocentric = 3,
+
+  UserDefined = 32767,
 }
 
 /** Sub file type for tag 255 {@link TiffTag.OldSubFileType} */
