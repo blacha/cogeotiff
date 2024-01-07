@@ -5865,12 +5865,12 @@ pretty-format@^29.7.0:
     react-is "^18.0.0"
 
 pretty-json-log@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/pretty-json-log/-/pretty-json-log-1.4.0.tgz#9a7a6a0a18d20da896090cc2eacb04e285a327de"
-  integrity sha512-YCaLcTW3djzUggm+4mE095W2ub9uqIxo9xfqATZuh8Fu4WnyvnRExSSWD7oMHm9Xk5PCma0gyKDqO8Cs+ihnUQ==
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/pretty-json-log/-/pretty-json-log-1.5.0.tgz#da4a50edd2d78b0d06a86b6bf5a000dfcfa4e6d7"
+  integrity sha512-+JLXlB8F0euMuW22PWdE9N8dHedvHAZglkHnCSnXsnf20tobB7wOioM0HiCeJUKeNKfH/BQaUiAnV+FghLF//w==
   dependencies:
     ansi-colors "^4.1.1"
-    split2 "^4.1.0"
+    split2 "^4.2.0"
 
 proc-log@^3.0.0:
   version "3.0.0"
@@ -6435,10 +6435,10 @@ split2@^3.2.2:
   dependencies:
     readable-stream "^3.0.0"
 
-split2@^4.0.0, split2@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/split2/-/split2-4.1.0.tgz#101907a24370f85bb782f08adaabe4e281ecf809"
-  integrity sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==
+split2@^4.0.0, split2@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/split2/-/split2-4.2.0.tgz#c9c5920904d148bab0b9f67145f245a86aadbfa4"
+  integrity sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==
 
 split@^1.0.1:
   version "1.0.1"
