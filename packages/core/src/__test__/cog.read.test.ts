@@ -108,6 +108,7 @@ describe('CogRead', () => {
     assert.equal(im.isGeoTagsLoaded, true);
     assert.equal(im.epsg, 2193);
     assert.equal(im.compression, TiffMimeType.Lzw);
+    assert.deepEqual(im.size, { width: 9600, height: 14400 });
     assert.deepEqual(im.value(TiffTag.BitsPerSample), [8, 8, 8, 8]);
 
     const geoTags = [...im.tagsGeo.keys()].map((key) => TiffTagGeo[key]);

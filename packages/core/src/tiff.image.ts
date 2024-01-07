@@ -379,7 +379,7 @@ export class TiffImage {
    */
   get size(): Size {
     const width = this.value(TiffTag.ImageWidth);
-    const height = this.value(TiffTag.ImageWidth);
+    const height = this.value(TiffTag.ImageHeight);
     if (width == null || height == null) throw new Error('Tiff has no height or width');
 
     return { width, height };
