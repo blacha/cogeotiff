@@ -40,6 +40,7 @@ describe('CogRead', () => {
 
     assert.equal(tiff.isLittleEndian, true);
     assert.equal(tiff.version, TiffVersion.BigTiff);
+    assert.equal(tiff.images[0].epsg, null);
     validate(tiff);
   });
 
@@ -51,6 +52,8 @@ describe('CogRead', () => {
 
     assert.equal(tiff.isLittleEndian, true);
     assert.equal(tiff.version, TiffVersion.Tiff);
+    assert.equal(tiff.images[0].epsg, null);
+
     validate(tiff);
 
     const [firstTif] = tiff.images;
@@ -108,6 +111,7 @@ describe('CogRead', () => {
     assert.equal(im.isGeoTagsLoaded, true);
     assert.equal(im.epsg, 2193);
     assert.equal(im.compression, TiffMimeType.Lzw);
+    assert.deepEqual(im.size, { width: 9600, height: 14400 });
     assert.deepEqual(im.value(TiffTag.BitsPerSample), [8, 8, 8, 8]);
 
     const geoTags = [...im.tagsGeo.keys()].map((key) => TiffTagGeo[key]);
@@ -149,5 +153,6 @@ describe('CogRead', () => {
 
     const tiff = await Tiff.create(source);
     assert.equal(tiff.images.length, 5);
+    assert.equal(tiff.images[0].epsg, 3857);
   });
 });
