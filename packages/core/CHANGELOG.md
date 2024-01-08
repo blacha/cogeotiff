@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.0.3](https://github.com/blacha/cogeotiff/compare/core-v9.0.2...core-v9.0.3) (2024-01-08)
+
+
+### Bug Fixes
+
+* **core:** correctly get image width/height ([3697ade](https://github.com/blacha/cogeotiff/commit/3697aded0267f133bc273f9d80d2fa53485cf2f3))
+* **core:** load more projection information ([57dd0a9](https://github.com/blacha/cogeotiff/commit/57dd0a9443231a1f2bb8be1be66e811467840d1a))
+
 ## [9.0.2](https://github.com/blacha/cogeotiff/compare/core-v9.0.1...core-v9.0.2) (2023-12-15)
 
 
