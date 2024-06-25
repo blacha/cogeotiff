@@ -85,7 +85,7 @@ export class Tiff {
     bytes.sourceOffset = 0;
 
     let offset = 0;
-    const endian = bytes.getUint16(offset, this.isLittleEndian);
+    const endian = bytes.getUint16(offset, this.isLittleEndian) as TiffEndian;
     offset += 2;
 
     this.isLittleEndian = endian === TiffEndian.Little;
@@ -108,7 +108,7 @@ export class Tiff {
       nextOffsetIfd = getUint(bytes, offset, this.ifdConfig.pointer, this.isLittleEndian);
       offset += this.ifdConfig.pointer;
     } else {
-      throw new Error(`Only tiff supported version:${this.version}`);
+      throw new Error(`Only tiff supported version:${String(this.version)}`);
     }
 
     const ghostSize = nextOffsetIfd - offset;
@@ -131,7 +131,7 @@ export class Tiff {
         lastView = new DataView(bytes) as DataViewOffset;
         lastView.sourceOffset = nextOffsetIfd;
       }
-      nextOffsetIfd = await this.readIfd(nextOffsetIfd, lastView);
+      nextOffsetIfd = this.readIfd(nextOffsetIfd, lastView);
     }
 
     await Promise.all(this.images.map((i) => i.init()));
@@ -145,7 +145,7 @@ export class Tiff {
    * @param offset file offset to read the header from
    * @param view offset that contains the bytes for the header
    */
-  private async readIfd(offset: number, view: DataViewOffset): Promise<number> {
+  private readIfd(offset: number, view: DataViewOffset): number {
     const viewOffset = offset - view.sourceOffset;
     const tagCount = getUint(view, viewOffset, this.ifdConfig.offset, this.isLittleEndian);
 

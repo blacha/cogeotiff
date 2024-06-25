@@ -3,7 +3,7 @@ import { SourceCallback, SourceMiddleware, SourceRequest, SourceView } from '@ch
 import { SourceHttp } from '@chunkd/source-http';
 import { Tiff } from '@cogeotiff/core';
 
-import { loadSingleTile } from './example.single.tile';
+import { loadSingleTile } from './example.single.tile.js';
 
 // Cache all requests to cogs
 const cache = new SourceCache({ size: 16 * 1024 * 1024 }); // 16MB Cache
@@ -11,14 +11,12 @@ const chunk = new SourceChunk({ size: 16 * 1024 }); // Chunk requests into 16KB 
 const fetchLog: SourceMiddleware = {
   name: 'fetch:log',
   fetch(req: SourceRequest, next: SourceCallback) {
-    this.fetches.push(req);
-    this.bytesRead += req.length ?? 0;
     console.log('Tiff:fetch', { href: req.source.url.href, offset: req.offset, length: req.length });
     return next(req);
   },
 };
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function loadTiff(): Promise<void> {
   const tiffSource = new SourceView(new SourceHttp('https://blayne.chard.com/world.webp.google.cog.tiff'), [
     chunk,
     cache,
@@ -32,4 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const nodes = await Promise.all([loadSingleTile(tiff)]);
   for (const n of nodes) mainEl.appendChild(n);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  void loadTiff();
 });

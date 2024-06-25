@@ -23,6 +23,6 @@ export function getTiffTagSize(fieldType: TiffTagValueType): ByteSize {
     case TiffTagValueType.Ifd8:
       return 8;
     default:
-      throw new Error(`Invalid fieldType ${fieldType}`);
+      throw new Error(`Invalid fieldType ${String(fieldType)}`);
   }
 }

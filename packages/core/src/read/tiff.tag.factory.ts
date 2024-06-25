@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { TiffTag, TiffTagConvertArray } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
 import { Tiff } from '../tiff.js';
@@ -113,6 +114,7 @@ export function createTag(tiff: Tiff, view: DataViewOffset, offset: number): Tag
   }
 
   const dataOffset = getUint(view, offset + 4 + tiff.ifdConfig.pointer, tiff.ifdConfig.pointer, tiff.isLittleEndian);
+
   switch (tagId) {
     case TiffTag.TileOffsets:
     case TiffTag.TileByteCounts:
@@ -166,7 +168,7 @@ export async function fetchAllOffsets(tiff: Tiff, tag: TagOffset): Promise<numbe
     tag.view.sourceOffset = tag.dataOffset;
   }
 
-  tag.value = readValue(tiff, tag.id, tag.view, 0, tag.dataType, tag.count) as number[];
+  tag.value = readValue(tiff, tag.id, tag.view, 0, tag.dataType, tag.count);
   tag.isLoaded = true;
   return tag.value;
 }
@@ -188,13 +190,13 @@ export async function getValueAt(tiff: Tiff, tag: TagOffset, index: number): Pro
     const bytes = await tiff.source.fetch(tag.dataOffset + index * dataTypeSize, dataTypeSize);
     const view = new DataView(bytes);
     // Skip type conversion to array by using undefined tiff tag id
-    const value = readValue(tiff, undefined, view, 0, tag.dataType, 1) as number;
+    const value = readValue(tiff, undefined, view, 0, tag.dataType, 1);
     tag.value[index] = value;
     return value;
   }
 
   // Skip type conversion to array by using undefined tiff tag id
-  const value = readValue(tiff, undefined, tag.view, index * dataTypeSize, tag.dataType, 1) as number;
+  const value = readValue(tiff, undefined, tag.view, index * dataTypeSize, tag.dataType, 1);
   tag.value[index] = value;
   return value;
 }
