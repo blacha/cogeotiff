@@ -31,9 +31,10 @@ export const commandInfo = command({
   },
   async handler(args) {
     const logger = setupLogger(args);
-    const paths = [...args.paths, args.path].filter((f) => f != null) as URL[];
+    const paths = [...args.paths, args.path].filter((f) => f != null);
 
     for (const path of paths) {
+      if (path == null) continue;
       if (path.protocol === 's3:') await ensureS3fs();
       logger.debug('Tiff:load', { path: path?.href });
       FetchLog.reset();
@@ -241,7 +242,7 @@ function formatTag(tag: Tag): { key: string; value: string } {
   let tagString = JSON.stringify(tag.value) ?? c.dim('null');
   if (tagString.length > 256) tagString = tagString.slice(0, 250) + '...';
   if (TagFormatters[tag.id]) {
-    complexType = ` - ${c.magenta(TagFormatters[tag.id]([tag.value as unknown as number]) ?? '??')}`;
+    complexType = ` - ${c.magenta(TagFormatters[tag.id]([tag.value as number]) ?? '??')}`;
   }
   return { key, value: tagString + complexType };
 }

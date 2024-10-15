@@ -29,4 +29,4 @@ async function main(): Promise<void> {
   img.bbox;
 }
 
-main();
+void main();

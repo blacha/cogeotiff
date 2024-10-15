@@ -226,7 +226,7 @@ export class TiffImage {
       if (typeof tag.value === 'string') {
         this.tagsGeo.set(key, tag.value.slice(offset, offset + count - 1).trim());
       } else if (Array.isArray(tag.value)) {
-        if (count === 1) this.tagsGeo.set(key, tag.value[offset]);
+        if (count === 1) this.tagsGeo.set(key, tag.value[offset] as string);
         else this.tagsGeo.set(key, tag.value.slice(offset, offset + count));
       } else {
         throw new Error('Failed to extract GeoTiffTags');
@@ -600,6 +600,6 @@ function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number
   }
   // Sparse tiffs may not have the full tileWidth * tileHeight in their offset arrays
   if (index >= x.count) return 0;
-  if (x.type === 'inline') return x.value[index] as number;
+  if (x.type === 'inline') return x.value[index];
   return getValueAt(tiff, x, index);
 }
