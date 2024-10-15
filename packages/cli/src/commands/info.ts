@@ -1,5 +1,5 @@
 import { fsa } from '@chunkd/fs';
-import { Tag, TagOffset, Tiff, TiffImage, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion } from '@cogeotiff/core';
+import { Tag, Tiff, TiffImage, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion } from '@cogeotiff/core';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
 
@@ -221,17 +221,24 @@ function parseGdalMetadata(img: TiffImage): string[] | null {
     .map((c) => c.trim());
 }
 
+function isLoaded(tag: Tag): boolean {
+  if (tag.type === 'offset' && tag.isLoaded === false) return false;
+  if (tag.type === 'lazy' && tag.value == null) return false;
+  return true;
+}
+
 function formatTag(tag: Tag): { key: string; value: string } {
   const tagName = TiffTag[tag.id];
   const tagDebug = `(${TiffTagValueType[tag.dataType]}${tag.count > 1 ? ' x' + tag.count : ''}`;
   const key = `${c.dim(String(tag.id)).padEnd(7, ' ')} ${String(tagName)} ${c.dim(tagDebug)})`.padEnd(52, ' ');
 
+  if (!isLoaded(tag)) {
+    return { key, value: c.dim('Tag not Loaded, use --fetch-tags to force load') };
+  }
+
   let complexType = '';
   // Array of values that is not a string!
   if (tag.count > 1 && tag.dataType !== TiffTagValueType.Ascii) {
-    if (tag.value == null || (tag as TagOffset).isLoaded === false) {
-      return { key, value: c.dim('Tag not Loaded, use --fetch-tags to force load') };
-    }
     const val = [...(tag.value as number[])]; // Ensure the value is not a TypedArray
     if (TagFormatters[tag.id]) {
       complexType = ` - ${c.magenta(TagFormatters[tag.id](val) ?? '??')}`;
