@@ -34,6 +34,7 @@ export const commandInfo = command({
     const paths = [...args.paths, args.path].filter((f) => f != null);
 
     for (const path of paths) {
+      if (path == null) continue;
       if (path.protocol === 's3:') await ensureS3fs();
       logger.debug('Tiff:load', { path: path?.href });
       FetchLog.reset();

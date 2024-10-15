@@ -191,12 +191,14 @@ export async function getValueAt(tiff: Tiff, tag: TagOffset, index: number): Pro
     const view = new DataView(bytes);
     // Skip type conversion to array by using undefined tiff tag id
     const value = readValue(tiff, undefined, view, 0, tag.dataType, 1);
+    if (typeof value !== 'number') throw new Error('Value is not a number');
     tag.value[index] = value;
     return value;
   }
 
   // Skip type conversion to array by using undefined tiff tag id
   const value = readValue(tiff, undefined, tag.view, index * dataTypeSize, tag.dataType, 1);
+  if (typeof value !== 'number') throw new Error('Value is not a number');
   tag.value[index] = value;
   return value;
 }
