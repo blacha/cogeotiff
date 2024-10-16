@@ -700,15 +700,15 @@
     js-tokens "^4.0.0"
 
 "@chunkd/fs-aws@^11.0.2":
-  version "11.2.1"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs-aws/-/fs-aws-11.2.1.tgz#2c8ec2d3f71d7355be17a5b3b5cef86020363c12"
-  integrity sha512-dGoyQlq1Hox+NAwenZmXcnMew1wkKwJDNZ/FUJnywKRWgR3aAOpFmwtJ5hrcJGtaRbq89NJseigncUvyBOkolA==
+  version "11.2.2"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs-aws/-/fs-aws-11.2.2.tgz#5d7b8c52a1f8bd5630603d280c47dab66698d659"
+  integrity sha512-zTF0sVXHkzHIOZWwav4Qe1AcdTCCHgY5fyd9IWd7XjZtOjgYwlakwKV6GnkRkhD5QqAjTW/SVJRLca8Z7T1snw==
   dependencies:
     "@aws-sdk/client-s3" "*"
     "@aws-sdk/credential-providers" "*"
     "@aws-sdk/lib-storage" "*"
     "@chunkd/fs" "11.2.0"
-    "@chunkd/source-aws" "11.0.2"
+    "@chunkd/source-aws" "11.0.3"
 
 "@chunkd/fs@11.2.0", "@chunkd/fs@^11.0.2":
   version "11.2.0"
@@ -721,16 +721,16 @@
     "@chunkd/source-memory" "^11.0.2"
 
 "@chunkd/middleware@^11.0.0":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@chunkd/middleware/-/middleware-11.0.1.tgz#4e592dbf1d654c151bafe3a842a4681795047f66"
-  integrity sha512-9Q0WyHH1UvUmAP4ly9lTvXgaRZwITFb4yZh8OV9wC7nrhS7RqhpwQExiz2SOos7vBpLEvRY+EEK4SEGuq7sgdA==
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@chunkd/middleware/-/middleware-11.1.0.tgz#e3564bfbc0936f8ab0abbd9c6674d38c4e5ff5e2"
+  integrity sha512-xLEoDWDG3djf/plcsEsm0q6eAD3fFC/nJ6QV9234a+DE4iN8xuaqdHqtk9CRC877YfCpWZ1RDw3T62OUeqyWqQ==
   dependencies:
     "@chunkd/source" "^11.1.0"
 
-"@chunkd/source-aws@11.0.2":
-  version "11.0.2"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-11.0.2.tgz#47235e02e96bb155364e6239af2b72fa23b7b302"
-  integrity sha512-Z+yJbJg7GISTD/vHsfyvDa0rAdfCd2xbV7RNm9hrgR0drmNgBoFxl1WBobtdOKFh4/Du3w0veJBgVRmSrR5tMA==
+"@chunkd/source-aws@11.0.3":
+  version "11.0.3"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-aws/-/source-aws-11.0.3.tgz#9d0650a8b158620a8e61f42e14e011562efd4565"
+  integrity sha512-zWWV39cOKdTmgiSW1PiNJLRM9PoxpaBkMD/z2Wn+8c8JnLt4NNILsdne0qrl722xc4vcFar0xXFdAxy9Stlolg==
   dependencies:
     "@aws-sdk/client-s3" "*"
     "@chunkd/source" "^11.1.0"
