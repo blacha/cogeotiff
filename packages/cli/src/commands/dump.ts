@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 
 import { fsa } from '@chunkd/fs';
 import { Tiff, TiffMimeType } from '@cogeotiff/core';
-import { log } from '@linzjs/tracing';
+import type { log } from '@linzjs/tracing';
 import { command, number, option, optional, restPositionals } from 'cmd-ts';
 import pLimit from 'p-limit';
 

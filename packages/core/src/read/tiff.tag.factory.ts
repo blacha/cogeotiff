@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { TiffTag, TiffTagConvertArray } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
-import { Tiff } from '../tiff.js';
+import type { Tiff } from '../tiff.js';
 import { getUint, getUint64 } from '../util/bytes.js';
-import { DataViewOffset, hasBytes } from './data.view.offset.js';
-import { Tag, TagLazy, TagOffset } from './tiff.tag.js';
+import type { DataViewOffset } from './data.view.offset.js';
+import { hasBytes } from './data.view.offset.js';
+import type { Tag, TagLazy, TagOffset } from './tiff.tag.js';
 import { getTiffTagSize } from './tiff.value.reader.js';
 
 function readTagValue(

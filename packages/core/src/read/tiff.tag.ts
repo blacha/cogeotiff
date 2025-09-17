@@ -1,6 +1,6 @@
-import { TiffTag } from '../const/tiff.tag.id.js';
-import { TiffTagValueType } from '../const/tiff.tag.value.js';
-import { DataViewOffset } from './data.view.offset.js';
+import type { TiffTag } from '../const/tiff.tag.id.js';
+import type { TiffTagValueType } from '../const/tiff.tag.value.js';
+import type { DataViewOffset } from './data.view.offset.js';
 
 /** Tiff tag interfaces */
 export type Tag<T = unknown> = TagLazy<T> | TagInline<T> | TagOffset;

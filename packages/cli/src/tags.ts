@@ -1,3 +1,4 @@
+import type { TiffTagGeoType, TiffTagType } from '@cogeotiff/core';
 import {
   AngularUnit,
   Compression,
@@ -11,8 +12,6 @@ import {
   SubFileType,
   TiffTag,
   TiffTagGeo,
-  TiffTagGeoType,
-  TiffTagType,
 } from '@cogeotiff/core';
 
 /** Convert enum values back to strings */

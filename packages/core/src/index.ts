@@ -1,11 +1,12 @@
 export { TiffEndian } from './const/tiff.endian.js';
 export { TiffCompressionMimeType as TiffCompression, TiffMimeType } from './const/tiff.mime.js';
-export { TiffTag, TiffTagGeo, TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
+export { TiffTag, TiffTagGeo} from './const/tiff.tag.id.js';
+export type { TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 export { TiffTagValueType } from './const/tiff.tag.value.js';
 export { TiffVersion } from './const/tiff.version.js';
-export { Tag, TagInline, TagLazy, TagOffset } from './read/tiff.tag.js';
+export type { Tag, TagInline, TagLazy, TagOffset } from './read/tiff.tag.js';
 export { getTiffTagSize } from './read/tiff.value.reader.js';
-export { Source } from './source.js';
+export type { Source } from './source.js';
 export { TiffImage } from './tiff.image.js';
 export { Tiff } from './tiff.js';
 export { toHex } from './util/util.hex.js';

@@ -1,5 +1,6 @@
 import { SourceCache, SourceChunk } from '@chunkd/middleware';
-import { SourceCallback, SourceMiddleware, SourceRequest, SourceView } from '@chunkd/source';
+import type { SourceCallback, SourceMiddleware, SourceRequest } from '@chunkd/source';
+import { SourceView } from '@chunkd/source';
 import { SourceHttp } from '@chunkd/source-http';
 import { Tiff } from '@cogeotiff/core';
 
