@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.1.0](https://github.com/blacha/cogeotiff/compare/core-v9.0.3...core-v9.1.0) (2025-09-17)
+
+
+### Features
+
+* enable basic big endian support ([1550206](https://github.com/blacha/cogeotiff/commit/1550206908bc3c85a2f4b295e755750aafa399c3))
+
+
+### Bug Fixes
+
+* **cli:** correctly show "not loaded" when strings are not loaded ([#1309](https://github.com/blacha/cogeotiff/issues/1309)) ([fdbd4e9](https://github.com/blacha/cogeotiff/commit/fdbd4e975ac5f27c4e36438e0f1ff776e7db7f5a))
+
 ## [9.0.3](https://github.com/blacha/cogeotiff/compare/core-v9.0.2...core-v9.0.3) (2024-01-08)
 
 
