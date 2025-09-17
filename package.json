@@ -7,7 +7,7 @@
     "build-watch": "tsc -b --pretty --watch",
     "version": "eslint lerna.json --fix",
     "lint": "eslint . --quiet --fix --ignore-path .gitignore",
-    "test": "node --test"
+    "test": "node --test \"packages/*/build/**/*.test.js\""
   },
   "type": "module",
   "engines": {

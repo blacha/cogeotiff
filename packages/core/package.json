@@ -15,7 +15,7 @@
   "author": "Blayne Chard",
   "license": "MIT",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test \"build/**/*.test.js\""
   },
   "dependencies": {},
   "devDependencies": {

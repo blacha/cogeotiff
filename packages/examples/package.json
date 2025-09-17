@@ -16,7 +16,7 @@
   "author": "Blayne Chard",
   "license": "MIT",
   "scripts": {
-    "test": "node --test",
+    "test": "node --test \"build/**/*.test.js\"",
     "bundle": "esbuild src/browser/index.ts --bundle --outfile=dist/index.js"
   },
   "dependencies": {

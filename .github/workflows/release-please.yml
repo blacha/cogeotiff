@@ -29,6 +29,7 @@ jobs:
         uses: linz/action-typescript@v3
         with:
           package-manager: yarn
+          node-version: 24.x
 
       - name: Publish to NPM
         run: npx lerna publish from-package --no-push --no-private --yes
