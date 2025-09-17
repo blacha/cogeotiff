@@ -1,18 +1,11 @@
 import { getCompressionMimeType, TiffCompressionMimeType, TiffMimeType } from './const/tiff.mime.js';
-import {
-  Compression,
-  ModelTypeCode,
-  SubFileType,
-  TiffTag,
-  TiffTagGeo,
-  TiffTagGeoType,
-  TiffTagType,
-} from './const/tiff.tag.id.js';
-import { fetchAllOffsets, fetchLazy, getOffsetValueAt, getOffsetValueAtSync } from './read/tiff.tag.factory.js';
-import { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
-import { Tiff } from './tiff.js';
+import type { TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
+import { Compression, ModelTypeCode, SubFileType, TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
+import { fetchAllOffsets, fetchLazy, getValueAt, getOffsetValueAtSync } from './read/tiff.tag.factory.js';
+import type { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
+import type { Tiff } from './tiff.js';
 import { getUint } from './util/bytes.js';
-import { BoundingBox, Size } from './vector.js';
+import type { BoundingBox, Size } from './vector.js';
 
 /** Invalid EPSG code */
 export const InvalidProjectionCode = 32767;

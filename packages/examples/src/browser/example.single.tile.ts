@@ -1,4 +1,4 @@
-import { Tiff } from '@cogeotiff/core';
+import type { Tiff } from '@cogeotiff/core';
 
 /** Loads a single tile from a COG and renders it as a <img /> element */
 export async function loadSingleTile(tiff: Tiff): Promise<HTMLElement> {

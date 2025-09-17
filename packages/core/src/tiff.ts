@@ -1,12 +1,14 @@
 import { TiffEndian } from './const/tiff.endian.js';
-import { TiffTag } from './const/tiff.tag.id.js';
+import type { TiffTag } from './const/tiff.tag.id.js';
 import { TiffVersion } from './const/tiff.version.js';
-import { Tag } from './index.js';
-import { DataViewOffset, hasBytes } from './read/data.view.offset.js';
+import type { Tag } from './index.js';
+import type { DataViewOffset } from './read/data.view.offset.js';
+import { hasBytes } from './read/data.view.offset.js';
 import { TiffGhostOptions } from './read/tiff.gdal.js';
-import { TagTiffBigConfig, TagTiffConfig, TiffIfdConfig } from './read/tiff.ifd.config.js';
+import type { TiffIfdConfig } from './read/tiff.ifd.config.js';
+import { TagTiffBigConfig, TagTiffConfig } from './read/tiff.ifd.config.js';
 import { createTag } from './read/tiff.tag.factory.js';
-import { Source } from './source.js';
+import type { Source } from './source.js';
 import { TiffImage } from './tiff.image.js';
 import { getUint } from './util/bytes.js';
 import { toHex } from './util/util.hex.js';
@@ -95,7 +97,6 @@ export class Tiff {
     offset += 2;
 
     this.isLittleEndian = endian === TiffEndian.Little;
-    if (!this.isLittleEndian) throw new Error('Only little endian is supported');
     this.version = bytes.getUint16(offset, this.isLittleEndian);
     offset += 2;
 

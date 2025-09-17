@@ -1,7 +1,7 @@
 {
   "name": "@cogeotiff/examples",
   "private": true,
-  "version": "9.0.3",
+  "version": "9.0.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/blacha/cogeotiff.git",
@@ -16,12 +16,12 @@
   "author": "Blayne Chard",
   "license": "MIT",
   "scripts": {
-    "test": "node --test",
+    "test": "node --test \"build/**/*.test.js\"",
     "bundle": "esbuild src/browser/index.ts --bundle --outfile=dist/index.js"
   },
   "dependencies": {
     "@chunkd/source-http": "^11.0.1",
-    "@cogeotiff/core": "^9.0.3",
+    "@cogeotiff/core": "^9.1.0",
     "esbuild": "^0.19.2"
   },
   "devDependencies": {

@@ -10,4 +10,5 @@ jobs:
       - uses: linz/action-typescript@v3
         with:
           package-manager: yarn
+          node-version: 24.x
       - uses: blacha/hyperfine-action@v1

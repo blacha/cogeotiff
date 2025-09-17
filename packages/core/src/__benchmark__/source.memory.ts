@@ -1,4 +1,4 @@
-import { Source } from '../source.js';
+import type { Source } from '../source.js';
 
 export class SourceMemory implements Source {
   url: URL;

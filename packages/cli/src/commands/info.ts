@@ -1,10 +1,13 @@
 import { fsa } from '@chunkd/fs';
-import { Tag, Tiff, TiffImage, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion } from '@cogeotiff/core';
+import type { Tag, TiffImage } from '@cogeotiff/core';
+import { Tiff, TiffTag, TiffTagGeo, TiffTagValueType, TiffVersion } from '@cogeotiff/core';
 import c from 'ansi-colors';
 import { command, flag, option, optional, restPositionals } from 'cmd-ts';
 
-import { ActionUtil, CliResultMap } from '../action.util.js';
-import { CliTable, CliTableInfo } from '../cli.table.js';
+import type { CliResultMap } from '../action.util.js';
+import { ActionUtil } from '../action.util.js';
+import type { CliTableInfo } from '../cli.table.js';
+import { CliTable } from '../cli.table.js';
 import { DefaultArgs, Url } from '../common.js';
 import { FetchLog } from '../fs.js';
 import { ensureS3fs, setupLogger } from '../log.js';
