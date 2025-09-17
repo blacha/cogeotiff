@@ -29,13 +29,13 @@ describe('CogRead', () => {
     assert.equal(tiff.isLittleEndian, false);
     assert.equal(tiff.version, TiffVersion.Tiff);
     assert.equal(tiff.images.length, 1);
-    const firstImage = tiff.images[0]
+    const firstImage = tiff.images[0];
 
-    assert.equal(firstImage.compression, 'application/zstd')
-    assert.equal(firstImage.isTiled(), true)
+    assert.equal(firstImage.compression, 'application/zstd');
+    assert.equal(firstImage.isTiled(), true);
 
-    const firstTile = await firstImage.getTile(0,0)
-    assert.equal(firstTile?.bytes.byteLength, 511)
+    const firstTile = await firstImage.getTile(0, 0);
+    assert.equal(firstTile?.bytes.byteLength, 511);
   });
 
   it('should read big tiff', async () => {

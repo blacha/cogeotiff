@@ -1,7 +1,7 @@
 export { TiffEndian } from './const/tiff.endian.js';
 export { TiffCompressionMimeType as TiffCompression, TiffMimeType } from './const/tiff.mime.js';
-export { TiffTag, TiffTagGeo} from './const/tiff.tag.id.js';
 export type { TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
+export { TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
 export { TiffTagValueType } from './const/tiff.tag.value.js';
 export { TiffVersion } from './const/tiff.version.js';
 export type { Tag, TagInline, TagLazy, TagOffset } from './read/tiff.tag.js';
