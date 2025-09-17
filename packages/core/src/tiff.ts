@@ -91,7 +91,6 @@ export class Tiff {
     offset += 2;
 
     this.isLittleEndian = endian === TiffEndian.Little;
-    if (!this.isLittleEndian) throw new Error('Only little endian is supported');
     this.version = bytes.getUint16(offset, this.isLittleEndian);
     offset += 2;
 

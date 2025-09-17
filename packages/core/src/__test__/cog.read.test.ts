@@ -20,17 +20,23 @@ function validate(tif: Tiff): void {
 }
 
 describe('CogRead', () => {
-  // TODO this does not load 100% yet
-  // it('should read big endian', async () => {
-  //     const source = new TestFileSource(new URL('../../data/big_cog.tiff', import.meta.url));
-  //     const tiff = new Tiff(source);
+  it('should read big endian', async () => {
+    const source = new TestFileSource(new URL('../../data/big.endian.tiff', import.meta.url));
+    const tiff = new Tiff(source);
 
-  //     await tiff.init();
+    await tiff.init();
 
-  //     assert.equal(tiff.isLittleEndian, false);
-  //     assert.equal(tiff.version, TiffVersion.BigTiff);
-  //     validate(tiff);
-  // });
+    assert.equal(tiff.isLittleEndian, false);
+    assert.equal(tiff.version, TiffVersion.Tiff);
+    assert.equal(tiff.images.length, 1);
+    const firstImage = tiff.images[0]
+
+    assert.equal(firstImage.compression, 'application/zstd')
+    assert.equal(firstImage.isTiled(), true)
+
+    const firstTile = await firstImage.getTile(0,0)
+    assert.equal(firstTile?.bytes.byteLength, 511)
+  });
 
   it('should read big tiff', async () => {
     const source = new TestFileSource(new URL('../../data/big_cog.tiff', import.meta.url));
