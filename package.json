@@ -20,7 +20,7 @@
   "description": "",
   "devDependencies": {
     "@linzjs/style": "^5.4.0",
-    "@types/node": "^20.0.0",
+    "@types/node": "^24.9.1",
     "lerna": "^8.2.4",
     "rimraf": "^4.1.2"
   },
