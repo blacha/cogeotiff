@@ -11,6 +11,8 @@ export enum TiffTagValueType {
   SignedRational = 10,
   Float32 = 11,
   Float64 = 12,
+  // IFD offset: https://owl.phy.queensu.ca/~phil/exiftool/standards.html
+  Ifd = 13,
   // BigTiff
   Uint64 = 16,
   Int64 = 17,
