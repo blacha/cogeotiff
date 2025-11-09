@@ -24,7 +24,7 @@
     "@cogeotiff/core": "^9.1.0",
     "@linzjs/tracing": "^1.1.1",
     "ansi-colors": "^4.1.1",
-    "cmd-ts": "^0.13.0",
+    "cmd-ts": "^0.14.3",
     "p-limit": "^4.0.0",
     "pretty-json-log": "^1.4.0"
   },
