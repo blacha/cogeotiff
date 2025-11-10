@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.1.1](https://github.com/blacha/cogeotiff/compare/core-v9.1.0...core-v9.1.1) (2025-11-10)
+
+
+### Bug Fixes
+
+* add field type 13 exif IFD Offset ([#1367](https://github.com/blacha/cogeotiff/issues/1367)) ([08546f1](https://github.com/blacha/cogeotiff/commit/08546f1b3901b624c0085723bc0e70da8415f6c4))
+* allow tiff reads if content-length is unknown ([#1355](https://github.com/blacha/cogeotiff/issues/1355)) ([78a35a9](https://github.com/blacha/cogeotiff/commit/78a35a903b3628f40289a2c576d920a568fb1abf)), closes [#1349](https://github.com/blacha/cogeotiff/issues/1349)
+
 ## [9.1.0](https://github.com/blacha/cogeotiff/compare/core-v9.0.3...core-v9.1.0) (2025-09-17)
 
 
