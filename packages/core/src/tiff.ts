@@ -171,9 +171,9 @@ export class Tiff {
 }
 
 function getMaxLength(source: Source, offset: number, length: number): number {
+  const size = source.metadata?.size;
   // max length is unknown, roll the dice and hope the chunk exists
-  if (source.metadata?.size == null) return length;
-  const size = source.metadata.size;
+  if (size == null || size < 1) return length;
 
   // Read was going to happen past the end of the file limit it to the end of the file
   if (offset + length > size) return size - offset;
