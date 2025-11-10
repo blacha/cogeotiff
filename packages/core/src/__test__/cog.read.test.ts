@@ -50,6 +50,13 @@ describe('CogRead', () => {
     validate(tiff);
   });
 
+  it('should fail reading a empty byte tiff', async () => {
+    const source = new SourceMemory(Buffer.from(''));
+    const tiff = new Tiff(source);
+    const ret = await tiff.init().catch((e) => e);
+    assert.equal(String(ret), 'Error: Unable to read empty tiff');
+  });
+
   it('should read tiff', async () => {
     const source = new TestFileSource(new URL('../../data/cog.tiff', import.meta.url));
     const tiff = new Tiff(source);
