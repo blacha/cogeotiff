@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.2](https://github.com/blacha/cogeotiff/compare/core-v9.1.1...core-v9.1.2) (2025-11-10)
+
+
+### Bug Fixes
+
+* add protection for empty tiffs ([3df0425](https://github.com/blacha/cogeotiff/commit/3df04250fab17e9fae26bf737c8300fbbf2adef6))
+
 ## [9.1.1](https://github.com/blacha/cogeotiff/compare/core-v9.1.0...core-v9.1.1) (2025-11-10)
 
 
