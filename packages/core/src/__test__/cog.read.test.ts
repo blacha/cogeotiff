@@ -53,7 +53,7 @@ describe('CogRead', () => {
   it('should fail reading a empty byte tiff', async () => {
     const source = new SourceMemory(Buffer.from(''));
     const tiff = new Tiff(source);
-    const ret = await tiff.init().catch((e) => e);
+    const ret = await tiff.init().catch((e) => String(e));
     assert.equal(String(ret), 'Error: Unable to read empty tiff');
   });
 
