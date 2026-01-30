@@ -700,24 +700,24 @@
     js-tokens "^4.0.0"
 
 "@chunkd/fs-aws@^11.0.2":
-  version "11.4.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs-aws/-/fs-aws-11.4.0.tgz#2e3b2299d09ded46cc92bb1b92257232489bd09a"
-  integrity sha512-4+QmOahgw5cG/sRvk2ACE04x5IoD/bnkgRV9jHAiEaNs1VGohir1mx3PmIX9UftcvgEQYuTTnC93k+4rlPOwYA==
+  version "11.4.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs-aws/-/fs-aws-11.4.1.tgz#615e0ef872bf2dbdf710b65d407b78d66e97b186"
+  integrity sha512-yRCnf9csMtkI01W3g883dzBOHfZfbwgaDc84KCAbafa0Gf+DIcmtzCLKw3WWCTlEvNrDs547t7EC1pfta0aB1A==
   dependencies:
     "@aws-sdk/client-s3" "*"
     "@aws-sdk/credential-providers" "*"
     "@aws-sdk/lib-storage" "*"
-    "@chunkd/fs" "11.3.0"
+    "@chunkd/fs" "11.3.1"
     "@chunkd/source-aws" "11.0.4"
 
-"@chunkd/fs@11.3.0", "@chunkd/fs@^11.0.2":
-  version "11.3.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-11.3.0.tgz#faa907b05040555a5c9be1130a286d540117ed3a"
-  integrity sha512-8yD/J+/fiHPmWaN+ERrfrjd7kZzrXAED03T8oCGd3s5Uy6ZUcDPW5jTxLXAt8tSJUCmhoOTfA56WC5hij1mNlQ==
+"@chunkd/fs@11.3.1", "@chunkd/fs@^11.0.2":
+  version "11.3.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/fs/-/fs-11.3.1.tgz#d7dcf657441e2a35e7a0b7eb301f0ebfbbfbb6ca"
+  integrity sha512-zoofr3mPS0eKECyTWwsZ6Kx/CKDK0DePuG17zGIcfSb4B/VyLC3HU35ZDD/BBVU06sW2j8JRPt7hwXbF/vIqvw==
   dependencies:
     "@chunkd/source" "^11.1.0"
     "@chunkd/source-file" "^11.0.1"
-    "@chunkd/source-http" "^11.1.0"
+    "@chunkd/source-http" "^11.1.1"
     "@chunkd/source-memory" "^11.0.2"
 
 "@chunkd/middleware@^11.0.0":
@@ -742,10 +742,10 @@
   dependencies:
     "@chunkd/source" "^11.1.0"
 
-"@chunkd/source-http@^11.0.1", "@chunkd/source-http@^11.1.0":
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-11.1.0.tgz#c79f89f537ef851438acec1135e294644cb8b050"
-  integrity sha512-vKCR/MwFuj7fAglym3BiSYromIFR65K9cIY3Z459B7HQR7aLATxQiQcxTfXNwFy+1/Xooe/6UXHrGs4EKcg6Vw==
+"@chunkd/source-http@^11.0.1", "@chunkd/source-http@^11.1.1":
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/@chunkd/source-http/-/source-http-11.1.1.tgz#09a13288d6957da684e9e2f841e0c1bae93cd462"
+  integrity sha512-cJPPYQ8JB9y+zWvv6NKOLdOp+jXYejTuzLa9bCtwFunlKML7a4PuOZVAQp8xlke6+HOq4w6Dzednq7mhgzHKaA==
   dependencies:
     "@chunkd/source" "^11.1.0"
 
