@@ -34,6 +34,8 @@ export class Tiff {
   isInitialized = false;
 
   private _initPromise?: Promise<Tiff>;
+
+  /** A Tiff constructed from a source will not be pre-initialized with {@link init}. */
   constructor(source: Source) {
     this.source = source;
   }
@@ -44,7 +46,10 @@ export class Tiff {
   }
 
   /**
-   * Initialize the tiff loading in the header and all image headers
+   * Initialize the tiff loading in the header and all image headers.
+   *
+   * This is only required if the Tiff was created with the constructor, if you
+   * used {@link create} this will have already been called.
    */
   init(): Promise<Tiff> {
     if (this._initPromise) return this._initPromise;
