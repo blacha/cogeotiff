@@ -11,7 +11,7 @@ Examples:
 
 Bundle the source code using `esbuild` into `dist/index.js`
 ```
-yarn bundle
+npm run bundle
 ```
 
 Serve the `index.html` and the `dist/` folder using your fav http server, 

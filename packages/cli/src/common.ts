@@ -14,7 +14,7 @@ export const Url: Type<string, URL> = {
   async from(s: string): Promise<URL> {
     try {
       return new URL(s);
-    } catch (e) {
+    } catch (_e) {
       return pathToFileURL(s);
     }
   },
