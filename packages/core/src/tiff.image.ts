@@ -32,11 +32,7 @@ export const ImportantTags = new Set([
   TiffTag.TileWidth,
 ]);
 
-export const ImportantGeoTags = new Set([
-  TiffTag.GeoKeyDirectory,
-  TiffTag.GeoAsciiParams,
-  TiffTag.GeoDoubleParams,
-]);
+export const ImportantGeoTags = new Set([TiffTag.GeoKeyDirectory, TiffTag.GeoAsciiParams, TiffTag.GeoDoubleParams]);
 
 /**
  * Size of a individual tile
@@ -79,7 +75,7 @@ export class TiffImage {
   async init(loadGeoTags = true): Promise<void> {
     const requiredTags: Promise<unknown>[] = [];
     ImportantTags.forEach((tag) => {
-        requiredTags.push(this.fetch(tag));
+      requiredTags.push(this.fetch(tag));
     });
 
     if (loadGeoTags) {
