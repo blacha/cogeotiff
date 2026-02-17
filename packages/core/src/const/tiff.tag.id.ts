@@ -424,6 +424,7 @@ export interface TiffTagType {
   [TiffTag.StripByteCounts]: number[];
   [TiffTag.StripOffsets]: number[];
 
+  [TiffTag.SamplesPerPixel]: number;
   [TiffTag.SampleFormat]: SampleFormat[];
   [TiffTag.GdalMetadata]: string;
   [TiffTag.GdalNoData]: string;
@@ -460,7 +461,6 @@ export interface TiffTagType {
   [TiffTag.Model]: unknown;
   [TiffTag.ResolutionUnit]: unknown;
   [TiffTag.RowsPerStrip]: unknown;
-  [TiffTag.SamplesPerPixel]: unknown;
   [TiffTag.Software]: unknown;
 
   [TiffTag.Threshholding]: unknown;
@@ -751,7 +751,7 @@ export interface TiffTagGeoType {
 /**
  * EPSG Angular Units. exist between [9100,  9199]
  *
- * Taken from libegotiff
+ * Taken from libgeotiff
  */
 export enum AngularUnit {
   Radian = 9101,
@@ -766,7 +766,7 @@ export enum AngularUnit {
 /**
  * ESPG Liner units exist between [9000,  9099]
  *
- * Taken from libegotiff
+ * Taken from libgeotiff
  */
 export enum LinearUnit {
   Metre = 9001,
