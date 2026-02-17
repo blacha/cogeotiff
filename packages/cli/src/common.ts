@@ -15,7 +15,7 @@ export const Url: Type<string, URL> = {
     try {
       return new URL(s);
     } catch (_e) {
-      return pathToFileURL(s);
+    return pathToFileURL(s);
     }
   },
 };

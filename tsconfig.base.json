@@ -1,9 +1,32 @@
 {
-  "extends": "@linzjs/style/tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["ES2020", "DOM"],
+    "lib": ["ES2024"],
     "outDir": "build",
-    "noUncheckedIndexedAccess": false,
-    "declarationMap": true
+    "composite": true,
+    "module": "nodenext",
+    "target": "es2024",
+
+    "esModuleInterop": true,
+    "moduleResolution": "node16",
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stolen from @linzjs/style
+    "newLine": "lf",
+    "stripInternal": true,
+    "erasableSyntaxOnly": false, // TODO
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false, // TODO
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedSideEffectImports": true,
+    "noEmitOnError": true,
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   }
 }
