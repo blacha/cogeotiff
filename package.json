@@ -7,7 +7,7 @@
     "build-watch": "tsc -b --pretty --watch",
     "lint": "biome check --write packages/",
     "check": "biome check packages/",
-    "test": "node --test \"packages/*/build/**/*.test.js\""
+    "test": "pnpm -r test"
   },
   "type": "module",
   "engines": {
