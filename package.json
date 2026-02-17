@@ -5,8 +5,8 @@
     "clean": "tsc -b --clean && rimraf 'packages/*/build'",
     "build": "tsc -b --pretty",
     "build-watch": "tsc -b --pretty --watch",
-    "version": "eslint lerna.json --fix",
-    "lint": "eslint . --quiet --fix --ignore-path .gitignore",
+    "lint": "biome check --write packages/",
+    "check": "biome check packages/",
     "test": "node --test \"packages/*/build/**/*.test.js\""
   },
   "type": "module",
@@ -19,10 +19,11 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@linzjs/style": "^5.4.0",
+    "@biomejs/biome": "2.4.2",
     "@types/node": "^20.0.0",
-    "lerna": "^9.0.0",
-    "rimraf": "^4.1.2"
+    "lerna": "^9.0.4",
+    "rimraf": "^4.1.2",
+    "typescript": "^5.9.3"
   },
   "workspaces": {
     "packages": [
