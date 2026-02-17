@@ -484,7 +484,7 @@ export class TiffImage {
   async getBytes(
     offset: number,
     byteCount: number,
-    options?: { signal?: AbortSignal }
+    options?: { signal?: AbortSignal },
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     if (byteCount === 0) return null;
 
@@ -512,7 +512,7 @@ export class TiffImage {
   async getTile(
     x: number,
     y: number,
-    options?: { signal?: AbortSignal }
+    options?: { signal?: AbortSignal },
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     const size = this.size;
     const tiles = this.tileSize;
