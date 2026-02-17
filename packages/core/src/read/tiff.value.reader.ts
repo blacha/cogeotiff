@@ -14,6 +14,7 @@ export function getTiffTagSize(fieldType: TiffTagValueType): ByteSize {
     case TiffTagValueType.Uint32:
     case TiffTagValueType.Int32:
     case TiffTagValueType.Float32:
+    case TiffTagValueType.Ifd:
       return 4;
     case TiffTagValueType.Rational:
     case TiffTagValueType.SignedRational:

@@ -32,6 +32,7 @@ function readTagValue(
       return bytes.getInt16(offset, isLittleEndian);
 
     case TiffTagValueType.Uint32:
+    case TiffTagValueType.Ifd:
       return bytes.getUint32(offset, isLittleEndian);
 
     case TiffTagValueType.Int32:

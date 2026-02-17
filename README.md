@@ -98,21 +98,20 @@ cogeotiff dump --image 2 --output output
 
 # Building
 
-This requires [NodeJs](https://nodejs.org/en/) >= 18 & [Yarn](https://yarnpkg.com/en/)
+This requires [NodeJs](https://nodejs.org/en/)
 
 Use [n](https://github.com/tj/n) to manage nodeJs versions
 
 ```bash
-# Download the latest nodejs & yarn
+# Download the latest nodejs
 n latest
-npm install -g yarn
 
 # Install node deps
-yarn
+npm install
 
 # Build everything into /build
-yarn run build
+npm run build
 
 # Run the unit tests
-yarn run test
+npm run test
 ```

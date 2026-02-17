@@ -12,6 +12,18 @@
   * dependencies
     * @cogeotiff/core bumped from ^9.0.2 to ^9.0.3
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^9.1.0 to ^9.1.1
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^9.1.1 to ^9.1.2
+
 ## [9.0.4](https://github.com/blacha/cogeotiff/compare/cli-v9.0.3...cli-v9.0.4) (2025-09-17)
 
 

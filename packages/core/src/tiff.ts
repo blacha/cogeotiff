@@ -40,6 +40,8 @@ export class Tiff {
   isInitialized = false;
 
   private _initPromise?: Promise<Tiff>;
+
+  /** A Tiff constructed from a source will not be pre-initialized with {@link init}. */
   constructor(source: Source) {
     this.source = source;
   }
@@ -50,7 +52,10 @@ export class Tiff {
   }
 
   /**
-   * Initialize the tiff loading in the header and all image headers
+   * Initialize the tiff loading in the header and all image headers.
+   *
+   * This is only required if the Tiff was created with the constructor, if you
+   * used {@link create} this will have already been called.
    */
   init(): Promise<Tiff> {
     if (this._initPromise) return this._initPromise;
@@ -90,6 +95,8 @@ export class Tiff {
     const bytes = new DataView(
       await this.source.fetch(0, getMaxLength(this.source, 0, this.defaultReadSize)),
     ) as DataViewOffset;
+    if (bytes.byteLength === 0) throw new Error('Unable to read empty tiff');
+
     bytes.sourceOffset = 0;
 
     let offset = 0;
@@ -177,9 +184,9 @@ export class Tiff {
 }
 
 function getMaxLength(source: Source, offset: number, length: number): number {
+  const size = source.metadata?.size;
   // max length is unknown, roll the dice and hope the chunk exists
-  if (source.metadata?.size == null) return length;
-  const size = source.metadata.size;
+  if (size == null || size < 0) return length;
 
   // Read was going to happen past the end of the file limit it to the end of the file
   if (offset + length > size) return size - offset;

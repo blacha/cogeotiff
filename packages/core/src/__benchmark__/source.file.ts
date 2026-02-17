@@ -20,7 +20,7 @@ export class TestFileSource implements Source {
 
   async fetch(offset: number, length: number): Promise<ArrayBuffer> {
     const fileData = await this.data;
-    return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + offset + length);
+    return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + offset + length) as ArrayBuffer;
   }
 
   get size(): Promise<number> {
