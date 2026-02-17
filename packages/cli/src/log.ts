@@ -1,4 +1,4 @@
-import { fsa, FsHttp } from '@chunkd/fs';
+import { FsHttp, fsa } from '@chunkd/fs';
 import { SourceCache, SourceChunk } from '@chunkd/middleware';
 import { log } from '@linzjs/tracing';
 
