@@ -474,7 +474,10 @@ export class TiffImage {
     const actualBytes = new Uint8Array(bytes.byteLength + tableData.length - 2);
     actualBytes.set(tableData, 0);
     actualBytes.set(new Uint8Array(bytes).slice(2), tableData.length);
-    return actualBytes.buffer.slice(actualBytes.byteOffset, actualBytes.byteOffset + actualBytes.byteLength) as ArrayBuffer;
+    return actualBytes.buffer.slice(
+      actualBytes.byteOffset,
+      actualBytes.byteOffset + actualBytes.byteLength,
+    ) as ArrayBuffer;
   }
 
   /** Read image bytes at the given offset */
