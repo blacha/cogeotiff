@@ -25,9 +25,19 @@ jobs:
       name: prod
     if: ${{ needs.release-please.outputs.releases_created == 'true' }}
     steps:
-      - uses: linz/action-typescript@v3
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
         with:
           node-version: 24.x
+
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run check
+      - run: ls -R packages/
+      - run: npm run test
 
       - name: Publish to NPM
         run: npx lerna publish from-package --yes

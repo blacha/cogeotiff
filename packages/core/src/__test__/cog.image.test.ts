@@ -103,7 +103,7 @@ describe('Cog.Big', () => {
 
   it('should read using a memory source', async () => {
     const bytes = await fs.readFile(new URL('../../data/sparse.tiff', import.meta.url));
-    const source = new SourceMemory(bytes.buffer);
+    const source = new SourceMemory(bytes.buffer as ArrayBuffer);
     const cog = new Tiff(source);
     await cog.init();
 
