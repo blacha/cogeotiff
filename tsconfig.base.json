@@ -3,6 +3,7 @@
   "compilerOptions": {
     "lib": ["ES2020", "DOM"],
     "outDir": "build",
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    "declarationMap": true
   }
 }
