@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: linz/action-typescript@v3
-        with:
-          node-version: 24.x
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run check
+      - run: npm run test
+
       - uses: blacha/hyperfine-action@v1
