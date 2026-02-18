@@ -12,13 +12,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 24.x
-
-      - run: npm ci
-      - run: npm run build
-      - run: npm run check
-      - run: npm run test
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install
+      - run: pnpm build
+      - run: pnpm check
+      - run: pnpm test
 
       - uses: blacha/hyperfine-action@v1

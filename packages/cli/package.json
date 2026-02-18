@@ -17,10 +17,11 @@
   },
   "scripts": {},
   "dependencies": {
-    "@chunkd/source": "^11.0.0",
-    "@chunkd/middleware": "^11.0.0",
+    "@aws-sdk/client-s3": "^3.992.0",
     "@chunkd/fs": "^11.0.2",
     "@chunkd/fs-aws": "^11.0.2",
+    "@chunkd/middleware": "^11.0.0",
+    "@chunkd/source": "^11.0.0",
     "@cogeotiff/core": "^9.1.2",
     "@linzjs/tracing": "^1.1.1",
     "ansi-colors": "^4.1.1",

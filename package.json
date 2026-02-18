@@ -7,13 +7,14 @@
     "build-watch": "tsc -b --pretty --watch",
     "lint": "biome check --write packages/",
     "check": "biome check packages/",
-    "test": "node --test \"packages/*/build/**/*.test.js\""
+    "test": "pnpm -r test"
   },
   "type": "module",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "private": true,
+  "packageManager": "pnpm@10.25.0",
   "keywords": [],
   "author": "Blayne Chard",
   "license": "ISC",
