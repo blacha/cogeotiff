@@ -476,10 +476,11 @@ export class TiffImage {
   async getBytes(
     offset: number,
     byteCount: number,
+    options?: { signal?: AbortSignal },
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     if (byteCount === 0) return null;
 
-    const bytes = await this.tiff.source.fetch(offset, byteCount);
+    const bytes = await this.tiff.source.fetch(offset, byteCount, options);
     if (bytes.byteLength < byteCount) {
       throw new Error(`Failed to fetch bytes from offset:${offset} wanted:${byteCount} got:${bytes.byteLength}`);
     }
@@ -503,6 +504,7 @@ export class TiffImage {
   async getTile(
     x: number,
     y: number,
+    options?: { signal?: AbortSignal },
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     const size = this.size;
     const tiles = this.tileSize;
@@ -523,7 +525,7 @@ export class TiffImage {
 
     const { offset, imageSize } = await this.getTileSize(idx);
 
-    return this.getBytes(offset, imageSize);
+    return this.getBytes(offset, imageSize, options);
   }
 
   /**
