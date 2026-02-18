@@ -13,7 +13,7 @@ export interface Source {
   };
 
   /** Fetch bytes from a source */
-  fetch(offset: number, length?: number): Promise<ArrayBuffer>;
+  fetch(offset: number, length?: number, options?: { signal?: AbortSignal }): Promise<ArrayBuffer>;
 
   /** Optionally close the source, useful for sources that have open connections of file descriptors */
   close?(): Promise<void>;
