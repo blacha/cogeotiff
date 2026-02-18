@@ -30,11 +30,9 @@ export const ImportantTags = new Set([
   TiffTag.ModelTransformation,
   TiffTag.TileHeight,
   TiffTag.TileWidth,
-  TiffTag.GeoKeyDirectory,
-  TiffTag.GeoAsciiParams,
-  TiffTag.GeoDoubleParams,
-  TiffTag.TileOffsets,
 ]);
+
+export const ImportantGeoTags = new Set([TiffTag.GeoKeyDirectory, TiffTag.GeoAsciiParams, TiffTag.GeoDoubleParams]);
 
 /**
  * Size of a individual tile
@@ -75,21 +73,15 @@ export class TiffImage {
    * @param loadGeoTags Whether to load the GeoKeyDirectory and unpack it
    */
   async init(loadGeoTags = true): Promise<void> {
-    const requiredTags: Promise<unknown>[] = [
-      this.fetch(TiffTag.Compression),
-      this.fetch(TiffTag.ImageHeight),
-      this.fetch(TiffTag.ImageWidth),
-      this.fetch(TiffTag.ModelPixelScale),
-      this.fetch(TiffTag.ModelTiePoint),
-      this.fetch(TiffTag.ModelTransformation),
-      this.fetch(TiffTag.TileHeight),
-      this.fetch(TiffTag.TileWidth),
-    ];
+    const requiredTags: Promise<unknown>[] = [];
+    ImportantTags.forEach((tag) => {
+      requiredTags.push(this.fetch(tag));
+    });
 
     if (loadGeoTags) {
-      requiredTags.push(this.fetch(TiffTag.GeoKeyDirectory));
-      requiredTags.push(this.fetch(TiffTag.GeoAsciiParams));
-      requiredTags.push(this.fetch(TiffTag.GeoDoubleParams));
+      ImportantGeoTags.forEach((tag) => {
+        requiredTags.push(this.fetch(tag));
+      });
     }
 
     await Promise.all(requiredTags);
