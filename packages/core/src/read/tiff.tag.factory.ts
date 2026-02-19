@@ -58,12 +58,11 @@ function readTagValue(
   }
 }
 
-
 /**
  * Convert a tiff tag value to a typed array if the local endian matches the tiff endian
- * 
- * @param tiff 
- * @param bytes 
+ *
+ * @param tiff
+ * @param bytes
  * @param offset Offset in the data view to read from
  * @param length Number of bytes to read
  * @param type type of tiff tag
@@ -78,17 +77,22 @@ export function readTypedValue<T>(
 ): T | null {
   switch (type) {
     case TiffTagValueType.Uint8:
-      return new Uint8Array(bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length)) as unknown as T;
+      return new Uint8Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length),
+      ) as unknown as T;
     case TiffTagValueType.Uint16:
       if (tiff.isLittleEndian !== isLittleEndian) return null;
-      return new Uint16Array(bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length)) as unknown as T;
+      return new Uint16Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length),
+      ) as unknown as T;
     case TiffTagValueType.Uint32:
       if (tiff.isLittleEndian !== isLittleEndian) return null;
-      return new Uint32Array(bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length)) as unknown as T;
+      return new Uint32Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length),
+      ) as unknown as T;
   }
   return null;
 }
-
 
 function readValue<T>(
   tiff: Tiff,
@@ -118,7 +122,12 @@ function readValue<T>(
   }
 
   // TODO should we convert all tag values to typed arrays if possible?
-  if (tagId === TiffTag.TileOffsets || tagId === TiffTag.TileByteCounts || tagId === TiffTag.StripOffsets || tagId === TiffTag.StripByteCounts) {
+  if (
+    tagId === TiffTag.TileOffsets ||
+    tagId === TiffTag.TileByteCounts ||
+    tagId === TiffTag.StripOffsets ||
+    tagId === TiffTag.StripByteCounts
+  ) {
     const typedOutput = readTypedValue(tiff, bytes, offset, dataLength, type);
     if (typedOutput) return typedOutput as unknown as T;
   }

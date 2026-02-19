@@ -17,8 +17,6 @@ function validate(tif: Tiff): void {
   assert.equal(firstTif.isTiled(), true);
   assert.deepEqual(firstTif.tileSize, { width: 256, height: 256 });
   assert.deepEqual(firstTif.size, { width: 64, height: 64 });
-
-
 }
 
 describe('CogRead', () => {
@@ -32,16 +30,15 @@ describe('CogRead', () => {
     assert.equal(tiff.version, TiffVersion.Tiff);
     assert.equal(tiff.images.length, 1);
     const firstImage = tiff.images[0];
-    const byteCounts = await firstImage.fetch(TiffTag.TileByteCounts)
-    assert.deepEqual([...byteCounts ?? []], [511])
-    console.log(byteCounts)
+    const byteCounts = await firstImage.fetch(TiffTag.TileByteCounts);
+    assert.deepEqual([...(byteCounts ?? [])], [511]);
+    console.log(byteCounts);
 
     assert.equal(firstImage.compression, 'application/zstd');
     assert.equal(firstImage.isTiled(), true);
 
     const firstTile = await firstImage.getTile(0, 0);
     assert.equal(firstTile?.bytes.byteLength, 511);
-
   });
 
   it('should read big tiff', async () => {
@@ -57,11 +54,11 @@ describe('CogRead', () => {
 
     const [byteCounts, tileOffsets] = await Promise.all([
       tiff.images[0].fetch(TiffTag.TileByteCounts),
-      tiff.images[0].fetch(TiffTag.TileOffsets)
-    ])
+      tiff.images[0].fetch(TiffTag.TileOffsets),
+    ]);
 
-    assert.deepEqual([...byteCounts ?? []], [196608])
-    assert.deepEqual([...tileOffsets ?? []], [272])
+    assert.deepEqual([...(byteCounts ?? [])], [196608]);
+    assert.deepEqual([...(tileOffsets ?? [])], [272]);
   });
 
   it('should fail reading a empty byte tiff', async () => {
@@ -125,7 +122,7 @@ describe('CogRead', () => {
     assert.equal(im.valueGeo(TiffTagGeo.GeodeticCitationGeoKey), 'NZGD2000');
 
     const stripCount = await im.fetch(TiffTag.StripByteCounts);
-    assert.deepEqual([...stripCount ?? []], [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
+    assert.deepEqual([...(stripCount ?? [])], [8064, 8064, 8064, 8064, 8064, 8064, 8064, 5040]);
   });
 
   it('should read sub array ifds', async () => {
@@ -186,15 +183,13 @@ describe('CogRead', () => {
 
     const [byteCounts, tileOffsets] = await Promise.all([
       tiff.images[0].fetch(TiffTag.TileByteCounts),
-      tiff.images[0].fetch(TiffTag.TileOffsets)
-    ])
+      tiff.images[0].fetch(TiffTag.TileOffsets),
+    ]);
 
-    assert.deepEqual([...byteCounts ?? []], [64, 64, 68, 64, 64, 68,
-      64, 64, 68, 64, 64, 64,
-      64, 64, 64, 68])
-    assert.deepEqual([...tileOffsets ?? []], [797, 861, 925, 993,
-      1057, 1121, 1189, 1253,
-      1317, 1385, 1449, 1513,
-      1577, 1641, 1705, 1769])
+    assert.deepEqual([...(byteCounts ?? [])], [64, 64, 68, 64, 64, 68, 64, 64, 68, 64, 64, 64, 64, 64, 64, 68]);
+    assert.deepEqual(
+      [...(tileOffsets ?? [])],
+      [797, 861, 925, 993, 1057, 1121, 1189, 1253, 1317, 1385, 1449, 1513, 1577, 1641, 1705, 1769],
+    );
   });
 });

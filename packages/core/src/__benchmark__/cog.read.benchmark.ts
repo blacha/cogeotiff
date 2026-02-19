@@ -4,7 +4,7 @@ import { TiffTag } from '../index.js';
 import { Tiff } from '../tiff.js';
 import { SourceMemory } from './source.memory.js';
 
-Tiff.DefaultReadSize = 64 * 1024
+Tiff.DefaultReadSize = 64 * 1024;
 // console.log = console.trace;
 /** Read a tile from every image inside of a tiff 300 tiles read */
 async function main(): Promise<void> {
