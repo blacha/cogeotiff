@@ -11,6 +11,7 @@ export {
   Orientation,
   Photometric,
   PlanarConfiguration,
+  Predictor,
   RasterTypeKey,
   SampleFormat,
   SubFileType,

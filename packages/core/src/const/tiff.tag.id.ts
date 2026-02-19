@@ -86,6 +86,14 @@ export enum PlanarConfiguration {
   Separate = 2,
 }
 
+export enum Predictor {
+  None = 1,
+  /** Horizontal differencing */
+  Horizontal = 2,
+  /** Floating point */
+  FloatingPoint = 3,
+}
+
 export enum SampleFormat {
   /** Unsigned integer data */
   Uint = 1,
@@ -437,6 +445,7 @@ export interface TiffTagType {
 
   [TiffTag.PlanarConfiguration]: PlanarConfiguration;
   [TiffTag.Orientation]: Orientation;
+  [TiffTag.Predictor]: Predictor;
 
   [TiffTag.LercParameters]: number[];
 
@@ -478,7 +487,6 @@ export interface TiffTagType {
   [TiffTag.Indexed]: unknown;
   [TiffTag.PageName]: unknown;
   [TiffTag.PageNumber]: unknown;
-  [TiffTag.Predictor]: unknown;
   [TiffTag.PrimaryChromaticities]: unknown;
   [TiffTag.ReferenceBlackWhite]: unknown;
   [TiffTag.SMinSampleValue]: unknown;
