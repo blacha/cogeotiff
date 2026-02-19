@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.2.0](https://github.com/blacha/cogeotiff/compare/core-v9.1.2...core-v9.2.0) (2026-02-18)
+
+
+### Features
+
+* Add AbortSignal option to Source.fetch ([#1400](https://github.com/blacha/cogeotiff/issues/1400)) ([13b6f6c](https://github.com/blacha/cogeotiff/commit/13b6f6c97c1aa42f15a505bdb423b387edcc7fa5))
+
+
+### Bug Fixes
+
+* Add type hint for samples per pixel tag ([#1394](https://github.com/blacha/cogeotiff/issues/1394)) ([95bf6a2](https://github.com/blacha/cogeotiff/commit/95bf6a2750e23c58497b6e38e2a5a59fb8c3c3ed))
+
 ## [9.1.2](https://github.com/blacha/cogeotiff/compare/core-v9.1.1...core-v9.1.2) (2025-11-10)
 
 
