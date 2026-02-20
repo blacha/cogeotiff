@@ -125,13 +125,58 @@ describe('CogRead', () => {
     assert.deepEqual(source.fetches[1], { offset: tileOffsets.value[0], length: byteCounts.value[0] });
 
     // force the offset to be unloaded
-    tileOffsets.isLoaded = false;
+    byteCounts.isLoaded = false;
+    const oldValue = byteCounts.value;
+    byteCounts.value = [];
     const tileB = await img.getTile(0, 0);
-    assert.equal(tileB?.bytes.byteLength, byteCounts.value[0]);
+    assert.equal(tileB?.bytes.byteLength, oldValue[0]);
+    assert.equal(source.fetches.length, 4);
+
+    // Read the tile offset then the tile
+    assert.deepEqual(source.fetches[2], { offset: tileOffsets.value[0] - 4, length: 4 });
+    assert.deepEqual(source.fetches[3], { offset: tileOffsets.value[0], length: oldValue[0] });
+  });
+
+  it('should read the byte count array if it is loaded (BigTiff)', async () => {
+    const source = new TestFileSource(new URL('../../data/rgba8_cog_big.tiff', import.meta.url));
+    const fetchSize = 16 * 1024;
+
+    const tiff = new Tiff(source);
+    tiff.defaultReadSize = fetchSize;
+    await tiff.init();
+
+    assert.equal(source.fetches.length, 1);
+    assert.equal(source.fetches[0].length, fetchSize);
+
+    const img = tiff.images[0];
+    const byteCounts = img.tags.get(TiffTag.TileByteCounts) as TagOffset;
+    const tileOffsets = img.tags.get(TiffTag.TileOffsets) as TagOffset;
+    assert.equal(source.fetches.length, 1);
+
+    assert.equal(byteCounts.type, 'offset');
+    assert.equal(byteCounts.isLoaded, true);
+    assert.equal(byteCounts.view == null, true);
+
+    assert.equal(tileOffsets.type, 'offset');
+    assert.equal(tileOffsets.isLoaded, false);
+    assert.equal(tileOffsets.view == null, false);
+
+    const tile = await img.getTile(0, 0);
+    assert.equal(tile?.bytes.byteLength, byteCounts.value[0]);
+    assert.equal(source.fetches.length, 2);
+    assert.deepEqual(source.fetches[1], { offset: tileOffsets.value[0], length: byteCounts.value[0] });
+
+    // force the offset to be unloaded
+    byteCounts.isLoaded = false;
+    const oldValue = byteCounts.value;
+    byteCounts.value = [];
+    byteCounts.view = undefined;
+    const tileB = await img.getTile(0, 0);
+    assert.equal(tileB?.bytes.byteLength, oldValue[0]);
     assert.equal(source.fetches.length, 4);
     // Read the tile offset then the tile
     assert.deepEqual(source.fetches[2], { offset: tileOffsets.value[0] - 4, length: 4 });
-    assert.deepEqual(source.fetches[3], { offset: tileOffsets.value[0], length: byteCounts.value[0] });
+    assert.deepEqual(source.fetches[3], { offset: tileOffsets.value[0], length: oldValue[0] });
   });
 
   it('should read ifds from anywhere in the file', async () => {

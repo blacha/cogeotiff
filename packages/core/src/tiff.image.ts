@@ -1,7 +1,7 @@
 import { getCompressionMimeType, TiffCompressionMimeType, TiffMimeType } from './const/tiff.mime.js';
 import type { TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 import { Compression, ModelTypeCode, SubFileType, TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
-import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
+import { fetchAllOffsets, fetchLazy, getValueAt, getValueAtSync } from './read/tiff.tag.factory.js';
 import type { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
 import type { Tiff } from './tiff.js';
 import { getUint } from './util/bytes.js';
@@ -607,5 +607,6 @@ function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: nu
   if (index >= x.count) return 0;
   if (x.type === 'inline') return x.value[index];
   if (x.isLoaded) return x.value[index];
-  return null;
+
+  return getValueAtSync(tiff, x, index);
 }
