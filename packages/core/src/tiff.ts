@@ -13,6 +13,11 @@ import { TiffImage } from './tiff.image.js';
 import { getUint } from './util/bytes.js';
 import { toHex } from './util/util.hex.js';
 
+export interface TiffCreationOptions {
+  /** When initializing the tiff, read data in blocks of this size (in KB) */
+  defaultReadSize: number;
+}
+
 export class Tiff {
   /** Read 16KB blocks at a time */
   static DefaultReadSize = 16 * 1024;
@@ -36,13 +41,17 @@ export class Tiff {
   private _initPromise?: Promise<Tiff>;
 
   /** A Tiff constructed from a source will not be pre-initialized with {@link init}. */
-  constructor(source: Source) {
+  constructor(source: Source, options: TiffCreationOptions = { defaultReadSize: Tiff.DefaultReadSize }) {
     this.source = source;
+    this.defaultReadSize = options.defaultReadSize;
   }
 
   /** Create a tiff and initialize it by reading the tiff headers */
-  static create(source: Source): Promise<Tiff> {
-    return new Tiff(source).init();
+  static create(
+    source: Source,
+    options: TiffCreationOptions = { defaultReadSize: Tiff.DefaultReadSize },
+  ): Promise<Tiff> {
+    return new Tiff(source, options).init();
   }
 
   /**

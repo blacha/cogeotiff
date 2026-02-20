@@ -25,6 +25,7 @@ export { getTiffTagSize } from './read/tiff.value.reader.js';
 export type { Source } from './source.js';
 export type { TiffImageTileCount } from './tiff.image.js';
 export { TiffImage } from './tiff.image.js';
+export type { TiffCreationOptions } from './tiff.js';
 export { Tiff } from './tiff.js';
 export { toHex } from './util/util.hex.js';
 export type { BoundingBox, Point, Size, Vector } from './vector.js';
