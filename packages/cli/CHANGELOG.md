@@ -24,6 +24,20 @@
   * dependencies
     * @cogeotiff/core bumped from ^9.1.1 to ^9.1.2
 
+## [9.1.0](https://github.com/blacha/cogeotiff/compare/cli-v9.0.7...cli-v9.1.0) (2026-02-20)
+
+
+### Features
+
+* **cli:** trace how a tiff is loaded with fetch-tile ([#1414](https://github.com/blacha/cogeotiff/issues/1414)) ([8a69302](https://github.com/blacha/cogeotiff/commit/8a693021e2c07fd08c6e2470d00106126e5b9f70))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^9.2.0 to ^9.3.0
+
 ## [9.0.7](https://github.com/blacha/cogeotiff/compare/cli-v9.0.6...cli-v9.0.7) (2026-02-18)
 
 

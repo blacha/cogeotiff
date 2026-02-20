@@ -1,5 +1,20 @@
 # Changelog
 
+## [9.3.0](https://github.com/blacha/cogeotiff/compare/core-v9.2.0...core-v9.3.0) (2026-02-20)
+
+
+### Features
+
+* Add Predictor enum ([#1412](https://github.com/blacha/cogeotiff/issues/1412)) ([d66d251](https://github.com/blacha/cogeotiff/commit/d66d251eda3c9a372aa3e24092fbf042e0097bb8))
+* **core:** add default read size as a optional arg ([a025899](https://github.com/blacha/cogeotiff/commit/a0258994fd488237156949c579221fccc8ffc137))
+* typed arrays for tile offset and byte counts ([#1410](https://github.com/blacha/cogeotiff/issues/1410)) ([733f066](https://github.com/blacha/cogeotiff/commit/733f066ac1d3177b70003c36c07eb776be5b170e))
+
+
+### Performance Improvements
+
+* **core:** improve tile loading performance for big tiff ([9848601](https://github.com/blacha/cogeotiff/commit/9848601931004ea9f97c146af981605a4f71f32e))
+* **core:** use the byte count array if it is loaded ([#1415](https://github.com/blacha/cogeotiff/issues/1415)) ([8f16769](https://github.com/blacha/cogeotiff/commit/8f16769e4f485510916e6807e2a2e2a5da9f70cf))
+
 ## [9.2.0](https://github.com/blacha/cogeotiff/compare/core-v9.1.2...core-v9.2.0) (2026-02-18)
 
 
