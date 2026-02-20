@@ -556,10 +556,20 @@ export class TiffImage {
 
   /**
    * Load the offset and byteCount of a tile
+   *
+   * if the tiff is sparse, offset and byteCount will be zero if the tile is empty
+   *
    * @param index index in the tile array
    * @returns Offset and byteCount for the tile
    */
   async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
+    // If both the tile offset and tile byte counts are loaded,
+    // we can get the offset and byte count synchronously without needing to fetch any additional data
+    const byteCounts = this.tags.get(TiffTag.TileByteCounts) as TagOffset | TagInline<number[]>;
+    const tileOffset = getOffsetSync(this.tiff, this.tileOffset, index);
+    const tileSize = getOffsetSync(this.tiff, byteCounts, index);
+    if (tileOffset >= 0 && tileSize >= 0) return { offset: tileOffset, imageSize: tileSize };
+
     // GDAL optimizes tiles by storing the size of the tile in
     // the few bytes leading up to the tile
     const leaderBytes = this.tiff.options?.tileLeaderByteSize;
@@ -574,7 +584,6 @@ export class TiffImage {
       return { offset, imageSize: getUint(new DataView(bytes), 0, leaderBytes, this.tiff.isLittleEndian) };
     }
 
-    const byteCounts = this.tags.get(TiffTag.TileByteCounts) as TagOffset;
     if (byteCounts == null) throw new Error('No tile byte counts found');
     const [offset, imageSize] = await Promise.all([
       getOffset(this.tiff, this.tileOffset, index),
@@ -585,11 +594,18 @@ export class TiffImage {
 }
 
 function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | Promise<number> {
+  const val = getOffsetSync(tiff, x, index);
+  if (val >= 0) return Promise.resolve(val);
+  return getValueAt(tiff, x as TagOffset, index);
+}
+
+function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number {
   if (index < 0) {
     throw new Error(`Tiff: ${tiff.source.url.href} out of bounds ${TiffTag[x.id]} index:${index} total:${x.count}`);
   }
   // Sparse tiffs may not have the full tileWidth * tileHeight in their offset arrays
   if (index >= x.count) return 0;
   if (x.type === 'inline') return x.value[index];
-  return getValueAt(tiff, x, index);
+  if (x.isLoaded) return x.value[index];
+  return -1;
 }
