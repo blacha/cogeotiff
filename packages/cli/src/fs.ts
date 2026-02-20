@@ -7,7 +7,7 @@ export const FetchLog: SourceMiddleware & { reset(): void; fetches: SourceReques
   fetch(req: SourceRequest, next: SourceCallback) {
     this.fetches.push(req);
     this.bytesRead += req.length ?? 0;
-    logger.info('Tiff:fetch', { href: req.source.url.href, offset: req.offset, length: req.length });
+    logger.debug('Tiff:fetch', { href: req.source.url.href, offset: req.offset, length: req.length });
     return next(req);
   },
   reset() {
