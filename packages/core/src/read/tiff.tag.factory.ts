@@ -5,6 +5,7 @@ import type { Tiff } from '../tiff.js';
 import { getUint, getUint64 } from '../util/bytes.js';
 import type { DataViewOffset } from './data.view.offset.js';
 import { hasBytes } from './data.view.offset.js';
+import { isLittleEndian } from './endian.js';
 import type { Tag, TagLazy, TagOffset } from './tiff.tag.js';
 import { getTiffTagSize } from './tiff.value.reader.js';
 
@@ -57,6 +58,42 @@ function readTagValue(
   }
 }
 
+/**
+ * Convert a tiff tag value to a typed array if the local endian matches the tiff endian
+ *
+ * @param tiff
+ * @param bytes
+ * @param offset Offset in the data view to read from
+ * @param length Number of bytes to read
+ * @param type type of tiff tag
+ * @returns the value if the type is a typed array and the endianness matches otherwise null
+ */
+export function readTypedValue<T>(
+  tiff: Tiff,
+  bytes: DataView,
+  offset: number,
+  length: number,
+  type: TiffTagValueType,
+): T | null {
+  switch (type) {
+    case TiffTagValueType.Uint8:
+      return new Uint8Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length),
+      ) as unknown as T;
+    case TiffTagValueType.Uint16:
+      if (tiff.isLittleEndian !== isLittleEndian) return null;
+      return new Uint16Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length),
+      ) as unknown as T;
+    case TiffTagValueType.Uint32:
+      if (tiff.isLittleEndian !== isLittleEndian) return null;
+      return new Uint32Array(
+        bytes.buffer.slice(bytes.byteOffset + offset, bytes.byteOffset + offset + length),
+      ) as unknown as T;
+  }
+  return null;
+}
+
 function readValue<T>(
   tiff: Tiff,
   tagId: TiffTag | undefined,
@@ -82,6 +119,17 @@ function readValue<T>(
         null,
         new Uint8Array(bytes.buffer, offset, dataLength - 1) as unknown as number[],
       ) as unknown as T;
+  }
+
+  // TODO should we convert all tag values to typed arrays if possible?
+  if (
+    tagId === TiffTag.TileOffsets ||
+    tagId === TiffTag.TileByteCounts ||
+    tagId === TiffTag.StripOffsets ||
+    tagId === TiffTag.StripByteCounts
+  ) {
+    const typedOutput = readTypedValue(tiff, bytes, offset, dataLength, type);
+    if (typedOutput) return typedOutput as unknown as T;
   }
 
   const output = [];
@@ -133,8 +181,17 @@ export function createTag(tiff: Tiff, view: DataViewOffset, offset: number): Tag
         value: [],
         tagOffset: offset,
       };
-      // Some offsets are quite long and don't need to read them often, so only read the tags we are interested in when we need to
-      if (tagId === TiffTag.TileOffsets && hasBytes(view, dataOffset, dataLength)) setBytes(tag, view);
+
+      if (hasBytes(view, dataOffset, dataLength)) {
+        const val = readTypedValue(tiff, view, dataOffset - view.sourceOffset, dataLength, dataType);
+        if (val) {
+          tag.value = val as number[] | Uint32Array | Uint16Array;
+          tag.isLoaded = true;
+        } else {
+          setBytes(tag, view);
+        }
+      }
+
       return tag;
   }
 
@@ -161,7 +218,7 @@ export async function fetchLazy<T>(tag: TagLazy<T>, tiff: Tiff): Promise<T> {
 /**
  * Fetch all the values from a {@link TagOffset}
  */
-export async function fetchAllOffsets(tiff: Tiff, tag: TagOffset): Promise<number[]> {
+export async function fetchAllOffsets(tiff: Tiff, tag: TagOffset): Promise<TagOffset['value']> {
   const dataTypeSize = getTiffTagSize(tag.dataType);
 
   if (tag.view == null) {
@@ -171,6 +228,7 @@ export async function fetchAllOffsets(tiff: Tiff, tag: TagOffset): Promise<numbe
   }
 
   tag.value = readValue(tiff, tag.id, tag.view, 0, tag.dataType, tag.count);
+  tag.view = undefined;
   tag.isLoaded = true;
   return tag.value;
 }

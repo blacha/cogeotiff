@@ -425,12 +425,12 @@ export interface TiffTagType {
 
   [TiffTag.TileWidth]: number;
   [TiffTag.TileHeight]: number;
-  [TiffTag.TileOffsets]: number[];
-  [TiffTag.TileByteCounts]: number[];
+  [TiffTag.TileOffsets]: number[] | Uint32Array | Uint16Array;
+  [TiffTag.TileByteCounts]: number[] | Uint32Array | Uint16Array;
   [TiffTag.JpegTables]: number[];
 
-  [TiffTag.StripByteCounts]: number[];
-  [TiffTag.StripOffsets]: number[];
+  [TiffTag.StripByteCounts]: number[] | Uint32Array | Uint16Array;
+  [TiffTag.StripOffsets]: number[] | Uint32Array | Uint16Array;
 
   [TiffTag.SamplesPerPixel]: number;
   [TiffTag.SampleFormat]: SampleFormat[];
