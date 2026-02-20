@@ -574,7 +574,7 @@ export class TiffImage {
     // the few bytes leading up to the tile
     const leaderBytes = this.tiff.options?.tileLeaderByteSize;
     if (leaderBytes) {
-      const offset = tileOffset ?? await getOffset(this.tiff, this.tileOffset, index);
+      const offset = tileOffset ?? (await getOffset(this.tiff, this.tileOffset, index));
       // Sparse tiff no data found
       if (offset === 0) return { offset: 0, imageSize: 0 };
 
@@ -599,7 +599,7 @@ function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number
   return getValueAt(tiff, x as TagOffset, index);
 }
 
-function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number  | null{
+function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | null {
   if (index < 0) {
     throw new Error(`Tiff: ${tiff.source.url.href} out of bounds ${TiffTag[x.id]} index:${index} total:${x.count}`);
   }
