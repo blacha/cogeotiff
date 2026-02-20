@@ -1,7 +1,7 @@
 import { getCompressionMimeType, TiffCompressionMimeType, TiffMimeType } from './const/tiff.mime.js';
 import type { TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 import { Compression, ModelTypeCode, SubFileType, TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
-import { fetchAllOffsets, fetchLazy, getValueAt } from './read/tiff.tag.factory.js';
+import { fetchAllOffsets, fetchLazy, getValueAt, getValueAtSync } from './read/tiff.tag.factory.js';
 import type { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
 import type { Tiff } from './tiff.js';
 import { getUint } from './util/bytes.js';
@@ -556,15 +556,25 @@ export class TiffImage {
 
   /**
    * Load the offset and byteCount of a tile
+   *
+   * if the tiff is sparse, offset and byteCount will be zero if the tile is empty
+   *
    * @param index index in the tile array
    * @returns Offset and byteCount for the tile
    */
   async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
+    // If both the tile offset and tile byte counts are loaded,
+    // we can get the offset and byte count synchronously without needing to fetch any additional data
+    const byteCounts = this.tags.get(TiffTag.TileByteCounts) as TagOffset | TagInline<number[]>;
+    const tileOffset = getOffsetSync(this.tiff, this.tileOffset, index);
+    const tileSize = getOffsetSync(this.tiff, byteCounts, index);
+    if (tileOffset != null && tileSize != null) return { offset: tileOffset, imageSize: tileSize };
+
     // GDAL optimizes tiles by storing the size of the tile in
     // the few bytes leading up to the tile
     const leaderBytes = this.tiff.options?.tileLeaderByteSize;
     if (leaderBytes) {
-      const offset = await getOffset(this.tiff, this.tileOffset, index);
+      const offset = tileOffset ?? (await getOffset(this.tiff, this.tileOffset, index));
       // Sparse tiff no data found
       if (offset === 0) return { offset: 0, imageSize: 0 };
 
@@ -574,22 +584,29 @@ export class TiffImage {
       return { offset, imageSize: getUint(new DataView(bytes), 0, leaderBytes, this.tiff.isLittleEndian) };
     }
 
-    const byteCounts = this.tags.get(TiffTag.TileByteCounts) as TagOffset;
     if (byteCounts == null) throw new Error('No tile byte counts found');
     const [offset, imageSize] = await Promise.all([
-      getOffset(this.tiff, this.tileOffset, index),
-      getOffset(this.tiff, byteCounts, index),
+      tileOffset ?? getOffset(this.tiff, this.tileOffset, index),
+      tileSize ?? getOffset(this.tiff, byteCounts, index),
     ]);
     return { offset, imageSize };
   }
 }
 
 function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | Promise<number> {
+  const val = getOffsetSync(tiff, x, index);
+  if (val != null) return Promise.resolve(val);
+  return getValueAt(tiff, x as TagOffset, index);
+}
+
+function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | null {
   if (index < 0) {
     throw new Error(`Tiff: ${tiff.source.url.href} out of bounds ${TiffTag[x.id]} index:${index} total:${x.count}`);
   }
   // Sparse tiffs may not have the full tileWidth * tileHeight in their offset arrays
   if (index >= x.count) return 0;
   if (x.type === 'inline') return x.value[index];
-  return getValueAt(tiff, x, index);
+  if (x.isLoaded) return x.value[index];
+
+  return getValueAtSync(tiff, x, index);
 }

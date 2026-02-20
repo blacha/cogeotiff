@@ -262,3 +262,15 @@ export async function getValueAt(tiff: Tiff, tag: TagOffset, index: number): Pro
   tag.value[index] = value;
   return value;
 }
+
+export function getValueAtSync(tiff: Tiff, tag: TagOffset, index: number): number | null {
+  if (index > tag.count || index < 0) throw new Error('TagOffset: out of bounds :' + index);
+  if (tag.value[index] != null) return tag.value[index];
+  if (tag.view == null) return null;
+  const dataTypeSize = getTiffTagSize(tag.dataType);
+
+  const value = readValue(tiff, undefined, tag.view, index * dataTypeSize, tag.dataType, 1);
+  if (typeof value !== 'number') throw new Error('Value is not a number');
+  tag.value[index] = value;
+  return value;
+}

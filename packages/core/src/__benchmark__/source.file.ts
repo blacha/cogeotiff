@@ -9,6 +9,7 @@ const gunzipP = promisify(gunzip);
 export class TestFileSource implements Source {
   url: URL;
   data: Promise<Buffer>;
+  fetches: { offset: number; length: number }[] = [];
 
   constructor(fileName: URL) {
     this.url = fileName;
@@ -20,6 +21,7 @@ export class TestFileSource implements Source {
 
   async fetch(offset: number, length: number): Promise<ArrayBuffer> {
     const fileData = await this.data;
+    this.fetches.push({ offset, length });
     return fileData.buffer.slice(fileData.byteOffset + offset, fileData.byteOffset + offset + length) as ArrayBuffer;
   }
 
