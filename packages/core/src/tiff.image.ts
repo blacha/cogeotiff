@@ -568,13 +568,13 @@ export class TiffImage {
     const byteCounts = this.tags.get(TiffTag.TileByteCounts) as TagOffset | TagInline<number[]>;
     const tileOffset = getOffsetSync(this.tiff, this.tileOffset, index);
     const tileSize = getOffsetSync(this.tiff, byteCounts, index);
-    if (tileOffset >= 0 && tileSize >= 0) return { offset: tileOffset, imageSize: tileSize };
+    if (tileOffset != null && tileSize != null) return { offset: tileOffset, imageSize: tileSize };
 
     // GDAL optimizes tiles by storing the size of the tile in
     // the few bytes leading up to the tile
     const leaderBytes = this.tiff.options?.tileLeaderByteSize;
     if (leaderBytes) {
-      const offset = await getOffset(this.tiff, this.tileOffset, index);
+      const offset = tileOffset ?? await getOffset(this.tiff, this.tileOffset, index);
       // Sparse tiff no data found
       if (offset === 0) return { offset: 0, imageSize: 0 };
 
@@ -586,8 +586,8 @@ export class TiffImage {
 
     if (byteCounts == null) throw new Error('No tile byte counts found');
     const [offset, imageSize] = await Promise.all([
-      getOffset(this.tiff, this.tileOffset, index),
-      getOffset(this.tiff, byteCounts, index),
+      tileOffset ?? getOffset(this.tiff, this.tileOffset, index),
+      tileSize ?? getOffset(this.tiff, byteCounts, index),
     ]);
     return { offset, imageSize };
   }
@@ -595,11 +595,11 @@ export class TiffImage {
 
 function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | Promise<number> {
   const val = getOffsetSync(tiff, x, index);
-  if (val >= 0) return Promise.resolve(val);
+  if (val != null) return Promise.resolve(val);
   return getValueAt(tiff, x as TagOffset, index);
 }
 
-function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number {
+function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number  | null{
   if (index < 0) {
     throw new Error(`Tiff: ${tiff.source.url.href} out of bounds ${TiffTag[x.id]} index:${index} total:${x.count}`);
   }
@@ -607,5 +607,5 @@ function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: nu
   if (index >= x.count) return 0;
   if (x.type === 'inline') return x.value[index];
   if (x.isLoaded) return x.value[index];
-  return -1;
+  return null;
 }
