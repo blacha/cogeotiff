@@ -23,7 +23,7 @@ export { TiffVersion } from './const/tiff.version.js';
 export type { Tag, TagInline, TagLazy, TagOffset } from './read/tiff.tag.js';
 export { getTiffTagSize } from './read/tiff.value.reader.js';
 export type { Source } from './source.js';
-export { TiffImage } from './tiff.image.js';
+export { TiffImage, TiffImageTileCount } from './tiff.image.js';
 export { Tiff } from './tiff.js';
 export { toHex } from './util/util.hex.js';
 export type { BoundingBox, Point, Size, Vector } from './vector.js';
