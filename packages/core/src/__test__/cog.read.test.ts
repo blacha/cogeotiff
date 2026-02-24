@@ -19,6 +19,12 @@ function validate(tif: Tiff): void {
   assert.deepEqual(firstTif.size, { width: 64, height: 64 });
 }
 
+describe('TiffTag', () => {
+  it('should have the correct ModelTransformation tag id', () => {
+    assert.equal(TiffTag.ModelTransformation, 34264);
+  });
+});
+
 describe('CogRead', () => {
   it('should read big endian', async () => {
     const source = new TestFileSource(new URL('../../data/big.endian.tiff', import.meta.url));
