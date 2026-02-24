@@ -301,7 +301,7 @@ export enum TiffTag {
    *     0,     0, 0,        1]
    * ```
    */
-  ModelTransformation = 34744,
+  ModelTransformation = 34264,
   /**
    * List of GeoTiff tags
    * {@link TiffTagGeo}
