@@ -71,7 +71,7 @@ export enum Compression {
   Jpeg = 7,
   DeflateOther = 8,
   Deflate = 32946,
-  Jp2000 = 3417,
+  Jp2000 = 34712,
   Lerc = 34887,
   Lzma = 34925,
   Zstd = 50000,
