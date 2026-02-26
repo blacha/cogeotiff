@@ -30,8 +30,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v5
         with:
-          node-version: 24.x
-
+          node-version-file: '.node-version'
 
       - run: npm ci
       - run: npm run build
