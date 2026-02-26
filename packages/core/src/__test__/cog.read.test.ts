@@ -279,7 +279,7 @@ describe('CogRead', () => {
       [797, 861, 925, 993, 1057, 1121, 1189, 1253, 1317, 1385, 1449, 1513, 1577, 1641, 1705, 1769],
     );
   });
-  
+
   it('should load a file with a model transformation tag', async () => {
     const cogSourceFile = new URL('../../data/model_transformation.tif', import.meta.url);
 
@@ -288,6 +288,9 @@ describe('CogRead', () => {
 
     const tiff = await Tiff.create(source);
     assert.equal(tiff.images.length, 1);
-    assert.deepEqual(tiff.images[0].tags.get(TiffTag.ModelTransformation)?.value, [10, 0, 0, 418080, 0, 10, 0, 4423680, 0, 0, 0, 0, 0, 0, 0, 1]);
+    assert.deepEqual(
+      tiff.images[0].tags.get(TiffTag.ModelTransformation)?.value,
+      [10, 0, 0, 418080, 0, 10, 0, 4423680, 0, 0, 0, 0, 0, 0, 0, 1],
+    );
   });
 });
