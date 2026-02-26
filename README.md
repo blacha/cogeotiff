@@ -98,9 +98,9 @@ cogeotiff dump --image 2 --output output
 
 # Building
 
-This requires [NodeJs](https://nodejs.org/en/)
+Requires [NodeJs](https://nodejs.org/en/) >=[24.0](./.node-version)
 
-Use [n](https://github.com/tj/n) to manage nodeJs versions
+Use [n](https://github.com/tj/n) or [fnm](https://github.com/Schniz/fnm) to manage nodeJs versions
 
 ```bash
 # Download the latest nodejs
