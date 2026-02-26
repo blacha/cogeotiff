@@ -5,6 +5,9 @@ import { Compression } from './tiff.tag.id.js';
  */
 export enum TiffMimeType {
   None = 'application/octet-stream',
+  Jbig = 'image/jbig',
+  Dcs = 'image/x-kodak-dcs',
+  PackBits = 'application/packbits',
   Jpeg = 'image/jpeg',
   Jp2000 = 'image/jp2',
   JpegXl = 'image/jpegxl',
@@ -29,6 +32,26 @@ export const TiffCompressionMimeType: Record<Compression, TiffMimeType> = {
   [Compression.Zstd]: TiffMimeType.Zstd,
   [Compression.Webp]: TiffMimeType.Webp,
   [Compression.JpegXl]: TiffMimeType.JpegXl,
+  [Compression.Ccittrle]: TiffMimeType.None,
+  [Compression.CcittT4]: TiffMimeType.None,
+  [Compression.CcittT6]: TiffMimeType.None,
+  [Compression.T85]: TiffMimeType.Jbig,
+  [Compression.T43]: TiffMimeType.Jbig,
+  [Compression.Next]: TiffMimeType.None,
+  [Compression.Ccittrlew]: TiffMimeType.None,
+  [Compression.PackBits]: TiffMimeType.PackBits,
+  [Compression.ThunderScan]: TiffMimeType.None,
+  [Compression.It8ctpad]: TiffMimeType.None,
+  [Compression.It8lw]: TiffMimeType.None,
+  [Compression.It8mp]: TiffMimeType.None,
+  [Compression.It8bl]: TiffMimeType.None,
+  [Compression.PixarFilm]: TiffMimeType.None,
+  [Compression.PixarLog]: TiffMimeType.None,
+  [Compression.Dcs]: TiffMimeType.Dcs,
+  [Compression.Jbig]: TiffMimeType.Jbig,
+  [Compression.SgiLog]: TiffMimeType.None,
+  [Compression.SgiLog24]: TiffMimeType.None,
+  [Compression.JpegXlDng17]: TiffMimeType.JpegXl,
 };
 
 /**
