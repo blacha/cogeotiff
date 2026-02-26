@@ -1,5 +1,23 @@
 [
   {
+    "hash": "8136086dae035c25c1d9257a624e7e201959126e",
+    "createdAt": "2026-02-26T19:39:44.255Z",
+    "results": [
+      {
+        "name": "Read 15,000 tiles from sparse.tiff",
+        "count": 10,
+        "command": "node packages/core/build/__benchmark__/cog.read.benchmark.js packages/core/data/sparse.tiff",
+        "mean": 0.44982509548500005,
+        "stddev": 0.00508104645835836,
+        "median": 0.447527261785,
+        "user": 0.5052732449999999,
+        "system": 0.036569964999999996,
+        "min": 0.443901650785,
+        "max": 0.457649934785
+      }
+    ]
+  },
+  {
     "hash": "b2fccf83600d718e48959c95e8b02db64e9d5b7c",
     "createdAt": "2026-02-23T19:28:10.598Z",
     "results": [
