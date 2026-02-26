@@ -288,5 +288,6 @@ describe('CogRead', () => {
 
     const tiff = await Tiff.create(source);
     assert.equal(tiff.images.length, 1);
+    assert.deepEqual(tiff.images[0].tags.get(TiffTag.ModelTransformation)?.value, [10, 0, 0, 418080, 0, 10, 0, 4423680, 0, 0, 0, 0, 0, 0, 0, 1]);
   });
 });
