@@ -1,5 +1,19 @@
 # Changelog
 
+## [9.4.0](https://github.com/blacha/cogeotiff/compare/core-v9.3.0...core-v9.4.0) (2026-02-26)
+
+
+### Features
+
+* add missing compression options from geotiff/tiff.h ([2de1381](https://github.com/blacha/cogeotiff/commit/2de138104072682bb3f66dfb350ce3fa51783da4))
+* attempt to map all compression types to mime types ([b0e1579](https://github.com/blacha/cogeotiff/commit/b0e1579db7059b00da98111e63e4bf6688d9a869))
+
+
+### Bug Fixes
+
+* jpeg2000 compression should be 34712 ([9a73e8a](https://github.com/blacha/cogeotiff/commit/9a73e8a19deefe44a04fe63b342cd6351922707d))
+* ModelTransformation tag ([#1420](https://github.com/blacha/cogeotiff/issues/1420)) ([8cd79ae](https://github.com/blacha/cogeotiff/commit/8cd79ae4a14ed2c35cd570da7bde3c68a407b952))
+
 ## [9.3.0](https://github.com/blacha/cogeotiff/compare/core-v9.2.0...core-v9.3.0) (2026-02-20)
 
 
