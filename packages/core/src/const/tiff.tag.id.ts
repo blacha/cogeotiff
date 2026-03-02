@@ -456,9 +456,30 @@ export interface TiffTagType {
   [TiffTag.SampleFormat]: SampleFormat[];
   [TiffTag.GdalMetadata]: string;
   [TiffTag.GdalNoData]: string;
-  [TiffTag.ModelPixelScale]: number[];
+  // Always [ScaleX, ScaleY, ScaleZ]
+  // https://web.archive.org/web/20240329145238/https://www.awaresystems.be/imaging/tiff/tifftags/modelpixelscaletag.html
+  [TiffTag.ModelPixelScale]: [number, number, number];
   [TiffTag.ModelTiePoint]: number[];
-  [TiffTag.ModelTransformation]: number[];
+  // Always 16 numbers
+  // https://web.archive.org/web/20240329145255/https://www.awaresystems.be/imaging/tiff/tifftags/modeltransformationtag.html
+  [TiffTag.ModelTransformation]: [
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+  ];
   [TiffTag.GeoKeyDirectory]: number[];
   [TiffTag.GeoDoubleParams]: number[];
   [TiffTag.GeoAsciiParams]: string;
