@@ -16,12 +16,9 @@ import { toHex } from './util/util.hex.js';
 export interface TiffCreationOptions {
   /** When initializing the tiff, read data in blocks of this size (in KB) */
   defaultReadSize: number;
-
-  /** Abort the initialization of the tiff */
-  signal?: AbortSignal;
 }
 
-export interface TiffAbort {
+export interface TiffFetchOptions {
   signal?: AbortSignal;
 }
 
@@ -56,7 +53,7 @@ export class Tiff {
   /** Create a tiff and initialize it by reading the tiff headers */
   static create(
     source: Source,
-    options: TiffCreationOptions & TiffAbort = { defaultReadSize: Tiff.DefaultReadSize },
+    options: TiffCreationOptions & TiffFetchOptions = { defaultReadSize: Tiff.DefaultReadSize },
   ): Promise<Tiff> {
     return new Tiff(source, options).init(options);
   }
@@ -67,7 +64,7 @@ export class Tiff {
    * This is only required if the Tiff was created with the constructor, if you
    * used {@link create} this will have already been called.
    */
-  init(options?: TiffAbort): Promise<Tiff> {
+  init(options?: TiffFetchOptions): Promise<Tiff> {
     if (this.isInitialized) return Promise.resolve(this);
     if (this._initPromise) return this._initPromise;
     this._initPromise = this.readHeader(options);
@@ -100,7 +97,7 @@ export class Tiff {
   }
 
   /** Read the Starting header and all Image headers from the source */
-  private async readHeader(options?: TiffAbort): Promise<Tiff> {
+  private async readHeader(options?: TiffFetchOptions): Promise<Tiff> {
     if (this.isInitialized) return this;
     // limit the read to the size of the file if it is known, for small tiffs
     const bytes = new DataView(

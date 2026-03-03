@@ -3,7 +3,7 @@ import type { TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 import { Compression, ModelTypeCode, SubFileType, TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
 import { fetchAllOffsets, fetchLazy, getValueAt, getValueAtSync } from './read/tiff.tag.factory.js';
 import type { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
-import type { Tiff, TiffAbort } from './tiff.js';
+import type { Tiff, TiffFetchOptions } from './tiff.js';
 import { getUint } from './util/bytes.js';
 import type { BoundingBox, Size } from './vector.js';
 
@@ -72,7 +72,7 @@ export class TiffImage {
    *
    * @param loadGeoTags Whether to load the GeoKeyDirectory and unpack it
    */
-  async init(loadGeoTags = true, options?: TiffAbort): Promise<void> {
+  async init(loadGeoTags = true, options?: TiffFetchOptions): Promise<void> {
     const requiredTags: Promise<unknown>[] = [];
     ImportantTags.forEach((tag) => {
       requiredTags.push(this.fetch(tag, options));
@@ -132,7 +132,7 @@ export class TiffImage {
    *
    * @param tag tag to fetch
    */
-  public async fetch<T extends keyof TiffTagType>(tag: T, options?: TiffAbort): Promise<TiffTagType[T] | null> {
+  public async fetch<T extends keyof TiffTagType>(tag: T, options?: TiffFetchOptions): Promise<TiffTagType[T] | null> {
     const sourceTag = this.tags.get(tag);
     if (sourceTag == null) return null;
     if (sourceTag.type === 'inline') return sourceTag.value as TiffTagType[T];
@@ -439,7 +439,10 @@ export class TiffImage {
    *
    * @param index Strip index to read
    */
-  async getStrip(index: number, options?: TiffAbort): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
+  async getStrip(
+    index: number,
+    options?: TiffFetchOptions,
+  ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
     if (this.isTiled()) throw new Error('Cannot read stripes, tiff is tiled: ' + index);
 
     const byteCounts = this.tags.get(TiffTag.StripByteCounts) as TagOffset;
@@ -476,7 +479,7 @@ export class TiffImage {
   async getBytes(
     offset: number,
     byteCount: number,
-    options?: { signal?: AbortSignal },
+    options?: TiffFetchOptions,
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     if (byteCount === 0) return null;
 
@@ -504,7 +507,7 @@ export class TiffImage {
   async getTile(
     x: number,
     y: number,
-    options?: { signal?: AbortSignal },
+    options?: TiffFetchOptions,
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     const size = this.size;
     const tiles = this.tileSize;
@@ -539,7 +542,7 @@ export class TiffImage {
    *
    * @returns if the tile exists and has data
    */
-  async hasTile(x: number, y: number, options?: TiffAbort): Promise<boolean> {
+  async hasTile(x: number, y: number, options?: TiffFetchOptions): Promise<boolean> {
     const tiles = this.tileSize;
     const size = this.size;
 
@@ -562,7 +565,7 @@ export class TiffImage {
    * @param index index in the tile array
    * @returns Offset and byteCount for the tile
    */
-  async getTileSize(index: number, options?: TiffAbort): Promise<{ offset: number; imageSize: number }> {
+  async getTileSize(index: number, options?: TiffFetchOptions): Promise<{ offset: number; imageSize: number }> {
     // If both the tile offset and tile byte counts are loaded,
     // we can get the offset and byte count synchronously without needing to fetch any additional data
     const byteCounts = this.tags.get(TiffTag.TileByteCounts) as TagOffset | TagInline<number[]>;
@@ -597,7 +600,7 @@ function getOffset(
   tiff: Tiff,
   x: TagOffset | TagInline<number[]>,
   index: number,
-  options?: TiffAbort,
+  options?: TiffFetchOptions,
 ): number | Promise<number> {
   const val = getOffsetSync(tiff, x, index);
   if (val != null) return Promise.resolve(val);
