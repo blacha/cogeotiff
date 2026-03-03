@@ -75,7 +75,7 @@ export class TiffImage {
   async init(loadGeoTags = true, options?: TiffAbort): Promise<void> {
     const requiredTags: Promise<unknown>[] = [];
     ImportantTags.forEach((tag) => {
-      requiredTags.push(this.fetch(tag, options ));
+      requiredTags.push(this.fetch(tag, options));
     });
 
     if (loadGeoTags) {
@@ -138,7 +138,7 @@ export class TiffImage {
     if (sourceTag.type === 'inline') return sourceTag.value as TiffTagType[T];
     if (sourceTag.type === 'lazy') return fetchLazy(sourceTag, this.tiff, options) as Promise<TiffTagType[T]>;
     if (sourceTag.isLoaded) return sourceTag.value as TiffTagType[T];
-    if (sourceTag.type === 'offset') return fetchAllOffsets(this.tiff, sourceTag, options ) as Promise<TiffTagType[T]>;
+    if (sourceTag.type === 'offset') return fetchAllOffsets(this.tiff, sourceTag, options) as Promise<TiffTagType[T]>;
     throw new Error('Cannot fetch:' + tag);
   }
   /**
@@ -587,13 +587,18 @@ export class TiffImage {
     if (byteCounts == null) throw new Error('No tile byte counts found');
     const [offset, imageSize] = await Promise.all([
       tileOffset ?? getOffset(this.tiff, this.tileOffset, index, options),
-      tileSize ?? getOffset(this.tiff, byteCounts, index, options ),
+      tileSize ?? getOffset(this.tiff, byteCounts, index, options),
     ]);
     return { offset, imageSize };
   }
 }
 
-function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number, options?: TiffAbort): number | Promise<number> {
+function getOffset(
+  tiff: Tiff,
+  x: TagOffset | TagInline<number[]>,
+  index: number,
+  options?: TiffAbort,
+): number | Promise<number> {
   const val = getOffsetSync(tiff, x, index);
   if (val != null) return Promise.resolve(val);
   return getValueAt(tiff, x as TagOffset, index, options);

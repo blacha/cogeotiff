@@ -222,7 +222,7 @@ export async function fetchAllOffsets(tiff: Tiff, tag: TagOffset, options?: Tiff
   const dataTypeSize = getTiffTagSize(tag.dataType);
 
   if (tag.view == null) {
-    const bytes = await tiff.source.fetch(tag.dataOffset, dataTypeSize * tag.count, options );
+    const bytes = await tiff.source.fetch(tag.dataOffset, dataTypeSize * tag.count, options);
     tag.view = new DataView(bytes) as DataViewOffset;
     tag.view.sourceOffset = tag.dataOffset;
   }

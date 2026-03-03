@@ -56,7 +56,7 @@ export class Tiff {
   /** Create a tiff and initialize it by reading the tiff headers */
   static create(
     source: Source,
-    options: TiffCreationOptions & TiffAbort = { defaultReadSize: Tiff.DefaultReadSize  },
+    options: TiffCreationOptions & TiffAbort = { defaultReadSize: Tiff.DefaultReadSize },
   ): Promise<Tiff> {
     return new Tiff(source, options).init(options);
   }
@@ -152,7 +152,7 @@ export class Tiff {
         const bytes = await this.source.fetch(
           nextOffsetIfd,
           getMaxLength(this.source, nextOffsetIfd, this.defaultReadSize),
-          options
+          options,
         );
         lastView = new DataView(bytes) as DataViewOffset;
         lastView.sourceOffset = nextOffsetIfd;
