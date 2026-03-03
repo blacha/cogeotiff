@@ -16,6 +16,13 @@ import { toHex } from './util/util.hex.js';
 export interface TiffCreationOptions {
   /** When initializing the tiff, read data in blocks of this size (in KB) */
   defaultReadSize: number;
+
+  /** Abort the initialization of the tiff */
+  signal?: AbortSignal;
+}
+
+export interface TiffAbort {
+  signal?: AbortSignal;
 }
 
 export class Tiff {
@@ -49,9 +56,9 @@ export class Tiff {
   /** Create a tiff and initialize it by reading the tiff headers */
   static create(
     source: Source,
-    options: TiffCreationOptions = { defaultReadSize: Tiff.DefaultReadSize },
+    options: TiffCreationOptions & TiffAbort = { defaultReadSize: Tiff.DefaultReadSize  },
   ): Promise<Tiff> {
-    return new Tiff(source, options).init();
+    return new Tiff(source, options).init(options);
   }
 
   /**
@@ -60,9 +67,10 @@ export class Tiff {
    * This is only required if the Tiff was created with the constructor, if you
    * used {@link create} this will have already been called.
    */
-  init(): Promise<Tiff> {
+  init(options?: TiffAbort): Promise<Tiff> {
+    if (this.isInitialized) return Promise.resolve(this);
     if (this._initPromise) return this._initPromise;
-    this._initPromise = this.readHeader();
+    this._initPromise = this.readHeader(options);
     return this._initPromise;
   }
 
@@ -92,11 +100,11 @@ export class Tiff {
   }
 
   /** Read the Starting header and all Image headers from the source */
-  private async readHeader(): Promise<Tiff> {
+  private async readHeader(options?: TiffAbort): Promise<Tiff> {
     if (this.isInitialized) return this;
     // limit the read to the size of the file if it is known, for small tiffs
     const bytes = new DataView(
-      await this.source.fetch(0, getMaxLength(this.source, 0, this.defaultReadSize)),
+      await this.source.fetch(0, getMaxLength(this.source, 0, this.defaultReadSize), options),
     ) as DataViewOffset;
     if (bytes.byteLength === 0) throw new Error('Unable to read empty tiff');
 
@@ -144,6 +152,7 @@ export class Tiff {
         const bytes = await this.source.fetch(
           nextOffsetIfd,
           getMaxLength(this.source, nextOffsetIfd, this.defaultReadSize),
+          options
         );
         lastView = new DataView(bytes) as DataViewOffset;
         lastView.sourceOffset = nextOffsetIfd;
@@ -151,7 +160,7 @@ export class Tiff {
       nextOffsetIfd = this.readIfd(nextOffsetIfd, lastView);
     }
 
-    await Promise.all(this.images.map((i) => i.init()));
+    await Promise.all(this.images.map((i) => i.init(true, options)));
     this.isInitialized = true;
     return this;
   }
