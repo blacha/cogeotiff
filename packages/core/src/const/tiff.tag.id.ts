@@ -458,7 +458,7 @@ export interface TiffTagType {
   [TiffTag.GdalNoData]: string;
   // Always [ScaleX, ScaleY, ScaleZ]
   // https://web.archive.org/web/20240329145238/https://www.awaresystems.be/imaging/tiff/tifftags/modelpixelscaletag.html
-  [TiffTag.ModelPixelScale]: [number, number, number];
+  [TiffTag.ModelPixelScale]: [scaleX: number, scaleY: number, scaleZ: number];
   [TiffTag.ModelTiePoint]: number[];
   // Always 16 numbers
   // https://web.archive.org/web/20240329145255/https://www.awaresystems.be/imaging/tiff/tifftags/modeltransformationtag.html
