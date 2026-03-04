@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 import { TiffTag, TiffTagConvertArray } from '../const/tiff.tag.id.js';
 import { TiffTagValueType } from '../const/tiff.tag.value.js';
-import type { Tiff } from '../tiff.js';
+import type { Tiff, TiffFetchOptions } from '../tiff.js';
 import { getUint, getUint64 } from '../util/bytes.js';
 import type { DataViewOffset } from './data.view.offset.js';
 import { hasBytes } from './data.view.offset.js';
@@ -205,11 +205,11 @@ export function createTag(tiff: Tiff, view: DataViewOffset, offset: number): Tag
 }
 
 /** Fetch the value from a {@link TagLazy} tag */
-export async function fetchLazy<T>(tag: TagLazy<T>, tiff: Tiff): Promise<T> {
+export async function fetchLazy<T>(tag: TagLazy<T>, tiff: Tiff, options?: TiffFetchOptions): Promise<T> {
   if (tag.value != null) return tag.value;
   const dataTypeSize = getTiffTagSize(tag.dataType);
   const dataLength = dataTypeSize * tag.count;
-  const bytes = await tiff.source.fetch(tag.dataOffset, dataLength);
+  const bytes = await tiff.source.fetch(tag.dataOffset, dataLength, options);
   const view = new DataView(bytes);
   tag.value = readValue(tiff, tag.id, view, 0, tag.dataType, tag.count);
   return tag.value as T;
@@ -218,11 +218,15 @@ export async function fetchLazy<T>(tag: TagLazy<T>, tiff: Tiff): Promise<T> {
 /**
  * Fetch all the values from a {@link TagOffset}
  */
-export async function fetchAllOffsets(tiff: Tiff, tag: TagOffset): Promise<TagOffset['value']> {
+export async function fetchAllOffsets(
+  tiff: Tiff,
+  tag: TagOffset,
+  options?: TiffFetchOptions,
+): Promise<TagOffset['value']> {
   const dataTypeSize = getTiffTagSize(tag.dataType);
 
   if (tag.view == null) {
-    const bytes = await tiff.source.fetch(tag.dataOffset, dataTypeSize * tag.count);
+    const bytes = await tiff.source.fetch(tag.dataOffset, dataTypeSize * tag.count, options);
     tag.view = new DataView(bytes) as DataViewOffset;
     tag.view.sourceOffset = tag.dataOffset;
   }
@@ -241,13 +245,18 @@ export function setBytes(tag: TagOffset, view: DataViewOffset): void {
 }
 
 /** Partially fetch the values of a {@link TagOffset} and return the value for the offset */
-export async function getValueAt(tiff: Tiff, tag: TagOffset, index: number): Promise<number> {
+export async function getValueAt(
+  tiff: Tiff,
+  tag: TagOffset,
+  index: number,
+  options?: TiffFetchOptions,
+): Promise<number> {
   if (index > tag.count || index < 0) throw new Error('TagOffset: out of bounds :' + index);
   if (tag.value[index] != null) return tag.value[index];
   const dataTypeSize = getTiffTagSize(tag.dataType);
 
   if (tag.view == null) {
-    const bytes = await tiff.source.fetch(tag.dataOffset + index * dataTypeSize, dataTypeSize);
+    const bytes = await tiff.source.fetch(tag.dataOffset + index * dataTypeSize, dataTypeSize, options);
     const view = new DataView(bytes);
     // Skip type conversion to array by using undefined tiff tag id
     const value = readValue(tiff, undefined, view, 0, tag.dataType, 1);

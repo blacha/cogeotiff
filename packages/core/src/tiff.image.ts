@@ -3,7 +3,7 @@ import type { TiffTagGeoType, TiffTagType } from './const/tiff.tag.id.js';
 import { Compression, ModelTypeCode, SubFileType, TiffTag, TiffTagGeo } from './const/tiff.tag.id.js';
 import { fetchAllOffsets, fetchLazy, getValueAt, getValueAtSync } from './read/tiff.tag.factory.js';
 import type { Tag, TagInline, TagOffset } from './read/tiff.tag.js';
-import type { Tiff } from './tiff.js';
+import type { Tiff, TiffFetchOptions } from './tiff.js';
 import { getUint } from './util/bytes.js';
 import type { BoundingBox, Size } from './vector.js';
 
@@ -72,15 +72,15 @@ export class TiffImage {
    *
    * @param loadGeoTags Whether to load the GeoKeyDirectory and unpack it
    */
-  async init(loadGeoTags = true): Promise<void> {
+  async init(loadGeoTags = true, options?: TiffFetchOptions): Promise<void> {
     const requiredTags: Promise<unknown>[] = [];
     ImportantTags.forEach((tag) => {
-      requiredTags.push(this.fetch(tag));
+      requiredTags.push(this.fetch(tag, options));
     });
 
     if (loadGeoTags) {
       ImportantGeoTags.forEach((tag) => {
-        requiredTags.push(this.fetch(tag));
+        requiredTags.push(this.fetch(tag, options));
       });
     }
 
@@ -132,13 +132,13 @@ export class TiffImage {
    *
    * @param tag tag to fetch
    */
-  public async fetch<T extends keyof TiffTagType>(tag: T): Promise<TiffTagType[T] | null> {
+  public async fetch<T extends keyof TiffTagType>(tag: T, options?: TiffFetchOptions): Promise<TiffTagType[T] | null> {
     const sourceTag = this.tags.get(tag);
     if (sourceTag == null) return null;
     if (sourceTag.type === 'inline') return sourceTag.value as TiffTagType[T];
-    if (sourceTag.type === 'lazy') return fetchLazy(sourceTag, this.tiff) as Promise<TiffTagType[T]>;
+    if (sourceTag.type === 'lazy') return fetchLazy(sourceTag, this.tiff, options) as Promise<TiffTagType[T]>;
     if (sourceTag.isLoaded) return sourceTag.value as TiffTagType[T];
-    if (sourceTag.type === 'offset') return fetchAllOffsets(this.tiff, sourceTag) as Promise<TiffTagType[T]>;
+    if (sourceTag.type === 'offset') return fetchAllOffsets(this.tiff, sourceTag, options) as Promise<TiffTagType[T]>;
     throw new Error('Cannot fetch:' + tag);
   }
   /**
@@ -439,7 +439,10 @@ export class TiffImage {
    *
    * @param index Strip index to read
    */
-  async getStrip(index: number): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
+  async getStrip(
+    index: number,
+    options?: TiffFetchOptions,
+  ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer } | null> {
     if (this.isTiled()) throw new Error('Cannot read stripes, tiff is tiled: ' + index);
 
     const byteCounts = this.tags.get(TiffTag.StripByteCounts) as TagOffset;
@@ -448,10 +451,10 @@ export class TiffImage {
     if (index >= byteCounts.count) throw new Error('Cannot read strip, index out of bounds');
 
     const [byteCount, offset] = await Promise.all([
-      getOffset(this.tiff, offsets, index),
-      getOffset(this.tiff, byteCounts, index),
+      getOffset(this.tiff, offsets, index, options),
+      getOffset(this.tiff, byteCounts, index, options),
     ]);
-    return this.getBytes(byteCount, offset);
+    return this.getBytes(byteCount, offset, options);
   }
 
   /** The jpeg header is stored in the IFD, read the JPEG header and adjust the byte array to include it */
@@ -476,7 +479,7 @@ export class TiffImage {
   async getBytes(
     offset: number,
     byteCount: number,
-    options?: { signal?: AbortSignal },
+    options?: TiffFetchOptions,
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     if (byteCount === 0) return null;
 
@@ -504,7 +507,7 @@ export class TiffImage {
   async getTile(
     x: number,
     y: number,
-    options?: { signal?: AbortSignal },
+    options?: TiffFetchOptions,
   ): Promise<{ mimeType: TiffMimeType; bytes: ArrayBuffer; compression: Compression } | null> {
     const size = this.size;
     const tiles = this.tileSize;
@@ -523,7 +526,7 @@ export class TiffImage {
     const totalTiles = nxTiles * nyTiles;
     if (idx >= totalTiles) throw new Error(`Tile index is outside of tile range: ${idx} >= ${totalTiles}`);
 
-    const { offset, imageSize } = await this.getTileSize(idx);
+    const { offset, imageSize } = await this.getTileSize(idx, options);
 
     return this.getBytes(offset, imageSize, options);
   }
@@ -539,7 +542,7 @@ export class TiffImage {
    *
    * @returns if the tile exists and has data
    */
-  async hasTile(x: number, y: number): Promise<boolean> {
+  async hasTile(x: number, y: number, options?: TiffFetchOptions): Promise<boolean> {
     const tiles = this.tileSize;
     const size = this.size;
 
@@ -550,7 +553,7 @@ export class TiffImage {
     const nxTiles = Math.ceil(size.width / tiles.width);
     if (x >= nxTiles || y >= nyTiles) return false;
     const idx = y * nxTiles + x;
-    const ret = await this.getTileSize(idx);
+    const ret = await this.getTileSize(idx, options);
     return ret.offset > 0;
   }
 
@@ -562,7 +565,7 @@ export class TiffImage {
    * @param index index in the tile array
    * @returns Offset and byteCount for the tile
    */
-  async getTileSize(index: number): Promise<{ offset: number; imageSize: number }> {
+  async getTileSize(index: number, options?: TiffFetchOptions): Promise<{ offset: number; imageSize: number }> {
     // If both the tile offset and tile byte counts are loaded,
     // we can get the offset and byte count synchronously without needing to fetch any additional data
     const byteCounts = this.tags.get(TiffTag.TileByteCounts) as TagOffset | TagInline<number[]>;
@@ -574,29 +577,34 @@ export class TiffImage {
     // the few bytes leading up to the tile
     const leaderBytes = this.tiff.options?.tileLeaderByteSize;
     if (leaderBytes) {
-      const offset = tileOffset ?? (await getOffset(this.tiff, this.tileOffset, index));
+      const offset = tileOffset ?? (await getOffset(this.tiff, this.tileOffset, index, options));
       // Sparse tiff no data found
       if (offset === 0) return { offset: 0, imageSize: 0 };
 
       // This fetch will generally load in the bytes needed for the image too
       // provided the image size is less than the size of a chunk
-      const bytes = await this.tiff.source.fetch(offset - leaderBytes, leaderBytes);
+      const bytes = await this.tiff.source.fetch(offset - leaderBytes, leaderBytes, options);
       return { offset, imageSize: getUint(new DataView(bytes), 0, leaderBytes, this.tiff.isLittleEndian) };
     }
 
     if (byteCounts == null) throw new Error('No tile byte counts found');
     const [offset, imageSize] = await Promise.all([
-      tileOffset ?? getOffset(this.tiff, this.tileOffset, index),
-      tileSize ?? getOffset(this.tiff, byteCounts, index),
+      tileOffset ?? getOffset(this.tiff, this.tileOffset, index, options),
+      tileSize ?? getOffset(this.tiff, byteCounts, index, options),
     ]);
     return { offset, imageSize };
   }
 }
 
-function getOffset(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | Promise<number> {
+function getOffset(
+  tiff: Tiff,
+  x: TagOffset | TagInline<number[]>,
+  index: number,
+  options?: TiffFetchOptions,
+): number | Promise<number> {
   const val = getOffsetSync(tiff, x, index);
   if (val != null) return Promise.resolve(val);
-  return getValueAt(tiff, x as TagOffset, index);
+  return getValueAt(tiff, x as TagOffset, index, options);
 }
 
 function getOffsetSync(tiff: Tiff, x: TagOffset | TagInline<number[]>, index: number): number | null {
