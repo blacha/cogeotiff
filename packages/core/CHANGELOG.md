@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.5.0](https://github.com/blacha/cogeotiff/compare/core-v9.4.0...core-v9.5.0) (2026-03-11)
+
+
+### Features
+
+* Improved type definitions for ModelPixelScale and ModelTransformation ([#1426](https://github.com/blacha/cogeotiff/issues/1426)) ([eaeb2d7](https://github.com/blacha/cogeotiff/commit/eaeb2d72cd8b0e61ac3c17a6b89c5a95c9b9bb22))
+* more abort signals ([#1433](https://github.com/blacha/cogeotiff/issues/1433)) ([67d4506](https://github.com/blacha/cogeotiff/commit/67d450687a9b91f31e6b5191eb5d455650757e7e)), closes [#1430](https://github.com/blacha/cogeotiff/issues/1430)
+
 ## [9.4.0](https://github.com/blacha/cogeotiff/compare/core-v9.3.0...core-v9.4.0) (2026-02-26)
 
 
