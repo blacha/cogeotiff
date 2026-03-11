@@ -1,7 +1,7 @@
 # cogeotiff
 
 
-Tools to work with [Cloud optimized GeogTiff](https://www.cogeo.org/) (COG) 
+Tools to work with [Cloud optimized GeoTIFF](https://www.cogeo.org/) (COG) 
 
 -  Completely javascript based, works in the browser and nodejs
 -  Lazy load Tiffs images and metadata
