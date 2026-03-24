@@ -164,7 +164,7 @@ export class TiffImage {
   get noData(): number | null {
     const tag = this.tags.get(TiffTag.GdalNoData);
     if (tag == null) return null;
-    if (tag.value) return Number(tag.value);
+    if (tag.value != null) return Number(tag.value);
     throw new Error('GdalNoData tag is not loaded');
   }
 

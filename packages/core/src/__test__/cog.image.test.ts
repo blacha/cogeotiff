@@ -7,6 +7,9 @@ import { TestFileSource } from '../__benchmark__/source.file.js';
 import { SourceMemory } from '../__benchmark__/source.memory.js';
 import { TiffMimeType } from '../const/tiff.mime.js';
 import { Photometric, TiffTag } from '../const/tiff.tag.id.js';
+import { TiffTagValueType } from '../const/tiff.tag.value.js';
+import type { Tag } from '../read/tiff.tag.js';
+import { TiffImage } from '../tiff.image.js';
 import { Tiff } from '../tiff.js';
 import { ByteSize } from '../util/bytes.js';
 
@@ -212,5 +215,63 @@ describe('CogStrip', () => {
     const stripB = await firstImage.getStrip(1);
     assert.equal(stripB?.mimeType, TiffMimeType.Webp);
     assert.equal(stripB?.bytes.byteLength, 152);
+  });
+});
+
+describe('TiffImage.noData', () => {
+  /** Create a TiffImage with a specific GdalNoData tag value for testing */
+  function imageWithNoData(value: string): TiffImage {
+    const tags = new Map<TiffTag, Tag>();
+    tags.set(TiffTag.GdalNoData, {
+      id: TiffTag.GdalNoData,
+      name: 'GdalNoData',
+      tagOffset: 0,
+      count: 1,
+      dataType: TiffTagValueType.Ascii,
+      type: 'inline',
+      value,
+    });
+    return new TiffImage(null as unknown as Tiff, 0, tags);
+  }
+
+  it('should return null when GdalNoData tag is absent', () => {
+    const img = new TiffImage(null as unknown as Tiff, 0, new Map());
+    assert.equal(img.noData, null);
+  });
+
+  it('should parse a negative nodata value', () => {
+    const img = imageWithNoData('-9999');
+    assert.equal(img.noData, -9999);
+  });
+
+  it('should parse nodata value of "0" (falsy string)', () => {
+    const img = imageWithNoData('0');
+    assert.equal(img.noData, 0);
+  });
+
+  it('should parse a positive nodata value', () => {
+    const img = imageWithNoData('255');
+    assert.equal(img.noData, 255);
+  });
+
+  it('should parse a floating point nodata value', () => {
+    const img = imageWithNoData('-3.4028234663852886e+38');
+    assert.equal(img.noData, -3.4028234663852886e38);
+  });
+
+  it('should throw when lazy tag value is undefined (not yet fetched)', () => {
+    const tags = new Map<TiffTag, Tag>();
+    tags.set(TiffTag.GdalNoData, {
+      id: TiffTag.GdalNoData,
+      name: 'GdalNoData',
+      tagOffset: 0,
+      count: 1,
+      dataType: TiffTagValueType.Ascii,
+      type: 'lazy',
+      dataOffset: 0,
+      value: undefined,
+    });
+    const img = new TiffImage(null as unknown as Tiff, 0, tags);
+    assert.throws(() => img.noData, /GdalNoData tag is not loaded/);
   });
 });
