@@ -32,6 +32,21 @@ if (img.isTiled()) {
     tile.bytes; // Raw image buffer
 }
 
+/** Fetch many tiles in a single batched request — nearby byte ranges are coalesced
+ * into a small number of underlying reads. */
+const tiles = await img.getTiles([
+    { x: 0, y: 0 },
+    { x: 1, y: 0 },
+    { x: 2, y: 0 },
+    { x: 0, y: 1 },
+    { x: 1, y: 1 },
+]);
+// Results are returned in input order. Sparse tiles are `null`.
+for (const tile of tiles) {
+    if (tile == null) continue;
+    // tile.bytes, tile.mimeType, tile.compression
+}
+
 /** Get the origin point of the tiff */
 const origin = img.origin;
 /** Bounding box of the tiff */
