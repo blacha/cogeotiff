@@ -454,7 +454,7 @@ export interface TiffTagType {
   [TiffTag.BitsPerSample]: number[];
   [TiffTag.ColorMap]: number[];
   [TiffTag.Compression]: Compression;
-  [TiffTag.ExtraSamples]: ExtraSample | ExtraSample[];
+  [TiffTag.ExtraSamples]: ExtraSample[];
   [TiffTag.ImageHeight]: number;
   [TiffTag.ImageWidth]: number;
   [TiffTag.OldSubFileType]: OldSubFileType;
@@ -852,9 +852,12 @@ export enum LinearUnit {
 }
 
 /**
- * Convert tiff tag values when being read.
+ * Convert tiff tag values to arrays when being read.
+ *
+ * This makes it easier to not check for number | number[]
  */
 export const TiffTagConvertArray: Partial<Record<TiffTag, boolean>> = {
+  [TiffTag.ExtraSamples]: true,
   [TiffTag.TileByteCounts]: true,
   [TiffTag.TileOffsets]: true,
   [TiffTag.StripOffsets]: true,
