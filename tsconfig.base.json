@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
-    "lib": [
-      "ES2024"
-    ],
-    "types": [
-      "node"
-    ],
+    "lib": ["ES2024"],
+    "types": ["node"],
     "outDir": "build",
     "composite": true,
     "module": "nodenext",

@@ -1,14 +1,13 @@
 # cogeotiff
 
+Tools to work with [Cloud optimized GeoTIFF](https://www.cogeo.org/) (COG)
 
-Tools to work with [Cloud optimized GeoTIFF](https://www.cogeo.org/) (COG) 
-
--  Completely javascript based, works in the browser and nodejs
--  Lazy load Tiffs images and metadata
--  Supports huge 100GB+ COGs
--  Uses GDAL Tiffs optimizations, generally only one or two reads per tile!
--  Loads Tiffs from URL, File, Google Cloud or AWS S3
--  Used in production for [LINZ's Basemaps](https://github.com/linz/basemaps) with billions of tiles fetched from COGs!
+- Completely javascript based, works in the browser and nodejs
+- Lazy load Tiffs images and metadata
+- Supports huge 100GB+ COGs
+- Uses GDAL Tiffs optimizations, generally only one or two reads per tile!
+- Loads Tiffs from URL, File, Google Cloud or AWS S3
+- Used in production for [LINZ's Basemaps](https://github.com/linz/basemaps) with billions of tiles fetched from COGs!
 
 ## Usage
 
@@ -27,7 +26,7 @@ const tile = await img.getTile(2, 2); // Fetch a tile from a tiff x:2, y:2
 // Tiff tags can be directly accessed too
 img.value(TiffTag.GdalNoData); // "-9999"
 // or tag metadata can be fetched
-img.tags.get(TiffTag.GdalNoData); 
+img.tags.get(TiffTag.GdalNoData);
 /**
 {
   type: 'inline', // How the tag was read "inline" vs "lazy"
@@ -94,7 +93,6 @@ Dump all tiles for a image (**Warning** if you do this for a large cog this will
 ```
 cogeotiff dump --image 2 --output output
 ```
-
 
 # Building
 

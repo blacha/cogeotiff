@@ -21,6 +21,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "lerna": "^9.0.4",
+    "oxfmt": "^0.63.0",
     "oxlint": "^1.78.0",
     "oxlint-tsgolint": "^7.0.2001",
     "rimraf": "^4.1.2",

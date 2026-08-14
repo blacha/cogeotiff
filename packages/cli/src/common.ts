@@ -1,6 +1,7 @@
+import { pathToFileURL } from 'url';
+
 import type { Type } from 'cmd-ts';
 import { flag } from 'cmd-ts';
-import { pathToFileURL } from 'url';
 
 export const verbose = flag({ long: 'verbose', description: 'Verbose logging', short: 'v' });
 export const extraVerbose = flag({ long: 'extra-verbose', description: 'Extra verbose logging', short: 'V' });

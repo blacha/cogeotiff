@@ -1,5 +1,5 @@
 import { fsa } from '@chunkd/fs';
-import type { TagOffset} from '@cogeotiff/core';
+import type { TagOffset } from '@cogeotiff/core';
 import { Tiff, TiffTag } from '@cogeotiff/core';
 import { command, number, option, optional, positional, string } from 'cmd-ts';
 
