@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs';
 import assert from 'node:assert';
+import { promises as fs } from 'node:fs';
 import { beforeEach, describe, it } from 'node:test';
 
 import { TestFileSource } from '../__benchmark__/source.file.js';

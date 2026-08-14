@@ -16,7 +16,8 @@
       { "allowForKnownSafeCalls": [{ "from": "package", "name": ["it", "describe"], "package": "node:test" }] }
     ],
     "@typescript-eslint/no-unused-vars": ["error", { "caughtErrors": "none" }],
-    "@typescript-eslint/consistent-type-imports": ["error", {}]
+    "@typescript-eslint/consistent-type-imports": ["error", {}],
+    "unicorn/prefer-node-protocol": "error"
   },
   "jsPlugins": []
 }
