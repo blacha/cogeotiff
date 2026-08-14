@@ -99,6 +99,22 @@ export enum Compression {
   JpegXlDng17 = 52546,
 }
 
+/**
+ * Description of extra components.
+ *
+ * Specifies that each pixel has N extra components whose interpretation is
+ * defined by one of the values listed below. When this field is used, the
+ * SamplesPerPixel field has a value greater than the PhotometricInterpretation
+ * field suggests.
+ *
+ * @see https://web.archive.org/web/20240329145321/https://www.awaresystems.be/imaging/tiff/tifftags/extrasamples.html
+ */
+export enum ExtraSample {
+  Unspecified = 0,
+  AssociatedAlpha = 1,
+  UnassociatedAlpha = 2,
+}
+
 export enum PlanarConfiguration {
   /** single image plane */
   Contig = 1,
@@ -435,13 +451,15 @@ export enum TiffTag {
 
 /** Define the expected types for all the tiff tags */
 export interface TiffTagType {
+  [TiffTag.BitsPerSample]: number[];
+  [TiffTag.ColorMap]: number[];
+  [TiffTag.Compression]: Compression;
+  [TiffTag.ExtraSamples]: ExtraSample[];
   [TiffTag.ImageHeight]: number;
   [TiffTag.ImageWidth]: number;
-  [TiffTag.SubFileType]: SubFileType;
-  [TiffTag.BitsPerSample]: number[];
-  [TiffTag.Compression]: Compression;
   [TiffTag.OldSubFileType]: OldSubFileType;
   [TiffTag.Photometric]: Photometric;
+  [TiffTag.SubFileType]: SubFileType;
 
   [TiffTag.TileWidth]: number;
   [TiffTag.TileHeight]: number;
@@ -494,10 +512,8 @@ export interface TiffTagType {
 
   [TiffTag.CellLength]: unknown;
   [TiffTag.CellWidth]: unknown;
-  [TiffTag.ColorMap]: unknown;
   [TiffTag.Copyright]: unknown;
   [TiffTag.DateTime]: unknown;
-  [TiffTag.ExtraSamples]: unknown;
   [TiffTag.FillOrder]: unknown;
   [TiffTag.FreeByteCounts]: unknown;
   [TiffTag.FreeOffsets]: unknown;
@@ -836,9 +852,12 @@ export enum LinearUnit {
 }
 
 /**
- * Convert tiff tag values when being read.
+ * Convert tiff tag values to arrays when being read.
+ *
+ * This makes it easier to not check for number | number[]
  */
 export const TiffTagConvertArray: Partial<Record<TiffTag, boolean>> = {
+  [TiffTag.ExtraSamples]: true,
   [TiffTag.TileByteCounts]: true,
   [TiffTag.TileOffsets]: true,
   [TiffTag.StripOffsets]: true,
