@@ -19,7 +19,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@types/node": "^20.0.0",
+    "@types/node": "^26.2.0",
     "lerna": "^9.0.4",
     "oxfmt": "^0.63.0",
     "oxlint": "^1.78.0",
