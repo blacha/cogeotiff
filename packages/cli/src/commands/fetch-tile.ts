@@ -1,5 +1,6 @@
 import { fsa } from '@chunkd/fs';
-import { TagOffset, Tiff, TiffTag } from '@cogeotiff/core';
+import type { TagOffset} from '@cogeotiff/core';
+import { Tiff, TiffTag } from '@cogeotiff/core';
 import { command, number, option, optional, positional, string } from 'cmd-ts';
 
 import { DefaultArgs, Url } from '../common.js';

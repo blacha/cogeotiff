@@ -5,8 +5,8 @@
     "clean": "tsc -b --clean && rimraf 'packages/*/build'",
     "build": "tsc -b --pretty",
     "build-watch": "tsc -b --pretty --watch",
-    "lint": "biome check --write packages/",
-    "check": "biome check packages/",
+    "lint": "oxlint . --type-aware --fix && oxfmt . --write",
+    "check": "oxlint . --type-aware && oxfmt . --check",
     "test": "node --test \"packages/*/build/**/*.test.js\""
   },
   "type": "module",

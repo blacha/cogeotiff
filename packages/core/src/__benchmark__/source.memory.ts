@@ -5,13 +5,13 @@ export class SourceMemory implements Source {
   data: ArrayBuffer;
   metadata: { size: number };
 
-  static toArrayBuffer(buf: Buffer | Uint8Array | ArrayBuffer): ArrayBuffer {
+  static toArrayBuffer(buf: Uint8Array | ArrayBuffer): ArrayBuffer {
     if (buf instanceof ArrayBuffer) return buf;
     if (buf.byteLength === buf.buffer.byteLength) return buf.buffer as ArrayBuffer;
     return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
   }
 
-  constructor(bytes: Buffer | Uint8Array | ArrayBuffer) {
+  constructor(bytes: Uint8Array | ArrayBuffer) {
     this.url = new URL('memory://fake-file');
     this.data = SourceMemory.toArrayBuffer(bytes);
     this.metadata = { size: this.data.byteLength };

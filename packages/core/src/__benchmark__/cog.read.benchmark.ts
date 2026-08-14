@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import { readFile } from 'node:fs/promises';
 
 import { TiffTag } from '../index.js';
 import { Tiff } from '../tiff.js';

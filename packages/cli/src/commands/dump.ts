@@ -92,7 +92,6 @@ async function dumpBounds(tiff: Tiff, target: URL, index: number): Promise<void>
       properties: { name: `epsg:${firstImage.epsg}` },
     };
   }
-  firstImage.compression;
   const firstTileSize = firstImage.size;
   const origin = firstImage.origin;
   const resolution = firstImage.resolution;
