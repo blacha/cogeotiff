@@ -29,8 +29,8 @@ async function loadTiff(): Promise<void> {
   console.log('Loaded: ', tiff.source.url, '\nImages:', tiff.images.length);
   document.body.appendChild(mainEl);
 
-  const nodes = await Promise.all([loadSingleTile(tiff)]);
-  for (const n of nodes) mainEl.appendChild(n);
+  const node = await loadSingleTile(tiff);
+  mainEl.appendChild(node);
 }
 document.addEventListener('DOMContentLoaded', () => {
   void loadTiff();

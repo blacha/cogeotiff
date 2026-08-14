@@ -1,3 +1,4 @@
+/* oxlint-disable no-unused-expressions */
 import { SourceHttp } from '@chunkd/source-http';
 
 import { Tiff } from '../index.js';

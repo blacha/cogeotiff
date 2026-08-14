@@ -5,8 +5,8 @@
     "clean": "tsc -b --clean && rimraf 'packages/*/build'",
     "build": "tsc -b --pretty",
     "build-watch": "tsc -b --pretty --watch",
-    "lint": "biome check --write packages/",
-    "check": "biome check packages/",
+    "lint": "oxlint . --type-aware --fix && oxfmt . --write",
+    "check": "oxlint . --type-aware && oxfmt . --check",
     "test": "node --test \"packages/*/build/**/*.test.js\""
   },
   "type": "module",
@@ -19,11 +19,13 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@biomejs/biome": "2.4.9",
     "@types/node": "^20.0.0",
     "lerna": "^9.0.4",
+    "oxfmt": "^0.63.0",
+    "oxlint": "^1.78.0",
+    "oxlint-tsgolint": "^7.0.2001",
     "rimraf": "^4.1.2",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "workspaces": {
     "packages": [

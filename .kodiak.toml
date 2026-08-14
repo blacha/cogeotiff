@@ -2,9 +2,9 @@ version = 1
 
 
 [merge]
-method = "squash" 
+method = "squash"
 automerge_label = "automerge 🚀"
-prioritize_ready_to_merge = true 
+prioritize_ready_to_merge = true
 
 [merge.message]
 title = "pull_request_title"

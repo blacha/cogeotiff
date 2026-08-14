@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
     "lib": ["ES2024"],
+    "types": ["node"],
     "outDir": "build",
     "composite": true,
     "module": "nodenext",
     "target": "es2024",
-
     "esModuleInterop": true,
     "moduleResolution": "node16",
     "declaration": true,
     "declarationMap": true,
-
     // Stolen from @linzjs/style
     "newLine": "lf",
     "stripInternal": true,
