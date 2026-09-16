@@ -61,3 +61,11 @@ Dump all tiles for a image (**Warning** if you do this for a large cog this will
 ```
 cogeotiff dump webp.cog.tiff --image 2 --output output
 ```
+
+#### Public S3 Buckets
+
+Disable signature verification for s3 buckets
+
+```bash
+AWS_SKIP_SIGNATURE=true cogeotiff info s3://nz-imagery/gisborne/gisborne_2023-2024_0.1m/rgb/2193/BE42_1000_3735.tiff
+```
