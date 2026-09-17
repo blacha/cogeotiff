@@ -23,10 +23,14 @@ export interface TiffFetchOptions {
 }
 
 export class Tiff {
+  /** Should tiles be fetched using GDAL's BLOCK_LEADER option */
+  static DefaultFetchWithLeader = true;
   /** Read 16KB blocks at a time */
   static DefaultReadSize = 16 * 1024;
   /** Read 16KB blocks at a time */
   defaultReadSize = Tiff.DefaultReadSize;
+  /** Should tiles be fetched using GDAL's BLOCK_LEADER option */
+  fetchWithLeader = Tiff.DefaultFetchWithLeader;
   /** Where this cog is fetching its data from */
   source: Source;
   /** Big or small Tiff */

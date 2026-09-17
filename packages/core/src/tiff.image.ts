@@ -576,7 +576,7 @@ export class TiffImage {
     // GDAL optimizes tiles by storing the size of the tile in
     // the few bytes leading up to the tile
     const leaderBytes = this.tiff.options?.tileLeaderByteSize;
-    if (leaderBytes) {
+    if (leaderBytes && this.tiff.fetchWithLeader) {
       const offset = tileOffset ?? (await getOffset(this.tiff, this.tileOffset, index, options));
       // Sparse tiff no data found
       if (offset === 0) return { offset: 0, imageSize: 0 };
