@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.5.1](https://github.com/blacha/cogeotiff/compare/core-v9.5.0...core-v9.5.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* **core:** allow turning off leader byte fetching ([#1502](https://github.com/blacha/cogeotiff/issues/1502)) ([7cd0171](https://github.com/blacha/cogeotiff/commit/7cd0171629c2dca505c99d95f80c605c7ff70f4e)), closes [#1467](https://github.com/blacha/cogeotiff/issues/1467)
+
 ## [9.5.0](https://github.com/blacha/cogeotiff/compare/core-v9.4.0...core-v9.5.0) (2026-03-25)
 
 
