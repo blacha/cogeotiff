@@ -54,6 +54,15 @@
   * dependencies
     * @cogeotiff/core bumped from ^9.1.1 to ^9.1.2
 
+## [9.0.11](https://github.com/blacha/cogeotiff/compare/examples-v9.0.10...examples-v9.0.11) (2026-09-17)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^9.5.0 to ^9.5.1
+
 ## [9.0.10](https://github.com/blacha/cogeotiff/compare/examples-v9.0.9...examples-v9.0.10) (2026-03-25)
 
 

@@ -1,6 +1,6 @@
 {
-  "packages/cli": "9.1.2",
-  "packages/core": "9.5.0",
-  "packages/examples": "9.0.10",
+  "packages/cli": "9.2.0",
+  "packages/core": "9.5.1",
+  "packages/examples": "9.0.11",
   "packages/fetchable": "7.0.0"
 }

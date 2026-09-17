@@ -24,6 +24,21 @@
   * dependencies
     * @cogeotiff/core bumped from ^9.1.1 to ^9.1.2
 
+## [9.2.0](https://github.com/blacha/cogeotiff/compare/cli-v9.1.2...cli-v9.2.0) (2026-09-17)
+
+
+### Features
+
+* **cli:** support AWS_SKIP_SIGNATURE for public buckets ([#1500](https://github.com/blacha/cogeotiff/issues/1500)) ([d5bfb38](https://github.com/blacha/cogeotiff/commit/d5bfb385dcc4c29340d9960d4610774168f32d74))
+* support AWS_ROLE_CONFIG_PATH for automatic aws role assumptions ([#1505](https://github.com/blacha/cogeotiff/issues/1505)) ([0468249](https://github.com/blacha/cogeotiff/commit/04682495735ded3b97cf5ed8174e6ce4ace5e959))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @cogeotiff/core bumped from ^9.5.0 to ^9.5.1
+
 ## [9.1.2](https://github.com/blacha/cogeotiff/compare/cli-v9.1.1...cli-v9.1.2) (2026-03-25)
 
 
