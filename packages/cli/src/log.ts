@@ -33,6 +33,12 @@ export function setupLogger(cfg: { verbose?: boolean; extraVerbose?: boolean }):
 
 export const logger = log;
 
+const publicSigner = {
+  sign<T>(req: T) {
+    return Promise.resolve(req);
+  },
+} as const;
+
 /** S3 client adds approx 300ms to the cli startup time, so only register it if needed */
 export async function ensureS3fs(): Promise<void> {
   if (fsa.systems.find((f) => f.prefix.startsWith('s3'))) return;
@@ -40,5 +46,8 @@ export async function ensureS3fs(): Promise<void> {
   const S3Client = await import('@aws-sdk/client-s3');
   const FsAwsS3 = await import('@chunkd/fs-aws');
 
-  fsa.register('s3://', new FsAwsS3.FsAwsS3(new S3Client.S3Client({})));
+  // If AWS_SKIP_SIGNATURE is set, then we don't sign the requests, which is useful for public buckets
+  const signer = process.env['AWS_SKIP_SIGNATURE'] ? publicSigner : undefined;
+
+  fsa.register('s3://', new FsAwsS3.FsAwsS3(new S3Client.S3Client({ signer })));
 }

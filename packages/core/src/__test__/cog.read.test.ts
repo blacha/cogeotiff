@@ -145,6 +145,34 @@ describe('CogRead', () => {
     assert.deepEqual(source.fetches[3], { offset: tileOffsets.value[0], length: oldValue[0] });
   });
 
+  it('should not read the leader block if fetchWithLeader is disabled', async () => {
+    const source = new TestFileSource(new URL('../../data/rgba8_cog.tiff', import.meta.url));
+    const fetchSize = 16 * 1024;
+
+    const tiff = new Tiff(source);
+    tiff.defaultReadSize = fetchSize;
+    tiff.fetchWithLeader = false;
+    await tiff.init();
+
+    const img = tiff.images[0];
+    const byteCounts = img.tags.get(TiffTag.TileByteCounts) as TagOffset;
+    const tileOffsets = img.tags.get(TiffTag.TileOffsets) as TagOffset;
+
+    // force the offset to be unloaded
+    byteCounts.isLoaded = false;
+    const oldValue = byteCounts.value;
+    byteCounts.value = [];
+    byteCounts.view = undefined;
+
+    const tile = await img.getTile(0, 0);
+    assert.equal(tile?.bytes.byteLength, oldValue[0]);
+    assert.equal(source.fetches.length, 3);
+
+    // Read the byte count array directly, not from the leader block
+    assert.deepEqual(source.fetches[1], { offset: byteCounts.dataOffset, length: 2 });
+    assert.deepEqual(source.fetches[2], { offset: tileOffsets.value[0], length: oldValue[0] });
+  });
+
   it('should read the byte count array if it is loaded (BigTiff)', async () => {
     const source = new TestFileSource(new URL('../../data/rgba8_cog_big.tiff', import.meta.url));
     const fetchSize = 16 * 1024;
