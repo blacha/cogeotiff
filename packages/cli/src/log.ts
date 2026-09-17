@@ -49,5 +49,22 @@ export async function ensureS3fs(): Promise<void> {
   // If AWS_SKIP_SIGNATURE is set, then we don't sign the requests, which is useful for public buckets
   const signer = process.env['AWS_SKIP_SIGNATURE'] ? publicSigner : undefined;
 
-  fsa.register('s3://', new FsAwsS3.FsAwsS3(new S3Client.S3Client({ signer })));
+
+  // Automatically assume roles into other AWS accounts if credentials allow,
+  // see @chunkd/fs-aws AwsS3CredentialProvider for more information
+  const roleConfig = process.env['AWS_ROLE_CONFIG_PATH'];
+  const fsAws = new FsAwsS3.FsAwsS3(new S3Client.S3Client({ signer }));
+
+  if (roleConfig != null) {
+    const credentials = new FsAwsS3.AwsS3CredentialProvider();
+    credentials.onFileSystemCreated = (acc, fs): void => {
+      if (fs == null) return;
+      logger.info('FileSystem:Register', { prefix: acc.prefix, roleArn: acc.roleArn });
+    }
+
+    logger.info('FileSystem:Credentials', { roleConfig })
+    credentials.registerConfig(fsa.toUrl(roleConfig), fsAws);
+  }
+
+  fsa.register('s3://', fsAws);
 }
