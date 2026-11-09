@@ -24,7 +24,7 @@
     "oxfmt": "^0.68.0",
     "oxlint": "^1.78.0",
     "oxlint-tsgolint": "^7.0.2001",
-    "rimraf": "^4.1.2",
+    "rimraf": "^6.1.4",
     "typescript": "^7.0.2"
   },
   "workspaces": {
